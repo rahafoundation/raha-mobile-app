@@ -1,7 +1,6 @@
 {
-  "name": "raha-mobile",
+  "name": "@raha.io/mobile",
   "version": "0.1.0",
-  "private": true,
   "devDependencies": {
     "@types/enzyme": "^3.1.9",
     "@types/enzyme-adapter-react-16": "^1.0.2",
