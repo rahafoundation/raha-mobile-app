@@ -3,6 +3,6 @@ import { SearchBar as SearchBarComponent } from "react-native-elements";
 
 type SearchBarProps = {};
 const SearchBar: React.StatelessComponent<SearchBarProps> = props => {
-  return <SearchBar />;
+  return <SearchBarComponent />;
 };
 export default SearchBar;
