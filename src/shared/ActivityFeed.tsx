@@ -7,9 +7,9 @@ const ActivityFeed: React.StatelessComponent<ListProps> = props => {
   return (
     <FlatList
       data={[
-        { text: "Mark received 5R from Omar" },
-        { text: "Tina received 5R from Omar" },
-        { text: "Omar received 5R from Rahul" }
+        { key: "1", text: "Mark received 5R from Omar" },
+        { key: "2", text: "Tina received 5R from Omar" },
+        { key: "3", text: "Omar received 5R from Rahul" }
       ]}
       renderItem={({ item }) => <ActivityItem text={item.text} />}
     />
