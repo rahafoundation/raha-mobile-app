@@ -3,10 +3,6 @@ import { FlatList, View, Text } from "react-native";
 
 type ListProps = {};
 
-type ActivityItemData = {
-  text: string;
-};
-
 const ActivityFeed: React.StatelessComponent<ListProps> = props => {
   return (
     <FlatList
