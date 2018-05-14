@@ -1,23 +1,30 @@
 import * as React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
+import { connect, MapDispatchToProps } from "react-redux";
+import { logIn as logInAction } from "../actions/loggedInUser";
 
-type LogInProps = {
+type OwnProps = {
   navigation: any;
 };
 
-export default class LogIn extends React.Component<LogInProps> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>This is the login page.</Text>
-        <Button
-          title="Go to Home"
-          onPress={() => this.props.navigation.navigate("Home")}
-        />
-      </View>
-    );
-  }
-}
+type DispatchProps = {
+  logIn: (userId: string) => void;
+};
+
+type LogInProps = OwnProps & DispatchProps;
+
+const LogIn: React.StatelessComponent<LogInProps> = props => {
+  return (
+    <View style={styles.container}>
+      <Text>This is the login page.</Text>
+      <Button
+        title="Cancel"
+        onPress={() => props.navigation.navigate("Home")}
+      />
+      <Button title="Log In as Omar" onPress={() => props.logIn("omar")} />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -27,3 +34,14 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   }
 });
+
+const mapDispatchToProps: MapDispatchToProps<
+  DispatchProps,
+  OwnProps
+> = dispatch => {
+  return {
+    logIn: (userId: string) => dispatch(logInAction(userId))
+  };
+};
+
+export default connect(undefined, mapDispatchToProps)(LogIn);

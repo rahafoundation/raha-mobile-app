@@ -3,26 +3,36 @@ import { StyleSheet, Text, View, ScrollView } from "react-native";
 import { Button } from "react-native-elements";
 
 import SearchBar from "../shared/SearchBar";
+import { connect, MapStateToProps } from "react-redux";
+import { AppState } from "../reducers";
 
-type HomeProps = {
+type OwnProps = {
   navigation: any;
 };
 
-export default class Home extends React.Component<HomeProps> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <SearchBar />
-        <Text>This is the home page.</Text>
-        <View style={styles.spacer} />
+type StateProps = {
+  loggedInUserId?: string;
+};
+
+type HomeProps = OwnProps & StateProps;
+
+const Home: React.StatelessComponent<HomeProps> = props => {
+  return (
+    <View style={styles.container}>
+      <SearchBar />
+      <Text>This is the home page.</Text>
+      <View style={styles.spacer} />
+      {!props.loggedInUserId ? (
         <Button
-          title="Go to LogIn"
-          onPress={() => this.props.navigation.navigate("LogIn")}
+          title="Log In"
+          onPress={() => props.navigation.navigate("LogIn")}
         />
-      </View>
-    );
-  }
-}
+      ) : (
+        <Text>{props.loggedInUserId}</Text>
+      )}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -34,3 +44,14 @@ const styles = StyleSheet.create({
     flexGrow: 1
   }
 });
+
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  OwnProps,
+  AppState
+> = state => {
+  return {
+    loggedInUserId: state.loggedInUser.userId
+  };
+};
+export default connect(mapStateToProps)(Home);
