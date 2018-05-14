@@ -2,23 +2,24 @@
   "name": "@raha.io/mobile",
   "version": "0.1.0",
   "devDependencies": {
-    "@types/enzyme": "^3.1.9",
+    "@types/enzyme": "^3.1.10",
     "@types/enzyme-adapter-react-16": "^1.0.2",
-    "@types/jest": "^22.2.2",
-    "@types/react": "^16.1.0",
-    "@types/react-native": "^0.52.21",
-    "@types/react-test-renderer": "^16.0.0",
+    "@types/jest": "^22.2.3",
+    "@types/react": "^16.3.14",
+    "@types/react-native": "^0.55.12",
+    "@types/react-native-elements": "^0.18.0",
+    "@types/react-test-renderer": "^16.0.1",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
-    "jest-expo": "26.0.0",
-    "jsdom": "^11.7.0",
-    "react-native-mock-render": "^0.0.22",
+    "jest-expo": "27.0.1",
+    "jsdom": "^11.10.0",
+    "react-native-mock-render": "^0.0.25",
     "react-native-scripts-ts": "1.13.0",
-    "react-native-typescript-transformer": "^1.2.3",
-    "react-test-renderer": "16.3.0-alpha.1",
-    "ts-jest": "^22.4.2",
+    "react-native-typescript-transformer": "^1.2.5",
+    "react-test-renderer": "16.3.2",
+    "ts-jest": "^22.4.6",
     "tslib": "^1.9.0",
-    "typescript": "^2.8.1"
+    "typescript": "^2.8.3"
   },
   "main": "./node_modules/react-native-scripts-ts/build/bin/crna-entry.js",
   "scripts": {
@@ -55,8 +56,10 @@
     ]
   },
   "dependencies": {
-    "expo": "^26.0.0",
-    "react": "16.3.0-alpha.1",
-    "react-native": "0.54.0"
+    "expo": "^27.0.1",
+    "react": "16.3.1",
+    "react-native": "0.55.4",
+    "react-native-elements": "^0.19.1",
+    "react-navigation": "^2.0.1"
   }
 }

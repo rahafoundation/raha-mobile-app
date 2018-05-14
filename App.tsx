@@ -1,23 +1,23 @@
-import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from "react";
+import { createStackNavigator } from "react-navigation";
 
-export default class App extends React.Component<{}> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Open up App.ts to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-      </View>
-    );
-  }
-}
+import Home from "./src/pages/Home";
+import LogIn from "./src/pages/LogIn";
+import Onboarding from "./src/pages/Onboarding";
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+export default createStackNavigator(
+  {
+    Home: {
+      screen: Home
+    },
+    Onboarding: {
+      screen: Onboarding
+    },
+    LogIn: {
+      screen: LogIn
+    }
   },
-});
+  {
+    initialRouteName: "Home"
+  }
+);
