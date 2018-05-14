@@ -20,8 +20,8 @@ type HomeProps = OwnProps & StateProps;
 const Home: React.StatelessComponent<HomeProps> = props => {
   return (
     <View style={styles.container}>
+      <Text>Give Raha to:</Text>
       <SearchBar />
-      <Text>This is the home page.</Text>
       <ActivityFeed />
       <View style={styles.spacer} />
       {!props.loggedInUserId ? (

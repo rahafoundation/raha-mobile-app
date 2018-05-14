@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FlatList, View, Text } from "react-native";
+import { FlatList, View, Text, StyleSheet } from "react-native";
 
 type ListProps = {};
 
@@ -22,9 +22,14 @@ type ItemProps = {
 
 const ActivityItem: React.StatelessComponent<ItemProps> = props => {
   return (
-    <View>
+    <View style={styles.item}>
       <Text>{props.text}</Text>
     </View>
   );
 };
 export default ActivityFeed;
+const styles = StyleSheet.create({
+  item: {
+    padding: 12
+  }
+});
