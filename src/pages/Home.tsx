@@ -5,6 +5,7 @@ import { Button } from "react-native-elements";
 import SearchBar from "../shared/SearchBar";
 import { connect, MapStateToProps } from "react-redux";
 import { AppState } from "../reducers";
+import ActivityFeed from "../shared/ActivityFeed";
 
 type OwnProps = {
   navigation: any;
@@ -19,8 +20,9 @@ type HomeProps = OwnProps & StateProps;
 const Home: React.StatelessComponent<HomeProps> = props => {
   return (
     <View style={styles.container}>
+      <Text>Give Raha to:</Text>
       <SearchBar />
-      <Text>This is the home page.</Text>
+      <ActivityFeed />
       <View style={styles.spacer} />
       {!props.loggedInUserId ? (
         <Button
