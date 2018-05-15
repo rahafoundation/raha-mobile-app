@@ -1,9 +1,9 @@
 import * as React from "react";
 import { FlatList, View, Text, StyleSheet } from "react-native";
 
-type ListProps = {};
+type ActivityFeedProps = {};
 
-const ActivityFeed: React.StatelessComponent<ListProps> = props => {
+const ActivityFeed: React.StatelessComponent<ActivityFeedProps> = props => {
   return (
     <FlatList
       data={[
@@ -16,11 +16,11 @@ const ActivityFeed: React.StatelessComponent<ListProps> = props => {
   );
 };
 
-type ItemProps = {
+type ActivityItemProps = {
   text: string;
 };
 
-const ActivityItem: React.StatelessComponent<ItemProps> = props => {
+const ActivityItem: React.StatelessComponent<ActivityItemProps> = props => {
   return (
     <View style={styles.item}>
       <Text>{props.text}</Text>
