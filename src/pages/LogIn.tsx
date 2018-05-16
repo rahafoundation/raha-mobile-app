@@ -22,6 +22,10 @@ const LogIn: React.StatelessComponent<LogInProps> = props => {
         onPress={() => props.navigation.navigate("Home")}
       />
       <Button title="Log In as Omar" onPress={() => props.logIn("omar")} />
+      <Button
+        title="Sign Up"
+        onPress={() => props.navigation.navigate("Onboarding")}
+      />
     </View>
   );
 };

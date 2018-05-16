@@ -9,7 +9,7 @@ export default class Onboarding extends React.Component<OnboardingProps> {
   render() {
     return (
       <View style={styles.container}>
-        <Text>This is the onboardibng page.</Text>
+        <Text>This is the onboarding page.</Text>
       </View>
     );
   }
