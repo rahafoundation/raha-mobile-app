@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { connect, MapDispatchToProps } from "react-redux";
-import { logIn as logInAction } from "../actions/loggedInUser";
+import { logIn as logInAction } from "../actions/authentication";
 
 type OwnProps = {
   navigation: any;

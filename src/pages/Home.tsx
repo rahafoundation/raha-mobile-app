@@ -4,7 +4,7 @@ import { Button } from "react-native-elements";
 
 import SearchBar from "../shared/SearchBar";
 import { connect, MapStateToProps } from "react-redux";
-import { AppState } from "../reducers";
+import { AppState } from "../store";
 
 type OwnProps = {
   navigation: any;
@@ -50,8 +50,9 @@ const mapStateToProps: MapStateToProps<
   OwnProps,
   AppState
 > = state => {
+  const { firebaseUser } = state.authentication;
   return {
-    loggedInUserId: state.loggedInUser.userId
+    loggedInUserId: firebaseUser ? firebaseUser.uid : undefined
   };
 };
 export default connect(mapStateToProps)(Home);

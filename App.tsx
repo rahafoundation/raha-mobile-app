@@ -6,7 +6,7 @@ import { createStackNavigator } from "react-navigation";
 import Home from "./src/pages/Home";
 import LogIn from "./src/pages/LogIn";
 import Onboarding from "./src/pages/Onboarding";
-import rootReducer from "./src/reducers";
+import createStore from "./src/store";
 
 const Navigator = createStackNavigator(
   {
@@ -25,7 +25,7 @@ const Navigator = createStackNavigator(
   }
 );
 
-const store = createStore(rootReducer);
+const store = createStore();
 const App: React.StatelessComponent<{}> = () => {
   return (
     <Provider store={store}>
