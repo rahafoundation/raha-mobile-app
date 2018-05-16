@@ -4,6 +4,7 @@
   "devDependencies": {
     "@types/enzyme": "^3.1.10",
     "@types/enzyme-adapter-react-16": "^1.0.2",
+    "@types/firebase": "^3.2.1",
     "@types/jest": "^22.2.3",
     "@types/react": "^16.3.14",
     "@types/react-native": "^0.55.12",
@@ -58,6 +59,8 @@
   },
   "dependencies": {
     "expo": "^27.0.1",
+    "firebase": "^5.0.2",
+    "immutable": "^3.8.2",
     "react": "16.3.1",
     "react-native": "0.55.4",
     "react-native-elements": "^0.19.1",
