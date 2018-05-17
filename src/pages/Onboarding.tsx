@@ -1,5 +1,6 @@
 import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import RoundedButton from "../shared/RoundedButton";
 
 type OnboardingProps = {
   navigation: any;
@@ -8,18 +9,33 @@ type OnboardingProps = {
 export default class Onboarding extends React.Component<OnboardingProps> {
   render() {
     return (
-      <View style={styles.container}>
-        <Text>This is the onboarding page.</Text>
+      <View style={[styles.slide, { backgroundColor: "#C04DEE" }]}>
+        <Text style={styles.header}>Give Raha</Text>
+        <Text style={styles.text}>
+          By using Raha, you are supporting basic income for everyone.
+        </Text>
+        <RoundedButton text="Next" onPress={() => console.log("hello")} />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  slide: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  header: {
+    color: "#fff",
+    fontSize: 30,
+    fontWeight: "bold",
+    marginVertical: 15
+  },
+  text: {
+    color: "#fff",
+    fontSize: 18,
+    marginHorizontal: 40,
+    textAlign: "center"
   }
 });
