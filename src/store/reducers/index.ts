@@ -7,16 +7,11 @@ import {
   AuthenticationState
 } from "./authentication";
 
-export interface AppState {
-  apiCalls: ApiCallsState;
-  members: MembersState;
-  operations: OperationsState;
-  authentication: AuthenticationState;
-}
-
-export default combineReducers<AppState>({
+const rootReducer = combineReducers({
   apiCalls,
   members,
   operations,
   authentication
 });
+export type AppState = ReturnType<typeof rootReducer>;
+export default rootReducer;
