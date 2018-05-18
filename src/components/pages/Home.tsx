@@ -4,7 +4,7 @@ import { Button } from "react-native-elements";
 
 import SearchBar from "../shared/SearchBar";
 import { connect, MapStateToProps } from "react-redux";
-import { AppState } from "../reducers";
+import { AppState } from "../../reducers";
 import ActivityFeed from "../shared/ActivityFeed";
 
 type OwnProps = {
