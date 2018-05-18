@@ -1,19 +1,29 @@
 import * as React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
-import { connect, MapDispatchToProps } from "react-redux";
-import { logIn as logInAction } from "../actions/authentication";
+import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
+
+import { googleLogIn } from "../store/actions/authentication";
+import { AppState } from "../store";
 
 type OwnProps = {
   navigation: any;
 };
 
-type DispatchProps = {
-  logIn: (userId: string) => void;
+type StateProps = {
+  isLoggedIn: boolean;
 };
 
-type LogInProps = OwnProps & DispatchProps;
+type DispatchProps = {
+  googleLogIn: () => void;
+};
+
+type LogInProps = OwnProps & StateProps & DispatchProps;
 
 const LogIn: React.StatelessComponent<LogInProps> = props => {
+  if (props.isLoggedIn) {
+    props.navigation.navigate("Home");
+    return <View />;
+  }
   return (
     <View style={styles.container}>
       <Text>This is the login page.</Text>
@@ -21,7 +31,7 @@ const LogIn: React.StatelessComponent<LogInProps> = props => {
         title="Cancel"
         onPress={() => props.navigation.navigate("Home")}
       />
-      <Button title="Log In as Omar" onPress={() => props.logIn("omar")} />
+      <Button title="Log in with Google" onPress={props.googleLogIn} />
     </View>
   );
 };
@@ -35,13 +45,20 @@ const styles = StyleSheet.create({
   }
 });
 
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  OwnProps,
+  AppState
+> = state => ({
+  isLoggedIn:
+    state.authentication.isLoaded && !!state.authentication.firebaseUser
+});
+
 const mapDispatchToProps: MapDispatchToProps<
   DispatchProps,
   OwnProps
-> = dispatch => {
-  return {
-    logIn: (userId: string) => dispatch(logInAction(userId))
-  };
-};
+> = dispatch => ({
+  googleLogIn: () => dispatch(googleLogIn())
+});
 
-export default connect(undefined, mapDispatchToProps)(LogIn);
+export default connect(mapStateToProps, mapDispatchToProps)(LogIn);

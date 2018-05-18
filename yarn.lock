@@ -687,6 +687,18 @@
   version "1.2.0"
   resolved "https://registry.npmjs.org/@types/events/-/events-1.2.0.tgz#81a6731ce4df43619e5c8c945383b3e62a89ea86"
 
+"@types/expo@^26.0.3":
+  version "26.0.3"
+  resolved "https://registry.npmjs.org/@types/expo/-/expo-26.0.3.tgz#ae2a1b00a4540d717f235222194c62a8e58d73c0"
+  dependencies:
+    "@types/fbemitter" "*"
+    "@types/react" "*"
+    "@types/react-native" "*"
+
+"@types/fbemitter@*":
+  version "2.0.32"
+  resolved "https://registry.npmjs.org/@types/fbemitter/-/fbemitter-2.0.32.tgz#8ed204da0f54e9c8eaec31b1eec91e25132d082c"
+
 "@types/firebase@^3.2.1":
   version "3.2.1"
   resolved "https://registry.npmjs.org/@types/firebase/-/firebase-3.2.1.tgz#17c1c8fee7485ab09668d2461e34540bdf44b3b1"
@@ -718,6 +730,12 @@
   resolved "https://registry.npmjs.org/@types/react-native-elements/-/react-native-elements-0.18.0.tgz#81cf92d75a5d9ed73599761da37bd2b05b107a91"
   dependencies:
     react-native-elements "*"
+
+"@types/react-native@*":
+  version "0.55.14"
+  resolved "https://registry.npmjs.org/@types/react-native/-/react-native-0.55.14.tgz#9a702845c7d72f2774b4e2004cb698c099f9b50e"
+  dependencies:
+    "@types/react" "*"
 
 "@types/react-native@^0.55.12":
   version "0.55.12"

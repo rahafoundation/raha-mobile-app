@@ -6,12 +6,12 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "jsx": "react-native",
-    "lib": ["dom", "es2017"],
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "noEmitHelpers": true,
     "importHelpers": true,
     "strict": true,
     "noImplicitReturns": true
-  }
+  },
+  "exclude": ["node_modules"]
 }

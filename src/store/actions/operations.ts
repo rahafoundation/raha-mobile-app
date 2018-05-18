@@ -2,7 +2,7 @@ import { Operation } from "../reducers/operations";
 import { ApiEndpoint, callApi, GetOperationsApiEndpoint } from "../../api";
 import { AsyncAction, AsyncActionCreator } from "./types";
 import { wrapApiCallAction } from "./apiCalls";
-import { ActionCreator } from "react-redux";
+import { ActionCreator } from "redux";
 
 // TODO: these operations methods are likely correct, but long term inefficient.
 // We can rely on it now given that the number and size of operations are small,

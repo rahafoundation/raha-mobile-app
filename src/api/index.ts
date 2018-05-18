@@ -1,5 +1,5 @@
 // TODO: consider splitting the actual API endpoint types into their finer grained files
-import { Uid } from "../identifiers";
+import { UserId } from "../identifiers";
 import InvalidApiRequestError from "../errors/ApiCallError/InvalidApiRequestError";
 import ApiCallFailedError from "../errors/ApiCallError/ApiCallFailedError";
 import ApiResponse, {
@@ -40,7 +40,7 @@ interface ApiCallDefinition<E extends ApiEndpoint, Params, Body> {
 }
 type TrustMemberApiCall = ApiCallDefinition<
   ApiEndpoint.TRUST_MEMBER,
-  { uid: Uid },
+  { uid: UserId },
   void
 >;
 type GetOperationsApiCall = ApiCallDefinition<
@@ -50,7 +50,7 @@ type GetOperationsApiCall = ApiCallDefinition<
 >;
 type RequestInviteApiCall = ApiCallDefinition<
   ApiEndpoint.REQUEST_INVITE,
-  { uid: Uid },
+  { uid: UserId },
   { fullName: string; videoUrl: string; creatorMid: string }
 >;
 type SendInviteApiCall = ApiCallDefinition<

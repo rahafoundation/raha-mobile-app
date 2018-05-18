@@ -1,4 +1,4 @@
-import { Operation } from "../reducers/operations";
+import { Operation } from "../store/reducers/operations";
 
 export type OperationApiResponse = Operation;
 export type OperationsApiResponse = Operation[];
