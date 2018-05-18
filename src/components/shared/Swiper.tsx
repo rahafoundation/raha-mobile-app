@@ -45,10 +45,11 @@ interface SwiperState {
   index: number;
   width: number;
   height: number;
-  scrollView?: ScrollView;
 }
 
 export default class Swiper extends Component<SwiperProps, SwiperState> {
+  private scrollView?: ScrollView | null;
+
   // Props for ScrollView component
   static defaultProps = {
     horizontal: true,
@@ -101,18 +102,23 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
    * Scroll begin handler
    * @param {object} e native event
    */
-  onScrollBegin = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+  onScrollBegin: ScrollViewProps["onScrollBeginDrag"] = (
+    event?: NativeSyntheticEvent<NativeScrollEvent>
+  ) => {
+    if (!event) {
+      // TODO: what does this case even mean? read react-native docs
+      return;
+    }
     // Update internal isScrolling state
     this.setState({ isScrolling: true });
   };
 
   /**
    * Scroll end handler
-   * @param {object} e native event
    */
-  onScrollEnd: ScrollViewProps["onMomentumScrollEnd"] = e => {
-    if (e === undefined) {
-      // maybe freak out?
+  onScrollEnd: ScrollViewProps["onMomentumScrollEnd"] = event => {
+    if (!event) {
+      // TODO: what does this case even mean? read react-native docs
       return;
     }
     // Update internal isScrolling state
@@ -120,21 +126,24 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
 
     // Update index
     this.updateIndex(
-      e.nativeEvent.contentOffset
-        ? e.nativeEvent.contentOffset.x
+      event.nativeEvent.contentOffset
+        ? event.nativeEvent.contentOffset.x
         : // When scrolled with .scrollTo() on Android there is no contentOffset
-          e.nativeEvent.position * this.state.width
+          event.nativeEvent.position * this.state.width
     );
   };
 
   /*
      * Drag end handler
-     * @param {object} e native event
      */
-  onScrollEndDrag = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+  onScrollEndDrag: ScrollViewProps["onScrollEndDrag"] = event => {
+    if (!event) {
+      // TODO: what does this case even mean? read react-native docs
+      return;
+    }
     const {
         contentOffset: { x: newOffset }
-      } = e.nativeEvent,
+      } = event.nativeEvent,
       { children } = this.props,
       { index } = this.state,
       { offset } = this.state;
@@ -195,8 +204,7 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
       y = 0;
 
     // Call scrollTo on scrollView component to perform the swipe
-    this.state.scrollView &&
-      this.state.scrollView.scrollTo({ x, y, animated: true });
+    this.scrollView && this.scrollView.scrollTo({ x, y, animated: true });
 
     // Update internal scroll state
     this.setState({
@@ -223,7 +231,7 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
     return (
       <ScrollView
         ref={component => {
-          this.state.scrollView = component;
+          this.scrollView = component;
         }}
         {...this.props}
         contentContainerStyle={[styles.wrapper, this.props.style]}
