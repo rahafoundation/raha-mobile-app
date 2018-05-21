@@ -200,10 +200,10 @@ export async function callApi<Def extends ApiDefinition>(
   const { url, method } = resolveApiEndpoint(apiCall);
   const requestOptions: RequestInit = {
     method,
-    cache: "no-cache",
     headers: {
       ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-      "content-type": "application/json"
+      "content-type": "application/json",
+      "cache-control": "no-cache"
     },
     ...(apiCall.body ? { body: JSON.stringify(apiCall.body) } : {})
   };
