@@ -2,8 +2,8 @@ import * as React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
-import { googleLogIn } from "../store/actions/authentication";
-import { AppState } from "../store";
+import { googleLogIn } from "../../store/actions/authentication";
+import { AppState } from "../../store";
 
 type OwnProps = {
   navigation: any;
