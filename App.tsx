@@ -1,3 +1,4 @@
+import "es6-symbol/implement";
 import * as React from "react";
 import { Provider } from "react-redux";
 import { createStackNavigator } from "react-navigation";

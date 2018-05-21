@@ -59,6 +59,7 @@
     ]
   },
   "dependencies": {
+    "es6-symbol": "^3.1.1",
     "expo": "^27.0.1",
     "firebase": "^5.0.2",
     "immutable": "^3.8.2",
