@@ -19,22 +19,26 @@ type DispatchProps = {
 
 type LogInProps = OwnProps & StateProps & DispatchProps;
 
-const LogIn: React.StatelessComponent<LogInProps> = props => {
-  if (props.isLoggedIn) {
-    props.navigation.navigate("Home");
-    return <View />;
+class LogIn extends React.Component<LogInProps> {
+  componentDidUpdate() {
+    if (this.props.isLoggedIn) {
+      this.props.navigation.navigate("Home");
+    }
   }
-  return (
-    <View style={styles.container}>
-      <Text>This is the login page.</Text>
-      <Button
-        title="Cancel"
-        onPress={() => props.navigation.navigate("Home")}
-      />
-      <Button title="Log in with Google" onPress={props.googleLogIn} />
-    </View>
-  );
-};
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>This is the login page.</Text>
+        <Button
+          title="Cancel"
+          onPress={() => this.props.navigation.navigate("Home")}
+        />
+        <Button title="Log in with Google" onPress={this.props.googleLogIn} />
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
