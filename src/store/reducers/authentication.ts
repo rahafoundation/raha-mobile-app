@@ -2,15 +2,16 @@ import { Reducer } from "redux";
 import { User as FirebaseUser } from "firebase";
 
 import {
-  SET_FIREBASE_USER,
-  SetFirebaseUserAction
+  AuthenticationActionType,
+  AuthenticationAction,
+  AuthMethod
 } from "../actions/authentication";
 
 export interface AuthenticationState {
   firebaseUser?: FirebaseUser;
   isLoaded: boolean;
+  existingAuthMethod?: AuthMethod;
 }
-type AuthAction = SetFirebaseUserAction;
 
 const initialState: AuthenticationState = {
   isLoaded: false
@@ -20,10 +21,20 @@ export const reducer: Reducer<AuthenticationState> = (
   state = initialState,
   untypedAction
 ) => {
-  const action = untypedAction as AuthAction;
+  const action = untypedAction as AuthenticationAction;
   switch (action.type) {
-    case SET_FIREBASE_USER:
-      return { isLoaded: true, firebaseUser: action.firebaseUser };
+    case AuthenticationActionType.SET_FIREBASE_USER:
+      return {
+        isLoaded: true,
+        firebaseUser: action.firebaseUser,
+        existingAuthMethod: undefined
+      };
+    case AuthenticationActionType.EXISTING_CREDENTIAL:
+      return {
+        isLoaded: false,
+        firebaseUser: undefined,
+        existingAuthMethod: action.authMethod
+      };
     default:
       return state;
   }

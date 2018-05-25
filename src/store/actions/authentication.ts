@@ -1,51 +1,75 @@
 import { Action } from "redux";
 import firebase from "firebase";
 import { ActionCreator } from "redux";
-import { NavigationActions } from "react-navigation";
 
 import { AsyncActionCreator } from "./types";
-import { Google } from "expo";
+import { Google, Facebook } from "expo";
 import { auth } from "../../firebaseInit";
+import { AppState } from "..";
 
-export const SET_FIREBASE_USER = "SET_FIREBASE_USER";
+const CONFIG = require("../../data/config.json");
 
-export interface SetFirebaseUserAction extends Action {
-  type: typeof SET_FIREBASE_USER;
+const FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE =
+  "auth/account-exists-with-different-credential";
+
+export enum AuthMethod {
+  GOOGLE = "Google",
+  FACEBOOK = "Facebook"
+}
+
+export const enum AuthenticationActionType {
+  SET_FIREBASE_USER = "AUTHENTICATION.SET_FIREBASE_USER",
+  EXISTING_CREDENTIAL = "AUTHENTICATION.EXISTING_CREDENTIAL"
+}
+
+export interface SetFirebaseUserAction {
+  type: AuthenticationActionType.SET_FIREBASE_USER;
   firebaseUser: firebase.User;
 }
 
-const setFirebaseUser: ActionCreator<SetFirebaseUserAction> = (
-  firebaseUser: firebase.User
-) => ({
-  type: SET_FIREBASE_USER,
+export interface ExistingCredentialAction {
+  type: AuthenticationActionType.EXISTING_CREDENTIAL;
+  authMethod: AuthMethod;
+}
+
+export type AuthenticationAction =
+  | ExistingCredentialAction
+  | SetFirebaseUserAction;
+
+const setFirebaseUserAction = (firebaseUser: firebase.User) => ({
+  type: AuthenticationActionType.SET_FIREBASE_USER,
   firebaseUser
 });
 
-export const authSetFirebaseUser: AsyncActionCreator = (
-  firebaseUser: firebase.User
-) => dispatch => {
-  dispatch(setFirebaseUser(firebaseUser));
-};
+const existingCredentialAction = (authMethod: AuthMethod) => ({
+  type: AuthenticationActionType.EXISTING_CREDENTIAL,
+  authMethod
+});
 
 /**
  * TODO: if we make actions general, figure out how to distinguish between
  * mobile-specific login methods like this vs platform-independent ones.
  */
 export const googleLogIn: AsyncActionCreator = () => async dispatch => {
+  const {
+    iosClientId,
+    iosStandaloneAppClientId,
+    androidClientId,
+    androidStandaloneAppClientId
+  } = CONFIG.federatedAuth;
+
   const googleData = await Google.logInAsync({
-    iosClientId:
-      "1000788606610-poko6usql5gpdaq9bl0h3ljac8lnpprr.apps.googleusercontent.com",
-    iosStandaloneAppClientId:
-      "1000788606610-31qfhcdqisk618gndrhacfq1mvc5p7cc.apps.googleusercontent.com",
-    androidClientId:
-      "1000788606610-off9qgir4lgtgct5lrod948e4k28egfc.apps.googleusercontent.com",
-    androidStandaloneAppClientId:
-      "1000788606610-3si004egrf47c9em0hpn255v8kl8ebau.apps.googleusercontent.com"
+    iosClientId,
+    iosStandaloneAppClientId,
+    androidClientId,
+    androidStandaloneAppClientId
   });
-  if (googleData.type === "cancel") {
-    // TODO: dispatch something that says it was cancelled?
+
+  if (googleData.type !== "success") {
+    // TODO: dispatch something that says it failed?
     return;
   }
+
   try {
     // Create a new Firebase credential with the token
     const credential = firebase.auth.GoogleAuthProvider.credential(
@@ -55,8 +79,43 @@ export const googleLogIn: AsyncActionCreator = () => async dispatch => {
 
     // Login with the credential
     const authData = await auth.signInAndRetrieveDataWithCredential(credential);
-    dispatch(setFirebaseUser(authData.user));
+    dispatch(setFirebaseUserAction(authData.user));
   } catch (error) {
-    const { code, message } = error;
+    if (error.code === FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE) {
+      dispatch(existingCredentialAction(AuthMethod.GOOGLE));
+      return;
+    }
+    // TODO: deal with error
+    throw error;
+  }
+};
+
+export const facebookLogIn: AsyncActionCreator = () => async dispatch => {
+  const facebookData = await Facebook.logInWithReadPermissionsAsync(
+    "239560396587704",
+    {
+      permissions: ["public_profile"]
+    }
+  );
+
+  if (facebookData.type !== "success" || !facebookData.token) {
+    // TODO: dispatch something that says it failed?
+    return;
+  }
+
+  try {
+    const credential = firebase.auth.FacebookAuthProvider.credential(
+      facebookData.token
+    );
+
+    const authData = await auth.signInAndRetrieveDataWithCredential(credential);
+    dispatch(setFirebaseUserAction(authData.user));
+  } catch (error) {
+    if (error.code === FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE) {
+      dispatch(existingCredentialAction(AuthMethod.FACEBOOK));
+      return;
+    }
+    // TODO: handle error;
+    throw error;
   }
 };
