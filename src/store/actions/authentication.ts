@@ -56,7 +56,7 @@ export const googleLogIn: AsyncActionCreator = () => async dispatch => {
     iosStandaloneAppClientId,
     androidClientId,
     androidStandaloneAppClientId
-  } = CONFIG.federatedAuth;
+  } = CONFIG.google;
 
   const googleData = await Google.logInAsync({
     iosClientId,
@@ -92,7 +92,7 @@ export const googleLogIn: AsyncActionCreator = () => async dispatch => {
 
 export const facebookLogIn: AsyncActionCreator = () => async dispatch => {
   const facebookData = await Facebook.logInWithReadPermissionsAsync(
-    "239560396587704",
+    CONFIG.facebook.appId,
     {
       permissions: ["public_profile"]
     }

@@ -8,7 +8,10 @@
     "storageBucket": "raha-5395e.appspot.com",
     "messagingSenderId": "677137485282"
   },
-  "federatedAuth": {
+  "facebook": {
+    "appId": "239560396587704"
+  },
+  "google": {
     "iosClientId":
       "677137485282-ftos44jfp2o4i3ploairco6cetttqsvl.apps.googleusercontent.com",
     "iosStandaloneAppClientId":
