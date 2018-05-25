@@ -2,10 +2,10 @@ import { Action } from "redux";
 import firebase from "firebase";
 import { ActionCreator } from "redux";
 
-import { AsyncActionCreator } from "./types";
+import { AsyncActionCreator } from "./";
 import { Google, Facebook } from "expo";
 import { auth } from "../../firebaseInit";
-import { AppState } from "..";
+import { RahaState } from "..";
 
 const CONFIG = require("../../data/config.json");
 

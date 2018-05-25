@@ -5,7 +5,7 @@ import {
   OperationsAction,
   OperationsActionType
 } from "./operations";
-import { AsyncActionCreator } from "./types";
+import { AsyncActionCreator } from "./";
 import { wrapApiCallAction } from "./apiCalls";
 import { getAuthToken } from "../selectors/authentication";
 import {

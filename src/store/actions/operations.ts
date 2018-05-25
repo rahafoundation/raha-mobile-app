@@ -1,6 +1,6 @@
 import { Operation } from "../reducers/operations";
 import { ApiEndpoint, callApi, GetOperationsApiEndpoint } from "../../api";
-import { AsyncAction, AsyncActionCreator } from "./types";
+import { AsyncAction, AsyncActionCreator } from "./";
 import { wrapApiCallAction } from "./apiCalls";
 import { ActionCreator } from "redux";
 

@@ -1,6 +1,6 @@
 import { ApiEndpoint } from "../../api";
 import ApiCallError from "../../errors/ApiCallError";
-import { AsyncAction } from "./types";
+import { AsyncAction } from "./";
 
 export const enum ApiCallsActionType {
   STARTED = "API_CALLS.STARTED",
