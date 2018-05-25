@@ -62,7 +62,8 @@ export const googleLogIn: AsyncActionCreator = () => async dispatch => {
     iosClientId,
     iosStandaloneAppClientId,
     androidClientId,
-    androidStandaloneAppClientId
+    androidStandaloneAppClientId,
+    scopes: ["profile", "email"]
   });
 
   if (googleData.type !== "success") {
