@@ -6,9 +6,9 @@ import { AuthenticationAction } from "./authentication";
 import { MembersAction } from "./members";
 import { OperationsAction } from "./operations";
 
-import { AppState } from "../reducers";
+import { RahaState } from "../reducers";
 
-export type AsyncAction = ThunkAction<void, AppState, void>;
+export type AsyncAction = ThunkAction<void, RahaState, void>;
 export type AsyncActionCreator = ActionCreator<AsyncAction>;
 
 export type RahaAction =

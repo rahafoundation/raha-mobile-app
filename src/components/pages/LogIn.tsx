@@ -7,7 +7,7 @@ import {
   facebookLogIn,
   AuthMethod
 } from "../../store/actions/authentication";
-import { AppState } from "../../store";
+import { RahaState } from "../../store";
 
 type OwnProps = {
   navigation: any;
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
 const mapStateToProps: MapStateToProps<
   StateProps,
   OwnProps,
-  AppState
+  RahaState
 > = state => ({
   isLoggedIn:
     state.authentication.isLoaded && !!state.authentication.firebaseUser,

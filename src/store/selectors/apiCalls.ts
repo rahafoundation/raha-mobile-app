@@ -1,6 +1,6 @@
 import { ApiEndpoint } from "../../api";
 import { ApiCallStatus } from "../reducers/apiCalls";
-import { AppState } from "../reducers";
+import { RahaState } from "../reducers";
 
 /**
  * Gets the status of a previously made API call.
@@ -8,7 +8,7 @@ import { AppState } from "../reducers";
  * null.
  */
 export function getStatusOfApiCall(
-  state: AppState,
+  state: RahaState,
   endpoint: ApiEndpoint,
   identifier: string
 ): ApiCallStatus | undefined {

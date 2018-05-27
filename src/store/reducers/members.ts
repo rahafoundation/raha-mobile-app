@@ -1,7 +1,7 @@
 import { Reducer } from "redux";
 
 import { Set, Map } from "immutable";
-import { UserId, MemberUsername } from "../../identifiers";
+import { MemberId, MemberUsername } from "../../identifiers";
 import { OperationsActionType } from "../actions/operations";
 import { MembersAction } from "../actions/members";
 import { Operation, OperationType } from "./operations";
@@ -25,23 +25,23 @@ export const GENESIS_MEMBER = Symbol("GENESIS");
  * Members that we're in the process of building up from operations below.
  */
 export class Member {
-  public uid: UserId;
+  public uid: MemberId;
   public mid: MemberUsername;
   public fullName: string;
-  public invitedBy: UserId | typeof GENESIS_MEMBER;
+  public invitedBy: MemberId | typeof GENESIS_MEMBER;
 
-  public trustedBy: Set<UserId>;
-  public invited: Set<UserId>;
-  public trusts: Set<UserId>;
+  public trustedBy: Set<MemberId>;
+  public invited: Set<MemberId>;
+  public trusts: Set<MemberId>;
 
   constructor(
-    uid: UserId,
+    uid: MemberId,
     mid: MemberUsername,
     fullName: string,
-    invitedBy: UserId | typeof GENESIS_MEMBER,
-    trusts?: Set<UserId>,
-    trustedBy?: Set<UserId>,
-    invited?: Set<UserId>
+    invitedBy: MemberId | typeof GENESIS_MEMBER,
+    trusts?: Set<MemberId>,
+    trustedBy?: Set<MemberId>,
+    invited?: Set<MemberId>
   ) {
     this.uid = uid;
     this.mid = mid;
@@ -64,7 +64,7 @@ export class Member {
   /**
    * @returns A new Member with the uid present in its invited set.
    */
-  public inviteMember(uid: UserId) {
+  public inviteMember(uid: MemberId) {
     return new Member(
       this.uid,
       this.mid,
@@ -79,7 +79,7 @@ export class Member {
   /**
    * @returns A new Member with the uid present in its trusted set.
    */
-  public trustMember(uid: UserId) {
+  public trustMember(uid: MemberId) {
     return new Member(
       this.uid,
       this.mid,
@@ -94,7 +94,7 @@ export class Member {
   /**
    * @returns A new Member with the uid present in its trustedBy set.
    */
-  public beTrustedByMember(uid: UserId) {
+  public beTrustedByMember(uid: MemberId) {
     return new Member(
       this.uid,
       this.mid,
@@ -108,7 +108,7 @@ export class Member {
 }
 
 export interface MembersState {
-  byUserId: Map<UserId, Member>;
+  byUserId: Map<MemberId, Member>;
   byMemberUsername: Map<MemberUsername, Member>;
 }
 
@@ -140,7 +140,7 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
 
 function assertUserIdPresentInState(
   prevState: MembersState,
-  uid: UserId,
+  uid: MemberId,
   operation: Operation
 ) {
   if (!(uid in prevState.byUserId)) {

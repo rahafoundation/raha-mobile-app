@@ -1,6 +1,6 @@
 import { Reducer } from "redux";
 
-import { UserId, MemberUsername, OperationId } from "../../identifiers";
+import { MemberId, MemberUsername, OperationId } from "../../identifiers";
 import { OperationsAction, OperationsActionType } from "../actions/operations";
 
 export enum OperationType {
@@ -9,18 +9,18 @@ export enum OperationType {
 }
 export interface RequestInvitePayload {
   full_name: string;
-  to_uid: UserId;
+  to_uid: MemberId;
   to_mid: MemberUsername;
 }
 export interface TrustPayload {
-  to_uid: UserId;
+  to_uid: MemberId;
   to_mid: MemberUsername;
 }
 
 export interface OperationBase {
   id: OperationId;
   creator_mid: MemberUsername;
-  creator_uid: UserId;
+  creator_uid: MemberId;
 }
 
 export type Operation = OperationBase &

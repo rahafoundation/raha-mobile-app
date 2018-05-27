@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, ScrollView } from "react-native";
 import { Button } from "react-native-elements";
 import { connect, MapStateToProps } from "react-redux";
 
-import { AppState } from "../../store";
+import { RahaState } from "../../store";
 import SearchBar from "../shared/SearchBar";
 import ActivityFeed from "../shared/ActivityFeed";
 
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
 const mapStateToProps: MapStateToProps<
   StateProps,
   OwnProps,
-  AppState
+  RahaState
 > = state => {
   const { firebaseUser } = state.authentication;
   return {

@@ -13,5 +13,5 @@ const rootReducer = combineReducers({
   operations,
   authentication
 });
-export type AppState = ReturnType<typeof rootReducer>;
+export type RahaState = ReturnType<typeof rootReducer>;
 export default rootReducer;

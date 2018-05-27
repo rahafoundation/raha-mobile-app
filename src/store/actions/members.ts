@@ -15,7 +15,7 @@ import {
   RequestInviteApiEndpoint,
   SendInviteApiEndpoint
 } from "../../api";
-import { UserId } from "../../identifiers";
+import { MemberId } from "../../identifiers";
 import UnauthenticatedError from "../../errors/ApiCallError/UnauthenticatedError";
 
 export type MembersAction = SetOperationsAction | AddOperationsAction;
@@ -26,7 +26,7 @@ export const refreshMembers: AsyncActionCreator = () => {
   };
 };
 
-export const trustMember: AsyncActionCreator = (uid: UserId) => {
+export const trustMember: AsyncActionCreator = (uid: MemberId) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
       const authToken = await getAuthToken(getState());
@@ -52,7 +52,7 @@ export const trustMember: AsyncActionCreator = (uid: UserId) => {
 };
 
 export const requestInviteFromMember: AsyncActionCreator = (
-  uid: UserId,
+  uid: MemberId,
   fullName: string,
   videoUrl: string,
   creatorMid: string

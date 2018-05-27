@@ -1,7 +1,7 @@
-import { AppState } from "../reducers";
+import { RahaState } from "../reducers";
 
 export async function getAuthToken(
-  state: AppState
+  state: RahaState
 ): Promise<string | undefined> {
   const authFirebaseUser = state.authentication.firebaseUser;
   if (!authFirebaseUser) {
@@ -12,7 +12,7 @@ export async function getAuthToken(
   return authToken;
 }
 
-export function getLoggedInMember(state: AppState) {
+export function getLoggedInMember(state: RahaState) {
   const loggedInUserId = !!state.authentication.firebaseUser
     ? state.authentication.firebaseUser.uid
     : undefined;
