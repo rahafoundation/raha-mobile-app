@@ -676,6 +676,10 @@
     component-type "^1.2.1"
     join-component "^1.1.0"
 
+"@types/big.js@^4.0.4":
+  version "4.0.4"
+  resolved "https://registry.npmjs.org/@types/big.js/-/big.js-4.0.4.tgz#96b94065ca3171d2ce721e487e8d274ad2e925bd"
+
 "@types/cheerio@*":
   version "0.22.7"
   resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.7.tgz#4a92eafedfb2b9f4437d3a4410006d81114c66ce"
@@ -1883,6 +1887,10 @@ bcrypt-pbkdf@^1.0.0:
 big-integer@^1.6.7:
   version "1.6.28"
   resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.28.tgz#8cef0fda3ccde8759c2c66efcfacc35aea658283"
+
+big.js@^5.1.2:
+  version "5.1.2"
+  resolved "https://registry.npmjs.org/big.js/-/big.js-5.1.2.tgz#946c634f3efd9c8dcd98f953e96a5f389dac3fec"
 
 binary-extensions@^1.0.0:
   version "1.11.0"

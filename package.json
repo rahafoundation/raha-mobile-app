@@ -2,6 +2,7 @@
   "name": "@raha.io/mobile",
   "version": "0.1.0",
   "devDependencies": {
+    "@types/big.js": "^4.0.4",
     "@types/enzyme": "^3.1.10",
     "@types/enzyme-adapter-react-16": "^1.0.2",
     "@types/expo": "^26.0.3",
@@ -60,6 +61,7 @@
     ]
   },
   "dependencies": {
+    "big.js": "^5.1.2",
     "es6-symbol": "^3.1.1",
     "expo": "^27.0.1",
     "firebase": "^5.0.2",
