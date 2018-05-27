@@ -1,12 +1,12 @@
-{
-  "apiBase": "https://raha-test.appspot.com/api/",
+export default {
+  "apiBase": "https://raha-5395e.appspot.com/api/",
   "firebase": {
-    "apiKey": "AIzaSyDz4sg33FdGUEAawsbnJDf6GKs8TPt5inU",
-    "authDomain": "raha-test.firebaseapp.com",
-    "databaseURL": "https://raha-test.firebaseio.com",
-    "projectId": "raha-test",
-    "storageBucket": "raha-test.appspot.com",
-    "messagingSenderId": "148482003030"
+    "apiKey": "AIzaSyBXuACowZcLcr1wlhM53LHtibFwa59EmAY",
+    "authDomain": "app.raha.io",
+    "databaseURL": "https://raha-5395e.firebaseio.com",
+    "projectId": "raha-5395e",
+    "storageBucket": "raha-5395e.appspot.com",
+    "messagingSenderId": "677137485282"
   },
   "facebook": {
     "appId": "239560396587704"

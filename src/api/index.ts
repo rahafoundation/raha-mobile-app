@@ -10,8 +10,7 @@ import ApiResponse, {
 import UnauthenticatedError from "../errors/ApiCallError/UnauthenticatedError";
 import NetworkError from "../errors/ApiCallError/NetworkError";
 
-// tslint:disable-next-line:no-var-requires
-const CONFIG = require("../data/config.json");
+import CONFIG from "../data/config";
 const API_BASE = CONFIG.apiBase;
 
 /* ==============================

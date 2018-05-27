@@ -7,7 +7,7 @@ import { Google, Facebook } from "expo";
 import { auth } from "../../firebaseInit";
 import { RahaState } from "..";
 
-const CONFIG = require("../../data/config.json");
+import CONFIG from "../../data/config";
 
 const FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE =
   "auth/account-exists-with-different-credential";
