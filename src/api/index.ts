@@ -121,7 +121,9 @@ type ApiDefinition =
   | TrustMemberApiEndpoint
   | GetOperationsApiEndpoint
   | RequestInviteApiEndpoint
-  | SendInviteApiEndpoint;
+  | SendInviteApiEndpoint
+  | GiveApiEndpoint
+  | MintApiEndpoint;
 
 /* =================================
  * Resolving API endpoint locations

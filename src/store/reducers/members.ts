@@ -1,4 +1,5 @@
 import { Reducer } from "redux";
+import Big from "big.js";
 
 import { Set, Map } from "immutable";
 import { MemberId, MemberUsername } from "../../identifiers";
@@ -25,32 +26,90 @@ export const GENESIS_MEMBER = Symbol("GENESIS");
  * Members that we're in the process of building up from operations below.
  */
 export class Member {
-  public uid: MemberId;
-  public mid: MemberUsername;
-  public fullName: string;
-  public invitedBy: MemberId | typeof GENESIS_MEMBER;
+  public readonly uid: MemberId;
+  public readonly username: MemberUsername;
+  public readonly fullName: string;
+  public readonly createdAt: Date;
+  public readonly invitedBy: MemberId | typeof GENESIS_MEMBER;
+  public readonly balance: Big;
+  public readonly lastMinted: Date;
 
-  public trustedBy: Set<MemberId>;
-  public invited: Set<MemberId>;
-  public trusts: Set<MemberId>;
+  public readonly trustedBy: Set<MemberId>;
+  public readonly invited: Set<MemberId>;
+  public readonly trusts: Set<MemberId>;
 
   constructor(
     uid: MemberId,
     mid: MemberUsername,
     fullName: string,
+    createdAt: Date,
     invitedBy: MemberId | typeof GENESIS_MEMBER,
+    balance: Big,
+    lastMinted: Date,
     trusts?: Set<MemberId>,
     trustedBy?: Set<MemberId>,
     invited?: Set<MemberId>
   ) {
     this.uid = uid;
-    this.mid = mid;
+    this.username = mid;
     this.fullName = fullName;
+    this.createdAt = createdAt;
     this.invitedBy = invitedBy;
 
     this.trusts = trusts || Set();
     this.trustedBy = trustedBy || Set();
     this.invited = invited || Set();
+    this.balance = balance;
+    this.lastMinted = lastMinted;
+  }
+
+  /* =======================
+   * ACCOUNT BALANCE METHODS
+   * =======================
+   */
+  public mintRaha(amount: Big, mintDate: Date) {
+    return new Member(
+      this.uid,
+      this.username,
+      this.fullName,
+      this.createdAt,
+      this.invitedBy,
+      this.balance.plus(amount),
+      mintDate,
+      this.trusts,
+      this.trustedBy,
+      this.invited
+    );
+  }
+
+  public giveRaha(amount: Big) {
+    return new Member(
+      this.uid,
+      this.username,
+      this.fullName,
+      this.createdAt,
+      this.invitedBy,
+      this.balance.minus(amount),
+      this.lastMinted,
+      this.trusts,
+      this.trustedBy,
+      this.invited
+    );
+  }
+
+  public receiveRaha(amount: Big) {
+    return new Member(
+      this.uid,
+      this.username,
+      this.fullName,
+      this.createdAt,
+      this.invitedBy,
+      this.balance.plus(amount),
+      this.lastMinted,
+      this.trusts,
+      this.trustedBy,
+      this.invited
+    );
   }
 
   /* =====================
@@ -67,9 +126,12 @@ export class Member {
   public inviteMember(uid: MemberId) {
     return new Member(
       this.uid,
-      this.mid,
+      this.username,
       this.fullName,
+      this.createdAt,
       this.invitedBy,
+      this.balance,
+      this.lastMinted,
       this.trusts,
       this.trustedBy.add(uid),
       this.invited.add(uid)
@@ -82,9 +144,12 @@ export class Member {
   public trustMember(uid: MemberId) {
     return new Member(
       this.uid,
-      this.mid,
+      this.username,
       this.fullName,
+      this.createdAt,
       this.invitedBy,
+      this.balance,
+      this.lastMinted,
       this.trusts.add(uid),
       this.trustedBy,
       this.invited
@@ -97,9 +162,12 @@ export class Member {
   public beTrustedByMember(uid: MemberId) {
     return new Member(
       this.uid,
-      this.mid,
+      this.username,
       this.fullName,
+      this.createdAt,
       this.invitedBy,
+      this.balance,
+      this.lastMinted,
       this.trusts,
       this.trustedBy.add(uid),
       this.invited
@@ -156,7 +224,7 @@ function addMemberToState(
   member: Member
 ): MembersState {
   return {
-    byMemberUsername: prevState.byMemberUsername.set(member.mid, member),
+    byMemberUsername: prevState.byMemberUsername.set(member.username, member),
     byUserId: prevState.byUserId.set(member.uid, member)
   };
 }
@@ -174,22 +242,29 @@ function applyOperation(
   prevState: MembersState,
   operation: Operation
 ): MembersState {
-  const { creator_mid, creator_uid } = operation;
+  const { creator_uid, created_at } = operation;
 
   try {
     if (!operationIsRelevantAndValid(operation)) {
       return prevState;
     }
-
     switch (operation.op_code) {
       case OperationType.REQUEST_INVITE: {
-        const { full_name, to_uid } = operation.data;
+        const { full_name, to_uid, username } = operation.data;
 
         // the initial users weren't invited by anyone; so no need to hook up any associations.
         if (GENESIS_REQUEST_INVITE_OPS.includes(operation.id)) {
           return addMemberToState(
             prevState,
-            new Member(creator_uid, creator_mid, full_name, GENESIS_MEMBER)
+            new Member(
+              creator_uid,
+              username,
+              full_name,
+              new Date(created_at),
+              GENESIS_MEMBER,
+              new Big(0),
+              new Date(created_at)
+            )
           );
         }
 
@@ -199,10 +274,13 @@ function applyOperation(
           .inviteMember(creator_uid);
         const inviteRequester = new Member(
           creator_uid,
-          creator_mid,
+          username,
           full_name,
+          new Date(created_at),
           to_uid,
-          Set(to_uid)
+          new Big(0),
+          new Date(created_at),
+          Set([to_uid])
         );
         return addMembersToState(prevState, [inviter, inviteRequester]);
       }
@@ -216,6 +294,33 @@ function applyOperation(
           .get(to_uid)
           .beTrustedByMember(creator_uid);
         return addMembersToState(prevState, [truster, trusted]);
+      }
+      case OperationType.MINT: {
+        const { amount } = operation.data;
+
+        assertUserIdPresentInState(prevState, creator_uid, operation);
+        const minter = prevState.byUserId
+          .get(creator_uid)
+          .mintRaha(new Big(amount), new Date(operation.created_at));
+        return addMembersToState(prevState, [minter]);
+      }
+      case OperationType.GIVE: {
+        const { to_uid, amount, donation_to, donation_amount } = operation.data;
+
+        assertUserIdPresentInState(prevState, creator_uid, operation);
+        assertUserIdPresentInState(prevState, to_uid, operation);
+        // TODO: Update donationRecipient state.
+        // Currently we don't do this as RAHA isn't a normal member created via a REQUEST_INVITE operation.
+        // Thus RAHA doesn't get added to the members state in the current paradigm.
+
+        const giver = prevState.byUserId
+          .get(creator_uid)
+          .giveRaha(new Big(amount).plus(donation_amount));
+        const recipient = prevState.byUserId
+          .get(to_uid)
+          .receiveRaha(new Big(amount));
+
+        return addMembersToState(prevState, [giver, recipient]);
       }
       default:
         return prevState;

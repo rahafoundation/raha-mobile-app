@@ -5,22 +5,34 @@ import { OperationsAction, OperationsActionType } from "../actions/operations";
 
 export enum OperationType {
   REQUEST_INVITE = "REQUEST_INVITE",
-  TRUST = "TRUST"
+  TRUST = "TRUST",
+  MINT = "MINT",
+  GIVE = "GIVE"
 }
 export interface RequestInvitePayload {
   full_name: string;
   to_uid: MemberId;
-  to_mid: MemberUsername;
+  username: MemberUsername;
 }
 export interface TrustPayload {
   to_uid: MemberId;
   to_mid: MemberUsername;
 }
+export interface MintPayload {
+  amount: string;
+}
+export interface GivePayload {
+  to_uid: MemberId;
+  amount: string;
+  memo: string;
+  donation_to: MemberId;
+  donation_amount: string;
+}
 
 export interface OperationBase {
   id: OperationId;
-  creator_mid: MemberUsername;
   creator_uid: MemberId;
+  created_at: string;
 }
 
 export type Operation = OperationBase &
@@ -32,6 +44,14 @@ export type Operation = OperationBase &
     | {
         op_code: OperationType.TRUST;
         data: TrustPayload;
+      }
+    | {
+        op_code: OperationType.MINT;
+        data: MintPayload;
+      }
+    | {
+        op_code: OperationType.GIVE;
+        data: GivePayload;
       });
 
 export type OperationsState = Operation[];
