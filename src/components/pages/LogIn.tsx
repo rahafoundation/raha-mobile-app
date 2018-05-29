@@ -1,34 +1,61 @@
 import * as React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
-import { connect, MapDispatchToProps } from "react-redux";
-import { logIn as logInAction } from "../../actions/loggedInUser";
+import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
+
+import {
+  googleLogIn,
+  facebookLogIn,
+  AuthMethod
+} from "../../store/actions/authentication";
+import { RahaState } from "../../store";
 
 type OwnProps = {
   navigation: any;
 };
 
+type StateProps = {
+  isLoggedIn: boolean;
+  existingAuthMethod?: AuthMethod;
+};
+
 type DispatchProps = {
-  logIn: (userId: string) => void;
+  googleLogIn: () => void;
+  facebookLogIn: () => void;
 };
 
-type LogInProps = OwnProps & DispatchProps;
+type LogInProps = OwnProps & StateProps & DispatchProps;
 
-const LogIn: React.StatelessComponent<LogInProps> = props => {
-  return (
-    <View style={styles.container}>
-      <Text>This is the login page.</Text>
-      <Button
-        title="Cancel"
-        onPress={() => props.navigation.navigate("Home")}
-      />
-      <Button title="Log In as Omar" onPress={() => props.logIn("omar")} />
-      <Button
-        title="Sign Up"
-        onPress={() => props.navigation.navigate("Onboarding")}
-      />
-    </View>
-  );
-};
+class LogIn extends React.Component<LogInProps> {
+  componentDidUpdate() {
+    if (this.props.isLoggedIn) {
+      this.props.navigation.navigate("Home");
+    }
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>This is the login page.</Text>
+        <Button
+          title="Cancel"
+          onPress={() => this.props.navigation.navigate("Home")}
+        />
+        {this.props.existingAuthMethod && (
+          <Text>
+            It appears you have created an account with that email address
+            before; please log in using a different method than{" "}
+            {this.props.existingAuthMethod}.
+          </Text>
+        )}
+        <Button title="Log in with Google" onPress={this.props.googleLogIn} />
+        <Button
+          title="Log in with Facebook"
+          onPress={this.props.facebookLogIn}
+        />
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -39,13 +66,24 @@ const styles = StyleSheet.create({
   }
 });
 
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  OwnProps,
+  RahaState
+> = state => ({
+  isLoggedIn:
+    state.authentication.isLoaded && !!state.authentication.firebaseUser,
+  existingAuthMethod: state.authentication.isLoaded
+    ? undefined
+    : state.authentication.existingAuthMethod
+});
+
 const mapDispatchToProps: MapDispatchToProps<
   DispatchProps,
   OwnProps
-> = dispatch => {
-  return {
-    logIn: (userId: string) => dispatch(logInAction(userId))
-  };
-};
+> = dispatch => ({
+  googleLogIn: () => dispatch(googleLogIn()),
+  facebookLogIn: () => dispatch(facebookLogIn())
+});
 
-export default connect(undefined, mapDispatchToProps)(LogIn);
+export default connect(mapStateToProps, mapDispatchToProps)(LogIn);

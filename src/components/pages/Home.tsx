@@ -1,10 +1,10 @@
 import * as React from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import { Button } from "react-native-elements";
-
-import SearchBar from "../shared/SearchBar";
 import { connect, MapStateToProps } from "react-redux";
-import { AppState } from "../../reducers";
+
+import { RahaState } from "../../store";
+import SearchBar from "../shared/SearchBar";
 import ActivityFeed from "../shared/ActivityFeed";
 
 type OwnProps = {
@@ -50,10 +50,11 @@ const styles = StyleSheet.create({
 const mapStateToProps: MapStateToProps<
   StateProps,
   OwnProps,
-  AppState
+  RahaState
 > = state => {
+  const { firebaseUser } = state.authentication;
   return {
-    loggedInUserId: state.loggedInUser.userId
+    loggedInUserId: firebaseUser ? firebaseUser.uid : undefined
   };
 };
 export default connect(mapStateToProps)(Home);
