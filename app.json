@@ -6,6 +6,12 @@
     "packagerOpts": {
       "sourceExts": ["ts", "tsx"],
       "transformer": "node_modules/react-native-typescript-transformer/index.js"
+    },
+    "ios": {
+      "bundleIdentifier": "app.raha.mobile"
+    },
+    "android": {
+      "package": "app.raha.mobile"
     }
   }
 }
