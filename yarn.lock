@@ -770,6 +770,12 @@
   dependencies:
     csstype "^2.2.0"
 
+"@types/redux-persist@^4.3.1":
+  version "4.3.1"
+  resolved "https://registry.npmjs.org/@types/redux-persist/-/redux-persist-4.3.1.tgz#aa4c876859e0bea5155e5f7980e5b8c4699dc2e6"
+  dependencies:
+    redux-persist "*"
+
 abab@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/abab/-/abab-1.0.4.tgz#5faad9c2c07f60dd76770f71cf025b62a63cfd4e"
@@ -6632,6 +6638,20 @@ redux-logger@^2.7.4:
   resolved "https://registry.yarnpkg.com/redux-logger/-/redux-logger-2.10.2.tgz#3c5a5f0a6f32577c1deadf6655f257f82c6c3937"
   dependencies:
     deep-diff "0.3.4"
+
+redux-persist-expo-securestore@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/redux-persist-expo-securestore/-/redux-persist-expo-securestore-1.0.0.tgz#39a1ab21f9a8d4439f7fd388c6f081ffd760048a"
+
+redux-persist-transform-immutable@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.npmjs.org/redux-persist-transform-immutable/-/redux-persist-transform-immutable-5.0.0.tgz#0ae277b4d8d662016f62af394df2572525ad6671"
+  dependencies:
+    remotedev-serialize "^0.1.0"
+
+redux-persist@*, redux-persist@^5.9.1:
+  version "5.9.1"
+  resolved "https://registry.npmjs.org/redux-persist/-/redux-persist-5.9.1.tgz#83bd4abd526ef768f63fceee338fa9d8ed6552d6"
 
 redux-thunk@^2.2.0:
   version "2.2.0"
