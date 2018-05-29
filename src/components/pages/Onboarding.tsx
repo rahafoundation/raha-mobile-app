@@ -1,6 +1,7 @@
 import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import RoundedButton from "../shared/RoundedButton";
+import Swiper from "../shared/Swiper";
 
 type OnboardingProps = {
   navigation: any;
