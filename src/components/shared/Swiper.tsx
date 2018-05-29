@@ -1,9 +1,6 @@
 /**
  * Swiper
- * Renders a swipable set of screens passed as children,
- * pagination indicators and a button to swipe through screens
- * or to get out of the flow when the last screen is reached.
- *
+ * Renders a swipable set of screens passed as children and pagination indicators.
  * Adapted from https://rationalappdev.com/complete-guide-to-mobile-app-onboarding-with-react-native/
  */
 
@@ -25,17 +22,16 @@ import RoundedButton from "./RoundedButton";
 const { width, height } = Dimensions.get("window");
 
 type SwiperProps = {
-  navigation: any;
-  horizontal: boolean;
-  pagingEnabled: boolean;
-  showsHorizontalScrollIndicator: boolean;
-  showsVerticalScrollIndicator: boolean;
-  bounces: boolean;
-  scrollsToTop: boolean;
-  removeClippedSubviews: boolean;
-  automaticallyAdjustContentInsets: boolean;
-  index: number;
-  children: React.ReactNode[];
+  horizontal?: boolean;
+  pagingEnabled?: boolean;
+  showsHorizontalScrollIndicator?: boolean;
+  showsVerticalScrollIndicator?: boolean;
+  bounces?: boolean;
+  scrollsToTop?: boolean;
+  removeClippedSubviews?: boolean;
+  automaticallyAdjustContentInsets?: boolean;
+  index?: number;
+  children: Element[];
 };
 
 interface SwiperState {
@@ -82,7 +78,8 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
     // Get the total number of slides passed as children
     const total = props.children ? props.children.length || 1 : 0,
       // Current index
-      index = total > 1 ? Math.min(props.index, total - 1) : 0,
+      index =
+        total > 1 ? Math.min(props.index ? props.index : 0, total - 1) : 0,
       // Current offset
       offset = width * index;
 
@@ -128,8 +125,9 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
     this.updateIndex(
       event.nativeEvent.contentOffset
         ? event.nativeEvent.contentOffset.x
-        : // When scrolled with .scrollTo() on Android there is no contentOffset
-          event.nativeEvent.position * this.state.width
+        : this.state.offset
+      // TODO: When scrolled with .scrollTo() on Android there is no contentOffset
+      // event.nativeEvent.position * this.state.width
     );
   };
 
@@ -212,15 +210,16 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
     });
 
     // Trigger onScrollEnd manually on android
-    if (Platform.OS === "android") {
-      setImmediate(() => {
-        this.onScrollEnd({
-          nativeEvent: {
-            position: diff
-          }
-        });
-      });
-    }
+    // TODO: Revisit for Android https://github.com/facebook/react-native/issues/11693
+    // if (Platform.OS === "android") {
+    //   setImmediate(() => {
+    //     this.onScrollEnd({
+    //       nativeEvent: {
+    //         position: diff
+    //       }
+    //     });
+    //   });
+    // }
   };
 
   /**
@@ -234,7 +233,6 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
           this.scrollView = component;
         }}
         {...this.props}
-        contentContainerStyle={[styles.wrapper, this.props.style]}
         onScrollBeginDrag={this.onScrollBegin}
         onMomentumScrollEnd={this.onScrollEnd}
         onScrollEndDrag={this.onScrollEndDrag}
@@ -280,37 +278,13 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
   };
 
   /**
-   * Render Continue or Done button
-   */
-  renderButton = () => {
-    const lastScreen = this.state.index === this.state.total - 1;
-    return (
-      <View
-        pointerEvents="box-none"
-        style={[styles.buttonWrapper, styles.fullScreen]}
-      >
-        {lastScreen ? (
-          // Show this button on the last screen
-          <RoundedButton
-            text="Create Video"
-            onPress={() => this.props.navigation.navigate()}
-          />
-        ) : (
-          <RoundedButton text="Continue" onPress={() => this.swipe()} />
-        )}
-      </View>
-    );
-  };
-
-  /**
    * Render the component
    */
-  render({ children } = this.props) {
+  render() {
     return (
       <View style={[styles.container, styles.fullScreen]}>
-        {this.renderScrollView(children)}
+        {this.renderScrollView(this.props.children)}
         {this.renderPagination()}
-        {this.renderButton()}
       </View>
     );
   }
@@ -351,17 +325,5 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     backgroundColor: "#FFFFFF"
-  },
-  buttonWrapper: {
-    backgroundColor: "transparent",
-    flexDirection: "column",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    flex: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 40,
-    justifyContent: "flex-end",
-    alignItems: "center"
   }
 });
