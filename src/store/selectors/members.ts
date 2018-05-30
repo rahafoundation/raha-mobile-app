@@ -1,17 +1,17 @@
 import { RahaState } from "../reducers";
-import { MemberId } from "../../identifiers";
+import { MemberId, MemberUsername } from "../../identifiers";
 import { Member } from "../reducers/members";
 
-export function getMembersByUid(
+export function getMembersByIds(
   state: RahaState,
-  uids: MemberId[]
+  ids: MemberId[]
 ): Array<Member | undefined> {
-  return uids.map(uid => state.members.byUserId.get(uid));
+  return ids.map(id => state.members.byUserId.get(id));
 }
 
-export function getMembersByMid(
+export function getMembersByUsernames(
   state: RahaState,
-  mids: MemberId[]
+  usernames: MemberUsername[]
 ): Array<Member | undefined> {
-  return mids.map(mid => state.members.byMemberUsername.get(mid));
+  return usernames.map(mid => state.members.byMemberUsername.get(mid));
 }
