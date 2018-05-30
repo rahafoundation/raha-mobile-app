@@ -13,7 +13,6 @@
     "@types/react-native-elements": "^0.18.0",
     "@types/react-redux": "^6.0.0",
     "@types/react-test-renderer": "^16.0.1",
-    "@types/redux-persist": "^4.3.1",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "jest-expo": "27.0.1",
