@@ -7,6 +7,13 @@ import Home from "./src/components/pages/Home";
 import LogIn from "./src/components/pages/LogIn";
 import Onboarding from "./src/components/pages/Onboarding";
 import createStore from "./src/store";
+import { refreshMembers } from "./src/store/actions/members";
+
+export enum RouteName {
+  Home = "Home",
+  Onboarding = "Onboarding",
+  LogIn = "LogIn"
+}
 
 const Navigator = createStackNavigator(
   {
@@ -19,19 +26,23 @@ const Navigator = createStackNavigator(
     LogIn: {
       screen: LogIn
     }
-  },
+  } as { [key in RouteName]: any },
   {
     initialRouteName: "Home"
   }
 );
 
 const store = createStore();
-const App: React.StatelessComponent<{}> = () => {
-  return (
-    <Provider store={store}>
-      <Navigator />
-    </Provider>
-  );
-};
+export default class App extends React.Component<{}> {
+  public componentDidMount() {
+    store.dispatch(refreshMembers());
+  }
 
-export default App;
+  render() {
+    return (
+      <Provider store={store}>
+        <Navigator />
+      </Provider>
+    );
+  }
+}
