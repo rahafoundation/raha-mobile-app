@@ -23,15 +23,25 @@ import { range } from "../../helpers/math";
 const { width, height } = Dimensions.get("window");
 
 type SwiperProps = {
+  // Arrange screens horizontally
   horizontal?: boolean;
+  // Scroll exactly to the next screen, instead of continous scrolling
   pagingEnabled?: boolean;
+  // Shows horizontal scroll indicators
   showsHorizontalScrollIndicator?: boolean;
+  // Shows vertical scroll indicators
   showsVerticalScrollIndicator?: boolean;
+  // Bounces when the end is reached
   bounces?: boolean;
+  // Scrolls to the top when the status bar is tapped
   scrollsToTop?: boolean;
+  // Removes offscreen child views
   removeClippedSubviews?: boolean;
+  // Adjusts content behind nav-, tab- or toolbars automatically
   automaticallyAdjustContentInsets?: boolean;
+  // Sets the index of the first screen
   index?: number;
+  // Sets the slides
   children: Element[];
 };
 
@@ -77,12 +87,12 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
    */
   initState(props: SwiperProps): SwiperState {
     // Get the total number of slides passed as children
-    const total = props.children ? props.children.length || 1 : 0,
-      // Current index
-      index =
-        total > 1 ? Math.min(props.index ? props.index : 0, total - 1) : 0,
-      // Current offset
-      offset = width * index;
+    const total = props.children ? props.children.length || 1 : 0;
+    // Current index
+    const index =
+      total > 1 ? Math.min(props.index ? props.index : 0, total - 1) : 0;
+    // Current offset
+    const offset = width * index;
 
     const state = {
       total,
@@ -141,11 +151,11 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
       return;
     }
     const {
-        contentOffset: { x: newOffset }
-      } = event.nativeEvent,
-      { children } = this.props,
-      { index } = this.state,
-      { offset } = this.state;
+      contentOffset: { x: newOffset }
+    } = event.nativeEvent;
+    const { children } = this.props;
+    const { index } = this.state;
+    const { offset } = this.state;
 
     // Update internal isScrolling state
     // if swiped right on the last slide
@@ -192,7 +202,6 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
    * Swipe one slide forward
    */
   swipe = () => {
-    // Ignore if already scrolling or if there is less than 2 slides
     if (this.state.isScrolling || this.state.total < 2) {
       return;
     }
@@ -256,20 +265,13 @@ export default class Swiper extends Component<SwiperProps, SwiperState> {
       return null;
     }
 
-    const ActiveDot = <View style={[styles.dot, styles.activeDot]} />,
-      Dot = <View style={styles.dot} />;
-
-    let dots = [];
-
-    for (let key = 0; key < this.state.total; key++) {
-      dots.push(
-        key === this.state.index
-          ? // Active dot
-            React.cloneElement(ActiveDot, { key })
-          : // Other dots
-            React.cloneElement(Dot, { key })
-      );
-    }
+    const dots = range(this.state.total).map((index: number) => {
+      const appliedStyles = [
+        styles.dot,
+        ...(index === this.state.index ? [styles.activeDot] : [])
+      ];
+      return <View key={index} style={appliedStyles} />;
+    });
 
     return (
       <View pointerEvents="none" style={[styles.pagination, styles.fullScreen]}>
