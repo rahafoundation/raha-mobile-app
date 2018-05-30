@@ -63,7 +63,10 @@ export default class Onboarding extends React.Component<OnboardingProps> {
             <Text style={styles.text}>
               We're starting a movement, and we'd like you to be a part of it.
             </Text>
-            <RoundedButton text="Join Now" onPress={() => console.log()} />
+            <RoundedButton
+              text="Join Now"
+              onPress={() => this.props.navigation.navigate("OnboardingCamera")}
+            />
           </View>
         </Swiper>
       </React.Fragment>
