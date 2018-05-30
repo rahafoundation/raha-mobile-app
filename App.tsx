@@ -1,6 +1,7 @@
 import "es6-symbol/implement";
 import * as React from "react";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 import { createStackNavigator } from "react-navigation";
 
 import Home from "./src/components/pages/Home";
@@ -25,11 +26,14 @@ const Navigator = createStackNavigator(
   }
 );
 
-const store = createStore();
+const { store, persistor } = createStore();
 const App: React.StatelessComponent<{}> = () => {
   return (
     <Provider store={store}>
-      <Navigator />
+      {/* TODO: decide if we should show a loading indicator here. */}
+      <PersistGate loading={null} persistor={persistor}>
+        <Navigator />
+      </PersistGate>
     </Provider>
   );
 };

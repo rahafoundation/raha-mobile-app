@@ -11,7 +11,10 @@ export default () => {
     rootReducer,
     composeWithDevTools(applyMiddleware(thunk))
   );
-  return persistStore(store);
+  return {
+    store: store,
+    persistor: persistStore(store)
+  };
 };
 
 export { RahaState } from "./persistedReducer";
