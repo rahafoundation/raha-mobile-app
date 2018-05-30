@@ -4,6 +4,7 @@ Below you'll find information about performing common tasks. The most recent ver
 
 ## Table of Contents
 
+* [Run Setup](#run-setup)
 * [Updating to New Releases](#updating-to-new-releases)
 * [Available Scripts](#available-scripts)
   * [npm start](#npm-start)
@@ -26,6 +27,20 @@ Below you'll find information about performing common tasks. The most recent ver
   * [Networking](#networking)
   * [iOS Simulator won't open](#ios-simulator-wont-open)
   * [QR Code does not scan](#qr-code-does-not-scan)
+
+## Run Setup
+
+Before you run the app, copy over either the prod or test config, whichever is applicable.
+
+```
+cp ./src/data/prod.config.ts ./src/data/config.ts
+```
+
+or
+
+```
+cp ./src/data/test.config.ts ./src/data/config.ts
+```
 
 ## Updating to New Releases
 
