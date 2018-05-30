@@ -40,7 +40,7 @@ export class Member {
 
   constructor(
     memberId: MemberId,
-    mid: MemberUsername,
+    username: MemberUsername,
     fullName: string,
     createdAt: Date,
     invitedBy: MemberId | typeof GENESIS_MEMBER,
@@ -51,7 +51,7 @@ export class Member {
     invited?: Set<MemberId>
   ) {
     this.memberId = memberId;
-    this.username = mid;
+    this.username = username;
     this.fullName = fullName;
     this.createdAt = createdAt;
     this.invitedBy = invitedBy;

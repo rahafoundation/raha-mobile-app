@@ -13,5 +13,7 @@ export function getMembersByUsernames(
   state: RahaState,
   usernames: MemberUsername[]
 ): Array<Member | undefined> {
-  return usernames.map(mid => state.members.byMemberUsername.get(mid));
+  return usernames.map(username =>
+    state.members.byMemberUsername.get(username)
+  );
 }
