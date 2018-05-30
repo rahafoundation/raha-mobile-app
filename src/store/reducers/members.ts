@@ -211,7 +211,7 @@ function assertUserIdPresentInState(
   uid: MemberId,
   operation: Operation
 ) {
-  if (!(uid in prevState.byUserId)) {
+  if (!prevState.byUserId.has(uid)) {
     throw new OperationInvalidError(
       `Invalid operation: user ${uid} not present`,
       operation
