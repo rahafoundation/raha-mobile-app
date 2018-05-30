@@ -26,7 +26,7 @@ const Navigator = createStackNavigator(
     LogIn: {
       screen: LogIn
     }
-  } as { [key in RouteName]: any },
+  } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
     initialRouteName: "Home"
   }
