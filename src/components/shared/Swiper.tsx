@@ -17,6 +17,7 @@ import {
   ViewPagerAndroidOnPageScrollEventData
 } from "react-native";
 import RoundedButton from "./RoundedButton";
+import { range } from "../../helpers/math";
 
 // Detect screen width and height
 const { width, height } = Dimensions.get("window");
