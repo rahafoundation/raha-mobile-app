@@ -8,6 +8,8 @@ import {
   AuthMethod
 } from "../../store/actions/authentication";
 import { RahaState } from "../../store";
+import { RouteName } from "../../../App";
+import { getMembersByIds } from "../../store/selectors/members";
 
 type OwnProps = {
   navigation: any;
@@ -15,6 +17,7 @@ type OwnProps = {
 
 type StateProps = {
   isLoggedIn: boolean;
+  hasAccount: boolean;
   existingAuthMethod?: AuthMethod;
 };
 
@@ -27,9 +30,14 @@ type LogInProps = OwnProps & StateProps & DispatchProps;
 
 class LogIn extends React.Component<LogInProps> {
   componentDidUpdate() {
-    if (this.props.isLoggedIn) {
-      this.props.navigation.navigate("Home");
+    if (!this.props.isLoggedIn) {
+      return;
     }
+    if (this.props.hasAccount) {
+      this.props.navigation.navigate(RouteName.Home);
+      return;
+    }
+    this.props.navigation.navigate(RouteName.Onboarding);
   }
 
   render() {
@@ -74,13 +82,22 @@ const mapStateToProps: MapStateToProps<
   StateProps,
   OwnProps,
   RahaState
-> = state => ({
-  isLoggedIn:
-    state.authentication.isLoaded && !!state.authentication.firebaseUser,
-  existingAuthMethod: state.authentication.isLoaded
-    ? undefined
-    : state.authentication.existingAuthMethod
-});
+> = state => {
+  const firebaseUser = state.authentication.firebaseUser;
+  const isLoggedIn =
+    state.authentication.isLoaded && !!state.authentication.firebaseUser;
+  const hasAccount =
+    isLoggedIn &&
+    !!state.authentication.firebaseUser &&
+    getMembersByIds(state, [state.authentication.firebaseUser.uid]).length > 0;
+  return {
+    isLoggedIn,
+    hasAccount,
+    existingAuthMethod: state.authentication.isLoaded
+      ? undefined
+      : state.authentication.existingAuthMethod
+  };
+};
 
 const mapDispatchToProps: MapDispatchToProps<
   DispatchProps,
