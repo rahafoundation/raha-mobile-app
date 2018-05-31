@@ -15,18 +15,22 @@ import {
 
 const secureStorage = createSecureStore();
 
+const baseConfig = {
+  transforms: [immutableTransform()],
+  storage: AsyncStorage
+};
+const secureConfig = {
+  ...baseConfig,
+  storage: secureStorage
+};
+
 const rootReducer = combineReducers({
-  apiCalls: persistReducer(
-    { key: "apiCalls", storage: AsyncStorage },
-    apiCalls
-  ),
-  members: persistReducer({ key: "members", storage: AsyncStorage }, members),
-  operations: persistReducer(
-    { key: "operations", storage: AsyncStorage },
-    operations
-  ),
+  apiCalls: persistReducer({ ...baseConfig, key: "apiCalls" }, apiCalls),
+  members: persistReducer({ ...baseConfig, key: "members" }, members),
+  operations: persistReducer({ ...baseConfig, key: "operations" }, operations),
+
   authentication: persistReducer(
-    { key: "authentication", storage: secureStorage },
+    { ...secureConfig, key: "authentication" },
     authentication
   )
 });
