@@ -26,7 +26,7 @@ export const refreshMembers: AsyncActionCreator = () => {
   };
 };
 
-export const trustMember: AsyncActionCreator = (uid: MemberId) => {
+export const trustMember: AsyncActionCreator = (memberId: MemberId) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
       const authToken = await getAuthToken(getState());
@@ -34,7 +34,7 @@ export const trustMember: AsyncActionCreator = (uid: MemberId) => {
       const response = await callApi<TrustMemberApiEndpoint>(
         {
           endpoint: ApiEndpoint.TRUST_MEMBER,
-          params: { uid },
+          params: { uid: memberId },
           body: undefined
         },
         authToken
@@ -47,12 +47,12 @@ export const trustMember: AsyncActionCreator = (uid: MemberId) => {
       dispatch(action);
     },
     ApiEndpoint.TRUST_MEMBER,
-    uid
+    memberId
   );
 };
 
 export const requestInviteFromMember: AsyncActionCreator = (
-  uid: MemberId,
+  memberId: MemberId,
   fullName: string,
   videoUrl: string,
   creatorMid: string
@@ -67,7 +67,7 @@ export const requestInviteFromMember: AsyncActionCreator = (
       const response = await callApi<RequestInviteApiEndpoint>(
         {
           endpoint: ApiEndpoint.REQUEST_INVITE,
-          params: { uid },
+          params: { uid: memberId },
           body: {
             fullName,
             videoUrl,
@@ -84,7 +84,7 @@ export const requestInviteFromMember: AsyncActionCreator = (
       dispatch(action);
     },
     ApiEndpoint.REQUEST_INVITE,
-    uid
+    memberId
   );
 };
 

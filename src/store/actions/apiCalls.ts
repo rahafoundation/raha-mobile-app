@@ -36,7 +36,7 @@ export type ApiCallsAction =
  * @param asyncAction API call redux action to be wrapped
  * @param endpoint API endpoint being hit
  * @param identifier A way of identifying the outgoing API call. For example, if
- * the logged in user calls the API to trust another user, that other user's UID
+ * the logged in user calls the API to trust another user, that other member's id
  * would work. These should be unique, especially for non-idempotent calls, so
  * that they don't overwrite the state of earlier calls to the same endpoint.
  *

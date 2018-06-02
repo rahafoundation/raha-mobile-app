@@ -3,11 +3,19 @@ import * as React from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { createStackNavigator } from "react-navigation";
+import { AsyncStorage } from "react-native";
 
 import Home from "./src/components/pages/Home";
 import LogIn from "./src/components/pages/LogIn";
 import Onboarding from "./src/components/pages/Onboarding";
-import createStore from "./src/store";
+import createStore, { store, persistor } from "./src/store";
+import { refreshMembers } from "./src/store/actions/members";
+
+export enum RouteName {
+  Home = "Home",
+  Onboarding = "Onboarding",
+  LogIn = "LogIn"
+}
 
 const Navigator = createStackNavigator(
   {
@@ -20,22 +28,29 @@ const Navigator = createStackNavigator(
     LogIn: {
       screen: LogIn
     }
-  },
+  } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
     initialRouteName: "Home"
   }
 );
 
-const { store, persistor } = createStore();
-const App: React.StatelessComponent<{}> = () => {
+// refresh the members/operations on app start
+const onBeforeLift = async () => {
+  store.dispatch(refreshMembers());
+};
+
+const App: React.StatelessComponent = () => {
   return (
     <Provider store={store}>
       {/* TODO: decide if we should show a loading indicator here. */}
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate
+        loading={null}
+        persistor={persistor}
+        onBeforeLift={onBeforeLift}
+      >
         <Navigator />
       </PersistGate>
     </Provider>
   );
 };
-
 export default App;

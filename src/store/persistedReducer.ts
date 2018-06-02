@@ -21,7 +21,6 @@ const untypedPersistReducer: any = persistReducer;
 const secureStorage = createSecureStore();
 
 const baseConfig = {
-  transforms: [immutableTransform()],
   storage: AsyncStorage
 };
 const secureConfig = {
@@ -29,18 +28,27 @@ const secureConfig = {
   storage: secureStorage
 };
 
-const rootReducer: Reducer<RahaState> = combineReducers({
-  apiCalls: untypedPersistReducer({ ...baseConfig, key: "apiCalls" }, apiCalls),
-  members: untypedPersistReducer({ ...baseConfig, key: "members" }, members),
-  operations: untypedPersistReducer(
-    { ...baseConfig, key: "operations" },
-    operations
-  ),
+const rootReducer: Reducer<RahaState> = persistReducer(
+  {
+    transforms: [immutableTransform()],
+    // members and authentication have their own config, apiCalls doesn't need to be persisted
+    blacklist: ["members", "authentication", "apiCalls"],
+    key: "main",
+    ...baseConfig
+  },
+  combineReducers({
+    apiCalls: apiCalls,
+    members: untypedPersistReducer(
+      { ...baseConfig, key: "members", transforms: [immutableTransform()] },
+      members
+    ),
+    operations: operations,
 
-  authentication: untypedPersistReducer(
-    { ...secureConfig, key: "authentication" },
-    authentication
-  )
-}) as any; // TODO: remove this type suggestion along with above PR
+    authentication: untypedPersistReducer(
+      { ...secureConfig, key: "authentication" },
+      authentication
+    )
+  }) as any
+); // TODO: remove this type suggestion along with above PR
 export { RahaState } from "./reducers";
 export default rootReducer;

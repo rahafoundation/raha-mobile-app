@@ -26,7 +26,7 @@ export const GENESIS_MEMBER = Symbol("GENESIS");
  * Members that we're in the process of building up from operations below.
  */
 export class Member {
-  public readonly uid: MemberId;
+  public readonly memberId: MemberId;
   public readonly username: MemberUsername;
   public readonly fullName: string;
   public readonly createdAt: Date;
@@ -39,8 +39,8 @@ export class Member {
   public readonly trusts: Set<MemberId>;
 
   constructor(
-    uid: MemberId,
-    mid: MemberUsername,
+    memberId: MemberId,
+    username: MemberUsername,
     fullName: string,
     createdAt: Date,
     invitedBy: MemberId | typeof GENESIS_MEMBER,
@@ -50,8 +50,8 @@ export class Member {
     trustedBy?: Set<MemberId>,
     invited?: Set<MemberId>
   ) {
-    this.uid = uid;
-    this.username = mid;
+    this.memberId = memberId;
+    this.username = username;
     this.fullName = fullName;
     this.createdAt = createdAt;
     this.invitedBy = invitedBy;
@@ -69,7 +69,7 @@ export class Member {
    */
   public mintRaha(amount: Big, mintDate: Date) {
     return new Member(
-      this.uid,
+      this.memberId,
       this.username,
       this.fullName,
       this.createdAt,
@@ -84,7 +84,7 @@ export class Member {
 
   public giveRaha(amount: Big) {
     return new Member(
-      this.uid,
+      this.memberId,
       this.username,
       this.fullName,
       this.createdAt,
@@ -99,7 +99,7 @@ export class Member {
 
   public receiveRaha(amount: Big) {
     return new Member(
-      this.uid,
+      this.memberId,
       this.username,
       this.fullName,
       this.createdAt,
@@ -121,11 +121,11 @@ export class Member {
    */
 
   /**
-   * @returns A new Member with the uid present in its invited set.
+   * @returns A new Member with the given member id present in its invited set.
    */
-  public inviteMember(uid: MemberId) {
+  public inviteMember(memberId: MemberId) {
     return new Member(
-      this.uid,
+      this.memberId,
       this.username,
       this.fullName,
       this.createdAt,
@@ -133,35 +133,35 @@ export class Member {
       this.balance,
       this.lastMinted,
       this.trusts,
-      this.trustedBy.add(uid),
-      this.invited.add(uid)
+      this.trustedBy.add(memberId),
+      this.invited.add(memberId)
     );
   }
 
   /**
-   * @returns A new Member with the uid present in its trusted set.
+   * @returns A new Member with the given member id present in its trusted set.
    */
-  public trustMember(uid: MemberId) {
+  public trustMember(memberId: MemberId) {
     return new Member(
-      this.uid,
+      this.memberId,
       this.username,
       this.fullName,
       this.createdAt,
       this.invitedBy,
       this.balance,
       this.lastMinted,
-      this.trusts.add(uid),
+      this.trusts.add(memberId),
       this.trustedBy,
       this.invited
     );
   }
 
   /**
-   * @returns A new Member with the uid present in its trustedBy set.
+   * @returns A new Member with the given member id present in its trustedBy set.
    */
-  public beTrustedByMember(uid: MemberId) {
+  public beTrustedByMember(memberId: MemberId) {
     return new Member(
-      this.uid,
+      this.memberId,
       this.username,
       this.fullName,
       this.createdAt,
@@ -169,7 +169,7 @@ export class Member {
       this.balance,
       this.lastMinted,
       this.trusts,
-      this.trustedBy.add(uid),
+      this.trustedBy.add(memberId),
       this.invited
     );
   }
@@ -189,7 +189,10 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
     if (GENESIS_TRUST_OPS.includes(operation.id)) {
       return false; // no need for the genesis ops to be reflected in app state.
     }
-    throw new OperationInvalidError("Must have uid", operation);
+    throw new OperationInvalidError(
+      "All operations must have a creator id",
+      operation
+    );
   }
   if (operation.op_code === OperationType.REQUEST_INVITE) {
     // Force to boolean
@@ -208,12 +211,12 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
 
 function assertUserIdPresentInState(
   prevState: MembersState,
-  uid: MemberId,
+  memberId: MemberId,
   operation: Operation
 ) {
-  if (!(uid in prevState.byUserId)) {
+  if (!prevState.byUserId.has(memberId)) {
     throw new OperationInvalidError(
-      `Invalid operation: user ${uid} not present`,
+      `Invalid operation: user ${memberId} not present`,
       operation
     );
   }
@@ -225,7 +228,7 @@ function addMemberToState(
 ): MembersState {
   return {
     byMemberUsername: prevState.byMemberUsername.set(member.username, member),
-    byUserId: prevState.byUserId.set(member.uid, member)
+    byUserId: prevState.byUserId.set(member.memberId, member)
   };
 }
 function addMembersToState(
