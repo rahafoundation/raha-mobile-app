@@ -3,11 +3,12 @@ import * as React from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { createStackNavigator } from "react-navigation";
+import { AsyncStorage } from "react-native";
 
 import Home from "./src/components/pages/Home";
 import LogIn from "./src/components/pages/LogIn";
 import Onboarding from "./src/components/pages/Onboarding";
-import createStore from "./src/store";
+import createStore, { store, persistor } from "./src/store";
 import { refreshMembers } from "./src/store/actions/members";
 
 export enum RouteName {
@@ -33,9 +34,8 @@ const Navigator = createStackNavigator(
   }
 );
 
-const { store, persistor } = createStore();
 // refresh the members/operations on app start
-const onBeforeLift = () => {
+const onBeforeLift = async () => {
   store.dispatch(refreshMembers());
 };
 

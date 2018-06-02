@@ -6,16 +6,11 @@ import { persistStore } from "redux-persist";
 import rootReducer, { RahaState } from "./persistedReducer";
 import { RahaAction } from "./actions";
 
-export default () => {
-  const store = createStore<RahaState, RahaAction, {}, {}>(
-    rootReducer,
-    composeWithDevTools(applyMiddleware(thunk))
-  );
-  return {
-    store: store,
-    persistor: persistStore(store)
-  };
-};
+export const store = createStore<RahaState, RahaAction, {}, {}>(
+  rootReducer,
+  composeWithDevTools(applyMiddleware(thunk))
+);
+export const persistor = persistStore(store);
 
 export { RahaState } from "./persistedReducer";
 export { RahaAction } from "./actions";
