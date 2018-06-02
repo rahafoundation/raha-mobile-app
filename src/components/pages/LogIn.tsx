@@ -89,7 +89,8 @@ const mapStateToProps: MapStateToProps<
   const hasAccount =
     isLoggedIn &&
     !!state.authentication.firebaseUser &&
-    getMembersByIds(state, [state.authentication.firebaseUser.uid]).length > 0;
+    getMembersByIds(state, [state.authentication.firebaseUser.uid])[0] !==
+      undefined;
   return {
     isLoggedIn,
     hasAccount,
