@@ -1,6 +1,7 @@
 import { ApiEndpoint } from "../../api";
 import { ApiCallStatus } from "../reducers/apiCalls";
 import { RahaState } from "../reducers";
+import { Map } from "immutable";
 
 /**
  * Gets the status of a previously made API call.
@@ -12,14 +13,5 @@ export function getStatusOfApiCall(
   endpoint: ApiEndpoint,
   identifier: string
 ): ApiCallStatus | undefined {
-  const apiCallsForEndpoint = state.apiCalls[endpoint];
-  if (apiCallsForEndpoint === undefined) {
-    return undefined;
-  }
-  const apiCallStatus = apiCallsForEndpoint[identifier];
-  if (apiCallStatus === undefined) {
-    return undefined;
-  }
-
-  return apiCallStatus;
+  return state.apiCalls.get(endpoint, Map()).get(identifier, undefined);
 }

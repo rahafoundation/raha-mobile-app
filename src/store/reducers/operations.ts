@@ -2,6 +2,7 @@ import { Reducer } from "redux";
 
 import { MemberId, MemberUsername, OperationId } from "../../identifiers";
 import { OperationsAction, OperationsActionType } from "../actions/operations";
+import { List } from "immutable";
 
 export enum OperationType {
   REQUEST_INVITE = "REQUEST_INVITE",
@@ -54,19 +55,19 @@ export type Operation = OperationBase &
         data: GivePayload;
       });
 
-export type OperationsState = Operation[];
+export type OperationsState = List<Operation>;
 
 export const reducer: Reducer<OperationsState> = (
-  state = [],
+  prevState = List(),
   untypedAction
 ) => {
   const action = untypedAction as OperationsAction;
   switch (action.type) {
     case OperationsActionType.SET_OPERATIONS:
-      return action.operations;
+      return List(action.operations);
     case OperationsActionType.ADD_OPERATIONS:
-      return [...state, ...action.operations];
+      return prevState.push(...action.operations);
     default:
-      return state;
+      return prevState;
   }
 };
