@@ -1,25 +1,24 @@
 import { Reducer } from "redux";
 import { ApiEndpoint } from "../../api";
 import { ApiCallsAction, ApiCallsActionType } from "../actions/apiCalls";
+import { Map } from "immutable";
 
 export enum ApiCallStatusType {
   STARTED = "STARTED",
   SUCCESS = "SUCCESS",
   FAILURE = "FAILURE"
 }
+
 export interface ApiCallStatus {
-  status:
-    | ApiCallStatusType.STARTED
-    | ApiCallStatusType.SUCCESS
-    | ApiCallStatusType.FAILURE;
+  status: ApiCallStatusType;
 }
 
-export type ApiCallsState = {
-  readonly [key in ApiEndpoint]?: { [identifier: string]: ApiCallStatus }
-};
+// call identifier => status of that call
+type ApiEndpointState = Map<string, ApiCallStatus>;
+export type ApiCallsState = Map<ApiEndpoint, ApiEndpointState>;
 
 export const reducer: Reducer<ApiCallsState> = (
-  prevState = {},
+  prevState = Map(),
   untypedAction
 ) => {
   const action = untypedAction as ApiCallsAction;
@@ -37,11 +36,8 @@ export const reducer: Reducer<ApiCallsState> = (
       status = ApiCallStatusType.FAILURE;
       break;
   }
-  return {
-    ...prevState,
-    [action.endpoint]: {
-      ...(action.endpoint in prevState ? prevState[action.endpoint] : {}),
-      [action.identifier]: { status }
-    }
-  };
+
+  return prevState.update(action.endpoint, Map(), endpointCalls =>
+    endpointCalls.set(action.identifier, { status })
+  );
 };
