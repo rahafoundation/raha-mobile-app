@@ -31,7 +31,8 @@ const secureConfig = {
 const rootReducer: Reducer<RahaState> = persistReducer(
   {
     transforms: [immutableTransform()],
-    blacklist: ["members", "authentication"],
+    // members and authentication have their own config, apiCalls doesn't need to be persisted
+    blacklist: ["members", "authentication", "apiCalls"],
     key: "main",
     ...baseConfig
   },
