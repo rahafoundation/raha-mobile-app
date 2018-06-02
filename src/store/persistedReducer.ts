@@ -1,4 +1,4 @@
-import { combineReducers } from "redux";
+import { combineReducers, Reducer } from "redux";
 import { persistReducer, persistCombineReducers } from "redux-persist";
 import AsyncStorage from "redux-persist/lib/storage";
 import createSecureStore from "redux-persist-expo-securestore";
@@ -12,6 +12,11 @@ import {
   reducer as authentication,
   AuthenticationState
 } from "./reducers/authentication";
+import { RahaState, RahaAction } from ".";
+
+// TODO: remove this once my redux-persist PR gets merged
+// https://github.com/rt2zz/redux-persist/pull/834
+const untypedPersistReducer: any = persistReducer;
 
 const secureStorage = createSecureStore();
 
@@ -24,15 +29,18 @@ const secureConfig = {
   storage: secureStorage
 };
 
-const rootReducer = combineReducers({
-  apiCalls: persistReducer({ ...baseConfig, key: "apiCalls" }, apiCalls),
-  members: persistReducer({ ...baseConfig, key: "members" }, members),
-  operations: persistReducer({ ...baseConfig, key: "operations" }, operations),
+const rootReducer: Reducer<RahaState> = combineReducers({
+  apiCalls: untypedPersistReducer({ ...baseConfig, key: "apiCalls" }, apiCalls),
+  members: untypedPersistReducer({ ...baseConfig, key: "members" }, members),
+  operations: untypedPersistReducer(
+    { ...baseConfig, key: "operations" },
+    operations
+  ),
 
-  authentication: persistReducer(
+  authentication: untypedPersistReducer(
     { ...secureConfig, key: "authentication" },
     authentication
   )
-});
-export type RahaState = ReturnType<typeof rootReducer>;
+}) as any; // TODO: remove this type suggestion along with above PR
+export { RahaState } from "./reducers";
 export default rootReducer;
