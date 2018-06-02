@@ -6,7 +6,7 @@ export function getMembersByIds(
   state: RahaState,
   ids: MemberId[]
 ): Array<Member | undefined> {
-  return ids.map(id => state.members.byUserId.get(id));
+  return ids.map(id => state.members.byUserId.get(id, undefined));
 }
 
 export function getMembersByUsernames(
@@ -14,6 +14,6 @@ export function getMembersByUsernames(
   usernames: MemberUsername[]
 ): Array<Member | undefined> {
   return usernames.map(username =>
-    state.members.byMemberUsername.get(username)
+    state.members.byMemberUsername.get(username, undefined)
   );
 }

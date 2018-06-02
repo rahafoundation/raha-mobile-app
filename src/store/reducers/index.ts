@@ -1,7 +1,9 @@
 import { combineReducers } from "redux";
+
 import { reducer as apiCalls, ApiCallsState } from "./apiCalls";
 import { reducer as members, MembersState } from "./members";
 import { reducer as operations, OperationsState } from "./operations";
+
 import {
   reducer as authentication,
   AuthenticationState

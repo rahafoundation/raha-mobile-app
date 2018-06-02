@@ -1,6 +1,7 @@
 import "es6-symbol/implement";
 import * as React from "react";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 import { createStackNavigator } from "react-navigation";
 
 import Home from "./src/components/pages/Home";
@@ -32,17 +33,24 @@ const Navigator = createStackNavigator(
   }
 );
 
-const store = createStore();
-export default class App extends React.Component<{}> {
-  public componentDidMount() {
-    store.dispatch(refreshMembers());
-  }
+const { store, persistor } = createStore();
+// refresh the members/operations on app start
+const onBeforeLift = () => {
+  store.dispatch(refreshMembers());
+};
 
-  render() {
-    return (
-      <Provider store={store}>
+const App: React.StatelessComponent = () => {
+  return (
+    <Provider store={store}>
+      {/* TODO: decide if we should show a loading indicator here. */}
+      <PersistGate
+        loading={null}
+        persistor={persistor}
+        onBeforeLift={onBeforeLift}
+      >
         <Navigator />
-      </Provider>
-    );
-  }
-}
+      </PersistGate>
+    </Provider>
+  );
+};
+export default App;
