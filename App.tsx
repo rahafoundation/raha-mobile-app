@@ -15,6 +15,7 @@ import { refreshMembers } from "./src/store/actions/members";
 export enum RouteName {
   Home = "Home",
   Onboarding = "Onboarding",
+  OnboardingCamera = "OnboardingCamera",
   LogIn = "LogIn"
 }
 

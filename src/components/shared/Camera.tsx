@@ -9,15 +9,6 @@
 import * as React from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Button } from "react-native";
 import { Camera as ExpoCamera, Permissions, CameraObject } from "expo";
-import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
-import {
-  googleLogIn,
-  facebookLogIn,
-  AuthMethod
-} from "../../store/actions/authentication";
-import { RahaState } from "../../store";
-import { ENGINE_METHOD_DIGESTS } from "constants";
-import { Record } from "immutable";
 
 type CameraProps = {
   onVideoRecorded: (uri: string) => any;
