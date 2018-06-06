@@ -51,6 +51,27 @@ class Camera extends React.Component<CameraProps, CameraState> {
     });
   }
 
+  startRecordVideo = (camera: CameraObject) => {
+    camera
+      .recordAsync({
+        // quality: Camera.Constants.VideoQuality['720p'],
+        maxDuration: 10 // seconds
+      })
+      .then(({ uri }) => {
+        this.setState({
+          isVideoRecording: false
+        });
+        this.props.onVideoRecorded(uri);
+      })
+      .catch(reason => {
+        // TODO: Handle error, toast a message?
+      });
+
+    this.setState({
+      isVideoRecording: true
+    });
+  };
+
   render() {
     if (
       !this.state.hasCameraPermission ||
@@ -101,27 +122,6 @@ class Camera extends React.Component<CameraProps, CameraState> {
         <Text style={styles.buttonText}>Flip</Text>
       </TouchableOpacity>
     );
-  };
-
-  startRecordVideo = (camera: CameraObject) => {
-    camera
-      .recordAsync({
-        // quality: Camera.Constants.VideoQuality['720p'],
-        maxDuration: 10 // seconds
-      })
-      .then(({ uri }) => {
-        this.setState({
-          isVideoRecording: false
-        });
-        this.props.onVideoRecorded(uri);
-      })
-      .catch(reason => {
-        // TODO: Handle error, toast a message?
-      });
-
-    this.setState({
-      isVideoRecording: true
-    });
   };
 
   renderRecordButton = () => {
