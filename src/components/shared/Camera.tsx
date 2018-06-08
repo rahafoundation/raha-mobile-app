@@ -115,6 +115,7 @@ class Camera extends React.Component<CameraProps, CameraState> {
         style={styles.flipButton}
         onPress={() => {
           this.setState({
+            // TODO: When expo types include these constants, replace
             type: this.state.type === "back" ? "front" : "back"
           });
         }}
