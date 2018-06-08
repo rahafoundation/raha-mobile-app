@@ -38,7 +38,6 @@ const Home: React.StatelessComponent<HomeProps> = props => {
 
 const styles = StyleSheet.create({
   container: {
-    minHeight: "100%",
     flex: 1,
     backgroundColor: "#fff"
   },

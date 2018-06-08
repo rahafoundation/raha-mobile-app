@@ -7,13 +7,15 @@ import { AsyncStorage } from "react-native";
 
 import Home from "./src/components/pages/Home";
 import LogIn from "./src/components/pages/LogIn";
+import OnboardingCamera from "./src/components/pages/OnboardingCamera";
 import Onboarding from "./src/components/pages/Onboarding";
-import createStore, { store, persistor } from "./src/store";
+import { store, persistor } from "./src/store";
 import { refreshMembers } from "./src/store/actions/members";
 
 export enum RouteName {
   Home = "Home",
   Onboarding = "Onboarding",
+  OnboardingCamera = "OnboardingCamera",
   LogIn = "LogIn"
 }
 
@@ -21,6 +23,9 @@ const Navigator = createStackNavigator(
   {
     Home: {
       screen: Home
+    },
+    OnboardingCamera: {
+      screen: OnboardingCamera
     },
     Onboarding: {
       screen: Onboarding
