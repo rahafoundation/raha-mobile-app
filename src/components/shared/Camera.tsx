@@ -121,7 +121,7 @@ class Camera extends React.Component<CameraProps, CameraState> {
           });
         }}
         // Flip button will stop recording. To prevent user confusion, disable it.
-        disabled={this.state.isVideoRecording ? true : false}
+        disabled={this.state.isVideoRecording}
       >
         <Text style={styles.buttonText}>Flip</Text>
       </TouchableOpacity>
