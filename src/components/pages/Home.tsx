@@ -6,6 +6,7 @@ import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../store";
 import SearchBar from "../shared/SearchBar";
 import ActivityFeed from "../shared/ActivityFeed";
+import { RouteName } from "../../../App";
 
 type OwnProps = {
   navigation: any;
@@ -27,7 +28,7 @@ const Home: React.StatelessComponent<HomeProps> = props => {
       {!props.loggedInUserId ? (
         <Button
           title="Log In"
-          onPress={() => props.navigation.navigate("LogIn")}
+          onPress={() => props.navigation.navigate(RouteName.LogIn)}
         />
       ) : (
         <Text>{props.loggedInUserId}</Text>

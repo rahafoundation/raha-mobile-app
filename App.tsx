@@ -11,12 +11,14 @@ import OnboardingCamera from "./src/components/pages/OnboardingCamera";
 import Onboarding from "./src/components/pages/Onboarding";
 import { store, persistor } from "./src/store";
 import { refreshMembers } from "./src/store/actions/members";
+import VideoPreview from "./src/components/pages/VideoPreview";
 
 export enum RouteName {
   Home = "Home",
   Onboarding = "Onboarding",
   OnboardingCamera = "OnboardingCamera",
-  LogIn = "LogIn"
+  LogIn = "LogIn",
+  VideoPreview = "VideoPreview"
 }
 
 const Navigator = createStackNavigator(
@@ -32,6 +34,9 @@ const Navigator = createStackNavigator(
     },
     LogIn: {
       screen: LogIn
+    },
+    VideoPreview: {
+      screen: VideoPreview
     }
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
