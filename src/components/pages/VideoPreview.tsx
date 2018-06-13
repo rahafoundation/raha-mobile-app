@@ -15,7 +15,6 @@ export default class VideoPreview extends React.Component<VideoPreviewProps> {
   render() {
     const videoUri = this.props.navigation.getParam("videoUri", null);
     if (videoUri) {
-      console.log(videoUri);
       return (
         <View style={styles.container}>
           <Video
@@ -29,7 +28,7 @@ export default class VideoPreview extends React.Component<VideoPreviewProps> {
             resizeMode={Video.RESIZE_MODE_COVER}
             shouldPlay
             isLooping
-            // @ts-ignore
+            // @ts-ignore Expo typing for Video is missing `style`
             style={styles.video}
           />
           <Button

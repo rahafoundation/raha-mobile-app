@@ -54,7 +54,7 @@ class Camera extends React.Component<CameraProps, CameraState> {
   startRecordVideo = (camera: CameraObject) => {
     camera
       .recordAsync({
-        // @ts-ignore
+        // @ts-ignore Expo typings are missing VideoQuality
         quality: ExpoCamera.Constants.VideoQuality["4:3"],
         maxDuration: 10 // seconds
       })
