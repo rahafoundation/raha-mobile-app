@@ -54,7 +54,8 @@ class Camera extends React.Component<CameraProps, CameraState> {
   startRecordVideo = (camera: CameraObject) => {
     camera
       .recordAsync({
-        // quality: Camera.Constants.VideoQuality['720p'],
+        // @ts-ignore Expo typings are missing VideoQuality
+        quality: ExpoCamera.Constants.VideoQuality["4:3"],
         maxDuration: 10 // seconds
       })
       .then(({ uri }) => {
@@ -119,6 +120,8 @@ class Camera extends React.Component<CameraProps, CameraState> {
             type: this.state.type === "back" ? "front" : "back"
           });
         }}
+        // Flip button will stop recording. To prevent user confusion, disable it.
+        disabled={this.state.isVideoRecording}
       >
         <Text style={styles.buttonText}>Flip</Text>
       </TouchableOpacity>

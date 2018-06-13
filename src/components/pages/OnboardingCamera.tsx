@@ -1,12 +1,16 @@
 /**
- * Renders the onboarding camera preview screen which
+ * Renders the onboarding camera preview screen which allows a user to record their
+ * identity verification video.
  */
 
 import * as React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Camera from "../shared/Camera";
+import { RouteName } from "../../../App";
 
-type OnboardingCameraProps = {};
+type OnboardingCameraProps = {
+  navigation: any;
+};
 
 export default class OnboardingCamera extends React.Component<
   OnboardingCameraProps
@@ -16,7 +20,9 @@ export default class OnboardingCamera extends React.Component<
       <React.Fragment>
         <Camera
           onVideoRecorded={uri => {
-            console.log("Video URI: " + uri);
+            this.props.navigation.navigate(RouteName.VideoPreview, {
+              videoUri: uri
+            });
           }}
         />
         <Text style={styles.text}>
