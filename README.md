@@ -37,16 +37,24 @@ version of this guide is available
 
 ## Run Setup
 
-Before you run the app, copy over either the prod or test config, whichever is applicable.
+Before you run the app, first ensure `yarn` is installed:
 
-```
-cp ./src/data/prod.config.ts ./src/data/config.ts
+```bash
+npm install -g yarn
 ```
 
-or
+Then, install the dependencies of the project:
 
+```bash
+yarn install
 ```
-cp ./src/data/test.config.ts ./src/data/config.ts
+
+Finall, copy over either the prod or test config, whichever environment you'd like to develop in.
+
+```bash
+yarn config:prod
+# OR
+yarn config:test
 ```
 
 ## Updating to New Releases
