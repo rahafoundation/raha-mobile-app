@@ -13,5 +13,7 @@ export function getStatusOfApiCall(
   endpoint: ApiEndpoint,
   identifier: string
 ): ApiCallStatus | undefined {
-  return state.apiCalls.get(endpoint, Map()).get(identifier, undefined);
+  return state.apiCalls
+    .get(endpoint, Map<string, ApiCallStatus>())
+    .get(identifier, undefined);
 }

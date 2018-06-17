@@ -7,7 +7,7 @@ import {
   facebookLogIn,
   AuthMethod
 } from "../../store/actions/authentication";
-import { RahaState } from "../../store";
+import { RahaState, RahaThunkDispatch } from "../../store";
 import { RouteName } from "../../../App";
 import { getMembersByIds } from "../../store/selectors/members";
 
@@ -100,12 +100,14 @@ const mapStateToProps: MapStateToProps<
   };
 };
 
-const mapDispatchToProps: MapDispatchToProps<
-  DispatchProps,
-  OwnProps
-> = dispatch => ({
+const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
+  dispatch: RahaThunkDispatch
+) => ({
   googleLogIn: () => dispatch(googleLogIn()),
   facebookLogIn: () => dispatch(facebookLogIn())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LogIn);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LogIn);
