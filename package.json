@@ -30,7 +30,9 @@
     "eject": "react-native-scripts-ts eject",
     "android": "react-native-scripts-ts android",
     "ios": "react-native-scripts-ts ios",
-    "test": "jest"
+    "test": "jest",
+    "config:prod": "cp ./src/data/prod.config.ts ./src/data/config.ts",
+    "config:test": "cp ./src/data/test.config.ts ./src/data/config.ts"
   },
   "jest": {
     "globals": {
