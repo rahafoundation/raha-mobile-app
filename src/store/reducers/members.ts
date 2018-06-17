@@ -209,7 +209,7 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
   return false;
 }
 
-function assertUserIdPresentInState(
+function assertMemberIdPresentInState(
   prevState: MembersState,
   memberId: MemberId,
   operation: Operation
@@ -271,10 +271,10 @@ function applyOperation(
           );
         }
 
-        assertUserIdPresentInState(prevState, to_uid, operation);
-        const inviter = prevState.byUserId
-          .get(to_uid)
-          .inviteMember(creator_uid);
+        assertMemberIdPresentInState(prevState, to_uid, operation);
+        const inviter = (prevState.byUserId.get(to_uid) as Member).inviteMember(
+          creator_uid
+        );
         const inviteRequester = new Member(
           creator_uid,
           username,
@@ -290,38 +290,41 @@ function applyOperation(
       case OperationType.TRUST: {
         const { to_uid } = operation.data;
 
-        assertUserIdPresentInState(prevState, creator_uid, operation);
-        assertUserIdPresentInState(prevState, to_uid, operation);
-        const truster = prevState.byUserId.get(creator_uid).trustMember(to_uid);
-        const trusted = prevState.byUserId
-          .get(to_uid)
-          .beTrustedByMember(creator_uid);
+        assertMemberIdPresentInState(prevState, creator_uid, operation);
+        assertMemberIdPresentInState(prevState, to_uid, operation);
+        const truster = (prevState.byUserId.get(
+          creator_uid
+        ) as Member).trustMember(to_uid);
+        const trusted = (prevState.byUserId.get(
+          to_uid
+        ) as Member).beTrustedByMember(creator_uid);
         return addMembersToState(prevState, [truster, trusted]);
       }
       case OperationType.MINT: {
         const { amount } = operation.data;
 
-        assertUserIdPresentInState(prevState, creator_uid, operation);
-        const minter = prevState.byUserId
-          .get(creator_uid)
-          .mintRaha(new Big(amount), new Date(operation.created_at));
+        assertMemberIdPresentInState(prevState, creator_uid, operation);
+        const minter = (prevState.byUserId.get(creator_uid) as Member).mintRaha(
+          new Big(amount),
+          new Date(operation.created_at)
+        );
         return addMembersToState(prevState, [minter]);
       }
       case OperationType.GIVE: {
         const { to_uid, amount, donation_to, donation_amount } = operation.data;
 
-        assertUserIdPresentInState(prevState, creator_uid, operation);
-        assertUserIdPresentInState(prevState, to_uid, operation);
+        assertMemberIdPresentInState(prevState, creator_uid, operation);
+        assertMemberIdPresentInState(prevState, to_uid, operation);
         // TODO: Update donationRecipient state.
         // Currently we don't do this as RAHA isn't a normal member created via a REQUEST_INVITE operation.
         // Thus RAHA doesn't get added to the members state in the current paradigm.
 
-        const giver = prevState.byUserId
-          .get(creator_uid)
-          .giveRaha(new Big(amount).plus(donation_amount));
-        const recipient = prevState.byUserId
-          .get(to_uid)
-          .receiveRaha(new Big(amount));
+        const giver = (prevState.byUserId.get(creator_uid) as Member).giveRaha(
+          new Big(amount).plus(donation_amount)
+        );
+        const recipient = (prevState.byUserId.get(
+          to_uid
+        ) as Member).receiveRaha(new Big(amount));
 
         return addMembersToState(prevState, [giver, recipient]);
       }

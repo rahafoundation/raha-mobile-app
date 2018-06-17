@@ -36,12 +36,16 @@ export type AuthenticationAction =
   | ExistingCredentialAction
   | SetFirebaseUserAction;
 
-const setFirebaseUserAction = (firebaseUser: firebase.User) => ({
+const setFirebaseUserAction = (
+  firebaseUser: firebase.User
+): SetFirebaseUserAction => ({
   type: AuthenticationActionType.SET_FIREBASE_USER,
   firebaseUser
 });
 
-const existingCredentialAction = (authMethod: AuthMethod) => ({
+const existingCredentialAction = (
+  authMethod: AuthMethod
+): ExistingCredentialAction => ({
   type: AuthenticationActionType.EXISTING_CREDENTIAL,
   authMethod
 });

@@ -1,13 +1,10 @@
 import { combineReducers } from "redux";
 
-import { reducer as apiCalls, ApiCallsState } from "./apiCalls";
-import { reducer as members, MembersState } from "./members";
-import { reducer as operations, OperationsState } from "./operations";
+import { reducer as apiCalls } from "./apiCalls";
+import { reducer as members } from "./members";
+import { reducer as operations } from "./operations";
 
-import {
-  reducer as authentication,
-  AuthenticationState
-} from "./authentication";
+import { reducer as authentication } from "./authentication";
 
 const rootReducer = combineReducers({
   apiCalls,
