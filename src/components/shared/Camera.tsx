@@ -21,7 +21,7 @@ interface CameraState {
   isVideoRecording: boolean;
 }
 
-class Camera extends React.Component<CameraProps, CameraState> {
+export class Camera extends React.Component<CameraProps, CameraState> {
   private cameraRef?: React.RefObject<CameraObject & ExpoCamera>;
 
   state = {
@@ -183,5 +183,3 @@ const styles = StyleSheet.create({
     textAlign: "center"
   }
 });
-
-export default Camera;

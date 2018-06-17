@@ -1,6 +1,6 @@
 import * as firebase from "firebase";
 
-import CONFIG from "./data/config";
+import { config } from "./data/config";
 
-export const app = firebase.initializeApp(CONFIG.firebase);
+export const app = firebase.initializeApp(config.firebase);
 export const auth = app.auth();

@@ -1,14 +1,14 @@
 import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import RoundedButton from "../shared/RoundedButton";
-import Swiper from "../shared/Swiper";
+import { RoundedButton } from "../shared/RoundedButton";
+import { Swiper } from "../shared/Swiper";
 import { RouteName } from "../../../App";
 
 type OnboardingProps = {
   navigation: any;
 };
 
-export default class Onboarding extends React.Component<OnboardingProps> {
+export class Onboarding extends React.Component<OnboardingProps> {
   render() {
     return (
       <React.Fragment>

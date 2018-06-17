@@ -7,7 +7,7 @@ import { Google, Facebook } from "expo";
 import { auth } from "../../firebaseInit";
 import { RahaState } from "..";
 
-import CONFIG from "../../data/config";
+import { config } from "../../data/config";
 
 const FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE =
   "auth/account-exists-with-different-credential";
@@ -60,7 +60,7 @@ export const googleLogIn: AsyncActionCreator = () => async dispatch => {
     iosStandaloneAppClientId,
     androidClientId,
     androidStandaloneAppClientId
-  } = CONFIG.google;
+  } = config.google;
 
   const googleData = await Google.logInAsync({
     iosClientId,
@@ -97,7 +97,7 @@ export const googleLogIn: AsyncActionCreator = () => async dispatch => {
 
 export const facebookLogIn: AsyncActionCreator = () => async dispatch => {
   const facebookData = await Facebook.logInWithReadPermissionsAsync(
-    CONFIG.facebook.appId,
+    config.facebook.appId,
     {
       permissions: ["public_profile"]
     }

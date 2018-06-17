@@ -1,12 +1,12 @@
 import { Reducer } from "redux";
-import Big from "big.js";
+import { Big } from "big.js";
 
 import { Set, Map } from "immutable";
 import { MemberId, MemberUsername } from "../../identifiers";
 import { OperationsActionType } from "../actions/operations";
 import { MembersAction } from "../actions/members";
 import { Operation, OperationType } from "./operations";
-import OperationInvalidError from "../../errors/OperationInvalidError";
+import { OperationInvalidError } from "../../errors/OperationInvalidError";
 
 const GENESIS_REQUEST_INVITE_OPS = [
   "InuYAjMISl6operovXIR",

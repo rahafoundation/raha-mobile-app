@@ -5,16 +5,14 @@
 
 import * as React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import Camera from "../shared/Camera";
+import { Camera } from "../shared/Camera";
 import { RouteName } from "../../../App";
 
 type OnboardingCameraProps = {
   navigation: any;
 };
 
-export default class OnboardingCamera extends React.Component<
-  OnboardingCameraProps
-> {
+export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
   render() {
     return (
       <React.Fragment>

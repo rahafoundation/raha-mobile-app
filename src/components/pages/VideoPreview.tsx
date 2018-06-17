@@ -11,7 +11,7 @@ type VideoPreviewProps = {
   navigation: any;
 };
 
-export default class VideoPreview extends React.Component<VideoPreviewProps> {
+export class VideoPreview extends React.Component<VideoPreviewProps> {
   render() {
     const videoUri = this.props.navigation.getParam("videoUri", null);
     if (videoUri) {

@@ -1,17 +1,18 @@
 // TODO: consider splitting the actual API endpoint types into their finer grained files
 import { MemberId } from "../identifiers";
-import InvalidApiRequestError from "../errors/ApiCallError/InvalidApiRequestError";
-import ApiCallFailedError from "../errors/ApiCallError/ApiCallFailedError";
-import ApiResponse, {
+import { InvalidApiRequestError } from "../errors/ApiCallError/InvalidApiRequestError";
+import { ApiCallFailedError } from "../errors/ApiCallError/ApiCallFailedError";
+import {
+  ApiResponse,
   OperationsApiResponse,
   OperationApiResponse,
   MessageApiResponse
 } from "./ApiResponse";
-import UnauthenticatedError from "../errors/ApiCallError/UnauthenticatedError";
-import NetworkError from "../errors/ApiCallError/NetworkError";
+import { UnauthenticatedError } from "../errors/ApiCallError/UnauthenticatedError";
+import { NetworkError } from "../errors/ApiCallError/NetworkError";
 
-import CONFIG from "../data/config";
-const API_BASE = CONFIG.apiBase;
+import { config } from "../data/config";
+const API_BASE = config.apiBase;
 
 /* ==============================
  * Definitions of how to address
