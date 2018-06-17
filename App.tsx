@@ -46,12 +46,14 @@ const Navigator = createStackNavigator(
 
 // refresh the members/operations on app start
 const onBeforeLift = async () => {
-  store.dispatch(refreshMembers());
+  await refreshMembers()(store.dispatch, store.getState, undefined);
 };
 
 const App: React.StatelessComponent = () => {
   return (
-    <Provider store={store}>
+    // TODO: see if there's a better way to make thunk types work properly aside
+    // from cast to `any`
+    <Provider store={store as any}>
       {/* TODO: decide if we should show a loading indicator here. */}
       <PersistGate
         loading={null}
