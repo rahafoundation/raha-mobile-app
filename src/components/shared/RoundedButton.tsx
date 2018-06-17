@@ -1,3 +1,8 @@
+/**
+ * TODO: this component seems extraneous, I'd rather we define components based
+ * on their functional use than details about their styling for flexibility.
+ * - osdiab
+ */
 import * as React from "react";
 import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
 
@@ -5,7 +10,10 @@ type RoundedButtonProps = {
   text: string;
   onPress: () => void;
 };
-const RoundedButton: React.StatelessComponent<RoundedButtonProps> = props => {
+
+export const RoundedButton: React.StatelessComponent<
+  RoundedButtonProps
+> = props => {
   return (
     <TouchableOpacity onPress={props.onPress}>
       <View style={styles.button}>
@@ -14,7 +22,6 @@ const RoundedButton: React.StatelessComponent<RoundedButtonProps> = props => {
     </TouchableOpacity>
   );
 };
-export default RoundedButton;
 
 const styles = StyleSheet.create({
   button: {

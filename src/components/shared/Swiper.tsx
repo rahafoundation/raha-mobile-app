@@ -16,7 +16,7 @@ import {
   View,
   ViewPagerAndroidOnPageScrollEventData
 } from "react-native";
-import RoundedButton from "./RoundedButton";
+import { RoundedButton } from "./RoundedButton";
 import { range } from "../../helpers/math";
 
 // Detect screen width and height
@@ -54,7 +54,7 @@ interface SwiperState {
   height: number;
 }
 
-export default class Swiper extends Component<SwiperProps, SwiperState> {
+export class Swiper extends Component<SwiperProps, SwiperState> {
   private scrollView?: ScrollView | null;
 
   // Props for ScrollView component

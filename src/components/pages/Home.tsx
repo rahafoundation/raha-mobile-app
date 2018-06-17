@@ -4,8 +4,8 @@ import { Button } from "react-native-elements";
 import { connect, MapStateToProps } from "react-redux";
 
 import { RahaState } from "../../store";
-import SearchBar from "../shared/SearchBar";
-import ActivityFeed from "../shared/ActivityFeed";
+import { SearchBar } from "../shared/SearchBar";
+import { ActivityFeed } from "../shared/ActivityFeed";
 import { RouteName } from "../../../App";
 
 type OwnProps = {
@@ -18,7 +18,7 @@ type StateProps = {
 
 type HomeProps = OwnProps & StateProps;
 
-const Home: React.StatelessComponent<HomeProps> = props => {
+const HomeView: React.StatelessComponent<HomeProps> = props => {
   return (
     <View style={styles.container}>
       <Text>Give Raha to:</Text>
@@ -57,4 +57,4 @@ const mapStateToProps: MapStateToProps<
     loggedInUserId: firebaseUser ? firebaseUser.uid : undefined
   };
 };
-export default connect(mapStateToProps)(Home);
+export const Home = connect(mapStateToProps)(HomeView);

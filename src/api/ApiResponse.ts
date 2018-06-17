@@ -7,8 +7,7 @@ export interface MessageApiResponse {
 }
 
 // as more response types appear, expand this type
-type ApiResponse =
+export type ApiResponse =
   | OperationApiResponse
   | OperationsApiResponse
   | MessageApiResponse;
-export default ApiResponse;

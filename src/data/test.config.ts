@@ -1,6 +1,6 @@
-import prodConfig from "./prod.config";
+import { Config } from "./prod.config";
 
-const testConfig: typeof prodConfig = {
+export const config: Config = {
   apiBase: "https://raha-test.appspot.com/api/",
   firebase: {
     apiKey: "AIzaSyDz4sg33FdGUEAawsbnJDf6GKs8TPt5inU",
@@ -24,5 +24,3 @@ const testConfig: typeof prodConfig = {
       "677137485282-ovig7bombpsb76s67hi2tmb9m8c66igr.apps.googleusercontent.com"
   }
 };
-
-export default testConfig;

@@ -3,7 +3,9 @@ import { FlatList, View, Text, StyleSheet } from "react-native";
 
 type ActivityFeedProps = {};
 
-const ActivityFeed: React.StatelessComponent<ActivityFeedProps> = props => {
+export const ActivityFeed: React.StatelessComponent<
+  ActivityFeedProps
+> = props => {
   return (
     <FlatList
       data={[
@@ -27,7 +29,6 @@ const ActivityItem: React.StatelessComponent<ActivityItemProps> = props => {
     </View>
   );
 };
-export default ActivityFeed;
 const styles = StyleSheet.create({
   item: {
     padding: 12

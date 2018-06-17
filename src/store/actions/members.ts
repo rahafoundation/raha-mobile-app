@@ -16,7 +16,7 @@ import {
   SendInviteApiEndpoint
 } from "../../api";
 import { MemberId } from "../../identifiers";
-import UnauthenticatedError from "../../errors/ApiCallError/UnauthenticatedError";
+import { UnauthenticatedError } from "../../errors/ApiCallError/UnauthenticatedError";
 
 export type MembersAction = SetOperationsAction | AddOperationsAction;
 export const refreshMembers: AsyncActionCreator = () => {

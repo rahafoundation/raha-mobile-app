@@ -28,7 +28,7 @@ type DispatchProps = {
 
 type LogInProps = OwnProps & StateProps & DispatchProps;
 
-class LogIn extends React.Component<LogInProps> {
+class LogInView extends React.Component<LogInProps> {
   componentDidUpdate() {
     if (!this.props.isLoggedIn) {
       return;
@@ -107,7 +107,7 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   facebookLogIn: () => dispatch(facebookLogIn())
 });
 
-export default connect(
+export const LogIn = connect(
   mapStateToProps,
   mapDispatchToProps
-)(LogIn);
+)(LogInView);
