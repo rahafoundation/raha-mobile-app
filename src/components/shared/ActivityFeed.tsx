@@ -1,18 +1,28 @@
 import * as React from "react";
 import { FlatList, View, Text, StyleSheet } from "react-native";
+import { connect, MapStateToProps } from "react-redux";
+import { List } from "immutable";
 
-type ActivityFeedProps = {};
+import { RahaState } from "../../store";
+import { Operation } from "../../store/reducers/operations";
 
-export const ActivityFeed: React.StatelessComponent<
+interface StateProps {
+  operations: List<Operation>;
+}
+
+type ActivityFeedProps = StateProps;
+
+export const ActivityFeedView: React.StatelessComponent<
   ActivityFeedProps
 > = props => {
   return (
     <FlatList
-      data={[
-        { key: "1", text: "Mark received 5R from Omar" },
-        { key: "2", text: "Tina received 5R from Omar" },
-        { key: "3", text: "Omar received 5R from Rahul" }
-      ]}
+      data={props.operations
+        .map(operation => ({
+          key: operation.id,
+          text: JSON.stringify(operation)
+        }))
+        .toArray()}
       renderItem={({ item }) => <ActivityItem text={item.text} />}
     />
   );
@@ -29,6 +39,13 @@ const ActivityItem: React.StatelessComponent<ActivityItemProps> = props => {
     </View>
   );
 };
+const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
+  return {
+    operations: state.operations
+  };
+};
+export const ActivityFeed = connect(mapStateToProps)(ActivityFeedView);
+
 const styles = StyleSheet.create({
   item: {
     padding: 12
