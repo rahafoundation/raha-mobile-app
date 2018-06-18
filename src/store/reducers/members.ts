@@ -112,6 +112,12 @@ export class Member {
     );
   }
 
+  public videoUri(): string {
+    return `https://storage.googleapis.com/raha-video/${
+      this.memberId
+    }/invite.mp4`;
+  }
+
   /* =====================
    * RELATIONSHIP METHODS
    * =====================
@@ -205,6 +211,26 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
 
   if (operation.op_code === OperationType.TRUST) {
     return !!operation.data.to_uid;
+  }
+
+  if (operation.op_code === OperationType.MINT) {
+    try {
+      const validBig = new Big(operation.data.amount);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  if (operation.op_code === OperationType.GIVE) {
+    try {
+      const validBig =
+        new Big(operation.data.amount) &&
+        new Big(operation.data.donation_amount);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
   return false;
 }
