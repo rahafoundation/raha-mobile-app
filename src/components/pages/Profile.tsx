@@ -9,6 +9,7 @@ import { connect, MapDispatchToProps } from "react-redux";
 
 import { Video } from "expo";
 import { Member } from "../../store/reducers/members";
+import { RahaThunkDispatch } from "../../store";
 
 type OwnProps = {
   navigation: any;
@@ -116,20 +117,22 @@ const styles = StyleSheet.create({
   }
 });
 
+// TODO: implement
 function mint() {
-  return null; // TODO
+  return null;
 }
 
+// TODO: implement
 function trust() {
-  return null; // TODO
+  return null;
 }
 
-const mapDispatchToProps: MapDispatchToProps<
-  DispatchProps,
-  OwnProps
-> = dispatch => ({
-  mint: () => dispatch(mint()),
-  trust: () => dispatch(trust())
+const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
+  dispatch: RahaThunkDispatch
+) => ({
+  // TODO: change once mint and trust are implemented
+  mint: () => dispatch(mint() as any),
+  trust: () => dispatch(trust() as any)
 });
 
 export const Profile = connect(
