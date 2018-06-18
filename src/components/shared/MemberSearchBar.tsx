@@ -2,7 +2,13 @@
  * Component that allows search through members and suggests autocompletions.
  */
 import * as React from "react";
-import { FlatList, View, StyleSheet, Text } from "react-native";
+import {
+  FlatList,
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity
+} from "react-native";
 import { SearchBar } from "react-native-elements";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../store";
@@ -14,7 +20,9 @@ type ReduxStateProps = {
   members: MembersState;
 };
 
-type OwnProps = {};
+type OwnProps = {
+  onMemberSelected: (member: Member) => any;
+};
 
 type MemberSearchBarProps = ReduxStateProps & OwnProps;
 
@@ -75,11 +83,19 @@ class MemberSearchBarView extends React.Component<
           onClearText={() => this.clearSuggestions()}
         />
         <FlatList
+          keyboardShouldPersistTaps="always"
           data={this.state.suggestedMembers}
           keyExtractor={item => {
             return item.memberId;
           }}
-          renderItem={({ item }) => <MemberItem member={item} />}
+          renderItem={({ item }) => (
+            <MemberItem
+              member={item}
+              onPressed={() => {
+                this.props.onMemberSelected(item);
+              }}
+            />
+          )}
         />
       </View>
     );
@@ -88,14 +104,17 @@ class MemberSearchBarView extends React.Component<
 
 type MemberProps = {
   member: Member;
+  onPressed: () => void;
 };
 
 const MemberItem: React.StatelessComponent<MemberProps> = props => {
   return (
-    <View style={styles.memberItemRow}>
-      <Text style={styles.memberText}>{props.member.fullName}</Text>
-      <Text style={styles.memberSubtext}>{props.member.username}</Text>
-    </View>
+    <TouchableOpacity onPress={props.onPressed}>
+      <View style={styles.memberItemRow}>
+        <Text style={styles.memberText}>{props.member.fullName}</Text>
+        <Text style={styles.memberSubtext}>{props.member.username}</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
