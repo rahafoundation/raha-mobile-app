@@ -44,7 +44,7 @@ const Navigator = createStackNavigator(
     }
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
-    initialRouteName: RouteName.LogIn
+    initialRouteName: RouteName.Home
   }
 );
 
