@@ -46,7 +46,7 @@ class LogInView extends React.Component<LogInProps> {
         <Text>This is the login page.</Text>
         <Button
           title="Cancel"
-          onPress={() => this.props.navigation.navigate(RouteName.MyProfile)}
+          onPress={() => this.props.navigation.navigate(RouteName.Home)}
         />
         {this.props.existingAuthMethod && (
           <Text>

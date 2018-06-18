@@ -1,3 +1,6 @@
+/**
+ * Small wrapper around Profile that specified it is a Profile specific to logged in member.
+ */
 import * as React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
