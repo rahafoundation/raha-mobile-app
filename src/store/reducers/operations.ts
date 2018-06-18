@@ -36,24 +36,31 @@ export interface OperationBase {
   created_at: string;
 }
 
-export type Operation = OperationBase &
-  (
-    | {
-        op_code: OperationType.REQUEST_INVITE;
-        data: RequestInvitePayload;
-      }
-    | {
-        op_code: OperationType.TRUST;
-        data: TrustPayload;
-      }
-    | {
-        op_code: OperationType.MINT;
-        data: MintPayload;
-      }
-    | {
-        op_code: OperationType.GIVE;
-        data: GivePayload;
-      });
+export type GiveOperation = OperationBase & {
+  op_code: OperationType.GIVE;
+  data: GivePayload;
+};
+
+export type TrustOperation = OperationBase & {
+  op_code: OperationType.TRUST;
+  data: TrustPayload;
+};
+
+export type MintOperation = OperationBase & {
+  op_code: OperationType.MINT;
+  data: MintPayload;
+};
+
+export type RequestInviteOperation = OperationBase & {
+  op_code: OperationType.REQUEST_INVITE;
+  data: RequestInvitePayload;
+};
+
+export type Operation =
+  | GiveOperation
+  | MintOperation
+  | TrustOperation
+  | RequestInviteOperation;
 
 export type OperationsState = List<Operation>;
 
