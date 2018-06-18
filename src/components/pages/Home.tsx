@@ -22,7 +22,11 @@ const HomeView: React.StatelessComponent<HomeProps> = props => {
   return (
     <View style={styles.container}>
       <Text>Give Raha to:</Text>
-      <MemberSearchBar />
+      <MemberSearchBar
+        onMemberSelected={member => {
+          console.log(member.username + " clicked");
+        }}
+      />
       <ActivityFeed />
       <View style={styles.spacer} />
       {!props.loggedInUserId ? (
