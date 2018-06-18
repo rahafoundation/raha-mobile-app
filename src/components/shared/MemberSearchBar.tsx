@@ -3,7 +3,7 @@
  */
 import * as React from "react";
 import { FlatList, View, StyleSheet, Text } from "react-native";
-import { SearchBar as SearchBarComponent, List } from "react-native-elements";
+import { SearchBar } from "react-native-elements";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../store";
 import { MembersState, Member } from "../../store/reducers/members";
@@ -16,16 +16,19 @@ type ReduxStateProps = {
 
 type OwnProps = {};
 
-type SearchBarProps = ReduxStateProps & OwnProps;
+type MemberSearchBarProps = ReduxStateProps & OwnProps;
 
-type SearchBarState = {
+type MemberSearchBarState = {
   suggestedMembers: Member[];
 };
 
-class SearchBarView extends React.Component<SearchBarProps, SearchBarState> {
+class MemberSearchBarView extends React.Component<
+  MemberSearchBarProps,
+  MemberSearchBarState
+> {
   state = {
     suggestedMembers: []
-  } as SearchBarState;
+  } as MemberSearchBarState;
 
   /**
    * Suggests members via simple autocompletion if the search query case-insensitively
@@ -66,7 +69,7 @@ class SearchBarView extends React.Component<SearchBarProps, SearchBarState> {
   render() {
     return (
       <View style={styles.container}>
-        <SearchBarComponent
+        <SearchBar
           style={styles.searchBar}
           onChangeText={text => this.suggestMembers(text)}
           onClearText={() => this.clearSuggestions()}
@@ -130,4 +133,4 @@ const mapStateToProps: MapStateToProps<
   };
 };
 
-export const SearchBar = connect(mapStateToProps)(SearchBarView);
+export const MemberSearchBar = connect(mapStateToProps)(MemberSearchBarView);

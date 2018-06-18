@@ -4,7 +4,7 @@ import { Button } from "react-native-elements";
 import { connect, MapStateToProps } from "react-redux";
 
 import { RahaState } from "../../store";
-import { SearchBar } from "../shared/SearchBar";
+import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { RouteName } from "../../../App";
 
@@ -22,7 +22,7 @@ const HomeView: React.StatelessComponent<HomeProps> = props => {
   return (
     <View style={styles.container}>
       <Text>Give Raha to:</Text>
-      <SearchBar />
+      <MemberSearchBar />
       <ActivityFeed />
       <View style={styles.spacer} />
       {!props.loggedInUserId ? (
