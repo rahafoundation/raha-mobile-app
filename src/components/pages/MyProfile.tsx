@@ -27,7 +27,7 @@ class MyProfileView extends React.Component<MyProfileProps> {
     if (!this.props.member) {
       return <Text>Loading</Text>;
     }
-    return <Profile member={this.props.member} />;
+    return <Profile isOwnProfile={true} member={this.props.member} />;
   }
 }
 

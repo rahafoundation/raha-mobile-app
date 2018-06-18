@@ -10,17 +10,26 @@ import { Member } from "../../store/reducers/members";
 type OwnProps = {
   navigation: any;
   member: Member;
+  isOwnProfile: boolean;
 };
 
 type StateProps = {};
 
 type DispatchProps = {
   mint: () => void;
+  trust: () => void;
 };
 
 type ProfileProps = OwnProps & StateProps & DispatchProps;
 
 class ProfileView extends React.Component<ProfileProps> {
+  renderActions() {
+    if (this.props.isOwnProfile) {
+      return <Button title="Mint" onPress={this.props.mint} />;
+    }
+    return <Button title="Trust" onPress={this.props.trust} />;
+  }
+
   renderThumbnail() {
     return (
       <View style={{ flex: 1 }}>
@@ -68,7 +77,7 @@ class ProfileView extends React.Component<ProfileProps> {
           {this.renderThumbnail()}
           <View style={{ flex: 3 }}>
             {this.renderStats()}
-            <Button title="Mint" onPress={this.props.mint} />
+            {this.renderActions()}
           </View>
         </View>
         <View style={{ flex: 3, backgroundColor: "red", width: "100%" }}>
@@ -108,11 +117,16 @@ function mint() {
   return null; // TODO
 }
 
+function trust() {
+  return null; // TODO
+}
+
 const mapDispatchToProps: MapDispatchToProps<
   DispatchProps,
   OwnProps
 > = dispatch => ({
-  mint: () => dispatch(mint())
+  mint: () => dispatch(mint()),
+  trust: () => dispatch(trust())
 });
 
 export const Profile = connect(
