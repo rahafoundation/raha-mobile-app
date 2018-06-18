@@ -1,3 +1,8 @@
+/**
+ * Show the users profile, such as their name, balance, and trust connections.
+ * If it is your own profile, then there will be additional information such
+ * as ability to Mint.
+ */
 import * as React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
