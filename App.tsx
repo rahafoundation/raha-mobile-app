@@ -8,6 +8,7 @@ import { Home } from "./src/components/pages/Home";
 import { LogIn } from "./src/components/pages/LogIn";
 import { OnboardingCamera } from "./src/components/pages/OnboardingCamera";
 import { Onboarding } from "./src/components/pages/Onboarding";
+import { MyProfile } from "./src/components/pages/MyProfile";
 import { store, persistor } from "./src/store";
 import { refreshMembers } from "./src/store/actions/members";
 import { VideoPreview } from "./src/components/pages/VideoPreview";
@@ -17,6 +18,7 @@ export enum RouteName {
   Onboarding = "Onboarding",
   OnboardingCamera = "OnboardingCamera",
   LogIn = "LogIn",
+  MyProfile = "MyProfile",
   VideoPreview = "VideoPreview"
 }
 
@@ -34,12 +36,15 @@ const Navigator = createStackNavigator(
     LogIn: {
       screen: LogIn
     },
+    MyProfile: {
+      screen: MyProfile
+    },
     VideoPreview: {
       screen: VideoPreview
     }
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
-    initialRouteName: "Home"
+    initialRouteName: RouteName.LogIn
   }
 );
 
