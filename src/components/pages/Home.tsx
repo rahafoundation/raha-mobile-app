@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-elements";
 import { connect, MapStateToProps } from "react-redux";
 
