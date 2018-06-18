@@ -1,5 +1,6 @@
 export const config = {
   apiBase: "https://raha-5395e.appspot.com/api/",
+  publicVideoBucket: "raha-video",
   firebase: {
     apiKey: "AIzaSyBXuACowZcLcr1wlhM53LHtibFwa59EmAY",
     authDomain: "app.raha.io",
