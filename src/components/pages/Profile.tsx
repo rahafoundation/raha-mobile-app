@@ -5,11 +5,9 @@
  */
 import * as React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
-import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
+import { connect, MapDispatchToProps } from "react-redux";
 
 import { Video } from "expo";
-import { RahaState } from "../../store";
-import { getMembersByIds } from "../../store/selectors/members";
 import { Member } from "../../store/reducers/members";
 
 type OwnProps = {
@@ -39,7 +37,7 @@ class ProfileView extends React.Component<ProfileProps> {
     return (
       <View style={{ flex: 1 }}>
         <Video
-          source={{ uri: this.props.member.videoUri() }}
+          source={{ uri: this.props.member.videoUri }}
           volume={1.0}
           isMuted={true}
           usePoster={true}
