@@ -5,40 +5,38 @@ import { List } from "immutable";
 
 import { RahaState } from "../../store";
 import { Operation } from "../../store/reducers/operations";
+import { ActivityItem } from "./ActivityItem/index";
 
 interface StateProps {
   operations: List<Operation>;
 }
 
-type ActivityFeedProps = StateProps;
+interface OwnProps {
+  filter?: (operation: Operation) => boolean;
+}
+
+type ActivityFeedProps = OwnProps & StateProps;
 
 export const ActivityFeedView: React.StatelessComponent<
   ActivityFeedProps
 > = props => {
+  const operations = props.filter
+    ? props.operations.filter(props.filter)
+    : props.operations;
   return (
     <FlatList
-      data={props.operations
+      data={operations
         .map(operation => ({
           key: operation.id,
-          text: JSON.stringify(operation)
+          operation: operation
         }))
+        .reverse()
         .toArray()}
-      renderItem={({ item }) => <ActivityItem text={item.text} />}
+      renderItem={({ item }) => <ActivityItem operation={item.operation} />}
     />
   );
 };
 
-type ActivityItemProps = {
-  text: string;
-};
-
-const ActivityItem: React.StatelessComponent<ActivityItemProps> = props => {
-  return (
-    <View style={styles.item}>
-      <Text>{props.text}</Text>
-    </View>
-  );
-};
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
   return {
     operations: state.operations
@@ -46,8 +44,4 @@ const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
 };
 export const ActivityFeed = connect(mapStateToProps)(ActivityFeedView);
 
-const styles = StyleSheet.create({
-  item: {
-    padding: 12
-  }
-});
+const styles = StyleSheet.create({});
