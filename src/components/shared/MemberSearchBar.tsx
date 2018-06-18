@@ -83,6 +83,7 @@ class MemberSearchBarView extends React.Component<
           onClearText={() => this.clearSuggestions()}
         />
         <FlatList
+          // Make onPress go to the item instead of dismissing keyboard
           keyboardShouldPersistTaps="always"
           data={this.state.suggestedMembers}
           keyExtractor={item => {
