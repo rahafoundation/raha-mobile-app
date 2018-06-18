@@ -44,6 +44,9 @@ const styles = StyleSheet.create({
   },
   spacer: {
     flexGrow: 1
+  },
+  searchBar: {
+    width: "100%"
   }
 });
 
