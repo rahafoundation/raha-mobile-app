@@ -7,6 +7,7 @@ import { OperationsActionType } from "../actions/operations";
 import { MembersAction } from "../actions/members";
 import { Operation, OperationType } from "./operations";
 import { OperationInvalidError } from "../../errors/OperationInvalidError";
+import { config } from "../../data/config";
 
 const GENESIS_REQUEST_INVITE_OPS = [
   "InuYAjMISl6operovXIR",
@@ -113,7 +114,7 @@ export class Member {
   }
 
   public videoUri(): string {
-    return `https://storage.googleapis.com/raha-video/${
+    return `https://storage.googleapis.com/${config.publicVideoBucket}/${
       this.memberId
     }/invite.mp4`;
   }

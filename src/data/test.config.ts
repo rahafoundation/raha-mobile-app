@@ -2,6 +2,7 @@ import { Config } from "./prod.config";
 
 export const config: Config = {
   apiBase: "https://raha-test.appspot.com/api/",
+  publicVideoBucket: "raha-video-test",
   firebase: {
     apiKey: "AIzaSyDz4sg33FdGUEAawsbnJDf6GKs8TPt5inU",
     authDomain: "raha-test.firebaseapp.com",
