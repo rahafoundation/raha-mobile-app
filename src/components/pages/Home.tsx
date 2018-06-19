@@ -1,12 +1,10 @@
 import * as React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { Button } from "react-native-elements";
+import { Text, View } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
 import { RahaState } from "../../store";
 import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { ActivityFeed } from "../shared/ActivityFeed";
-import { RouteName } from "../shared/Navigation";
 import { OperationType } from "../../store/reducers/operations";
 
 type OwnProps = {
@@ -21,7 +19,7 @@ type HomeProps = OwnProps & StateProps;
 
 const HomeView: React.StatelessComponent<HomeProps> = props => {
   return (
-    <View style={styles.container}>
+    <View>
       <Text>Give Raha to:</Text>
       <MemberSearchBar
         onMemberSelected={member => {
@@ -31,31 +29,9 @@ const HomeView: React.StatelessComponent<HomeProps> = props => {
       <ActivityFeed
         filter={operation => operation.op_code !== OperationType.MINT}
       />
-      <View style={styles.spacer} />
-      {!props.loggedInUserId ? (
-        <Button
-          title="Log In"
-          onPress={() => props.navigation.navigate(RouteName.LogIn)}
-        />
-      ) : (
-        <Text>{props.loggedInUserId}</Text>
-      )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
-  },
-  spacer: {
-    flexGrow: 1
-  },
-  searchBar: {
-    width: "100%"
-  }
-});
 
 const mapStateToProps: MapStateToProps<
   StateProps,

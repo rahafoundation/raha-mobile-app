@@ -6,17 +6,24 @@
 import * as React from "react";
 import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
 
-type RoundedButtonProps = {
+type ButtonProps = {
   text: string;
   onPress: () => void;
+  // TODO: figure out a better API for doing this
+  backgroundColor?: string;
 };
 
-export const RoundedButton: React.StatelessComponent<
-  RoundedButtonProps
-> = props => {
+export const Button: React.StatelessComponent<ButtonProps> = props => {
   return (
     <TouchableOpacity onPress={props.onPress}>
-      <View style={styles.button}>
+      <View
+        style={[
+          styles.button,
+          ...(props.backgroundColor
+            ? [{ backgroundColor: props.backgroundColor }]
+            : [])
+        ]}
+      >
         <Text style={styles.text}>{props.text.toUpperCase()}</Text>
       </View>
     </TouchableOpacity>
@@ -28,7 +35,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 2,
     borderColor: "#fff",
-    paddingHorizontal: 50,
+    paddingHorizontal: 30,
     paddingVertical: 10
   },
   // Button text
