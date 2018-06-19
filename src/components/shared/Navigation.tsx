@@ -28,7 +28,7 @@ export enum RouteName {
   Give = "Give"
 }
 
-const SignedIn = createMaterialBottomTabNavigator(
+const SignedInNavigator = createMaterialBottomTabNavigator(
   {
     Home: {
       screen: Home
@@ -52,7 +52,7 @@ const SignedIn = createMaterialBottomTabNavigator(
     navigationOptions: ({ navigation }: any) => ({
       tabBarIcon: ({ focused }: any) => {
         const { routeName } = navigation.state;
-        let iconName = null;
+        let iconName;
         let IconType = Icon;
         switch (routeName) {
           case RouteName.MyProfile:
@@ -75,12 +75,9 @@ const SignedIn = createMaterialBottomTabNavigator(
             IconType = Ionicons;
             break;
           default:
-            iconName = "bad";
-            IconType = Ionicons;
+            console.error(`Unrecognized route ${routeName}`);
             break;
         }
-        // You can return any component that you like here! We usually use an
-        // icon component from react-native-vector-icons
         return (
           <IconType
             name={`${iconName}${focused ? "" : "-outline"}`}
@@ -97,7 +94,7 @@ const SignedIn = createMaterialBottomTabNavigator(
   }
 );
 
-const SignedOut = createStackNavigator(
+const SignedOutNavigator = createStackNavigator(
   {
     OnboardingCamera: {
       screen: OnboardingCamera
@@ -117,7 +114,7 @@ const SignedOut = createStackNavigator(
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
     headerMode: "screen",
-    initialRouteName: RouteName.Onboarding
+    initialRouteName: RouteName.LogIn
   }
 );
 
@@ -143,9 +140,9 @@ class NavigationView extends React.Component<Props> {
     }
 
     if (hasAccount) {
-      return <SignedIn />;
+      return <SignedInNavigator />;
     } else {
-      return <SignedOut />;
+      return <SignedOutNavigator />;
     }
   }
 }

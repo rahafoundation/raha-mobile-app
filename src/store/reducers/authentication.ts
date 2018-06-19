@@ -35,6 +35,12 @@ export const reducer: Reducer<AuthenticationState> = (
         firebaseUser: undefined,
         existingAuthMethod: action.authMethod
       };
+    case AuthenticationActionType.SIGN_OUT:
+      return {
+        isLoaded: true,
+        firebaseUser: undefined,
+        existingAuthMethod: undefined
+      };
     default:
       return state;
   }
