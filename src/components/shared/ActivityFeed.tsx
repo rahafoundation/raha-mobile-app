@@ -4,7 +4,7 @@
  * Raha, trust each other, or join Raha.
  */
 import * as React from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet, FlatListProps } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import { List } from "immutable";
 
@@ -27,6 +27,33 @@ type ActivityFeedProps = OwnProps & StateProps;
 export class ActivityFeedView extends React.Component<ActivityFeedProps> {
   activities: { [key in OperationId]?: ActivityTemplate } = {};
 
+  private onViewableItemsChanged: FlatListProps<
+    Operation
+  >["onViewableItemsChanged"] = ({ viewableItems, changed }) => {
+    viewableItems.forEach(async item => {
+      const operation: Operation = item.item;
+      if (!item.isViewable) {
+        return;
+      }
+      const activityComponent = this.activities[operation.id];
+      if (!activityComponent) {
+        return;
+      }
+      await activityComponent.startVideo();
+    });
+    changed.forEach(async item => {
+      const operation: Operation = item.item;
+      if (item.isViewable) {
+        return;
+      }
+      const activityComponent = this.activities[operation.id];
+      if (!activityComponent) {
+        return;
+      }
+      await activityComponent.resetVideo();
+    });
+  };
+
   render() {
     const operations = this.props.filter
       ? this.props.operations.filter(this.props.filter)
@@ -43,30 +70,7 @@ export class ActivityFeedView extends React.Component<ActivityFeedProps> {
             }}
           />
         )}
-        onViewableItemsChanged={({ viewableItems, changed }) => {
-          viewableItems.forEach(async item => {
-            const operation: Operation = item.item;
-            if (!item.isViewable) {
-              return;
-            }
-            const activityComponent = this.activities[operation.id];
-            if (!activityComponent) {
-              return;
-            }
-            await activityComponent.startVideo();
-          });
-          changed.forEach(async item => {
-            const operation: Operation = item.item;
-            if (item.isViewable) {
-              return;
-            }
-            const activityComponent = this.activities[operation.id];
-            if (!activityComponent) {
-              return;
-            }
-            await activityComponent.resetVideo();
-          });
-        }}
+        onViewableItemsChanged={this.onViewableItemsChanged}
       />
     );
   }
