@@ -7,7 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Home } from "../pages/Home";
 import { LogIn } from "../pages/LogIn";
 import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
-import { Onboarding } from "../pages/Onboarding/Onboarding";
+import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
 import { MyProfile } from "../pages/MyProfile";
 import { VideoPreview } from "../pages/VideoPreview";
 import { getMembersByIds } from "../../../src/store/selectors/members";
@@ -19,7 +19,7 @@ import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
 
 export enum RouteName {
   Home = "Home",
-  Onboarding = "Onboarding",
+  OnboardingSplash = "OnboardingSplash",
   OnboardingCamera = "OnboardingCamera",
   OnboardingInvite = "OnboardingInvite",
   LogIn = "LogIn",
@@ -36,12 +36,15 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
       screen: Home
     },
     Search: {
+      // TODO: Implement page
       screen: OnboardingCamera
     },
     Give: {
+      // TODO: Implement page
       screen: OnboardingCamera
     },
     Invite: {
+      // TODO: Implement page
       screen: OnboardingCamera
     },
     MyProfile: {
@@ -101,8 +104,8 @@ const SignedOutNavigator = createStackNavigator(
     OnboardingCamera: {
       screen: OnboardingCamera
     },
-    Onboarding: {
-      screen: Onboarding
+    OnboardingSplash: {
+      screen: OnboardingSplash
     },
     OnboardingInvite: {
       screen: OnboardingInvite
