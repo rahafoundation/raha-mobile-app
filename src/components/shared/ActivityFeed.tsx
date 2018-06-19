@@ -20,6 +20,7 @@ interface StateProps {
 
 interface OwnProps {
   filter?: (operation: Operation) => boolean;
+  header?: React.ReactNode;
 }
 
 type ActivityFeedProps = OwnProps & StateProps;
@@ -54,12 +55,17 @@ export class ActivityFeedView extends React.Component<ActivityFeedProps> {
     });
   };
 
+  private renderHeader = () => {
+    return this.props.header as React.ReactElement<any>;
+  };
+
   render() {
     const operations = this.props.filter
       ? this.props.operations.filter(this.props.filter)
       : this.props.operations;
     return (
       <FlatList
+        ListHeaderComponent={this.props.header ? this.renderHeader : undefined}
         data={operations.reverse().toArray()}
         keyExtractor={operation => operation.id}
         renderItem={operationItem => (
