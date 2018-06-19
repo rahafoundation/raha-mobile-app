@@ -21,6 +21,14 @@ type ReduxStateProps = {
 };
 
 type OwnProps = {
+  /**
+   * Placeholder text
+   */
+  placeholderText?: string;
+
+  /**
+   * Callback when member is selected from the search bar
+   */
   onMemberSelected: (member: Member) => any;
 };
 
@@ -78,6 +86,7 @@ class MemberSearchBarView extends React.Component<
     return (
       <View style={styles.container}>
         <SearchBar
+          placeholder={this.props.placeholderText}
           style={styles.searchBar}
           onChangeText={text => this.suggestMembers(text)}
           onClearText={() => this.clearSuggestions()}
