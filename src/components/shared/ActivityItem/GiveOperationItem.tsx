@@ -10,23 +10,26 @@ import { getMembersByIds } from "../../../store/selectors/members";
 
 type OwnProps = {
   operation: GiveOperation;
+  activityRef?: React.Ref<ActivityTemplate>;
 };
 type StateProps = {
-  toMember?: Member;
+  toMember: Member;
   fromMember: Member;
 };
 type GiveOperationItemProps = OwnProps & StateProps;
 
 export const GiveOperationItemView: React.StatelessComponent<
   GiveOperationItemProps
-> = ({ operation, fromMember, toMember }) => {
+> = ({ operation, fromMember, toMember, activityRef }) => {
   return (
     <ActivityTemplate
-      message={`Give ${operation.data.memo} `}
+      message={`I just gave you Raha for: ${operation.data.memo} `}
       from={fromMember}
       to={toMember}
       timestamp={new Date(operation.created_at)}
       amount={new Big(operation.data.amount)}
+      donationAmount={new Big(operation.data.donation_amount)}
+      ref={activityRef}
     />
   );
 };
@@ -40,7 +43,17 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
     getMembersByIds(state, [ownProps.operation.data.to_uid])[0]
   ];
   if (!fromMember || !toMember) {
-    throw new Error("aah");
+    // TODO: log the following properly, properly handle cases when members are
+    // missing instead of throwing uncaught error
+    throw new Error(
+      `Member missing: ${JSON.stringify({
+        fromMember: {
+          id: ownProps.operation.creator_uid,
+          memberDoc: fromMember
+        },
+        toMember: { id: ownProps.operation.data.to_uid, memberDoc: toMember }
+      })}`
+    );
   }
   return { fromMember, toMember };
 };

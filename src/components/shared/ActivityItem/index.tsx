@@ -6,17 +6,33 @@ import { GiveOperationItem } from "./GiveOperationItem";
 import { MintOperationItem } from "./MintOperationItem";
 import { RequestInviteOperationItem } from "./RequestInviteOperationItem";
 import { TrustOperationItem } from "./TrustOperationItem";
+import { ActivityTemplate } from "./ActivityTemplate";
 
-function renderOperation(operation: Operation) {
+function renderOperation(
+  operation: Operation,
+  activityRef?: React.Ref<ActivityTemplate>
+) {
+  let Component;
   switch (operation.op_code) {
     case OperationType.GIVE:
-      return <GiveOperationItem operation={operation} />;
+      return (
+        <GiveOperationItem operation={operation} activityRef={activityRef} />
+      );
     case OperationType.MINT:
-      return <MintOperationItem operation={operation} />;
+      return (
+        <MintOperationItem operation={operation} activityRef={activityRef} />
+      );
     case OperationType.REQUEST_INVITE:
-      return <RequestInviteOperationItem operation={operation} />;
+      return (
+        <RequestInviteOperationItem
+          operation={operation}
+          activityRef={activityRef}
+        />
+      );
     case OperationType.TRUST:
-      return <TrustOperationItem operation={operation} />;
+      return (
+        <TrustOperationItem operation={operation} activityRef={activityRef} />
+      );
     default:
       // Shouldn't happen. Type assertion is because TypeScript also thinks this
       // should never happen.
@@ -34,16 +50,14 @@ function renderOperation(operation: Operation) {
 
 type ActivityItemProps = {
   operation: Operation;
+  activityRef?: React.Ref<ActivityTemplate>;
 };
 
 export const ActivityItem: React.StatelessComponent<ActivityItemProps> = ({
-  operation
+  operation,
+  activityRef
 }) => {
-  return <View style={styles.item}>{renderOperation(operation)}</View>;
+  return <View>{renderOperation(operation, activityRef)}</View>;
 };
 
-const styles = StyleSheet.create({
-  item: {
-    padding: 12
-  }
-});
+const styles = StyleSheet.create({});
