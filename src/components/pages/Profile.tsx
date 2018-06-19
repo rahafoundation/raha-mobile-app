@@ -5,13 +5,15 @@
  */
 import * as React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
-import { connect, MapDispatchToProps } from "react-redux";
+import { connect, MapDispatchToProps, MergeProps } from "react-redux";
 
 import { Video } from "expo";
 import { Member } from "../../store/reducers/members";
 import { signOut } from "../../store/actions/authentication";
-import { AsyncActionCreator } from "../../store/actions";
 import { RahaThunkDispatch } from "../../store";
+import { trustMember } from "../../store/actions/members";
+import { MemberId } from "../../identifiers";
+import { mint } from "../../store/actions/wallet";
 
 type OwnProps = {
   member: Member;
@@ -23,13 +25,19 @@ type StateProps = {};
 type DispatchProps = {
   signOut: () => void;
   mint: () => void;
+  trust: (memberId: MemberId) => void;
+};
+
+type MergedDispatchProps = Pick<DispatchProps, "mint" | "signOut"> & {
   trust: () => void;
 };
 
-type ProfileProps = OwnProps & StateProps & DispatchProps;
+type MergedProps = StateProps & OwnProps & MergedDispatchProps;
+
+type ProfileProps = MergedProps;
 
 const Actions: React.StatelessComponent<
-  { isOwnProfile: boolean } & DispatchProps
+  { isOwnProfile: boolean } & MergedDispatchProps
 > = props =>
   props.isOwnProfile ? (
     <View>
@@ -119,21 +127,28 @@ const styles = StyleSheet.create({
   }
 });
 
-// TODO: implement these, and place them in actions dir.
-let mint: AsyncActionCreator = () => dispatch => {
-  console.error("not yet implemented");
-};
-let trust: AsyncActionCreator = () => dispatch => {
-  console.error("not yet implemented");
-};
-
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   dispatch: RahaThunkDispatch
 ) => {
   return {
     mint: () => dispatch(mint()),
-    trust: () => dispatch(trust()),
+    trust: (memberId: MemberId) => dispatch(trustMember(memberId)),
     signOut: () => dispatch(signOut())
+  };
+};
+
+const mergeProps: MergeProps<
+  StateProps,
+  DispatchProps,
+  OwnProps,
+  MergedProps
+> = (stateProps, dispatchProps, ownProps) => {
+  return {
+    ...stateProps,
+    trust: () => dispatchProps.trust(ownProps.member.memberId),
+    signOut: dispatchProps.signOut,
+    mint: dispatchProps.mint,
+    ...ownProps
   };
 };
 
