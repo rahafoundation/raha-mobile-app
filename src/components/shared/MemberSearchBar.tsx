@@ -17,7 +17,7 @@ import { MembersState, Member } from "../../store/reducers/members";
 const NUM_AUTOCOMPLETION_SUGGESTIONS = 3;
 
 type ReduxStateProps = {
-  members: MembersState;
+  members: Member[];
 };
 
 type OwnProps = {
@@ -37,6 +37,8 @@ type OwnProps = {
    * taps and the keyboard will not dismiss automatically.
    */
   keyboardShouldPersistTaps?: boolean | "always" | "never" | "handled";
+  excludeMembers?: Member[];
+  lightTheme?: boolean;
 };
 
 type MemberSearchBarProps = ReduxStateProps & OwnProps;
@@ -64,9 +66,7 @@ class MemberSearchBarView extends React.Component<
     }
 
     let filteredMembers: Member[] = [];
-    for (let member of Array.from(
-      this.props.members.byMemberUsername.values()
-    )) {
+    for (let member of this.props.members) {
       let searchedTextLowercase = searchedText.toLowerCase();
       if (
         member.fullName.toLowerCase().startsWith(searchedTextLowercase) ||
@@ -95,6 +95,7 @@ class MemberSearchBarView extends React.Component<
         <SearchBar
           placeholder={this.props.placeholderText}
           style={styles.searchBar}
+          lightTheme={this.props.lightTheme ? this.props.lightTheme : false}
           onChangeText={text => this.suggestMembers(text)}
           onClearText={() => this.clearSuggestions()}
         />
@@ -158,13 +159,16 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps: MapStateToProps<
-  ReduxStateProps,
-  OwnProps,
-  RahaState
-> = state => {
+const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
+  state,
+  ownProps
+) => {
+  const allMembers = Array.from(state.members.byMemberUsername.values());
+  const { excludeMembers } = ownProps;
   return {
-    members: state.members
+    members: excludeMembers
+      ? allMembers.filter(member => excludeMembers.indexOf(member) < 0)
+      : allMembers
   };
 };
 
