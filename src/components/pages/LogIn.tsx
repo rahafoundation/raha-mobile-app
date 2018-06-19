@@ -37,7 +37,7 @@ class LogInView extends React.Component<LogInProps> {
       this.props.navigation.navigate(RouteName.Home);
       return;
     }
-    this.props.navigation.navigate(RouteName.Onboarding);
+    this.props.navigation.navigate(RouteName.OnboardingSplash);
   }
 
   render() {
@@ -62,7 +62,9 @@ class LogInView extends React.Component<LogInProps> {
         />
         <Button
           title="Sign Up"
-          onPress={() => this.props.navigation.navigate("Onboarding")}
+          onPress={() =>
+            this.props.navigation.navigate(RouteName.OnboardingSplash)
+          }
         />
       </View>
     );
