@@ -118,9 +118,7 @@ const SignedOutNavigator = createStackNavigator(
   }
 );
 
-type OwnProps = {
-  navigation: any;
-};
+type OwnProps = {};
 
 type StateProps = {
   isLoaded: boolean;
@@ -171,7 +169,4 @@ const mapStateToProps: MapStateToProps<
   };
 };
 
-export const Navigation = connect(
-  mapStateToProps,
-  {}
-)(NavigationView);
+export const Navigation = connect(mapStateToProps, {})(NavigationView);
