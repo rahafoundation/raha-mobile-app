@@ -4,6 +4,7 @@ import { Text } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+import { Give } from "../pages/Give";
 import { Home } from "../pages/Home";
 import { LogIn } from "../pages/LogIn";
 import { Profile } from "../pages/Profile";
