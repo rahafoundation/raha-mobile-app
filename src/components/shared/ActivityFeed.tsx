@@ -59,7 +59,7 @@ export class ActivityFeedView extends React.Component<ActivityFeedProps> {
             if (!activityComponent) {
               return;
             }
-            await activityComponent.stopVideo();
+            await activityComponent.resetVideo();
           });
         }}
       />

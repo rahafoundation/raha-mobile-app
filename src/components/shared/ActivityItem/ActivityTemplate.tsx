@@ -31,14 +31,25 @@ export class ActivityTemplate extends React.Component<
   } as ActivityTemplateState;
   videoElem: PlaybackObject | undefined;
 
+  /**
+   * Start video playback
+   */
   public startVideo = async () => {
     if (!this.videoElem) return;
     await this.videoElem.playAsync();
   };
 
-  public stopVideo = async () => {
+  /**
+   * Reset video playback state, stop it
+   */
+  public resetVideo = async () => {
     if (!this.videoElem) return;
     await this.videoElem.stopAsync();
+    this.videoElem.setPositionAsync(0);
+    this.setState({
+      videoPressed: false,
+      videoPlaybackFinished: false
+    });
   };
 
   private handleVideoPress = async () => {
