@@ -132,11 +132,6 @@ class NavigationView extends React.Component<Props> {
   render() {
     const { isLoaded, hasAccount } = this.props;
 
-    // If we haven't checked AsyncStorage yet, don't render anything (better ways to do this)
-    if (!isLoaded) {
-      return <Text>Loading</Text>;
-    }
-
     if (hasAccount) {
       return <SignedInNavigator />;
     } else {
