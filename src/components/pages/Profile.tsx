@@ -64,7 +64,6 @@ const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
       resizeMode={Video.RESIZE_MODE_COVER}
       shouldPlay
       isLooping
-      // @ts-ignore Expo typing for Video is missing `style`
       style={styles.video}
     />
     <Text style={styles.memberName}>{props.member.fullName}</Text>
