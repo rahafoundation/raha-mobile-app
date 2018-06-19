@@ -1,5 +1,10 @@
+/**
+ * Filterable list of actions members have taken. Those actions are a
+ * human-readable form of backend Operations, like when people give each other
+ * Raha, trust each other, or join Raha.
+ */
 import * as React from "react";
-import { FlatList, View, Text, StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import { List } from "immutable";
 

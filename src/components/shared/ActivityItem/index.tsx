@@ -1,37 +1,56 @@
+/**
+ * Renders the proper Activity for a given Operation.
+ */
+
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 
 import { OperationType, Operation } from "../../../store/reducers/operations";
-import { GiveOperationItem } from "./GiveOperationItem";
-import { MintOperationItem } from "./MintOperationItem";
-import { RequestInviteOperationItem } from "./RequestInviteOperationItem";
-import { TrustOperationItem } from "./TrustOperationItem";
+import { GiveOperationActivity } from "./GiveOperationActivity";
+import { MintOperationActivity } from "./MintOperationActivity";
+import { RequestInviteOperationActivity } from "./RequestInviteOperationActivity";
+import { TrustOperationActivity } from "./TrustOperationActivity";
 import { ActivityTemplate } from "./ActivityTemplate";
 
-function renderOperation(
-  operation: Operation,
-  activityRef?: React.Ref<ActivityTemplate>
-) {
-  let Component;
+type ActivityItemProps = {
+  operation: Operation;
+  // Used to get a handle to the underlying ActivityTemplate component this
+  // outputs
+  activityRef?: React.Ref<ActivityTemplate>;
+};
+
+export const ActivityItem: React.StatelessComponent<ActivityItemProps> = ({
+  operation,
+  activityRef
+}) => {
   switch (operation.op_code) {
     case OperationType.GIVE:
       return (
-        <GiveOperationItem operation={operation} activityRef={activityRef} />
+        <GiveOperationActivity
+          operation={operation}
+          activityRef={activityRef}
+        />
       );
     case OperationType.MINT:
       return (
-        <MintOperationItem operation={operation} activityRef={activityRef} />
+        <MintOperationActivity
+          operation={operation}
+          activityRef={activityRef}
+        />
       );
     case OperationType.REQUEST_INVITE:
       return (
-        <RequestInviteOperationItem
+        <RequestInviteOperationActivity
           operation={operation}
           activityRef={activityRef}
         />
       );
     case OperationType.TRUST:
       return (
-        <TrustOperationItem operation={operation} activityRef={activityRef} />
+        <TrustOperationActivity
+          operation={operation}
+          activityRef={activityRef}
+        />
       );
     default:
       // Shouldn't happen. Type assertion is because TypeScript also thinks this
@@ -46,18 +65,4 @@ function renderOperation(
       );
       return <View />;
   }
-}
-
-type ActivityItemProps = {
-  operation: Operation;
-  activityRef?: React.Ref<ActivityTemplate>;
 };
-
-export const ActivityItem: React.StatelessComponent<ActivityItemProps> = ({
-  operation,
-  activityRef
-}) => {
-  return <View>{renderOperation(operation, activityRef)}</View>;
-};
-
-const styles = StyleSheet.create({});

@@ -1,7 +1,9 @@
+/**
+ * Visual display of a Trust operation in the ActivityFeed.
+ */
 import * as React from "react";
-import { Big } from "big.js";
 
-import { GiveOperation } from "../../../store/reducers/operations";
+import { TrustOperation } from "../../../store/reducers/operations";
 import { ActivityTemplate } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
@@ -9,26 +11,24 @@ import { Member } from "../../../store/reducers/members";
 import { getMembersByIds } from "../../../store/selectors/members";
 
 type OwnProps = {
-  operation: GiveOperation;
+  operation: TrustOperation;
   activityRef?: React.Ref<ActivityTemplate>;
 };
 type StateProps = {
-  toMember: Member;
   fromMember: Member;
+  toMember: Member;
 };
-type GiveOperationItemProps = OwnProps & StateProps;
+type TrustOperationActivityProps = OwnProps & StateProps;
 
-export const GiveOperationItemView: React.StatelessComponent<
-  GiveOperationItemProps
+export const TrustOperationActivityView: React.StatelessComponent<
+  TrustOperationActivityProps
 > = ({ operation, fromMember, toMember, activityRef }) => {
   return (
     <ActivityTemplate
-      message={`I just gave you Raha for: ${operation.data.memo} `}
+      message={"I have trusted you."}
       from={fromMember}
       to={toMember}
       timestamp={new Date(operation.created_at)}
-      amount={new Big(operation.data.amount)}
-      donationAmount={new Big(operation.data.donation_amount)}
       ref={activityRef}
     />
   );
@@ -58,6 +58,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return { fromMember, toMember };
 };
 
-export const GiveOperationItem = connect(mapStateToProps)(
-  GiveOperationItemView
+export const TrustOperationActivity = connect(mapStateToProps)(
+  TrustOperationActivityView
 );

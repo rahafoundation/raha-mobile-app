@@ -1,6 +1,10 @@
+/**
+ * Visual display of a Give operation in the ActivityFeed.
+ */
 import * as React from "react";
+import { Big } from "big.js";
 
-import { RequestInviteOperation } from "../../../store/reducers/operations";
+import { GiveOperation } from "../../../store/reducers/operations";
 import { ActivityTemplate } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
@@ -8,25 +12,26 @@ import { Member } from "../../../store/reducers/members";
 import { getMembersByIds } from "../../../store/selectors/members";
 
 type OwnProps = {
-  operation: RequestInviteOperation;
+  operation: GiveOperation;
   activityRef?: React.Ref<ActivityTemplate>;
 };
 type StateProps = {
-  fromMember: Member;
   toMember: Member;
+  fromMember: Member;
 };
-type RequestInviteOperationItemProps = OwnProps & StateProps;
+type GiveOperationActivityProps = OwnProps & StateProps;
 
-export const RequestInviteOperationItemView: React.StatelessComponent<
-  RequestInviteOperationItemProps
+export const GiveOperationActivityView: React.StatelessComponent<
+  GiveOperationActivityProps
 > = ({ operation, fromMember, toMember, activityRef }) => {
   return (
     <ActivityTemplate
-      message={`Your friend just joined Raha!`}
+      message={`I just gave you Raha for: ${operation.data.memo} `}
       from={fromMember}
       to={toMember}
       timestamp={new Date(operation.created_at)}
-      videoUri={fromMember.videoUri}
+      amount={new Big(operation.data.amount)}
+      donationAmount={new Big(operation.data.donation_amount)}
       ref={activityRef}
     />
   );
@@ -56,6 +61,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return { fromMember, toMember };
 };
 
-export const RequestInviteOperationItem = connect(mapStateToProps)(
-  RequestInviteOperationItemView
+export const GiveOperationActivity = connect(mapStateToProps)(
+  GiveOperationActivityView
 );

@@ -1,6 +1,9 @@
+/**
+ * Visual display of a RequestInvite operation in the ActivityFeed.
+ */
 import * as React from "react";
 
-import { TrustOperation } from "../../../store/reducers/operations";
+import { RequestInviteOperation } from "../../../store/reducers/operations";
 import { ActivityTemplate } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
@@ -8,24 +11,25 @@ import { Member } from "../../../store/reducers/members";
 import { getMembersByIds } from "../../../store/selectors/members";
 
 type OwnProps = {
-  operation: TrustOperation;
+  operation: RequestInviteOperation;
   activityRef?: React.Ref<ActivityTemplate>;
 };
 type StateProps = {
   fromMember: Member;
   toMember: Member;
 };
-type TrustOperationItemProps = OwnProps & StateProps;
+type RequestInviteOperationActivityProps = OwnProps & StateProps;
 
-export const TrustOperationItemView: React.StatelessComponent<
-  TrustOperationItemProps
+export const RequestInviteOperationActivityView: React.StatelessComponent<
+  RequestInviteOperationActivityProps
 > = ({ operation, fromMember, toMember, activityRef }) => {
   return (
     <ActivityTemplate
-      message={"I have trusted you."}
+      message={`Your friend just joined Raha!`}
       from={fromMember}
       to={toMember}
       timestamp={new Date(operation.created_at)}
+      videoUri={fromMember.videoUri}
       ref={activityRef}
     />
   );
@@ -55,6 +59,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return { fromMember, toMember };
 };
 
-export const TrustOperationItem = connect(mapStateToProps)(
-  TrustOperationItemView
+export const RequestInviteOperationActivity = connect(mapStateToProps)(
+  RequestInviteOperationActivityView
 );

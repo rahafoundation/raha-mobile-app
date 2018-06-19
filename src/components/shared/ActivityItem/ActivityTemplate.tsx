@@ -1,3 +1,7 @@
+/**
+ * General purpose component that displays all types of activities. Specific
+ * Activities like GiveOperationActivity ultimately output this component.
+ */
 import * as React from "react";
 import { format } from "date-fns";
 

@@ -1,3 +1,6 @@
+/**
+ * Visual display of a Mint operation in the ActivityFeed.
+ */
 import * as React from "react";
 import { Big } from "big.js";
 
@@ -15,10 +18,10 @@ type OwnProps = {
 type StateProps = {
   fromMember: Member;
 };
-type MintOperationItemProps = OwnProps & StateProps;
+type MintOperationActivityProps = OwnProps & StateProps;
 
-export const MintOperationItemView: React.StatelessComponent<
-  MintOperationItemProps
+export const MintOperationActivityView: React.StatelessComponent<
+  MintOperationActivityProps
 > = ({ operation, fromMember, activityRef }) => {
   return (
     <ActivityTemplate
@@ -51,6 +54,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return { fromMember };
 };
 
-export const MintOperationItem = connect(mapStateToProps)(
-  MintOperationItemView
+export const MintOperationActivity = connect(mapStateToProps)(
+  MintOperationActivityView
 );
