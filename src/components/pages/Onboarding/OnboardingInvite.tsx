@@ -1,15 +1,19 @@
 import * as React from "react";
 import { Member } from "../../../store/reducers/members";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TextInput } from "react-native";
 import { Text, Button } from "react-native-elements";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
 import { RouteName } from "../../../../App";
+import { connect, MapStateToProps } from "react-redux";
+import { RahaState } from "../../../store";
 
 /**
- *
+ * Page that confirms who the user is trying to get an invite from.
  */
 
-type ReduxStateProps = {};
+type ReduxStateProps = {
+  displayName: string | null;
+};
 
 type OwnProps = {
   deeplinkInvitingMember?: Member;
@@ -20,62 +24,30 @@ type OnboardingInviteProps = ReduxStateProps & OwnProps;
 
 type OnboardingInviteState = {
   invitingMember?: Member;
+  verifiedName?: string;
 };
 
-export class OnboardingInvite extends React.Component<
+export class OnboardingInviteView extends React.Component<
   OnboardingInviteProps,
   OnboardingInviteState
 > {
   state = {
-    invitingMember: this.props.deeplinkInvitingMember
+    invitingMember: this.props.deeplinkInvitingMember,
+    verifiedName: this.props.displayName ? this.props.displayName : undefined
   };
-
-  renderInviter() {
-    if (this.state.invitingMember) {
-      return (
-        <React.Fragment>
-          <Text>
-            You are requesting an invite from{" "}
-            {this.state.invitingMember.fullName}!
-          </Text>
-          <Button
-            title="Confirm"
-            onPress={() =>
-              this.props.navigation.navigate(RouteName.OnboardingCamera)
-            }
-          />
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <Text>
-          Raha is currently invite-only and you'll be recording a video with
-          your inviter on the next screen. Who is inviting you?
-        </Text>
-      );
-    }
-  }
-
-  renderNoInviter() {
-    return (
-      <View style={styles.container}>
-        <MemberSearchBar
-          placeholderText="Who are you requesting an invite from?"
-          onMemberSelected={member => {
-            this.setState({
-              invitingMember: member
-            });
-          }}
-        />
-      </View>
-    );
-  }
 
   render() {
     return (
       <View style={styles.container}>
+        <Text>Please confirm your full name:</Text>
+        <TextInput
+          placeholder="What's your full name?"
+          onChangeText={text => this.setState({ verifiedName: text })}
+          value={this.state.verifiedName}
+        />
+
         <MemberSearchBar
-          placeholderText="Who are you requesting an invite from?"
+          placeholderText="Who do you want to request an invite from?"
           onMemberSelected={member => {
             this.setState({
               invitingMember: member
@@ -83,12 +55,25 @@ export class OnboardingInvite extends React.Component<
           }}
         />
         {this.state.invitingMember && (
-          <Button
-            title={`Request invite from ${this.state.invitingMember.fullName}`}
-            onPress={() =>
-              this.props.navigation.navigate(RouteName.OnboardingCamera)
-            }
-          />
+          <React.Fragment>
+            <Text>
+              By pressing request, I agree that this is my real identity, my
+              full name, and the only time I have joined Raha. I understand that
+              creating duplicate or fake accounts may result in me and people I
+              have invited losing access to our accounts.
+            </Text>
+            <Button
+              title={`Request invite from ${
+                this.state.invitingMember.fullName
+              }`}
+              onPress={() =>
+                this.props.navigation.navigate(RouteName.OnboardingCamera, {
+                  invitingMember: this.state.invitingMember,
+                  verifiedName: this.state.verifiedName
+                })
+              }
+            />
+          </React.Fragment>
         )}
       </View>
     );
@@ -104,3 +89,15 @@ const styles = StyleSheet.create({
     width: "100%"
   }
 });
+
+const mapStateToProps: MapStateToProps<
+  ReduxStateProps,
+  OwnProps,
+  RahaState
+> = state => {
+  const { firebaseUser } = state.authentication;
+  return {
+    displayName: firebaseUser ? firebaseUser.displayName : null
+  };
+};
+export const OnboardingInvite = connect(mapStateToProps)(OnboardingInviteView);
