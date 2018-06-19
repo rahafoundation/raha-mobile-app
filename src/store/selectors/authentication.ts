@@ -1,4 +1,5 @@
 import { RahaState } from "../reducers";
+import { auth } from "../../firebaseInit";
 
 export async function getAuthToken(
   state: RahaState
@@ -8,7 +9,9 @@ export async function getAuthToken(
     // TODO: trigger login or error
     return;
   }
-  const authToken = await authFirebaseUser.getIdToken();
+  // console.error(auth.currentUser.getIdToken);
+  const authToken = auth.currentUser.getIdToken();
+  // const authToken = await authFirebaseUser.getIdToken();
   return authToken;
 }
 
