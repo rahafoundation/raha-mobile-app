@@ -113,7 +113,7 @@ export class Member {
     );
   }
 
-  public videoUri(): string {
+  public get videoUri(): string {
     return `https://storage.googleapis.com/${config.publicVideoBucket}/${
       this.memberId
     }/invite.mp4`;

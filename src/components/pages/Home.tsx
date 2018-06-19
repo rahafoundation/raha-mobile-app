@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-elements";
 import { connect, MapStateToProps } from "react-redux";
 
@@ -7,6 +7,7 @@ import { RahaState } from "../../store";
 import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { RouteName } from "../shared/Navigation";
+import { OperationType } from "../../store/reducers/operations";
 
 type OwnProps = {
   navigation: any;
@@ -27,7 +28,9 @@ const HomeView: React.StatelessComponent<HomeProps> = props => {
           console.log(member.username + " clicked");
         }}
       />
-      <ActivityFeed />
+      <ActivityFeed
+        filter={operation => operation.op_code !== OperationType.MINT}
+      />
       <View style={styles.spacer} />
       {!props.loggedInUserId ? (
         <Button

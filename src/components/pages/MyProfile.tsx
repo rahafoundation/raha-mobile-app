@@ -7,9 +7,10 @@ import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
 import { Video } from "expo";
 import { Profile } from "./Profile";
-import { RahaState } from "../../store";
+import { RahaState, RahaThunkDispatch } from "../../store";
 import { getMembersByIds } from "../../store/selectors/members";
 import { Member } from "../../store/reducers/members";
+import { mint } from "../../store/actions/wallet";
 
 type OwnProps = {
   navigation: any;
@@ -50,14 +51,9 @@ const mapStateToProps: MapStateToProps<
   };
 };
 
-function mint() {
-  return null; // TODO
-}
-
-const mapDispatchToProps: MapDispatchToProps<
-  DispatchProps,
-  OwnProps
-> = dispatch => ({
+const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
+  dispatch: RahaThunkDispatch
+) => ({
   mint: () => dispatch(mint())
 });
 

@@ -1,36 +1,92 @@
+/**
+ * Filterable list of actions members have taken. Those actions are a
+ * human-readable form of backend Operations, like when people give each other
+ * Raha, trust each other, or join Raha.
+ */
 import * as React from "react";
-import { FlatList, View, Text, StyleSheet } from "react-native";
+import { FlatList, StyleSheet, FlatListProps } from "react-native";
+import { connect, MapStateToProps } from "react-redux";
+import { List } from "immutable";
 
-type ActivityFeedProps = {};
+import { RahaState } from "../../store";
+import { Operation } from "../../store/reducers/operations";
+import { OperationId } from "../../identifiers";
+import { ActivityItem } from "./ActivityItem/index";
+import { ActivityTemplate } from "./ActivityItem/ActivityTemplate";
 
-export const ActivityFeed: React.StatelessComponent<
-  ActivityFeedProps
-> = props => {
-  return (
-    <FlatList
-      data={[
-        { key: "1", text: "Mark received 5R from Omar" },
-        { key: "2", text: "Tina received 5R from Omar" },
-        { key: "3", text: "Omar received 5R from Rahul" }
-      ]}
-      renderItem={({ item }) => <ActivityItem text={item.text} />}
-    />
-  );
-};
+interface StateProps {
+  operations: List<Operation>;
+}
 
-type ActivityItemProps = {
-  text: string;
-};
+interface OwnProps {
+  filter?: (operation: Operation) => boolean;
+  header?: React.ReactNode;
+}
 
-const ActivityItem: React.StatelessComponent<ActivityItemProps> = props => {
-  return (
-    <View style={styles.item}>
-      <Text>{props.text}</Text>
-    </View>
-  );
-};
-const styles = StyleSheet.create({
-  item: {
-    padding: 12
+type ActivityFeedProps = OwnProps & StateProps;
+
+export class ActivityFeedView extends React.Component<ActivityFeedProps> {
+  activities: { [key in OperationId]?: ActivityTemplate } = {};
+
+  private onViewableItemsChanged: FlatListProps<
+    Operation
+  >["onViewableItemsChanged"] = ({ viewableItems, changed }) => {
+    viewableItems.forEach(async item => {
+      const operation: Operation = item.item;
+      if (!item.isViewable) {
+        return;
+      }
+      const activityComponent = this.activities[operation.id];
+      if (!activityComponent) {
+        return;
+      }
+      await activityComponent.startVideo();
+    });
+    changed.forEach(async item => {
+      const operation: Operation = item.item;
+      if (item.isViewable) {
+        return;
+      }
+      const activityComponent = this.activities[operation.id];
+      if (!activityComponent) {
+        return;
+      }
+      await activityComponent.resetVideo();
+    });
+  };
+
+  private renderHeader = () => {
+    return this.props.header as React.ReactElement<any>;
+  };
+
+  render() {
+    const operations = this.props.filter
+      ? this.props.operations.filter(this.props.filter)
+      : this.props.operations;
+    return (
+      <FlatList
+        ListHeaderComponent={this.props.header ? this.renderHeader : undefined}
+        data={operations.reverse().toArray()}
+        keyExtractor={operation => operation.id}
+        renderItem={operationItem => (
+          <ActivityItem
+            operation={operationItem.item}
+            activityRef={(elem: ActivityTemplate) => {
+              this.activities[operationItem.item.id] = elem;
+            }}
+          />
+        )}
+        onViewableItemsChanged={this.onViewableItemsChanged}
+      />
+    );
   }
-});
+}
+
+const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
+  return {
+    operations: state.operations
+  };
+};
+export const ActivityFeed = connect(mapStateToProps)(ActivityFeedView);
+
+const styles = StyleSheet.create({});
