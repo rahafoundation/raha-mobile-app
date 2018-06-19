@@ -7,6 +7,7 @@ import { RahaState } from "../../store";
 import { SearchBar } from "../shared/SearchBar";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { RouteName } from "../../../App";
+import { OperationType } from "../../store/reducers/operations";
 
 type OwnProps = {
   navigation: any;
@@ -23,7 +24,9 @@ const HomeView: React.StatelessComponent<HomeProps> = props => {
     <View style={styles.container}>
       <Text>Give Raha to:</Text>
       <SearchBar />
-      <ActivityFeed />
+      <ActivityFeed
+        filter={operation => operation.op_code !== OperationType.MINT}
+      />
       <View style={styles.spacer} />
       {!props.loggedInUserId ? (
         <Button
