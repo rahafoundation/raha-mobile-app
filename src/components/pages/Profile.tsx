@@ -8,9 +8,10 @@ import { StyleSheet, Text, View, Button } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
 import { Video } from "expo";
-import { RahaState } from "../../store";
+import { RahaState, RahaThunkDispatch } from "../../store";
 import { getMembersByIds } from "../../store/selectors/members";
 import { Member } from "../../store/reducers/members";
+import { signOut } from "../../store/actions/authentication";
 
 type OwnProps = {
   navigation: any;
@@ -21,6 +22,7 @@ type OwnProps = {
 type StateProps = {};
 
 type DispatchProps = {
+  signOut: () => void;
   mint: () => void;
   trust: () => void;
 };
@@ -30,7 +32,12 @@ type ProfileProps = OwnProps & StateProps & DispatchProps;
 class ProfileView extends React.Component<ProfileProps> {
   renderActions() {
     if (this.props.isOwnProfile) {
-      return <Button title="Mint" onPress={this.props.mint} />;
+      return (
+        <View>
+          <Button title="Mint" onPress={this.props.mint} />
+          <Button title="Log Out" onPress={this.props.signOut} />
+        </View>
+      );
     }
     return <Button title="Trust" onPress={this.props.trust} />;
   }
@@ -126,15 +133,15 @@ function trust() {
   return null; // TODO
 }
 
-const mapDispatchToProps: MapDispatchToProps<
-  DispatchProps,
-  OwnProps
-> = dispatch => ({
-  mint: () => dispatch(mint()),
-  trust: () => dispatch(trust())
-});
+// const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
+//   dispatch: RahaThunkDispatch
+// ) => ({
+//   mint: () => dispatch(mint()),
+//   trust: () => dispatch(trust()),
+//   logOut: () => dispatch(logOut())
+// });
 
 export const Profile = connect(
   null,
-  mapDispatchToProps
+  { signOut, mint, trust }
 )(ProfileView);

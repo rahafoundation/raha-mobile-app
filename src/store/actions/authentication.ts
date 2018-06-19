@@ -19,7 +19,8 @@ export enum AuthMethod {
 
 export const enum AuthenticationActionType {
   SET_FIREBASE_USER = "AUTHENTICATION.SET_FIREBASE_USER",
-  EXISTING_CREDENTIAL = "AUTHENTICATION.EXISTING_CREDENTIAL"
+  EXISTING_CREDENTIAL = "AUTHENTICATION.EXISTING_CREDENTIAL",
+  SIGN_OUT = "AUTHENTICATION.SIGN_OUT"
 }
 
 export interface SetFirebaseUserAction {
@@ -32,9 +33,14 @@ export interface ExistingCredentialAction {
   authMethod: AuthMethod;
 }
 
+export interface SignOutAction {
+  type: AuthenticationActionType.SIGN_OUT;
+}
+
 export type AuthenticationAction =
   | ExistingCredentialAction
-  | SetFirebaseUserAction;
+  | SetFirebaseUserAction
+  | SignOutAction;
 
 const setFirebaseUserAction = (
   firebaseUser: firebase.User
@@ -48,6 +54,10 @@ const existingCredentialAction = (
 ): ExistingCredentialAction => ({
   type: AuthenticationActionType.EXISTING_CREDENTIAL,
   authMethod
+});
+
+const signOutAction = (): SignOutAction => ({
+  type: AuthenticationActionType.SIGN_OUT
 });
 
 /**
@@ -123,4 +133,9 @@ export const facebookLogIn: AsyncActionCreator = () => async dispatch => {
     // TODO: handle error;
     throw error;
   }
+};
+
+export const signOut: AsyncActionCreator = () => async dispatch => {
+  await auth.signOut(); // TODO handle error
+  dispatch(signOutAction());
 };

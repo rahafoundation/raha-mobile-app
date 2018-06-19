@@ -5,7 +5,7 @@
 import * as React from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import { Video } from "expo";
-import { RouteName } from "../../../App";
+import { RouteName } from "../shared/Navigation";
 
 type VideoPreviewProps = {
   navigation: any;

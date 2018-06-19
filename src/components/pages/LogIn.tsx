@@ -8,7 +8,7 @@ import {
   AuthMethod
 } from "../../store/actions/authentication";
 import { RahaState, RahaThunkDispatch } from "../../store";
-import { RouteName } from "../../../App";
+import { RouteName } from "../shared/Navigation";
 import { getMembersByIds } from "../../store/selectors/members";
 
 type OwnProps = {
