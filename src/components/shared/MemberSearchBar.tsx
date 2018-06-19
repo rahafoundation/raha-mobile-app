@@ -30,6 +30,13 @@ type OwnProps = {
    * Callback when member is selected from the search bar
    */
   onMemberSelected: (member: Member) => any;
+
+  /**
+   * When false, tapping outside of the focused text input when the keyboard
+   * is up dismisses the keyboard. When "always", the view will not catch
+   * taps and the keyboard will not dismiss automatically.
+   */
+  keyboardShouldPersistTaps?: boolean | "always" | "never" | "handled";
 };
 
 type MemberSearchBarProps = ReduxStateProps & OwnProps;
@@ -92,8 +99,7 @@ class MemberSearchBarView extends React.Component<
           onClearText={() => this.clearSuggestions()}
         />
         <FlatList
-          // Make onPress go to the item instead of dismissing keyboard
-          keyboardShouldPersistTaps="always"
+          keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
           data={this.state.suggestedMembers}
           keyExtractor={item => {
             return item.memberId;
