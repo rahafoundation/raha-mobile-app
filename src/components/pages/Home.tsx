@@ -22,6 +22,8 @@ const HomeView: React.StatelessComponent<HomeProps> = props => {
     <View>
       <Text>Give Raha to:</Text>
       <MemberSearchBar
+        // Make onPress go to the item instead of dismissing keyboard
+        keyboardShouldPersistTaps="always"
         onMemberSelected={member => {
           console.log(member.username + " clicked");
         }}
