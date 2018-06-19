@@ -5,7 +5,9 @@ import { List } from "immutable";
 
 import { RahaState } from "../../store";
 import { Operation } from "../../store/reducers/operations";
+import { OperationId } from "../../identifiers";
 import { ActivityItem } from "./ActivityItem/index";
+import { ActivityTemplate } from "./ActivityItem/ActivityTemplate";
 
 interface StateProps {
   operations: List<Operation>;
@@ -17,25 +19,53 @@ interface OwnProps {
 
 type ActivityFeedProps = OwnProps & StateProps;
 
-export const ActivityFeedView: React.StatelessComponent<
-  ActivityFeedProps
-> = props => {
-  const operations = props.filter
-    ? props.operations.filter(props.filter)
-    : props.operations;
-  return (
-    <FlatList
-      data={operations
-        .map(operation => ({
-          key: operation.id,
-          operation: operation
-        }))
-        .reverse()
-        .toArray()}
-      renderItem={({ item }) => <ActivityItem operation={item.operation} />}
-    />
-  );
-};
+export class ActivityFeedView extends React.Component<ActivityFeedProps> {
+  activities: { [key in OperationId]?: ActivityTemplate } = {};
+
+  render() {
+    const operations = this.props.filter
+      ? this.props.operations.filter(this.props.filter)
+      : this.props.operations;
+    return (
+      <FlatList
+        data={operations.reverse().toArray()}
+        keyExtractor={operation => operation.id}
+        renderItem={operationItem => (
+          <ActivityItem
+            operation={operationItem.item}
+            activityRef={(elem: ActivityTemplate) => {
+              this.activities[operationItem.item.id] = elem;
+            }}
+          />
+        )}
+        onViewableItemsChanged={({ viewableItems, changed }) => {
+          viewableItems.forEach(async item => {
+            const operation: Operation = item.item;
+            if (!item.isViewable) {
+              return;
+            }
+            const activityComponent = this.activities[operation.id];
+            if (!activityComponent) {
+              return;
+            }
+            await activityComponent.startVideo();
+          });
+          changed.forEach(async item => {
+            const operation: Operation = item.item;
+            if (item.isViewable) {
+              return;
+            }
+            const activityComponent = this.activities[operation.id];
+            if (!activityComponent) {
+              return;
+            }
+            await activityComponent.stopVideo();
+          });
+        }}
+      />
+    );
+  }
+}
 
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
   return {
