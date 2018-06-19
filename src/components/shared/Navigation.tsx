@@ -6,8 +6,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { Home } from "../pages/Home";
 import { LogIn } from "../pages/LogIn";
-import { OnboardingCamera } from "../pages/OnboardingCamera";
-import { Onboarding } from "../pages/Onboarding";
+import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
+import { Onboarding } from "../pages/Onboarding/Onboarding";
 import { MyProfile } from "../pages/MyProfile";
 import { VideoPreview } from "../pages/VideoPreview";
 import { getMembersByIds } from "../../../src/store/selectors/members";
@@ -15,11 +15,13 @@ import { RahaState } from "../../../src/store";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { createStackNavigator } from "react-navigation";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
+import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
 
 export enum RouteName {
   Home = "Home",
   Onboarding = "Onboarding",
   OnboardingCamera = "OnboardingCamera",
+  OnboardingInvite = "OnboardingInvite",
   LogIn = "LogIn",
   MyProfile = "MyProfile",
   VideoPreview = "VideoPreview",
@@ -102,6 +104,9 @@ const SignedOutNavigator = createStackNavigator(
     Onboarding: {
       screen: Onboarding
     },
+    OnboardingInvite: {
+      screen: OnboardingInvite
+    },
     LogIn: {
       screen: LogIn
     },
@@ -164,4 +169,7 @@ const mapStateToProps: MapStateToProps<
   };
 };
 
-export const Navigation = connect(mapStateToProps, {})(NavigationView);
+export const Navigation = connect(
+  mapStateToProps,
+  {}
+)(NavigationView);
