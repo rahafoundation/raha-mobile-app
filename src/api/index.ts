@@ -42,7 +42,7 @@ interface ApiCallDefinition<E extends ApiEndpoint, Params, Body> {
 }
 type TrustMemberApiCall = ApiCallDefinition<
   ApiEndpoint.TRUST_MEMBER,
-  { uid: MemberId },
+  { memberId: MemberId },
   void
 >;
 type GetOperationsApiCall = ApiCallDefinition<
@@ -52,7 +52,7 @@ type GetOperationsApiCall = ApiCallDefinition<
 >;
 type RequestInviteApiCall = ApiCallDefinition<
   ApiEndpoint.REQUEST_INVITE,
-  { uid: MemberId },
+  { memberId: MemberId },
   { fullName: string; videoUrl: string; creatorMid: string }
 >;
 type SendInviteApiCall = ApiCallDefinition<
@@ -67,7 +67,7 @@ type MintApiCall = ApiCallDefinition<
 >;
 type GiveApiCall = ApiCallDefinition<
   ApiEndpoint.GIVE,
-  { uid: MemberId },
+  { memberId: MemberId },
   { amount: string; memo?: string }
 >;
 /**

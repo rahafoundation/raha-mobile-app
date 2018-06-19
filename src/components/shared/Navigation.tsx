@@ -138,7 +138,7 @@ type Props = OwnProps & StateProps;
 
 class NavigationView extends React.Component<Props> {
   render() {
-    const { isLoaded, hasAccount } = this.props;
+    const { hasAccount } = this.props;
 
     if (hasAccount) {
       return <SignedInNavigator />;
