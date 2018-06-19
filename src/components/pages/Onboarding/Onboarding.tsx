@@ -1,8 +1,8 @@
 import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Button } from "../shared/Button";
-import { Swiper } from "../shared/Swiper";
-import { RouteName } from "../shared/Navigation";
+import { Button } from "../../shared/Button";
+import { Swiper } from "../../shared/Swiper";
+import { RouteName } from "../../shared/Navigation";
 
 type OnboardingProps = {
   navigation: any;
@@ -22,6 +22,10 @@ export class Onboarding extends React.Component<OnboardingProps> {
             <Text style={styles.text}>
               It's free to join, and each person can mint Raha every week as a
               basic income.
+            </Text>
+            <Text style={styles.text}>
+              If you are inactive for more than a year, your Raha is donated
+              back to the network.
             </Text>
           </View>
 
@@ -67,7 +71,7 @@ export class Onboarding extends React.Component<OnboardingProps> {
             <Button
               text="Join Now"
               onPress={() =>
-                this.props.navigation.navigate(RouteName.OnboardingCamera)
+                this.props.navigation.navigate(RouteName.OnboardingInvite)
               }
             />
           </View>
