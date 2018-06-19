@@ -1,57 +1,19 @@
-import "es6-symbol/implement";
 import * as React from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import { createStackNavigator } from "react-navigation";
+import { StatusBar, View, Platform } from "react-native";
 
-import { Home } from "./src/components/pages/Home";
-import { LogIn } from "./src/components/pages/LogIn";
-import { OnboardingCamera } from "./src/components/pages/OnboardingCamera";
-import { Onboarding } from "./src/components/pages/Onboarding";
-import { MyProfile } from "./src/components/pages/MyProfile";
+import { Navigation } from "./src/components/shared/Navigation";
 import { store, persistor } from "./src/store";
 import { refreshMembers } from "./src/store/actions/members";
-import { VideoPreview } from "./src/components/pages/VideoPreview";
-
-export enum RouteName {
-  Home = "Home",
-  Onboarding = "Onboarding",
-  OnboardingCamera = "OnboardingCamera",
-  LogIn = "LogIn",
-  MyProfile = "MyProfile",
-  VideoPreview = "VideoPreview"
-}
-
-const Navigator = createStackNavigator(
-  {
-    Home: {
-      screen: Home
-    },
-    OnboardingCamera: {
-      screen: OnboardingCamera
-    },
-    Onboarding: {
-      screen: Onboarding
-    },
-    LogIn: {
-      screen: LogIn
-    },
-    MyProfile: {
-      screen: MyProfile
-    },
-    VideoPreview: {
-      screen: VideoPreview
-    }
-  } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
-  {
-    initialRouteName: RouteName.Home
-  }
-);
 
 // refresh the members/operations on app start
 const onBeforeLift = async () => {
   await refreshMembers()(store.dispatch, store.getState, undefined);
 };
+
+// TODO Does StatusBar work in ios?
+const STATUSBAR_HEIGHT = Platform.OS === "ios" ? 20 : StatusBar.currentHeight;
 
 const App: React.StatelessComponent = () => {
   return (
@@ -64,7 +26,8 @@ const App: React.StatelessComponent = () => {
         persistor={persistor}
         onBeforeLift={onBeforeLift}
       >
-        <Navigator />
+        <View style={{ height: STATUSBAR_HEIGHT }} />
+        <Navigation />
       </PersistGate>
     </Provider>
   );

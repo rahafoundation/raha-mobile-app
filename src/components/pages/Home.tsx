@@ -6,7 +6,7 @@ import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../store";
 import { SearchBar } from "../shared/SearchBar";
 import { ActivityFeed } from "../shared/ActivityFeed";
-import { RouteName } from "../../../App";
+import { RouteName } from "../shared/Navigation";
 
 type OwnProps = {
   navigation: any;

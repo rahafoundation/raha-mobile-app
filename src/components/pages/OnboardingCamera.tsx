@@ -6,7 +6,7 @@
 import * as React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Camera } from "../shared/Camera";
-import { RouteName } from "../../../App";
+import { RouteName } from "../shared/Navigation";
 
 type OnboardingCameraProps = {
   navigation: any;
