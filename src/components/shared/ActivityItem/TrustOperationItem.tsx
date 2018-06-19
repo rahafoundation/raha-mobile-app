@@ -22,7 +22,7 @@ export const TrustOperationItemView: React.StatelessComponent<
 > = ({ operation, fromMember, toMember, activityRef }) => {
   return (
     <ActivityTemplate
-      message={"I now trust you."}
+      message={"I have trusted you."}
       from={fromMember}
       to={toMember}
       timestamp={new Date(operation.created_at)}

@@ -92,15 +92,22 @@ export class ActivityTemplate extends React.Component<
       <View style={styles.card}>
         <View style={styles.metadataRow}>
           <View>{to && <Text>To {to.fullName}:</Text>}</View>
-          <Text>{format(timestamp, "MMM D, YYYY h:mm a")}</Text>
+          <Text style={styles.timestamp}>
+            {format(timestamp, "MMM D, YYYY h:mm a")}
+          </Text>
         </View>
         <View style={styles.bodyRow}>
           <Text>{message}</Text>
-          <Text>From: {from.fullName}</Text>
+          <Text style={styles.fromText}>From: {from.fullName}</Text>
         </View>
         <View>
           {videoUri && (
-            <TouchableOpacity onPress={this.handleVideoPress} delayPressIn={20}>
+            <TouchableOpacity
+              onPress={this.handleVideoPress}
+              delayPressIn={20}
+              disabled={this.state.videoPressed}
+            >
+              {/* TODO: make own playback controls for smoother customization */}
               <Video
                 ref={(elem: any) => {
                   this.videoElem = elem;
@@ -122,7 +129,7 @@ export class ActivityTemplate extends React.Component<
             </TouchableOpacity>
           )}
         </View>
-        <View style={styles.fromRow}>
+        <View style={styles.moneyRow}>
           <View style={styles.amountDetail}>
             {totalAmount && (
               <Text style={styles.amount}>ℝ{totalAmount.toFixed(2)}</Text>
@@ -172,15 +179,20 @@ const styles = StyleSheet.create({
   donationAmount: {
     color: "purple"
   },
-  fromRow: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
+  fromText: {
+    marginTop: 10,
+    textAlign: "right"
+  },
+  moneyRow: {
     marginHorizontal: 10,
     marginTop: 10
   },
   video: {
     width: "100%",
     aspectRatio: 4 / 3
+  },
+  timestamp: {
+    fontSize: 12,
+    color: "#666"
   }
 });
