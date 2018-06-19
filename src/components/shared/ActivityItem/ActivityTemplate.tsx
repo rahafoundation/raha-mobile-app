@@ -140,7 +140,7 @@ export class ActivityTemplate extends React.Component<
             )}
             {donationAmount && (
               <React.Fragment>
-                <Text>{donationIntroText} </Text>}
+                <Text>{donationIntroText} </Text>
                 <Text style={[styles.amount, styles.donationAmount]}>
                   ℝ{donationAmount.toFixed(2)}
                 </Text>
