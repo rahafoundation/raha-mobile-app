@@ -116,7 +116,6 @@ export class ActivityTemplate extends React.Component<
                 ref={(elem: any) => {
                   this.videoElem = elem;
                 }}
-                // @ts-ignore Expo typing for Video is missing `style`
                 style={styles.video}
                 rate={1.0}
                 volume={1.0}

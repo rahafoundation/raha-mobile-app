@@ -28,7 +28,6 @@ export class VideoPreview extends React.Component<VideoPreviewProps> {
             resizeMode={Video.RESIZE_MODE_COVER}
             shouldPlay
             isLooping
-            // @ts-ignore Expo typing for Video is missing `style`
             style={styles.video}
           />
           <Button
