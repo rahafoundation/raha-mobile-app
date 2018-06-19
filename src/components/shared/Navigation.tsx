@@ -118,9 +118,7 @@ const SignedOutNavigator = createStackNavigator(
   }
 );
 
-type OwnProps = {
-  navigation: any;
-};
+type OwnProps = {};
 
 type StateProps = {
   isLoaded: boolean;
