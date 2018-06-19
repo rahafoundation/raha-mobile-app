@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { RoundedButton } from "../shared/RoundedButton";
+import { Button } from "../shared/Button";
 import { Swiper } from "../shared/Swiper";
 import { RouteName } from "../shared/Navigation";
 
@@ -64,7 +64,7 @@ export class Onboarding extends React.Component<OnboardingProps> {
             <Text style={styles.text}>
               We're starting a movement, and we'd like you to be a part of it.
             </Text>
-            <RoundedButton
+            <Button
               text="Join Now"
               onPress={() =>
                 this.props.navigation.navigate(RouteName.OnboardingCamera)

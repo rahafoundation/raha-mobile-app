@@ -4,10 +4,10 @@
  * as ability to Mint.
  */
 import * as React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { connect, MapDispatchToProps, MergeProps } from "react-redux";
-
 import { Video } from "expo";
+
 import { Member } from "../../store/reducers/members";
 import { signOut } from "../../store/actions/authentication";
 import { RahaThunkDispatch } from "../../store";
@@ -15,6 +15,7 @@ import { trustMember } from "../../store/actions/members";
 import { MemberId } from "../../identifiers";
 import { mint } from "../../store/actions/wallet";
 import { ActivityFeed } from "../shared/ActivityFeed";
+import { Button } from "../shared/Button";
 
 type OwnProps = {
   member: Member;
@@ -42,8 +43,12 @@ const Actions: React.StatelessComponent<
 > = props =>
   props.isOwnProfile ? (
     <View style={styles.actions}>
-      <Button title="Mint" onPress={props.mint} />
-      <Button title="Log Out" onPress={props.signOut} />
+      <Button text="Mint" onPress={props.mint} backgroundColor="#2196F3" />
+      <Button
+        text="Log Out"
+        onPress={props.signOut}
+        backgroundColor="#2196F3"
+      />
     </View>
   ) : (
     <Button title="Trust" onPress={props.trust} />
@@ -62,7 +67,8 @@ const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
       // @ts-ignore Expo typing for Video is missing `style`
       style={styles.video}
     />
-    <Text style={styles.memberName}>{`${props.member.fullName}`}</Text>
+    <Text style={styles.memberName}>{props.member.fullName}</Text>
+    <Text style={styles.memberUsername}>@{props.member.username}</Text>
   </View>
 );
 
@@ -70,15 +76,15 @@ const Stats: React.StatelessComponent<{ member: Member }> = props => (
   <View style={styles.statsContainer}>
     <View style={styles.stat}>
       <Text style={styles.number}>ℝ{props.member.balance.toFixed(2)}</Text>
-      <Text>{"balance"}</Text>
+      <Text style={styles.statLabel}>{"balance"}</Text>
     </View>
     <View style={styles.stat}>
       <Text style={styles.number}>{props.member.trustedBy.size}</Text>
-      <Text>{"trusted by"}</Text>
+      <Text style={styles.statLabel}>{"trusted by"}</Text>
     </View>
     <View style={styles.stat}>
       <Text style={styles.number}>{props.member.trusts.size}</Text>
-      <Text>{"trusts"}</Text>
+      <Text style={styles.statLabel}>{"trusts"}</Text>
     </View>
   </View>
 );
@@ -122,25 +128,47 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   thumbnail: {
-    flexGrow: 1,
+    flexGrow: 0,
     flexBasis: 100,
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
   },
-  memberName: { fontWeight: "600", fontSize: 20, marginTop: 5 },
-  interactions: { flexGrow: 4 },
+  memberName: {
+    fontWeight: "600",
+    fontSize: 18,
+    marginVertical: 5,
+    textAlign: "center"
+  },
+  memberUsername: {
+    fontWeight: "600",
+    fontSize: 12,
+    textAlign: "center",
+    color: "#666"
+  },
+  interactions: {
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    alignItems: "stretch",
+    alignSelf: "stretch",
+    marginTop: 20
+  },
   actions: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
-    alignItems: "center"
+    alignItems: "center",
+    marginHorizontal: 20
   },
   statsContainer: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
+    marginLeft: 10,
+    marginRight: 25
   },
   stat: {
     alignItems: "center",
@@ -151,7 +179,12 @@ const styles = StyleSheet.create({
     aspectRatio: 3 / 4
   },
   number: {
-    fontWeight: "bold"
+    fontWeight: "bold",
+    fontSize: 16
+  },
+  statLabel: {
+    color: "#666",
+    fontSize: 12
   }
 });
 
