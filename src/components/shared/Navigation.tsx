@@ -7,6 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Home } from "../pages/Home";
 import { LogIn } from "../pages/LogIn";
 import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
+import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
 import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
 import { MyProfile } from "../pages/MyProfile";
 import { VideoPreview } from "../pages/VideoPreview";
@@ -15,7 +16,6 @@ import { RahaState } from "../../../src/store";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { createStackNavigator } from "react-navigation";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
-import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
 
 export enum RouteName {
   Home = "Home",
@@ -37,15 +37,15 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
     },
     Search: {
       // TODO: Implement page
-      screen: OnboardingCamera
+      screen: OnboardingSplash
     },
     Give: {
       // TODO: Implement page
-      screen: OnboardingCamera
+      screen: OnboardingSplash
     },
     Invite: {
       // TODO: Implement page
-      screen: OnboardingCamera
+      screen: OnboardingSplash
     },
     MyProfile: {
       screen: MyProfile
