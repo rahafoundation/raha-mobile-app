@@ -4,9 +4,9 @@ import { Button } from "react-native-elements";
 import { connect, MapStateToProps } from "react-redux";
 
 import { RahaState } from "../../store";
-import { SearchBar } from "../shared/SearchBar";
+import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { ActivityFeed } from "../shared/ActivityFeed";
-import { RouteName } from "../../../App";
+import { RouteName } from "../shared/Navigation";
 import { OperationType } from "../../store/reducers/operations";
 
 type OwnProps = {
@@ -23,7 +23,11 @@ const HomeView: React.StatelessComponent<HomeProps> = props => {
   return (
     <View style={styles.container}>
       <Text>Give Raha to:</Text>
-      <SearchBar />
+      <MemberSearchBar
+        onMemberSelected={member => {
+          console.log(member.username + " clicked");
+        }}
+      />
       <ActivityFeed
         filter={operation => operation.op_code !== OperationType.MINT}
       />
@@ -47,6 +51,9 @@ const styles = StyleSheet.create({
   },
   spacer: {
     flexGrow: 1
+  },
+  searchBar: {
+    width: "100%"
   }
 });
 

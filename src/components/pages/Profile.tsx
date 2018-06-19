@@ -9,10 +9,11 @@ import { connect, MapDispatchToProps } from "react-redux";
 
 import { Video } from "expo";
 import { Member } from "../../store/reducers/members";
+import { signOut } from "../../store/actions/authentication";
+import { AsyncActionCreator } from "../../store/actions";
 import { RahaThunkDispatch } from "../../store";
 
 type OwnProps = {
-  navigation: any;
   member: Member;
   isOwnProfile: boolean;
 };
@@ -20,77 +21,78 @@ type OwnProps = {
 type StateProps = {};
 
 type DispatchProps = {
+  signOut: () => void;
   mint: () => void;
   trust: () => void;
 };
 
 type ProfileProps = OwnProps & StateProps & DispatchProps;
 
-class ProfileView extends React.Component<ProfileProps> {
-  renderActions() {
-    if (this.props.isOwnProfile) {
-      return <Button title="Mint" onPress={this.props.mint} />;
-    }
-    return <Button title="Trust" onPress={this.props.trust} />;
-  }
+const Actions: React.StatelessComponent<
+  { isOwnProfile: boolean } & DispatchProps
+> = props =>
+  props.isOwnProfile ? (
+    <View>
+      <Button title="Mint" onPress={props.mint} />
+      <Button title="Log Out" onPress={props.signOut} />
+    </View>
+  ) : (
+    <Button title="Trust" onPress={props.trust} />
+  );
 
-  renderThumbnail() {
-    return (
-      <View style={{ flex: 1 }}>
-        <Video
-          source={{ uri: this.props.member.videoUri }}
-          volume={1.0}
-          isMuted={true}
-          usePoster={true}
-          resizeMode={Video.RESIZE_MODE_COVER}
-          shouldPlay
-          isLooping
-          // @ts-ignore Expo typing for Video is missing `style`
-          style={styles.video}
+const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
+  <View style={{ flex: 1 }}>
+    <Video
+      source={{ uri: props.member.videoUri }}
+      volume={1.0}
+      isMuted={true}
+      usePoster={true}
+      resizeMode={Video.RESIZE_MODE_COVER}
+      shouldPlay
+      isLooping
+      // @ts-ignore Expo typing for Video is missing `style`
+      style={styles.video}
+    />
+    <Text style={{ flex: 1 }}>{`${props.member.fullName}`}</Text>
+  </View>
+);
+
+const Stats: React.StatelessComponent<{ member: Member }> = props => (
+  <View style={styles.statsContainer}>
+    <View style={styles.stat}>
+      <Text style={styles.number}>{props.member.balance.toString()}</Text>
+      <Text>{"balance"}</Text>
+    </View>
+    <View style={styles.stat}>
+      <Text style={styles.number}>{props.member.trustedBy.size}</Text>
+      <Text>{"trusted by"}</Text>
+    </View>
+    <View style={styles.stat}>
+      <Text style={styles.number}>{props.member.trusts.size}</Text>
+      <Text>{"trusts"}</Text>
+    </View>
+  </View>
+);
+
+const ProfileView: React.StatelessComponent<ProfileProps> = props => (
+  <View style={styles.container}>
+    <View style={{ flex: 1, width: "100%", flexDirection: "row" }}>
+      <Thumbnail member={props.member} />
+      <View style={{ flex: 3 }}>
+        <Stats member={props.member} />
+        <Actions
+          isOwnProfile={props.isOwnProfile}
+          mint={props.mint}
+          trust={props.trust}
+          signOut={props.signOut}
         />
-        <Text style={{ flex: 1 }}>{`${this.props.member.fullName}`}</Text>
       </View>
-    );
-  }
-
-  renderStats() {
-    return (
-      <View style={styles.statsContainer}>
-        <View style={styles.stat}>
-          <Text style={styles.number}>
-            {this.props.member.balance.toString()}
-          </Text>
-          <Text>{"balance"}</Text>
-        </View>
-        <View style={styles.stat}>
-          <Text style={styles.number}>{this.props.member.trustedBy.size}</Text>
-          <Text>{"trusted by"}</Text>
-        </View>
-        <View style={styles.stat}>
-          <Text style={styles.number}>{this.props.member.trusts.size}</Text>
-          <Text>{"trusts"}</Text>
-        </View>
-      </View>
-    );
-  }
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <View style={{ flex: 1, width: "100%", flexDirection: "row" }}>
-          {this.renderThumbnail()}
-          <View style={{ flex: 3 }}>
-            {this.renderStats()}
-            {this.renderActions()}
-          </View>
-        </View>
-        <View style={{ flex: 3, backgroundColor: "red", width: "100%" }}>
-          <Text>TODO feed specific to this user</Text>
-        </View>
-      </View>
-    );
-  }
-}
+    </View>
+    <View style={{ flex: 3, backgroundColor: "red", width: "100%" }}>
+      <Text>TODO feed specific to this user</Text>
+    </View>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -117,25 +119,25 @@ const styles = StyleSheet.create({
   }
 });
 
-// TODO: implement
-function mint() {
-  return null;
-}
-
-// TODO: implement
-function trust() {
-  return null;
-}
+// TODO: implement these, and place them in actions dir.
+let mint: AsyncActionCreator = () => dispatch => {
+  console.error("not yet implemented");
+};
+let trust: AsyncActionCreator = () => dispatch => {
+  console.error("not yet implemented");
+};
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   dispatch: RahaThunkDispatch
-) => ({
-  // TODO: change once mint and trust are implemented
-  mint: () => dispatch(mint() as any),
-  trust: () => dispatch(trust() as any)
-});
+) => {
+  return {
+    mint: () => dispatch(mint()),
+    trust: () => dispatch(trust()),
+    signOut: () => dispatch(signOut())
+  };
+};
 
 export const Profile = connect(
-  null,
+  undefined,
   mapDispatchToProps
 )(ProfileView);
