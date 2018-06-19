@@ -51,7 +51,7 @@ const Actions: React.StatelessComponent<
       />
     </View>
   ) : (
-    <Button title="Trust" onPress={props.trust} />
+    <Button text="Trust" onPress={props.trust} />
   );
 
 const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
