@@ -8,7 +8,7 @@ type OnboardingProps = {
   navigation: any;
 };
 
-export class Onboarding extends React.Component<OnboardingProps> {
+export class OnboardingSplash extends React.Component<OnboardingProps> {
   render() {
     return (
       <React.Fragment>
