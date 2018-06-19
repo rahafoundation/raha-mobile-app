@@ -34,7 +34,7 @@ export const trustMember: AsyncActionCreator = (memberId: MemberId) => {
       const response = await callApi<TrustMemberApiEndpoint>(
         {
           endpoint: ApiEndpoint.TRUST_MEMBER,
-          params: { uid: memberId },
+          params: { memberId: memberId },
           body: undefined
         },
         authToken
@@ -67,7 +67,7 @@ export const requestInviteFromMember: AsyncActionCreator = (
       const response = await callApi<RequestInviteApiEndpoint>(
         {
           endpoint: ApiEndpoint.REQUEST_INVITE,
-          params: { uid: memberId },
+          params: { memberId: memberId },
           body: {
             fullName,
             videoUrl,
