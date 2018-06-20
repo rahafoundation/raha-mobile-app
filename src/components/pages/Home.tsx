@@ -6,7 +6,7 @@ import { RahaState } from "../../store";
 import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { OperationType } from "../../store/reducers/operations";
-import { IosAndroidSafeAreaView } from "../../shared/IosAndroidSafeAreaView";
+import { SafeAreaView } from "../../shared/SafeAreaView";
 
 type OwnProps = {
   navigation: any;
@@ -20,7 +20,7 @@ type HomeProps = OwnProps & StateProps;
 
 const HomeView: React.StatelessComponent<HomeProps> = props => {
   return (
-    <IosAndroidSafeAreaView>
+    <SafeAreaView>
       <Text>Give Raha to:</Text>
       <MemberSearchBar
         // Make onPress go to the item instead of dismissing keyboard
@@ -32,7 +32,7 @@ const HomeView: React.StatelessComponent<HomeProps> = props => {
       <ActivityFeed
         filter={operation => operation.op_code !== OperationType.MINT}
       />
-    </IosAndroidSafeAreaView>
+    </SafeAreaView>
   );
 };
 

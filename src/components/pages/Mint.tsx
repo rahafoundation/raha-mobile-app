@@ -6,7 +6,7 @@ import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";
 import { RouteName } from "../shared/Navigation";
 import { getLoggedInMember } from "../../store/selectors/authentication";
-import { IosAndroidSafeAreaView } from "../../shared/IosAndroidSafeAreaView";
+import { SafeAreaView } from "../../shared/SafeAreaView";
 import { Button } from "../shared/Button";
 
 type OwnProps = {
@@ -20,8 +20,16 @@ type StateProps = {
 type Props = OwnProps & StateProps;
 
 const MintView: React.StatelessComponent<Props> = ({ loggedInMember }) => {
+  let net = loggedInMember.balance.minus(loggedInMember.totalMinted).toString();
+  let netColor;
+  if (net.substr(0, 1) === "-") {
+    netColor = "red";
+  } else {
+    netColor = "green";
+    net = `+${net}`;
+  }
   return (
-    <IosAndroidSafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <View
         style={[
           styles.centerFlex,
@@ -30,12 +38,12 @@ const MintView: React.StatelessComponent<Props> = ({ loggedInMember }) => {
       >
         <View style={styles.centerFlex}>
           <Text style={styles.number}>
-            {loggedInMember.balance.minus(30).toString()}
+            {loggedInMember.totalMinted.toString()}
           </Text>
           <Text style={styles.numberLabel}>minted</Text>
         </View>
         <View style={styles.centerFlex}>
-          <Text style={[styles.number, { color: "green" }]}>+30</Text>
+          <Text style={[styles.number, { color: netColor }]}>{net}</Text>
           <Text style={styles.numberLabel}>net</Text>
         </View>
         <View style={styles.centerFlex}>
@@ -65,7 +73,7 @@ const MintView: React.StatelessComponent<Props> = ({ loggedInMember }) => {
           backgroundColor="#2196F3"
         />
       </View>
-    </IosAndroidSafeAreaView>
+    </SafeAreaView>
   );
 };
 

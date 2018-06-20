@@ -33,6 +33,7 @@ export class Member {
   public readonly createdAt: Date;
   public readonly invitedBy: MemberId | typeof GENESIS_MEMBER;
   public readonly balance: Big;
+  public readonly totalMinted: Big;
   public readonly lastMinted: Date;
 
   public readonly trustedBy: Set<MemberId>;
@@ -46,6 +47,7 @@ export class Member {
     createdAt: Date,
     invitedBy: MemberId | typeof GENESIS_MEMBER,
     balance: Big,
+    totalMinted: Big,
     lastMinted: Date,
     trusts?: Set<MemberId>,
     trustedBy?: Set<MemberId>,
@@ -61,6 +63,7 @@ export class Member {
     this.trustedBy = trustedBy || Set();
     this.invited = invited || Set();
     this.balance = balance;
+    this.totalMinted = totalMinted;
     this.lastMinted = lastMinted;
   }
 
@@ -76,6 +79,7 @@ export class Member {
       this.createdAt,
       this.invitedBy,
       this.balance.plus(amount),
+      this.totalMinted.plus(amount),
       mintDate,
       this.trusts,
       this.trustedBy,
@@ -91,6 +95,7 @@ export class Member {
       this.createdAt,
       this.invitedBy,
       this.balance.minus(amount),
+      this.totalMinted,
       this.lastMinted,
       this.trusts,
       this.trustedBy,
@@ -106,6 +111,7 @@ export class Member {
       this.createdAt,
       this.invitedBy,
       this.balance.plus(amount),
+      this.totalMinted,
       this.lastMinted,
       this.trusts,
       this.trustedBy,
@@ -138,6 +144,7 @@ export class Member {
       this.createdAt,
       this.invitedBy,
       this.balance,
+      this.totalMinted,
       this.lastMinted,
       this.trusts,
       this.trustedBy.add(memberId),
@@ -156,6 +163,7 @@ export class Member {
       this.createdAt,
       this.invitedBy,
       this.balance,
+      this.totalMinted,
       this.lastMinted,
       this.trusts.add(memberId),
       this.trustedBy,
@@ -174,6 +182,7 @@ export class Member {
       this.createdAt,
       this.invitedBy,
       this.balance,
+      this.totalMinted,
       this.lastMinted,
       this.trusts,
       this.trustedBy.add(memberId),
@@ -293,6 +302,7 @@ function applyOperation(
               new Date(created_at),
               GENESIS_MEMBER,
               new Big(0),
+              new Big(0),
               new Date(created_at)
             )
           );
@@ -308,6 +318,7 @@ function applyOperation(
           full_name,
           new Date(created_at),
           to_uid,
+          new Big(0),
           new Big(0),
           new Date(created_at),
           Set([to_uid])
