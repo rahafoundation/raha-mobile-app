@@ -1,3 +1,5 @@
+import { Big } from "big.js";
+
 import {
   ApiEndpoint,
   callApi,
@@ -47,7 +49,7 @@ export const mint: AsyncActionCreator = (
 export const give: AsyncActionCreator = (
   operationIdentifier: string,
   memberId: MemberId,
-  amount: string,
+  amount: Big,
   memo?: string
 ) => {
   return wrapApiCallAction(
@@ -62,7 +64,7 @@ export const give: AsyncActionCreator = (
           endpoint: ApiEndpoint.GIVE,
           params: { memberId },
           body: {
-            amount,
+            amount: amount.toString(),
             memo
           }
         },
