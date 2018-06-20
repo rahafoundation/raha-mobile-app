@@ -3,6 +3,7 @@ import { Member } from "../../../store/reducers/members";
 import { View, StyleSheet, TextInput } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../store";
+import { OnboardingSplash } from "./OnboardingSplash";
 
 /**
  * Parent component for Onboarding flow.
@@ -45,7 +46,21 @@ export class OnboardingView extends React.Component<
   };
 
   renderOnboardingStep() {
-    return undefined;
+    switch (this.state.step) {
+      case OnboardingStep.SPLASH: {
+        return (
+          <OnboardingSplash
+            onSplashCompleted={() => {
+              this.setState({
+                step: OnboardingStep.VERIFY_NAME
+              });
+            }}
+          />
+        );
+      }
+      default:
+        return undefined;
+    }
   }
 
   render() {
