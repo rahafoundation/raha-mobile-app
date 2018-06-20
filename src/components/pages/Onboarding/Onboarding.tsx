@@ -4,6 +4,7 @@ import { View, StyleSheet, TextInput } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../store";
 import { OnboardingSplash } from "./OnboardingSplash";
+import { VerifyName } from "./VerifyName";
 
 /**
  * Parent component for Onboarding flow.
@@ -53,6 +54,18 @@ export class OnboardingView extends React.Component<
             onSplashCompleted={() => {
               this.setState({
                 step: OnboardingStep.VERIFY_NAME
+              });
+            }}
+          />
+        );
+      }
+      case OnboardingStep.VERIFY_NAME: {
+        return (
+          <VerifyName
+            onVerifiedName={name => {
+              this.setState({
+                verifiedName: name,
+                step: OnboardingStep.CHOOSE_INVITER
               });
             }}
           />

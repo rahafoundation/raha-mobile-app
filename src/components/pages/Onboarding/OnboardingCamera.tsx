@@ -7,7 +7,6 @@ import * as React from "react";
 import { Text, StyleSheet } from "react-native";
 import { Camera } from "../../shared/Camera";
 import { RouteName } from "../../shared/Navigation";
-import { Member } from "../../../store/reducers/members";
 
 type OnboardingCameraProps = {
   navigation: any;
@@ -27,7 +26,7 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
         </Text>
         <Camera
           onVideoRecorded={uri => {
-            this.props.navigation.navigate(RouteName.OnboardingVideoPreview, {
+            this.props.navigation.navigate(RouteName.Onboarding, {
               videoUri: uri
             });
           }}
