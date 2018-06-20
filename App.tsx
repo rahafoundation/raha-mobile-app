@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import { StatusBar, View, Platform } from "react-native";
 
 import { Navigation } from "./src/components/shared/Navigation";
 import { store, persistor } from "./src/store";
@@ -11,9 +10,6 @@ import { refreshMembers } from "./src/store/actions/members";
 const onBeforeLift = async () => {
   await refreshMembers()(store.dispatch, store.getState, undefined);
 };
-
-// TODO Does StatusBar work in ios?
-const STATUSBAR_HEIGHT = Platform.OS === "ios" ? 20 : StatusBar.currentHeight;
 
 const App: React.StatelessComponent = () => {
   return (
@@ -26,7 +22,6 @@ const App: React.StatelessComponent = () => {
         persistor={persistor}
         onBeforeLift={onBeforeLift}
       >
-        <View style={{ height: STATUSBAR_HEIGHT }} />
         <Navigation />
       </PersistGate>
     </Provider>
