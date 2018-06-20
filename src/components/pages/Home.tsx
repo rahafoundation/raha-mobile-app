@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Text, View } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
+import { SafeAreaView } from "react-navigation";
 
 import { RahaState } from "../../store";
 import { MemberSearchBar } from "../shared/MemberSearchBar";
@@ -19,7 +20,7 @@ type HomeProps = OwnProps & StateProps;
 
 const HomeView: React.StatelessComponent<HomeProps> = props => {
   return (
-    <View>
+    <SafeAreaView>
       <Text>Give Raha to:</Text>
       <MemberSearchBar
         // Make onPress go to the item instead of dismissing keyboard
@@ -31,7 +32,7 @@ const HomeView: React.StatelessComponent<HomeProps> = props => {
       <ActivityFeed
         filter={operation => operation.op_code !== OperationType.MINT}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

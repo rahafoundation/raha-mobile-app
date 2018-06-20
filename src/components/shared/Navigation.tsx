@@ -6,16 +6,17 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { Home } from "../pages/Home";
 import { LogIn } from "../pages/LogIn";
-import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
-import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
-import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
-import { MyProfile } from "../pages/MyProfile";
+import { Profile } from "../pages/Profile";
 import { VideoPreview } from "../pages/VideoPreview";
 import { getMembersByIds } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { createStackNavigator } from "react-navigation";
-import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
+import { connect, MapStateToProps } from "react-redux";
+import { MemberList } from "../pages/MemberList";
+import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
+import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
+import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
 
 export enum RouteName {
   Home = "Home",
@@ -23,12 +24,41 @@ export enum RouteName {
   OnboardingCamera = "OnboardingCamera",
   OnboardingInvite = "OnboardingInvite",
   LogIn = "LogIn",
-  MyProfile = "MyProfile",
+  MemberList = "MemberList",
+  OtherProfile = "OtherProfile",
+  Profile = "Profile",
   VideoPreview = "VideoPreview",
   Search = "Search",
   Invite = "Invite",
   Give = "Give"
 }
+
+const ProfileNavigator = createStackNavigator(
+  {
+    Profile: {
+      screen: Profile,
+      navigationOptions: ({ navigation }: any) => {
+        const member = navigation.getParam("member");
+        const person = member ? `${member.fullName}'s` : "My";
+        return {
+          title: `${person} Profile`
+        };
+      }
+    },
+    MemberList: {
+      screen: MemberList,
+      navigationOptions: ({ navigation }: any) => {
+        return {
+          title: navigation.getParam("title", "Member List")
+        };
+      }
+    }
+  } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
+  {
+    initialRouteName: RouteName.Profile,
+    headerMode: "float"
+  }
+);
 
 const SignedInNavigator = createMaterialBottomTabNavigator(
   {
@@ -37,22 +67,18 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
     },
     Search: {
       // TODO: Implement page
-      screen: OnboardingSplash
-    },
-    Give: {
-      // TODO: Implement page
-      screen: OnboardingSplash
+      screen: OnboardingCamera
     },
     Invite: {
       // TODO: Implement page
       screen: OnboardingSplash
     },
-    MyProfile: {
-      screen: MyProfile
+    Profile: {
+      screen: ProfileNavigator
     }
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
-    initialRouteName: RouteName.MyProfile,
+    initialRouteName: RouteName.Home,
     labeled: false,
     navigationOptions: ({ navigation }: any) => ({
       tabBarIcon: ({ focused }: any) => {
@@ -60,7 +86,7 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
         let iconName;
         let IconType = Icon;
         switch (routeName) {
-          case RouteName.MyProfile:
+          case RouteName.Profile:
             iconName = "account";
             break;
           case RouteName.Give:
@@ -73,21 +99,25 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
             iconName = "account-multiple-plus";
             break;
           case RouteName.Invite:
-            iconName = "account-multiple-plus";
+            iconName = "gift";
             break;
           case RouteName.Search:
             iconName = "ios-search";
             IconType = Ionicons;
             break;
           default:
-            console.error(`Unrecognized route ${routeName}`);
+            throw Error(`Unrecognized route ${routeName}`);
             break;
+        }
+        const isInvite = routeName === RouteName.Invite;
+        if (!focused && !isInvite) {
+          iconName += "-outline";
         }
         return (
           <IconType
-            name={`${iconName}${focused ? "" : "-outline"}`}
+            name={iconName}
             size={25}
-            color="black"
+            color={focused && isInvite ? "pink" : "black"}
           />
         );
       },
@@ -113,8 +143,8 @@ const SignedOutNavigator = createStackNavigator(
     LogIn: {
       screen: LogIn
     },
-    MyProfile: {
-      screen: MyProfile
+    Profile: {
+      screen: Profile
     },
     VideoPreview: {
       screen: VideoPreview
