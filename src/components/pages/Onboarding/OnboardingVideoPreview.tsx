@@ -1,17 +1,19 @@
 /**
- * Renders the video camera preview screen after recording a video.
+ * Renders the video camera preview screen after recording a video for onboarding.
  */
 
 import * as React from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import { Video } from "expo";
-import { RouteName } from "../shared/Navigation";
+import { RouteName } from "../../shared/Navigation";
 
-type VideoPreviewProps = {
+type OnboardingVideoPreviewProps = {
   navigation: any;
 };
 
-export class VideoPreview extends React.Component<VideoPreviewProps> {
+export class OnboardingVideoPreview extends React.Component<
+  OnboardingVideoPreviewProps
+> {
   render() {
     const videoUri = this.props.navigation.getParam("videoUri", null);
     if (videoUri) {
