@@ -1,3 +1,4 @@
+import { Big } from "big.js";
 import * as React from "react";
 
 import { Member } from "../../../store/reducers/members";
@@ -9,7 +10,7 @@ type Props = {};
 type State = {
   operationIdentifer: string;
   toMember?: Member;
-  amount?: string;
+  amount?: Big;
   memo?: string;
 };
 
@@ -26,7 +27,7 @@ export class Give extends React.Component<Props, State> {
     this.state = { operationIdentifer: getOperationIdentifer() };
   }
 
-  onSuccess = (toMember: Member, amount: string, memo: string) => {
+  onSuccess = (toMember: Member, amount: Big, memo: string) => {
     this.setState({
       toMember,
       amount,

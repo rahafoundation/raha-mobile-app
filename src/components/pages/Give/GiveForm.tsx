@@ -19,11 +19,15 @@ import { MemberSearchBar } from "../../shared/MemberSearchBar";
 
 const MESSAGE_PLACEHOLDER_TEXT = "";
 const MAX_MEMO_LENGTH = 140;
+// Donation rate is currently constant.
+const DONATION_RATE = 3;
 
 type OwnProps = {
   toMemberId?: MemberId;
+  // Identifier for the Give API Operation created by this form.
   identifier: string;
-  onSuccessCallback: (toMember: Member, amount: string, memo: string) => any;
+  // Callback once the Give API Operation created by this form is successful.
+  onSuccessCallback: (toMember: Member, amount: Big, memo: string) => any;
 };
 
 type StateProps = {
@@ -35,13 +39,13 @@ type DispatchProps = {
   give: typeof give;
 };
 type MergedProps = StateProps & {
-  give: (amount: string, memo: string, toMemberId: MemberId) => void;
+  give: (amount: Big, memo: string, toMemberId: MemberId) => void;
 };
 
 type Props = OwnProps & MergedProps;
 
 interface FormFields {
-  amount: string;
+  amount?: Big;
   memo: string;
 }
 type FormState = { readonly [field in keyof FormFields]: FormFields[field] };
@@ -56,45 +60,28 @@ class GiveFormView extends React.Component<Props, State> {
     const toMemberId = props.toMemberId;
     this.state = {
       toMember: toMemberId ? props.getMemberById(toMemberId) : undefined,
-      amount: "",
       memo: ""
     };
   }
 
-  private validateAmount: (amount: string) => boolean = amount => {
-    try {
-      const bigAmount = new Big(amount);
-      if (
-        (amount.indexOf(".") >= 0 && amount.split(".")[1].length > 2) ||
-        bigAmount.lte(0) ||
-        (this.props.loggedInMember &&
-          bigAmount.gt(this.props.loggedInMember.balance))
-      ) {
-        return false;
-      }
-    } catch {
-      return false;
-    }
-    return true;
-  };
-  private validateAmountInput: (amount: string) => boolean = amount => {
-    try {
-      const bigAmount = new Big(amount);
-      if (
-        (amount.indexOf(".") >= 0 && amount.split(".")[1].length > 2) ||
-        (this.props.loggedInMember &&
-          bigAmount.gt(this.props.loggedInMember.balance))
-      ) {
-        return false;
-      }
-    } catch {
-      return false;
-    }
-    return true;
+  private validateAmount: (amount: Big | undefined) => boolean = amount => {
+    return (
+      !!amount &&
+      amount.gt(0) &&
+      !!this.props.loggedInMember &&
+      amount.lte(this.props.loggedInMember.balance)
+    );
   };
   private onChangeAmount = (amount: string) => {
-    if (amount.length === 0 || this.validateAmountInput(amount)) {
-      this.setState({ amount });
+    if (amount.length === 0) {
+      this.setState({ amount: undefined });
+    } else {
+      try {
+        // Rounding Mode half-up
+        const bigAmount = new Big(amount).round(2, 1);
+        if (this.validateAmount(bigAmount)) {
+        }
+      } catch {}
     }
   };
 
@@ -135,7 +122,7 @@ class GiveFormView extends React.Component<Props, State> {
 
   private giveRaha = () => {
     const { amount, memo, toMember } = this.state;
-    if (toMember && this.validateForm()) {
+    if (amount && toMember && this.validateForm()) {
       this.props.give(amount, memo, toMember.memberId);
     }
   };
@@ -145,7 +132,8 @@ class GiveFormView extends React.Component<Props, State> {
       this.props.apiCallStatus &&
       prevProps.apiCallStatus !== this.props.apiCallStatus &&
       this.props.apiCallStatus.status === ApiCallStatusType.SUCCESS &&
-      this.state.toMember
+      this.state.toMember &&
+      this.state.amount
     ) {
       this.props.onSuccessCallback(
         this.state.toMember,
@@ -180,10 +168,10 @@ class GiveFormView extends React.Component<Props, State> {
         </View>
         {this.state.toMember ? (
           <Text style={styles.section}>
-            {this.state.toMember.fullName} is currently donating 3% of all Raha
-            they receive back to the Raha basic income pool. This donation will
-            be used to fund future basic income distributions for everyone in
-            the Raha network.
+            {this.state.toMember.fullName} is currently donating {DONATION_RATE}%
+            of all Raha they receive back to the Raha basic income pool. This
+            donation will be used to fund future basic income distributions for
+            everyone in the Raha network.
           </Text>
         ) : (
           <React.Fragment />
@@ -194,7 +182,7 @@ class GiveFormView extends React.Component<Props, State> {
           <TextInput
             style={styles.input}
             keyboardType="numeric"
-            value={this.state.amount}
+            value={this.state.amount && this.state.amount.toString()}
             onChangeText={this.onChangeAmount}
             placeholder="0.00"
           />
@@ -273,15 +261,17 @@ const mergeProps: MergeProps<
 > = (stateProps, dispatchProps, ownProps) => {
   return {
     ...stateProps,
-    give: (amount: string, memo: string, toMemberId: string) =>
+    give: (amount: Big, memo: string, toMemberId: string) =>
       dispatchProps.give(ownProps.identifier, toMemberId, amount, memo),
     ...ownProps
   };
 };
 
-export const GiveForm = connect(mapStateToProps, { give }, mergeProps)(
-  GiveFormView
-);
+export const GiveForm = connect(
+  mapStateToProps,
+  { give },
+  mergeProps
+)(GiveFormView);
 
 const styles = StyleSheet.create({
   container: {

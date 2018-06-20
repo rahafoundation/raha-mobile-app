@@ -1,3 +1,4 @@
+import { Big } from "big.js";
 import * as React from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 
@@ -5,7 +6,7 @@ import { Member } from "../../../store/reducers/members";
 
 type OwnProps = {
   toMember: Member;
-  amount: string;
+  amount: Big;
   memo?: string;
 };
 
