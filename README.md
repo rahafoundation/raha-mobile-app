@@ -20,7 +20,7 @@ Then, install the dependencies of the project:
 yarn install
 ```
 
-Finall, copy over either the prod or test config, whichever environment you'd
+Finally, copy over either the prod or test config, whichever environment you'd
 like to develop in.
 
 ```bash
