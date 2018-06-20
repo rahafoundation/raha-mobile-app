@@ -4,25 +4,34 @@
  * as ability to Mint.
  */
 import * as React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { connect, MapDispatchToProps, MergeProps } from "react-redux";
+import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import {
+  connect,
+  MapDispatchToProps,
+  MapStateToProps,
+  MergeProps
+} from "react-redux";
 import { Video } from "expo";
 
+import { RouteName } from "../shared/Navigation";
 import { Member } from "../../store/reducers/members";
 import { signOut } from "../../store/actions/authentication";
-import { RahaThunkDispatch } from "../../store";
+import { RahaThunkDispatch, RahaState } from "../../store";
 import { trustMember } from "../../store/actions/members";
+import { getMembersByIds } from "../../store/selectors/members";
 import { MemberId } from "../../identifiers";
 import { mint } from "../../store/actions/wallet";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { Button } from "../shared/Button";
 
 type OwnProps = {
+  navigation: any;
+};
+
+type StateProps = {
   member: Member;
   isOwnProfile: boolean;
 };
-
-type StateProps = {};
 
 type DispatchProps = {
   signOut: () => void;
@@ -66,25 +75,45 @@ const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
       isLooping
       style={styles.video}
     />
-    <Text style={styles.memberName}>{props.member.fullName}</Text>
     <Text style={styles.memberUsername}>@{props.member.username}</Text>
   </View>
 );
 
-const Stats: React.StatelessComponent<{ member: Member }> = props => (
+const Stats: React.StatelessComponent<{
+  member: Member;
+  navigation: any;
+}> = props => (
   <View style={styles.statsContainer}>
     <View style={styles.stat}>
       <Text style={styles.number}>ℝ{props.member.balance.toFixed(2)}</Text>
-      <Text style={styles.statLabel}>{"balance"}</Text>
+      <Text style={styles.statLabel}>balance</Text>
     </View>
-    <View style={styles.stat}>
-      <Text style={styles.number}>{props.member.trustedBy.size}</Text>
-      <Text style={styles.statLabel}>{"trusted by"}</Text>
-    </View>
-    <View style={styles.stat}>
-      <Text style={styles.number}>{props.member.trusts.size}</Text>
-      <Text style={styles.statLabel}>{"trusts"}</Text>
-    </View>
+    <TouchableHighlight
+      onPress={() => {
+        props.navigation.push(RouteName.MemberList, {
+          memberIds: Array.from(props.member.trustedBy),
+          title: "Trusted By"
+        });
+      }}
+    >
+      <View style={styles.stat}>
+        <Text style={styles.number}>{props.member.trustedBy.size}</Text>
+        <Text style={styles.statLabel}>trusted by</Text>
+      </View>
+    </TouchableHighlight>
+    <TouchableHighlight
+      onPress={() =>
+        props.navigation.push(RouteName.MemberList, {
+          memberIds: Array.from(props.member.trusts),
+          title: "Trusted By"
+        })
+      }
+    >
+      <View style={styles.stat}>
+        <Text style={styles.number}>{props.member.trusts.size}</Text>
+        <Text style={styles.statLabel}>trusts</Text>
+      </View>
+    </TouchableHighlight>
   </View>
 );
 
@@ -95,7 +124,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = props => (
         <View style={styles.header}>
           <Thumbnail member={props.member} />
           <View style={styles.interactions}>
-            <Stats member={props.member} />
+            <Stats navigation={props.navigation} member={props.member} />
             <Actions
               isOwnProfile={props.isOwnProfile}
               mint={props.mint}
@@ -132,12 +161,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
-  },
-  memberName: {
-    fontWeight: "600",
-    fontSize: 18,
-    marginVertical: 5,
-    textAlign: "center"
   },
   memberUsername: {
     fontWeight: "600",
@@ -197,6 +220,22 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   };
 };
 
+const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
+  state,
+  props
+) => {
+  const firebaseUser = state.authentication.firebaseUser;
+  const loggedInMember = firebaseUser
+    ? getMembersByIds(state, [firebaseUser.uid])[0]
+    : undefined;
+  const member: Member = props.navigation.getParam("member", loggedInMember);
+  return {
+    member,
+    isOwnProfile:
+      !!loggedInMember && loggedInMember.memberId === member.memberId
+  };
+};
+
 const mergeProps: MergeProps<
   StateProps,
   DispatchProps,
@@ -205,7 +244,7 @@ const mergeProps: MergeProps<
 > = (stateProps, dispatchProps, ownProps) => {
   return {
     ...stateProps,
-    trust: () => dispatchProps.trust(ownProps.member.memberId),
+    trust: () => dispatchProps.trust(stateProps.member.memberId),
     signOut: dispatchProps.signOut,
     mint: dispatchProps.mint,
     ...ownProps
@@ -213,6 +252,7 @@ const mergeProps: MergeProps<
 };
 
 export const Profile = connect(
-  undefined,
-  mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
 )(ProfileView);
