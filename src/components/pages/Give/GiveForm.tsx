@@ -80,6 +80,9 @@ class GiveFormView extends React.Component<Props, State> {
         // Rounding Mode half-up
         const bigAmount = new Big(amount).round(2, 1);
         if (this.validateAmount(bigAmount)) {
+          this.setState({
+            amount: bigAmount
+          });
         }
       } catch {}
     }
