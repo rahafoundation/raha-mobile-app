@@ -1,6 +1,5 @@
 import "es6-symbol/implement";
 import * as React from "react";
-import { Text } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
@@ -9,27 +8,21 @@ import { Home } from "../pages/Home";
 import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
 import { Profile } from "../pages/Profile";
-import { OnboardingVideoPreview } from "../pages/Onboarding/OnboardingVideoPreview";
 import { getMembersByIds } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { createStackNavigator } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
 import { MemberList } from "../pages/MemberList";
-import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
-import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
-import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
+import { Onboarding } from "../pages/Onboarding/Onboarding";
 
 export enum RouteName {
   Home = "Home",
-  OnboardingSplash = "OnboardingSplash",
-  OnboardingCamera = "OnboardingCamera",
-  OnboardingInvite = "OnboardingInvite",
+  Onboarding = "Onboarding",
   LogIn = "LogIn",
   MemberList = "MemberList",
   OtherProfile = "OtherProfile",
   Profile = "Profile",
-  OnboardingVideoPreview = "OnboardingVideoPreview",
   Search = "Search",
   Mint = "Mint",
   Give = "Give"
@@ -69,7 +62,7 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
     },
     Search: {
       // TODO: Implement page
-      screen: OnboardingCamera
+      screen: Onboarding
     },
     Mint: {
       // TODO: Implement page
@@ -100,7 +93,7 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
           case RouteName.Home:
             iconName = "home";
             break;
-          case RouteName.OnboardingCamera:
+          case RouteName.Onboarding:
             iconName = "account-multiple-plus";
             break;
           case RouteName.Mint:
@@ -136,23 +129,14 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
 
 const SignedOutNavigator = createStackNavigator(
   {
-    OnboardingCamera: {
-      screen: OnboardingCamera
-    },
-    OnboardingSplash: {
-      screen: OnboardingSplash
-    },
-    OnboardingInvite: {
-      screen: OnboardingInvite
+    Onboarding: {
+      screen: Onboarding
     },
     LogIn: {
       screen: LogIn
     },
     Profile: {
       screen: Profile
-    },
-    OnboardingVideoPreview: {
-      screen: OnboardingVideoPreview
     }
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {

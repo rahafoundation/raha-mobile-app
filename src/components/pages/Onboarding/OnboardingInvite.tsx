@@ -67,7 +67,7 @@ export class OnboardingInviteView extends React.Component<
                 this.state.invitingMember.fullName
               }`}
               onPress={() =>
-                this.props.navigation.navigate(RouteName.OnboardingCamera, {
+                this.props.navigation.navigate(RouteName.Onboarding, {
                   invitingMember: this.state.invitingMember,
                   verifiedName: this.state.verifiedName
                 })

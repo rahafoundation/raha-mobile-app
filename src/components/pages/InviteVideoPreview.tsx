@@ -5,14 +5,14 @@
 import * as React from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import { Video } from "expo";
-import { RouteName } from "../../shared/Navigation";
+import { RouteName } from "../shared/Navigation";
 
-type OnboardingVideoPreviewProps = {
+type InviteVideoPreviewProps = {
   navigation: any;
 };
 
 export class OnboardingVideoPreview extends React.Component<
-  OnboardingVideoPreviewProps
+  InviteVideoPreviewProps
 > {
   render() {
     const videoUri = this.props.navigation.getParam("videoUri", null);

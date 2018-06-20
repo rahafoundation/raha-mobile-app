@@ -27,7 +27,7 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
         </Text>
         <Camera
           onVideoRecorded={uri => {
-            this.props.navigation.navigate(RouteName.VideoPreview, {
+            this.props.navigation.navigate(RouteName.OnboardingVideoPreview, {
               videoUri: uri
             });
           }}

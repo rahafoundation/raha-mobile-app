@@ -3,7 +3,6 @@ import { Member } from "../../../store/reducers/members";
 import { View, StyleSheet, TextInput } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../store";
-import { OnboardingSplash } from "./OnboardingSplash";
 
 /**
  * Parent component for Onboarding flow.
