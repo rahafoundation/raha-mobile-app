@@ -6,6 +6,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { Give } from "../pages/Give";
 import { Home } from "../pages/Home";
+import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
 import { Profile } from "../pages/Profile";
 import { VideoPreview } from "../pages/VideoPreview";
@@ -30,7 +31,7 @@ export enum RouteName {
   Profile = "Profile",
   VideoPreview = "VideoPreview",
   Search = "Search",
-  Invite = "Invite",
+  Mint = "Mint",
   Give = "Give"
 }
 
@@ -70,9 +71,9 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
       // TODO: Implement page
       screen: OnboardingCamera
     },
-    Invite: {
+    Mint: {
       // TODO: Implement page
-      screen: OnboardingSplash
+      screen: Mint
     },
     Profile: {
       screen: ProfileNavigator
@@ -82,7 +83,7 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
     }
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
-    initialRouteName: RouteName.Home,
+    initialRouteName: RouteName.Mint,
     labeled: false,
     navigationOptions: ({ navigation }: any) => ({
       tabBarIcon: ({ focused }: any) => {
@@ -102,7 +103,7 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
           case RouteName.OnboardingCamera:
             iconName = "account-multiple-plus";
             break;
-          case RouteName.Invite:
+          case RouteName.Mint:
             iconName = "gift";
             break;
           case RouteName.Search:
@@ -113,15 +114,15 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
             throw Error(`Unrecognized route ${routeName}`);
             break;
         }
-        const isInvite = routeName === RouteName.Invite;
-        if (!focused && !isInvite) {
+        const isMint = routeName === RouteName.Mint;
+        if (!focused && !isMint) {
           iconName += "-outline";
         }
         return (
           <IconType
             name={iconName}
             size={25}
-            color={focused && isInvite ? "pink" : "black"}
+            color={focused && isMint ? "green" : "black"}
           />
         );
       },

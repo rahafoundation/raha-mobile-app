@@ -86,7 +86,7 @@ const Stats: React.StatelessComponent<{
   <View style={styles.statsContainer}>
     <View style={styles.stat}>
       <Text style={styles.number}>ℝ{props.member.balance.toFixed(2)}</Text>
-      <Text style={styles.statLabel}>balance</Text>
+      <Text style={styles.numberLabel}>balance</Text>
     </View>
     <TouchableHighlight
       onPress={() => {
@@ -98,7 +98,7 @@ const Stats: React.StatelessComponent<{
     >
       <View style={styles.stat}>
         <Text style={styles.number}>{props.member.trustedBy.size}</Text>
-        <Text style={styles.statLabel}>trusted by</Text>
+        <Text style={styles.numberLabel}>trusted by</Text>
       </View>
     </TouchableHighlight>
     <TouchableHighlight
@@ -111,7 +111,7 @@ const Stats: React.StatelessComponent<{
     >
       <View style={styles.stat}>
         <Text style={styles.number}>{props.member.trusts.size}</Text>
-        <Text style={styles.statLabel}>trusts</Text>
+        <Text style={styles.numberLabel}>trusts</Text>
       </View>
     </TouchableHighlight>
   </View>
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16
   },
-  statLabel: {
+  numberLabel: {
     color: "#666",
     fontSize: 12
   }
