@@ -3,7 +3,7 @@ import { TextInput } from "react-native";
 import { Text, Button } from "react-native-elements";
 
 /**
- * Component that confirms user's full name.
+ * Component that confirms user's full name during onboarding.
  */
 type VerifyNameProps = {
   initialDisplayName?: string;
@@ -18,6 +18,10 @@ export class VerifyName extends React.Component<
   VerifyNameProps,
   VerifyNameState
 > {
+  state = {
+    displayName: this.props.initialDisplayName
+  };
+
   render() {
     const displayName = this.state.displayName;
     return (
@@ -25,7 +29,7 @@ export class VerifyName extends React.Component<
         <Text>Please enter your full name:</Text>
         <TextInput
           placeholder="What's your full name?"
-          defaultValue={this.state.displayName}
+          defaultValue={this.props.initialDisplayName}
           onChangeText={name => {
             this.setState({ displayName: name });
           }}

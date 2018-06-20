@@ -5,6 +5,7 @@ import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../store";
 import { OnboardingSplash } from "./OnboardingSplash";
 import { VerifyName } from "./VerifyName";
+import { ChooseInviter } from "./ChooseInviter";
 
 /**
  * Parent component for Onboarding flow.
@@ -62,10 +63,37 @@ export class OnboardingView extends React.Component<
       case OnboardingStep.VERIFY_NAME: {
         return (
           <VerifyName
+            initialDisplayName={
+              this.props.displayName ? this.props.displayName : undefined
+            }
             onVerifiedName={name => {
               this.setState({
                 verifiedName: name,
                 step: OnboardingStep.CHOOSE_INVITER
+              });
+            }}
+          />
+        );
+      }
+      case OnboardingStep.CHOOSE_INVITER: {
+        return (
+          <ChooseInviter
+            onInviterSelected={member => {
+              this.setState({
+                invitingMember: member,
+                step: OnboardingStep.CAMERA
+              });
+            }}
+          />
+        );
+      }
+      case OnboardingStep.CAMERA: {
+        return (
+          <ChooseInviter
+            onInviterSelected={member => {
+              this.setState({
+                invitingMember: member,
+                step: OnboardingStep.CAMERA
               });
             }}
           />
