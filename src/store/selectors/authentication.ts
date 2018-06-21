@@ -1,6 +1,7 @@
 import { RahaState } from "../reducers";
 import { auth } from "../../firebaseInit";
 import { MemberId } from "../../identifiers";
+import * as firebase from "firebase";
 
 export async function getAuthToken(
   state: RahaState
@@ -34,5 +35,19 @@ export function getLoggedInMember(state: RahaState) {
       : undefined;
   return loggedInUserId
     ? state.members.byUserId.get(loggedInUserId)
+    : undefined;
+}
+
+export function getPrivateVideoInviteRef(state: RahaState) {
+  const loggedInUserId = !!state.authentication.firebaseUser
+    ? state.authentication.firebaseUser.uid
+    : undefined;
+  return loggedInUserId
+    ? firebase
+        .storage()
+        .ref()
+        .child("private-video")
+        .child(loggedInUserId)
+        .child("invite.mp4")
     : undefined;
 }

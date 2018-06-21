@@ -9,7 +9,7 @@ import { Home } from "../pages/Home";
 import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
 import { Profile } from "../pages/Profile";
-import { VideoPreview } from "../pages/VideoPreview";
+import { InviteVideoPreview } from "../pages/Onboarding/InviteVideoPreview";
 import { getMembersByIds } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
@@ -24,6 +24,7 @@ import { getLoggedInMemberId } from "../../store/selectors/authentication";
 export enum RouteName {
   Home = "Home",
   HomeTab = "HomeTab",
+  InviteVideoPreview = "InviteVideoPreview",
   OnboardingSplash = "OnboardingSplash",
   OnboardingCamera = "OnboardingCamera",
   OnboardingInvite = "OnboardingInvite",
@@ -32,7 +33,6 @@ export enum RouteName {
   OtherProfile = "OtherProfile",
   Profile = "Profile",
   ProfileTab = "ProfileTab",
-  VideoPreview = "VideoPreview",
   Discover = "Discover",
   Mint = "Mint",
   Give = "Give"
@@ -176,8 +176,8 @@ const SignedOutNavigator = createStackNavigator(
     Profile: {
       screen: Profile
     },
-    VideoPreview: {
-      screen: VideoPreview
+    InviteVideoPreview: {
+      screen: InviteVideoPreview
     }
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {

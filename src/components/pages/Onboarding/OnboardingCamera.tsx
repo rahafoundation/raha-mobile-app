@@ -15,9 +15,15 @@ type OnboardingCameraProps = {
 
 export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
   render() {
-    // TODO: Redirect if any of these params are null?
-    let invitingMember = this.props.navigation.getParam("invitingMember", null);
-    let verifiedName = this.props.navigation.getParam("verifiedName", null);
+    const verifiedName = this.props.navigation.getParam("verifiedName", null);
+    const invitingMember = this.props.navigation.getParam(
+      "invitingMember",
+      null
+    );
+    if (!invitingMember || !verifiedName) {
+      // Should not happen, but in case of bug we can safely navigate back to fill in missing info.
+      this.props.navigation.navigate(RouteName.OnboardingInvite);
+    }
 
     return (
       <React.Fragment>
@@ -27,8 +33,10 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
         </Text>
         <Camera
           onVideoRecorded={uri => {
-            this.props.navigation.navigate(RouteName.VideoPreview, {
-              videoUri: uri
+            this.props.navigation.navigate(RouteName.InviteVideoPreview, {
+              videoUri: uri,
+              invitingMember: invitingMember,
+              verifiedName: verifiedName
             });
           }}
         />
