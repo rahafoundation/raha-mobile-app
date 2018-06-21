@@ -21,12 +21,9 @@ class AuthManagerComponent extends React.Component<Props> {
 
   public componentWillMount() {
     this.unsubscribe = auth.onAuthStateChanged(user => {
-      console.log("AuthStateChanged");
       if (user) {
-        console.log("SignedIn");
         this.props.logIn();
       } else {
-        console.log("SignedOut");
         this.props.signOut();
       }
     });
