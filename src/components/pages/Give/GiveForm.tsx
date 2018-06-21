@@ -150,7 +150,7 @@ class GiveFormView extends React.Component<Props, State> {
     return (
       <View style={styles.container}>
         <View style={styles.toRow}>
-          <Text style={styles.label}>Give Raha to:</Text>
+          <Text style={styles.label}>To:</Text>
           {this.state.toMember ? (
             <View style={styles.selectedMember}>
               <Text onPress={this.clearTo}>
