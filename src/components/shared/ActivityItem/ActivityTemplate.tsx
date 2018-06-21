@@ -4,11 +4,12 @@
  */
 import * as React from "react";
 import { format } from "date-fns";
-
 import { Big } from "big.js";
-import { Member } from "../../../store/reducers/members";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { withNavigation } from "react-navigation";
 import { Video, PlaybackObject, PlaybackStatus } from "expo";
+
+import { Member } from "../../../store/reducers/members";
 import { RouteName } from "../Navigation";
 
 interface ActivityTemplateProps {
@@ -26,7 +27,7 @@ interface ActivityTemplateState {
   videoPlaybackFinished: boolean; // true if video has completed after pressed, not when it loops.
 }
 
-export class ActivityTemplate extends React.Component<
+class ActivityTemplateView extends React.Component<
   ActivityTemplateProps,
   ActivityTemplateState
 > {
@@ -215,3 +216,5 @@ const styles = StyleSheet.create({
     color: "#666"
   }
 });
+
+export const ActivityTemplate = withNavigation(ActivityTemplateView);
