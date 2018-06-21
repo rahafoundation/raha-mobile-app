@@ -136,8 +136,7 @@ class InviteVideoPreviewView extends React.Component<
     }
   }
 
-  renderButtons() {
-    // If uploading or requesting, show loading spinner
+  renderButtonsOrStatus() {
     const videoUploadRef = this.props.videoUploadRef;
     if (this.state.uploadStatus === UploadStatus.NOT_STARTED) {
       return (
@@ -214,7 +213,7 @@ class InviteVideoPreviewView extends React.Component<
       <View style={styles.container}>
         {this.renderErrorMessage()}
         {this.renderVideo()}
-        {this.renderButtons()}
+        {this.renderButtonsOrStatus()}
       </View>
     );
   }
