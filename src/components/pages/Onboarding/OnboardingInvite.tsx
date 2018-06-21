@@ -7,6 +7,7 @@ import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../store";
 import { RouteName } from "../../shared/Navigation";
 import { getLoggedInFirebaseUser } from "../../../store/selectors/authentication";
+import { NavigationScreenProps } from "react-navigation";
 
 /**
  * Page that confirms who the user is trying to get an invite from and their full name.
@@ -16,9 +17,8 @@ type ReduxStateProps = {
   displayName: string | null;
 };
 
-type OwnProps = {
+type OwnProps = NavigationScreenProps<{}> & {
   deeplinkInvitingMember?: Member;
-  navigation: any;
 };
 
 type OnboardingInviteProps = ReduxStateProps & OwnProps;

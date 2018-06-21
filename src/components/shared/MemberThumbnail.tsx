@@ -12,10 +12,10 @@ import {
 } from "react-native";
 import { Member } from "../../store/reducers/members";
 import { RouteName } from "../shared/Navigation";
+import { NavigationScreenProps } from "react-navigation";
 
-type Props = {
+type Props = NavigationScreenProps<{}> & {
   member: Member;
-  navigation: any;
 };
 
 function getInitialsForName(name: string): string {

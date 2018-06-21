@@ -6,13 +6,8 @@ import { RahaState } from "../../store";
 import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { OperationType } from "../../store/reducers/operations";
-import { getLoggedInMember } from "../../store/selectors/authentication";
 
-type Props = {
-  navigation: any;
-};
-
-const HomeView: React.StatelessComponent<Props> = props => {
+const HomeView: React.StatelessComponent<{}> = props => {
   return (
     <View>
       <Text>Give Raha to:</Text>

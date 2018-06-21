@@ -8,10 +8,9 @@ import { RouteName } from "../shared/Navigation";
 import { getLoggedInMember } from "../../store/selectors/authentication";
 import { SafeAreaView } from "../../shared/SafeAreaView";
 import { Button } from "../shared/Button";
+import { NavigationScreenProps } from "react-navigation";
 
-type OwnProps = {
-  navigation: any;
-};
+type OwnProps = NavigationScreenProps<{}>;
 
 type StateProps = {
   loggedInMember: Member;
