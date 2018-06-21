@@ -2,6 +2,7 @@ import * as React from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 
+import { AuthManager } from "./src/components/AuthManager";
 import { Navigation } from "./src/components/shared/Navigation";
 import { store, persistor } from "./src/store";
 import { refreshMembers } from "./src/store/actions/members";
@@ -22,7 +23,9 @@ const App: React.StatelessComponent = () => {
         persistor={persistor}
         onBeforeLift={onBeforeLift}
       >
-        <Navigation />
+        <AuthManager>
+          <Navigation />
+        </AuthManager>
       </PersistGate>
     </Provider>
   );

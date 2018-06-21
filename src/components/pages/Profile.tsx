@@ -23,6 +23,7 @@ import { MemberId } from "../../identifiers";
 import { mint } from "../../store/actions/wallet";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { Button } from "../shared/Button";
+import { getLoggedInMemberId } from "../../store/selectors/authentication";
 
 type OwnProps = {
   navigation: any;
@@ -224,10 +225,11 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   props
 ) => {
-  const firebaseUser = state.authentication.firebaseUser;
-  const loggedInMember = firebaseUser
-    ? getMembersByIds(state, [firebaseUser.uid])[0]
-    : undefined;
+  const loggedInMemberId = getLoggedInMemberId(state);
+  const loggedInMember =
+    state.authentication.isLoggedIn && loggedInMemberId
+      ? getMembersByIds(state, [loggedInMemberId])[0]
+      : undefined;
   const member: Member = props.navigation.getParam("member", loggedInMember);
   return {
     member,

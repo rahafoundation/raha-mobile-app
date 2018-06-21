@@ -8,13 +8,14 @@ import {
 } from "../actions/authentication";
 
 export interface AuthenticationState {
-  firebaseUser?: FirebaseUser;
   isLoaded: boolean;
+  isLoggedIn: boolean;
   existingAuthMethod?: AuthMethod;
 }
 
 const initialState: AuthenticationState = {
-  isLoaded: false
+  isLoaded: false,
+  isLoggedIn: false
 };
 
 export const reducer: Reducer<AuthenticationState> = (
@@ -23,22 +24,23 @@ export const reducer: Reducer<AuthenticationState> = (
 ) => {
   const action = untypedAction as AuthenticationAction;
   switch (action.type) {
-    case AuthenticationActionType.SET_FIREBASE_USER:
+    case AuthenticationActionType.LOG_IN:
       return {
         isLoaded: true,
-        firebaseUser: action.firebaseUser,
+        isLoggedIn: true,
         existingAuthMethod: undefined
       };
     case AuthenticationActionType.EXISTING_CREDENTIAL:
       return {
         isLoaded: false,
-        firebaseUser: undefined,
+        isLoggedIn: false,
         existingAuthMethod: action.authMethod
       };
     case AuthenticationActionType.SIGN_OUT:
+    case AuthenticationActionType.SIGNED_OUT:
       return {
         isLoaded: true,
-        firebaseUser: undefined,
+        isLoggedIn: false,
         existingAuthMethod: undefined
       };
     default:

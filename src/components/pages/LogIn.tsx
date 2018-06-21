@@ -9,6 +9,7 @@ import {
 } from "../../store/actions/authentication";
 import { RahaState, RahaThunkDispatch } from "../../store";
 import { RouteName } from "../shared/Navigation";
+import { getLoggedInMemberId } from "../../store/selectors/authentication";
 import { getMembersByIds } from "../../store/selectors/members";
 
 type OwnProps = {
@@ -85,14 +86,13 @@ const mapStateToProps: MapStateToProps<
   OwnProps,
   RahaState
 > = state => {
-  const firebaseUser = state.authentication.firebaseUser;
   const isLoggedIn =
-    state.authentication.isLoaded && !!state.authentication.firebaseUser;
+    state.authentication.isLoaded && state.authentication.isLoggedIn;
+  const loggedInMemberId = getLoggedInMemberId(state);
   const hasAccount =
     isLoggedIn &&
-    !!state.authentication.firebaseUser &&
-    getMembersByIds(state, [state.authentication.firebaseUser.uid])[0] !==
-      undefined;
+    !!loggedInMemberId &&
+    getMembersByIds(state, [loggedInMemberId])[0] !== undefined;
   return {
     isLoggedIn,
     hasAccount,
