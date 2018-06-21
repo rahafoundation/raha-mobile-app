@@ -212,7 +212,7 @@ class GiveFormView extends React.Component<Props, State> {
         </View>
         {this.state.toMember && this.state.amount ? (
           <Text style={styles.section}>
-            You will give {this.state.amount} Raha to{" "}
+            You will give {this.state.amount.toString()} Raha to{" "}
             {this.state.toMember.fullName}
             {this.state.memo ? ` ${this.state.memo}` : ""}.
           </Text>

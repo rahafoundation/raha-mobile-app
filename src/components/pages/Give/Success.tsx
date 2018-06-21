@@ -14,7 +14,7 @@ export const Success: React.StatelessComponent<OwnProps> = props => {
   return (
     <View style={styles.container}>
       <Text>
-        You sent {props.amount} Raha to {props.toMember.fullName}
+        You sent {props.amount.toString()} Raha to {props.toMember.fullName}
         {props.memo ? ` ${props.memo}` : ""}.
       </Text>
       {/* <Button title="Give again" onPress={() => null} /> */}
