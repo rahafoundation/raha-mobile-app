@@ -23,6 +23,7 @@ import { getLoggedInMemberId } from "../../store/selectors/authentication";
 
 export enum RouteName {
   Home = "Home",
+  HomeTab = "HomeTab",
   OnboardingSplash = "OnboardingSplash",
   OnboardingCamera = "OnboardingCamera",
   OnboardingInvite = "OnboardingInvite",
@@ -30,23 +31,36 @@ export enum RouteName {
   MemberList = "MemberList",
   OtherProfile = "OtherProfile",
   Profile = "Profile",
+  ProfileTab = "ProfileTab",
   VideoPreview = "VideoPreview",
-  Search = "Search",
+  Discover = "Discover",
   Mint = "Mint",
   Give = "Give"
 }
 
-const HomeNavigator = createStackNavigator(
+const MemberListRouteConfig = {
+  screen: MemberList,
+  navigationOptions: ({ navigation }: any) => {
+    return {
+      title: navigation.getParam("title", "Member List")
+    };
+  }
+};
+
+const ProfileRouteConfig = {
+  screen: Profile,
+  navigationOptions: ({ navigation }: any) => {
+    const member = navigation.getParam("member");
+    return {
+      title: member ? member.fullName : "Your Profile"
+    };
+  }
+};
+
+const HomeTab = createStackNavigator(
   {
-    Profile: {
-      screen: Profile,
-      navigationOptions: ({ navigation }: any) => {
-        const member = navigation.getParam("member");
-        return {
-          title: member ? member.fullName : "Profile"
-        };
-      }
-    },
+    Profile: ProfileRouteConfig,
+    MemberList: MemberListRouteConfig,
     Home: {
       screen: Home,
       navigationOptions: ({ navigation }: any) => {
@@ -62,25 +76,10 @@ const HomeNavigator = createStackNavigator(
   }
 );
 
-const ProfileNavigator = createStackNavigator(
+const ProfileTab = createStackNavigator(
   {
-    Profile: {
-      screen: Profile,
-      navigationOptions: ({ navigation }: any) => {
-        const member = navigation.getParam("member");
-        return {
-          title: member ? member.fullName : "Your Profile"
-        };
-      }
-    },
-    MemberList: {
-      screen: MemberList,
-      navigationOptions: ({ navigation }: any) => {
-        return {
-          title: navigation.getParam("title", "Member List")
-        };
-      }
-    }
+    Profile: ProfileRouteConfig,
+    MemberList: MemberListRouteConfig
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
     initialRouteName: RouteName.Profile,
@@ -90,10 +89,10 @@ const ProfileNavigator = createStackNavigator(
 
 const SignedInNavigator = createMaterialBottomTabNavigator(
   {
-    Home: {
-      screen: HomeNavigator
+    HomeTab: {
+      screen: HomeTab
     },
-    Search: {
+    Discover: {
       // TODO: Implement page
       screen: OnboardingCamera
     },
@@ -101,8 +100,8 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
       // TODO: Implement page
       screen: Mint
     },
-    Profile: {
-      screen: ProfileNavigator
+    ProfileTab: {
+      screen: ProfileTab
     },
     Give: {
       screen: Give
@@ -117,13 +116,13 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
         let iconName;
         let IconType = Icon;
         switch (routeName) {
-          case RouteName.Profile:
+          case RouteName.ProfileTab:
             iconName = "account";
             break;
           case RouteName.Give:
             iconName = "star";
             break;
-          case RouteName.Home:
+          case RouteName.HomeTab:
             iconName = "home";
             break;
           case RouteName.OnboardingCamera:
@@ -132,7 +131,7 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
           case RouteName.Mint:
             iconName = "gift";
             break;
-          case RouteName.Search:
+          case RouteName.Discover:
             iconName = "ios-search";
             IconType = Ionicons;
             break;
