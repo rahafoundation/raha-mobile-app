@@ -11,9 +11,10 @@ import { RahaState, RahaThunkDispatch } from "../../store";
 import { RouteName } from "../shared/Navigation";
 import { getLoggedInMemberId } from "../../store/selectors/authentication";
 import { getMembersByIds } from "../../store/selectors/members";
+import { NavigationScreenProp } from "react-navigation";
 
 type OwnProps = {
-  navigation: any;
+  navigation: NavigationScreenProp<{}>;
 };
 
 type StateProps = {

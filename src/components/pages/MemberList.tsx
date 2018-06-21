@@ -3,16 +3,21 @@
  * of members such as everyone trusted by or who trusts a certain person.
  */
 import * as React from "react";
+import { MapStateToProps, connect } from "react-redux";
+import { NavigationScreenProps } from "react-navigation";
 import { FlatList } from "react-native";
+
 import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";
 import { getMembersByIds } from "../../store/selectors/members";
 import { MemberThumbnail } from "../shared/MemberThumbnail";
-import { MapStateToProps, connect } from "react-redux";
+import { MemberId } from "../../identifiers";
 
-type OwnProps = {
-  navigation: any;
-};
+interface NavParams {
+  memberIds: MemberId[];
+}
+
+type OwnProps = NavigationScreenProps<NavParams>;
 
 type StateProps = {
   members: Member[];

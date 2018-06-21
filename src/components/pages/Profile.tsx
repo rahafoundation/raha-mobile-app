@@ -11,6 +11,7 @@ import {
   MapStateToProps,
   MergeProps
 } from "react-redux";
+import { NavigationScreenProps } from "react-navigation";
 import { Video } from "expo";
 
 import { RouteName } from "../shared/Navigation";
@@ -25,9 +26,10 @@ import { ActivityFeed } from "../shared/ActivityFeed";
 import { Button } from "../shared/Button";
 import { getLoggedInMemberId } from "../../store/selectors/authentication";
 
-type OwnProps = {
-  navigation: any;
-};
+interface NavParams {
+  member: Member;
+}
+type OwnProps = NavigationScreenProps<NavParams>;
 
 type StateProps = {
   member: Member;

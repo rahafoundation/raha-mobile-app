@@ -746,6 +746,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-navigation@^2.0.6":
+  version "2.0.6"
+  resolved "https://registry.npmjs.org/@types/react-navigation/-/react-navigation-2.0.6.tgz#16ef87a163aebb7e6d2b5223f2c1f692a9f03726"
+  dependencies:
+    "@types/react" "*"
+    "@types/react-native" "*"
+
 "@types/react-redux@^6.0.0":
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-6.0.0.tgz#31711592b13ed6d6d2fd4506e5447b00e1f0b484"

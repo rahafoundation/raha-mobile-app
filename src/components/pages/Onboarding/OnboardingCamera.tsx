@@ -4,25 +4,27 @@
  */
 
 import * as React from "react";
-import { Text, StyleSheet } from "react-native";
+import { Text, StyleSheet, View } from "react-native";
 import { Camera } from "../../shared/Camera";
 import { RouteName } from "../../shared/Navigation";
 import { Member } from "../../../store/reducers/members";
+import { NavigationScreenProps } from "react-navigation";
 
-type OnboardingCameraProps = {
-  navigation: any;
-};
+interface NavParams {
+  invitingMember?: Member;
+  verifiedName?: string;
+}
+type OnboardingCameraProps = NavigationScreenProps<NavParams>;
 
 export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
   render() {
-    const verifiedName = this.props.navigation.getParam("verifiedName", null);
-    const invitingMember = this.props.navigation.getParam(
-      "invitingMember",
-      null
-    );
+    let invitingMember = this.props.navigation.getParam("invitingMember");
+    let verifiedName = this.props.navigation.getParam("verifiedName");
     if (!invitingMember || !verifiedName) {
       // Should not happen, but in case of bug we can safely navigate back to fill in missing info.
+      console.warn(`Missing invitingMember or verifiedName: ${{invitingMember, verifiedName}}`)
       this.props.navigation.navigate(RouteName.OnboardingInvite);
+      return <View />
     }
 
     return (

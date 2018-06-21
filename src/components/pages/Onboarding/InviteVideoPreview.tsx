@@ -12,6 +12,7 @@ import { Member } from "../../../store/reducers/members";
 import { RahaState } from "../../../store";
 import { connect, MapStateToProps } from "react-redux";
 import { getPrivateVideoInviteRef } from "../../../store/selectors/authentication";
+import { NavigationScreenProps } from "react-navigation";
 
 const BYTES_PER_MIB = 1024 * 1024;
 const MAX_MB = 60;
@@ -21,10 +22,13 @@ type ReduxStateProps = {
   videoUploadRef?: firebase.storage.Reference;
 };
 
-type OwnProps = {
-  navigation: any;
-  invitingMember: Member;
-};
+interface NavParams {
+  invitingMember?: Member;
+  verifiedName?: string;
+  videoUri?: string;
+}
+
+type OwnProps = NavigationScreenProps<NavParams>;
 
 type InviteVideoPreviewProps = ReduxStateProps & OwnProps;
 
@@ -66,13 +70,17 @@ class InviteVideoPreviewView extends React.Component<
 
   navigateToCamera() {
     this.props.navigation.navigate(RouteName.OnboardingCamera, {
-      invitingMember: this.props.navigation.getParam("invitingMember", null),
-      verifiedName: this.props.navigation.getParam("verifiedName", null)
+      invitingMember: this.props.navigation.getParam("invitingMember"),
+      verifiedName: this.props.navigation.getParam("verifiedName")
     });
   }
 
   uploadVideo = async (videoUploadRef: firebase.storage.Reference) => {
-    const videoUri = this.props.navigation.getParam("videoUri", null);
+    const videoUri = this.props.navigation.getParam("videoUri");
+    if (!videoUri) {
+      console.warn("videoUri missing from navigator when uploading video.");
+      return;
+    }
     this.setState({ uploadStatus: UploadStatus.UPLOADING });
     const response = await fetch(videoUri);
     const blob = await response.blob();
@@ -122,10 +130,13 @@ class InviteVideoPreviewView extends React.Component<
   }
 
   componentWillMount() {
-    this.videoUri = this.props.navigation.getParam("videoUri", null);
+    this.videoUri = this.props.navigation.getParam("videoUri");
 
     // Validate video state.
     if (!this.videoUri) {
+      console.warn(
+        "videoUri missing from navigator when mounting video preview."
+      );
       this.setState({
         errorMessage: "Invalid video. Please try again."
       });

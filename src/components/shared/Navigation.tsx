@@ -1,6 +1,5 @@
 import "es6-symbol/implement";
 import * as React from "react";
-import { Text } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
@@ -13,7 +12,7 @@ import { InviteVideoPreview } from "../pages/Onboarding/InviteVideoPreview";
 import { getMembersByIds } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
-import { createStackNavigator } from "react-navigation";
+import { createStackNavigator, NavigationContainer } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
 import { MemberList } from "../pages/MemberList";
 import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
@@ -87,7 +86,7 @@ const ProfileTab = createStackNavigator(
   }
 );
 
-const SignedInNavigator = createMaterialBottomTabNavigator(
+const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
     HomeTab: {
       screen: HomeTab
@@ -137,7 +136,6 @@ const SignedInNavigator = createMaterialBottomTabNavigator(
             break;
           default:
             throw Error(`Unrecognized route ${routeName}`);
-            break;
         }
         const isMint = routeName === RouteName.Mint;
         if (!focused && !isMint) {
