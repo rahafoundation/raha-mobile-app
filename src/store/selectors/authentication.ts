@@ -39,9 +39,7 @@ export function getLoggedInMember(state: RahaState) {
 }
 
 export function getPrivateVideoInviteRef(state: RahaState) {
-  const loggedInUserId = !!state.authentication.firebaseUser
-    ? state.authentication.firebaseUser.uid
-    : undefined;
+  const loggedInUserId = getLoggedInMemberId(state);
   return loggedInUserId
     ? firebase
         .storage()
