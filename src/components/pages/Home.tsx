@@ -6,22 +6,15 @@ import { RahaState } from "../../store";
 import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { OperationType } from "../../store/reducers/operations";
-import { SafeAreaView } from "../../shared/SafeAreaView";
-import { getLoggedInFirebaseUser } from "../../store/selectors/authentication";
+import { getLoggedInMember } from "../../store/selectors/authentication";
 
-type OwnProps = {
+type Props = {
   navigation: any;
 };
 
-type StateProps = {
-  loggedInUserId?: string;
-};
-
-type HomeProps = OwnProps & StateProps;
-
-const HomeView: React.StatelessComponent<HomeProps> = props => {
+const HomeView: React.StatelessComponent<Props> = props => {
   return (
-    <SafeAreaView>
+    <View>
       <Text>Give Raha to:</Text>
       <MemberSearchBar
         // Make onPress go to the item instead of dismissing keyboard
@@ -33,18 +26,8 @@ const HomeView: React.StatelessComponent<HomeProps> = props => {
       <ActivityFeed
         filter={operation => operation.op_code !== OperationType.MINT}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
-const mapStateToProps: MapStateToProps<
-  StateProps,
-  OwnProps,
-  RahaState
-> = state => {
-  const firebaseUser = getLoggedInFirebaseUser(state);
-  return {
-    loggedInUserId: firebaseUser ? firebaseUser.uid : undefined
-  };
-};
-export const Home = connect(mapStateToProps)(HomeView);
+export const Home = HomeView;

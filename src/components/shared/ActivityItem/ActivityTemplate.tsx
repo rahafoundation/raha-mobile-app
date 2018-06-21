@@ -9,6 +9,7 @@ import { Big } from "big.js";
 import { Member } from "../../../store/reducers/members";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Video, PlaybackObject, PlaybackStatus } from "expo";
+import { RouteName } from "../Navigation";
 
 interface ActivityTemplateProps {
   from: Member;
@@ -80,6 +81,7 @@ export class ActivityTemplate extends React.Component<
     const {
       to,
       from,
+      navigation,
       videoUri,
       timestamp,
       message,
@@ -95,14 +97,28 @@ export class ActivityTemplate extends React.Component<
     return (
       <View style={styles.card}>
         <View style={styles.metadataRow}>
-          <View>{to && <Text>To {to.fullName}:</Text>}</View>
+          <View>
+            {to && (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.push(RouteName.Profile, { member: to })
+                }
+              >
+                <Text>To {to.fullName}:</Text>
+              </TouchableOpacity>
+            )}
+          </View>
           <Text style={styles.timestamp}>
             {format(timestamp, "MMM D, YYYY h:mm a")}
           </Text>
         </View>
         <View style={styles.bodyRow}>
           <Text>{message}</Text>
-          <Text style={styles.fromText}>From: {from.fullName}</Text>
+          <TouchableOpacity
+            onPress={() => navigation.push(RouteName.Profile, { member: from })}
+          >
+            <Text style={styles.fromText}>From: {from.fullName}</Text>
+          </TouchableOpacity>
         </View>
         <View>
           {videoUri && (

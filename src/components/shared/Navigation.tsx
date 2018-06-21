@@ -36,15 +36,40 @@ export enum RouteName {
   Give = "Give"
 }
 
+const HomeNavigator = createStackNavigator(
+  {
+    Profile: {
+      screen: Profile,
+      navigationOptions: ({ navigation }: any) => {
+        const member = navigation.getParam("member");
+        return {
+          title: member ? member.fullName : "Profile"
+        };
+      }
+    },
+    Home: {
+      screen: Home,
+      navigationOptions: ({ navigation }: any) => {
+        return {
+          title: "Raha"
+        };
+      }
+    }
+  } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
+  {
+    initialRouteName: RouteName.Home,
+    headerMode: "float"
+  }
+);
+
 const ProfileNavigator = createStackNavigator(
   {
     Profile: {
       screen: Profile,
       navigationOptions: ({ navigation }: any) => {
         const member = navigation.getParam("member");
-        const person = member ? `${member.fullName}'s` : "My";
         return {
-          title: `${person} Profile`
+          title: member ? member.fullName : "Your Profile"
         };
       }
     },
@@ -66,7 +91,7 @@ const ProfileNavigator = createStackNavigator(
 const SignedInNavigator = createMaterialBottomTabNavigator(
   {
     Home: {
-      screen: Home
+      screen: HomeNavigator
     },
     Search: {
       // TODO: Implement page
