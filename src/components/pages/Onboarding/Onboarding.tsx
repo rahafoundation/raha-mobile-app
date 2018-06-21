@@ -1,11 +1,13 @@
 import * as React from "react";
 import { Member } from "../../../store/reducers/members";
-import { View, StyleSheet, TextInput } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../store";
 import { OnboardingSplash } from "./OnboardingSplash";
 import { VerifyName } from "./VerifyName";
 import { ChooseInviter } from "./ChooseInviter";
+import { OnboardingCamera } from "./OnboardingCamera";
+import { VideoPreview } from "./VideoPreview";
 
 /**
  * Parent component for Onboarding flow.
@@ -33,9 +35,10 @@ type OnboardingProps = ReduxStateProps & OwnProps;
 
 type OnboardingState = {
   step: OnboardingStep;
-
   invitingMember?: Member;
   verifiedName?: string;
+  videoUri?: string;
+  errorMessage?: string;
 };
 
 export class OnboardingView extends React.Component<
@@ -44,7 +47,10 @@ export class OnboardingView extends React.Component<
 > {
   state = {
     step: OnboardingStep.SPLASH,
-    invitingMember: this.props.deeplinkInvitingMember
+    invitingMember: this.props.deeplinkInvitingMember,
+    verifiedName: undefined,
+    videoUri: undefined,
+    errorMessage: undefined
   };
 
   renderOnboardingStep() {
