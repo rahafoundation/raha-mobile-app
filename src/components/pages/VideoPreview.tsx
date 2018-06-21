@@ -6,14 +6,16 @@ import * as React from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import { Video } from "expo";
 import { RouteName } from "../shared/Navigation";
+import { NavigationScreenProps } from "react-navigation";
 
-type VideoPreviewProps = {
-  navigation: any;
-};
+interface NavParams {
+  videoUri: string;
+}
+type VideoPreviewProps = NavigationScreenProps<NavParams>;
 
 export class VideoPreview extends React.Component<VideoPreviewProps> {
   render() {
-    const videoUri = this.props.navigation.getParam("videoUri", null);
+    const videoUri = this.props.navigation.getParam("videoUri");
     if (videoUri) {
       return (
         <View style={styles.container}>

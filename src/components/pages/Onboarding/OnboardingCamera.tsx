@@ -8,16 +8,23 @@ import { Text, StyleSheet } from "react-native";
 import { Camera } from "../../shared/Camera";
 import { RouteName } from "../../shared/Navigation";
 import { Member } from "../../../store/reducers/members";
+import { NavigationScreenProps } from "react-navigation";
 
-type OnboardingCameraProps = {
-  navigation: any;
-};
+interface NavParams {
+  invitingMember?: Member;
+  verifiedName?: string;
+}
+type OnboardingCameraProps = NavigationScreenProps<NavParams>;
 
 export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
   render() {
-    // TODO: Redirect if any of these params are null?
-    let invitingMember = this.props.navigation.getParam("invitingMember", null);
-    let verifiedName = this.props.navigation.getParam("verifiedName", null);
+    let invitingMember = this.props.navigation.getParam("invitingMember");
+    let verifiedName = this.props.navigation.getParam("verifiedName");
+
+    if (!invitingMember || !verifiedName) {
+      // TODO: Redirect, don't error if any of these params are undefined
+      throw new Error("invitingMember or verifiedName not present.");
+    }
 
     return (
       <React.Fragment>

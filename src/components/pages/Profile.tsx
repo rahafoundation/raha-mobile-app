@@ -23,10 +23,12 @@ import { MemberId } from "../../identifiers";
 import { mint } from "../../store/actions/wallet";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { Button } from "../shared/Button";
+import { NavigationScreenProps } from "react-navigation";
 
-type OwnProps = {
-  navigation: any;
-};
+interface NavParams {
+  member: Member;
+}
+type OwnProps = NavigationScreenProps<NavParams>;
 
 type StateProps = {
   member: Member;
