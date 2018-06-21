@@ -1,5 +1,6 @@
 import "es6-symbol/implement";
 import * as React from "react";
+import { Button } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
@@ -60,13 +61,25 @@ const HomeTab = createStackNavigator(
   {
     Profile: ProfileRouteConfig,
     MemberList: MemberListRouteConfig,
+    Give: {
+      screen: Give,
+      navigationOptions: {
+        title: "Give Raha"
+      }
+    },
     Home: {
       screen: Home,
-      navigationOptions: ({ navigation }: any) => {
-        return {
-          title: "Raha"
-        };
-      }
+      navigationOptions: ({ navigation }: any) => ({
+        title: "Raha",
+        headerRight: (
+          <Button
+            title="Give"
+            onPress={() => {
+              navigation.navigate(RouteName.Give);
+            }}
+          />
+        )
+      })
     }
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
@@ -101,9 +114,6 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
     },
     ProfileTab: {
       screen: ProfileTab
-    },
-    Give: {
-      screen: Give
     }
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
@@ -117,9 +127,6 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
         switch (routeName) {
           case RouteName.ProfileTab:
             iconName = "account";
-            break;
-          case RouteName.Give:
-            iconName = "star";
             break;
           case RouteName.HomeTab:
             iconName = "home";
