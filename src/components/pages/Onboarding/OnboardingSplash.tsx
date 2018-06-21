@@ -3,10 +3,9 @@ import { StyleSheet, Text, View } from "react-native";
 import { Button } from "../../shared/Button";
 import { Swiper } from "../../shared/Swiper";
 import { RouteName } from "../../shared/Navigation";
+import { NavigationScreenProps } from "react-navigation";
 
-type OnboardingProps = {
-  navigation: any;
-};
+type OnboardingProps = NavigationScreenProps<{}>;
 
 export class OnboardingSplash extends React.Component<OnboardingProps> {
   render() {

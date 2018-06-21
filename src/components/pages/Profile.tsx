@@ -82,10 +82,10 @@ const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
   </View>
 );
 
-const Stats: React.StatelessComponent<{
+type StatsProps = NavigationScreenProps<NavParams> & {
   member: Member;
-  navigation: any;
-}> = props => (
+};
+const Stats: React.StatelessComponent<StatsProps> = props => (
   <View style={styles.statsContainer}>
     <View style={styles.stat}>
       <Text style={styles.number}>ℝ{props.member.balance.toFixed(2)}</Text>
