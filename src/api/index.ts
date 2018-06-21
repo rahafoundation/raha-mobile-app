@@ -152,7 +152,7 @@ interface ApiEndpointLocation {
  */
 const apiEndpointLocations: { [key in ApiEndpoint]: ApiEndpointLocation } = {
   [ApiEndpoint.TRUST_MEMBER]: {
-    uri: "members/:uid/trust",
+    uri: "members/:memberId/trust",
     method: HttpVerb.POST
   },
   [ApiEndpoint.GET_OPERATIONS]: {
@@ -160,7 +160,7 @@ const apiEndpointLocations: { [key in ApiEndpoint]: ApiEndpointLocation } = {
     method: HttpVerb.GET
   },
   [ApiEndpoint.REQUEST_INVITE]: {
-    uri: "members/:uid/request_invite",
+    uri: "members/:memberId/request_invite",
     method: HttpVerb.POST
   },
   [ApiEndpoint.SEND_INVITE]: {
@@ -172,7 +172,7 @@ const apiEndpointLocations: { [key in ApiEndpoint]: ApiEndpointLocation } = {
     method: HttpVerb.POST
   },
   [ApiEndpoint.GIVE]: {
-    uri: "members/:uid/give",
+    uri: "members/:memberId/give",
     method: HttpVerb.POST
   }
 };

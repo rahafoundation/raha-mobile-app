@@ -8,7 +8,7 @@ import { Home } from "../pages/Home";
 import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
 import { Profile } from "../pages/Profile";
-import { VideoPreview } from "../pages/VideoPreview";
+import { InviteVideoPreview } from "../pages/Onboarding/InviteVideoPreview";
 import { getMembersByIds } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
@@ -18,9 +18,12 @@ import { MemberList } from "../pages/MemberList";
 import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
 import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
 import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
+import { getLoggedInMemberId } from "../../store/selectors/authentication";
 
 export enum RouteName {
   Home = "Home",
+  HomeTab = "HomeTab",
+  InviteVideoPreview = "InviteVideoPreview",
   OnboardingSplash = "OnboardingSplash",
   OnboardingCamera = "OnboardingCamera",
   OnboardingInvite = "OnboardingInvite",
@@ -28,32 +31,54 @@ export enum RouteName {
   MemberList = "MemberList",
   OtherProfile = "OtherProfile",
   Profile = "Profile",
-  VideoPreview = "VideoPreview",
-  Search = "Search",
+  ProfileTab = "ProfileTab",
+  Discover = "Discover",
   Mint = "Mint",
   Give = "Give"
 }
 
-const ProfileNavigator = createStackNavigator(
+const MemberListRouteConfig = {
+  screen: MemberList,
+  navigationOptions: ({ navigation }: any) => {
+    return {
+      title: navigation.getParam("title", "Member List")
+    };
+  }
+};
+
+const ProfileRouteConfig = {
+  screen: Profile,
+  navigationOptions: ({ navigation }: any) => {
+    const member = navigation.getParam("member");
+    return {
+      title: member ? member.fullName : "Your Profile"
+    };
+  }
+};
+
+const HomeTab = createStackNavigator(
   {
-    Profile: {
-      screen: Profile,
-      navigationOptions: ({ navigation }: any) => {
-        const member = navigation.getParam("member");
-        const person = member ? `${member.fullName}'s` : "My";
-        return {
-          title: `${person} Profile`
-        };
-      }
-    },
-    MemberList: {
-      screen: MemberList,
+    Profile: ProfileRouteConfig,
+    MemberList: MemberListRouteConfig,
+    Home: {
+      screen: Home,
       navigationOptions: ({ navigation }: any) => {
         return {
-          title: navigation.getParam("title", "Member List")
+          title: "Raha"
         };
       }
     }
+  } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
+  {
+    initialRouteName: RouteName.Home,
+    headerMode: "float"
+  }
+);
+
+const ProfileTab = createStackNavigator(
+  {
+    Profile: ProfileRouteConfig,
+    MemberList: MemberListRouteConfig
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
     initialRouteName: RouteName.Profile,
@@ -63,10 +88,10 @@ const ProfileNavigator = createStackNavigator(
 
 const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
-    Home: {
-      screen: Home
+    HomeTab: {
+      screen: HomeTab
     },
-    Search: {
+    Discover: {
       // TODO: Implement page
       screen: OnboardingCamera
     },
@@ -74,8 +99,8 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
       // TODO: Implement page
       screen: Mint
     },
-    Profile: {
-      screen: ProfileNavigator
+    ProfileTab: {
+      screen: ProfileTab
     },
     Give: {
       screen: Give
@@ -90,13 +115,13 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
         let iconName;
         let IconType = Icon;
         switch (routeName) {
-          case RouteName.Profile:
+          case RouteName.ProfileTab:
             iconName = "account";
             break;
           case RouteName.Give:
             iconName = "star";
             break;
-          case RouteName.Home:
+          case RouteName.HomeTab:
             iconName = "home";
             break;
           case RouteName.OnboardingCamera:
@@ -105,7 +130,7 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
           case RouteName.Mint:
             iconName = "gift";
             break;
-          case RouteName.Search:
+          case RouteName.Discover:
             iconName = "ios-search";
             IconType = Ionicons;
             break;
@@ -149,8 +174,8 @@ const SignedOutNavigator = createStackNavigator(
     Profile: {
       screen: Profile
     },
-    VideoPreview: {
-      screen: VideoPreview
+    InviteVideoPreview: {
+      screen: InviteVideoPreview
     }
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
@@ -187,14 +212,13 @@ const mapStateToProps: MapStateToProps<
   RahaState
 > = state => {
   const isLoaded = state.authentication.isLoaded;
-  const firebaseUser = state.authentication.firebaseUser;
+  const loggedInMemberId = getLoggedInMemberId(state);
   const isLoggedIn =
-    state.authentication.isLoaded && !!state.authentication.firebaseUser;
+    state.authentication.isLoaded && state.authentication.isLoggedIn;
   const hasAccount =
     isLoggedIn &&
-    !!state.authentication.firebaseUser &&
-    getMembersByIds(state, [state.authentication.firebaseUser.uid])[0] !==
-      undefined;
+    !!loggedInMemberId &&
+    getMembersByIds(state, [loggedInMemberId])[0] !== undefined;
   return {
     isLoaded,
     isLoggedIn,

@@ -6,6 +6,7 @@ import { MemberSearchBar } from "../../shared/MemberSearchBar";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../store";
 import { RouteName } from "../../shared/Navigation";
+import { getLoggedInFirebaseUser } from "../../../store/selectors/authentication";
 
 /**
  * Page that confirms who the user is trying to get an invite from and their full name.
@@ -95,7 +96,7 @@ const mapStateToProps: MapStateToProps<
   OwnProps,
   RahaState
 > = state => {
-  const { firebaseUser } = state.authentication;
+  const firebaseUser = getLoggedInFirebaseUser(state);
   return {
     displayName: firebaseUser ? firebaseUser.displayName : null
   };

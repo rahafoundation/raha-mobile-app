@@ -11,6 +11,7 @@ import {
   MapStateToProps,
   MergeProps
 } from "react-redux";
+import { NavigationScreenProps } from "react-navigation";
 import { Video } from "expo";
 
 import { RouteName } from "../shared/Navigation";
@@ -23,7 +24,7 @@ import { MemberId } from "../../identifiers";
 import { mint } from "../../store/actions/wallet";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { Button } from "../shared/Button";
-import { NavigationScreenProps } from "react-navigation";
+import { getLoggedInMemberId } from "../../store/selectors/authentication";
 
 interface NavParams {
   member: Member;
@@ -226,10 +227,11 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   props
 ) => {
-  const firebaseUser = state.authentication.firebaseUser;
-  const loggedInMember = firebaseUser
-    ? getMembersByIds(state, [firebaseUser.uid])[0]
-    : undefined;
+  const loggedInMemberId = getLoggedInMemberId(state);
+  const loggedInMember =
+    state.authentication.isLoggedIn && loggedInMemberId
+      ? getMembersByIds(state, [loggedInMemberId])[0]
+      : undefined;
   const member: Member = props.navigation.getParam("member", loggedInMember);
   return {
     member,

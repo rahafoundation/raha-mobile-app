@@ -4,7 +4,7 @@
  */
 
 import * as React from "react";
-import { Text, StyleSheet } from "react-native";
+import { Text, StyleSheet, View } from "react-native";
 import { Camera } from "../../shared/Camera";
 import { RouteName } from "../../shared/Navigation";
 import { Member } from "../../../store/reducers/members";
@@ -20,10 +20,11 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
   render() {
     let invitingMember = this.props.navigation.getParam("invitingMember");
     let verifiedName = this.props.navigation.getParam("verifiedName");
-
     if (!invitingMember || !verifiedName) {
-      // TODO: Redirect, don't error if any of these params are undefined
-      throw new Error("invitingMember or verifiedName not present.");
+      // Should not happen, but in case of bug we can safely navigate back to fill in missing info.
+      console.warn(`Missing invitingMember or verifiedName: ${{invitingMember, verifiedName}}`)
+      this.props.navigation.navigate(RouteName.OnboardingInvite);
+      return <View />
     }
 
     return (
@@ -34,8 +35,10 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
         </Text>
         <Camera
           onVideoRecorded={uri => {
-            this.props.navigation.navigate(RouteName.VideoPreview, {
-              videoUri: uri
+            this.props.navigation.navigate(RouteName.InviteVideoPreview, {
+              videoUri: uri,
+              invitingMember: invitingMember,
+              verifiedName: verifiedName
             });
           }}
         />

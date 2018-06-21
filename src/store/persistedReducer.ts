@@ -40,11 +40,7 @@ export const rootReducer: Reducer<RahaState> = persistReducer(
       members
     ),
     operations: operations,
-
-    authentication: untypedPersistReducer(
-      { ...secureConfig, key: "authentication" },
-      authentication
-    )
+    authentication: authentication
   }) as any
 ); // TODO: remove this type suggestion along with above PR
 export { RahaState } from "./reducers";

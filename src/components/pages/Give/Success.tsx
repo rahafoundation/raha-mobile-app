@@ -8,16 +8,17 @@ type OwnProps = {
   toMember: Member;
   amount: Big;
   memo?: string;
+  onResetCallback: () => void;
 };
 
 export const Success: React.StatelessComponent<OwnProps> = props => {
   return (
     <View style={styles.container}>
       <Text>
-        You sent {props.amount} Raha to {props.toMember.fullName}
+        You sent {props.amount.toString()} Raha to {props.toMember.fullName}
         {props.memo ? ` ${props.memo}` : ""}.
       </Text>
-      {/* <Button title="Give again" onPress={() => null} /> */}
+      <Button title="Give again" onPress={() => props.onResetCallback()} />
     </View>
   );
 };
