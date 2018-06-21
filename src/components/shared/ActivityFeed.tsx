@@ -1,5 +1,5 @@
 /**
- * Filterable list of actions members have taken. Those actions are a
+ * Filterable list of actions Acs have taken. Those actions are a
  * human-readable form of backend Operations, like when people give each other
  * Raha, trust each other, or join Raha.
  */

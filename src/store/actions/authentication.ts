@@ -8,6 +8,7 @@ import { auth } from "../../firebaseInit";
 import { RahaState } from "..";
 
 import { config } from "../../data/config";
+import { ThunkDispatch } from "redux-thunk";
 
 const FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE =
   "auth/account-exists-with-different-credential";
@@ -18,14 +19,14 @@ export enum AuthMethod {
 }
 
 export const enum AuthenticationActionType {
-  SET_FIREBASE_USER = "AUTHENTICATION.SET_FIREBASE_USER",
+  LOG_IN = "AUTHENTICATION.LOG_IN",
   EXISTING_CREDENTIAL = "AUTHENTICATION.EXISTING_CREDENTIAL",
-  SIGN_OUT = "AUTHENTICATION.SIGN_OUT"
+  SIGN_OUT = "AUTHENTICATION.SIGN_OUT",
+  SIGNED_OUT = "AUTHENTICATION.SIGNED_OUT"
 }
 
-export interface SetFirebaseUserAction {
-  type: AuthenticationActionType.SET_FIREBASE_USER;
-  firebaseUser: firebase.User;
+export interface LogInAction {
+  type: AuthenticationActionType.LOG_IN;
 }
 
 export interface ExistingCredentialAction {
@@ -36,17 +37,18 @@ export interface ExistingCredentialAction {
 export interface SignOutAction {
   type: AuthenticationActionType.SIGN_OUT;
 }
+export interface SignedOutAction {
+  type: AuthenticationActionType.SIGNED_OUT;
+}
 
 export type AuthenticationAction =
   | ExistingCredentialAction
-  | SetFirebaseUserAction
-  | SignOutAction;
+  | LogInAction
+  | SignOutAction
+  | SignedOutAction;
 
-const setFirebaseUserAction = (
-  firebaseUser: firebase.User
-): SetFirebaseUserAction => ({
-  type: AuthenticationActionType.SET_FIREBASE_USER,
-  firebaseUser
+export const logInAction = (): LogInAction => ({
+  type: AuthenticationActionType.LOG_IN
 });
 
 const existingCredentialAction = (
@@ -58,6 +60,10 @@ const existingCredentialAction = (
 
 const signOutAction = (): SignOutAction => ({
   type: AuthenticationActionType.SIGN_OUT
+});
+
+export const signedOutAction = (): SignedOutAction => ({
+  type: AuthenticationActionType.SIGNED_OUT
 });
 
 /**
@@ -93,8 +99,7 @@ export const googleLogIn: AsyncActionCreator = () => async dispatch => {
     );
 
     // Login with the credential
-    const authData = await auth.signInAndRetrieveDataWithCredential(credential);
-    dispatch(setFirebaseUserAction(authData.user));
+    await auth.signInAndRetrieveDataWithCredential(credential);
   } catch (error) {
     if (error.code === FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE) {
       dispatch(existingCredentialAction(AuthMethod.GOOGLE));
@@ -123,8 +128,7 @@ export const facebookLogIn: AsyncActionCreator = () => async dispatch => {
       facebookData.token
     );
 
-    const authData = await auth.signInAndRetrieveDataWithCredential(credential);
-    dispatch(setFirebaseUserAction(authData.user));
+    await auth.signInAndRetrieveDataWithCredential(credential);
   } catch (error) {
     if (error.code === FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE) {
       dispatch(existingCredentialAction(AuthMethod.FACEBOOK));

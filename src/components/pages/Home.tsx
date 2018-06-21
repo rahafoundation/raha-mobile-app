@@ -7,6 +7,7 @@ import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { OperationType } from "../../store/reducers/operations";
 import { SafeAreaView } from "../../shared/SafeAreaView";
+import { getLoggedInFirebaseUser } from "../../store/selectors/authentication";
 
 type OwnProps = {
   navigation: any;
@@ -41,7 +42,7 @@ const mapStateToProps: MapStateToProps<
   OwnProps,
   RahaState
 > = state => {
-  const { firebaseUser } = state.authentication;
+  const firebaseUser = getLoggedInFirebaseUser(state);
   return {
     loggedInUserId: firebaseUser ? firebaseUser.uid : undefined
   };
