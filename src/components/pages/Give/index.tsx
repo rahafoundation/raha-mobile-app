@@ -35,10 +35,24 @@ export class Give extends React.Component<Props, State> {
     });
   };
 
+  onReset = () => {
+    this.setState({
+      operationIdentifer: getOperationIdentifer(),
+      toMember: undefined,
+      amount: undefined,
+      memo: undefined
+    });
+  };
+
   public render() {
     const { operationIdentifer, toMember, amount, memo } = this.state;
     return toMember && amount ? (
-      <Success toMember={toMember} amount={amount} memo={memo} />
+      <Success
+        toMember={toMember}
+        amount={amount}
+        memo={memo}
+        onResetCallback={this.onReset}
+      />
     ) : (
       <GiveForm
         identifier={this.state.operationIdentifer}
