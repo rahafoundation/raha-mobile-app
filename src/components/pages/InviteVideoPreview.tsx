@@ -1,5 +1,5 @@
 /**
- * Renders the video camera preview screen after recording a video.
+ * Renders the video camera preview screen after recording a video for onboarding.
  */
 
 import * as React from "react";
@@ -7,11 +7,13 @@ import { View, Text, StyleSheet, Button } from "react-native";
 import { Video } from "expo";
 import { RouteName } from "../shared/Navigation";
 
-type VideoPreviewProps = {
+type InviteVideoPreviewProps = {
   navigation: any;
 };
 
-export class VideoPreview extends React.Component<VideoPreviewProps> {
+export class OnboardingVideoPreview extends React.Component<
+  InviteVideoPreviewProps
+> {
   render() {
     const videoUri = this.props.navigation.getParam("videoUri", null);
     if (videoUri) {
@@ -39,7 +41,7 @@ export class VideoPreview extends React.Component<VideoPreviewProps> {
           <Button
             title="Retake"
             onPress={() => {
-              this.props.navigation.navigate(RouteName.OnboardingCamera);
+              this.props.navigation.navigate(RouteName.Onboarding);
             }}
           />
         </View>
@@ -51,7 +53,7 @@ export class VideoPreview extends React.Component<VideoPreviewProps> {
           <Button
             title="Retake"
             onPress={() => {
-              this.props.navigation.navigate(RouteName.OnboardingCamera);
+              this.props.navigation.navigate(RouteName.Onboarding);
             }}
           />
         </View>

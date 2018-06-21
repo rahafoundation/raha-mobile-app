@@ -6,40 +6,35 @@
 import * as React from "react";
 import { Text, StyleSheet } from "react-native";
 import { Camera } from "../../shared/Camera";
-import { RouteName } from "../../shared/Navigation";
-import { Member } from "../../../store/reducers/members";
 
 type OnboardingCameraProps = {
-  navigation: any;
+  inviterFullName: string;
+  verifiedFullName: string;
+  onVideoRecorded: (videoUri: string) => void;
 };
 
 export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
   render() {
-    // TODO: Redirect if any of these params are null?
-    let invitingMember = this.props.navigation.getParam("invitingMember", null);
-    let verifiedName = this.props.navigation.getParam("verifiedName", null);
-
     return (
       <React.Fragment>
         <Text style={styles.text}>
-          Please record a video with {invitingMember.fullName} to verify your
+          Please record a video with {this.props.inviterFullName} to verify your
           identity.
         </Text>
         <Camera
           onVideoRecorded={uri => {
-            this.props.navigation.navigate(RouteName.VideoPreview, {
-              videoUri: uri
-            });
+            this.props.onVideoRecorded(uri);
           }}
         />
         <Text style={styles.text}>Example of what to say:</Text>
         <Text style={styles.text}>
-          {invitingMember.fullName}: "Hi, my name is {invitingMember.fullName},
-          and I'm inviting {verifiedName} to Raha."
+          {this.props.inviterFullName}: "Hi, my name is{" "}
+          {this.props.inviterFullName}, and I'm inviting{" "}
+          {this.props.verifiedFullName} to Raha."
         </Text>
         <Text style={styles.text}>
-          You: "My name is {verifiedName} and I'm joining Raha because I believe
-          every life has value."
+          You: "My name is {this.props.verifiedFullName} and I'm joining Raha
+          because I believe every life has value."
         </Text>
       </React.Fragment>
     );

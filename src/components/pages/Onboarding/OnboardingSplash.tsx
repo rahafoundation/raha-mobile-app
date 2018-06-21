@@ -2,10 +2,9 @@ import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button } from "../../shared/Button";
 import { Swiper } from "../../shared/Swiper";
-import { RouteName } from "../../shared/Navigation";
 
 type OnboardingProps = {
-  navigation: any;
+  onSplashCompleted: () => void;
 };
 
 export class OnboardingSplash extends React.Component<OnboardingProps> {
@@ -68,12 +67,7 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
             <Text style={styles.text}>
               We're starting a movement, and we'd like you to be a part of it.
             </Text>
-            <Button
-              text="Join Now"
-              onPress={() =>
-                this.props.navigation.navigate(RouteName.OnboardingInvite)
-              }
-            />
+            <Button text="Join Now" onPress={this.props.onSplashCompleted} />
           </View>
         </Swiper>
       </React.Fragment>
