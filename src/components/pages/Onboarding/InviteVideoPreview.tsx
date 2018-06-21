@@ -77,40 +77,41 @@ class InviteVideoPreviewView extends React.Component<
     const response = await fetch(videoUri);
     const blob = await response.blob();
     //@ts-ignore Expo Blob does not have data type
-    if (blob.data.size <= MAX_VIDEO_SIZE) {
-      // TODO: Transcode video to make it smaller.
-      const metadata = {
-        //@ts-ignore Expo Blob does not have data type
-        contentType: blob.data.type
-      };
-      const uploadTask = videoUploadRef.put(blob, metadata);
-      uploadTask.on(
-        firebase.storage.TaskEvent.STATE_CHANGED,
-        s => {
-          const snapshot = s as firebase.storage.UploadTaskSnapshot;
-          this.setState({
-            uploadedBytes: snapshot.bytesTransferred,
-            totalBytes: snapshot.totalBytes
-          });
-        },
-        () =>
-          this.setState({
-            errorMessage: "Could not upload. Please try again.",
-            uploadStatus: UploadStatus.NOT_STARTED
-          }),
-        () => {
-          this.setState({ uploadStatus: UploadStatus.UPLOADED });
-          this.requestInvite();
-        }
-      );
-    } else {
+    if (blob.data.size > MAX_VIDEO_SIZE) {
       this.setState({
         errorMessage:
           "The video size is larger than " +
           MAX_VIDEO_SIZE +
           "MB. Please retake your video."
       });
+      return;
     }
+
+    // TODO: Transcode video to make it smaller.
+    const metadata = {
+      //@ts-ignore Expo Blob does not have data type
+      contentType: blob.data.type
+    };
+    const uploadTask = videoUploadRef.put(blob, metadata);
+    uploadTask.on(
+      firebase.storage.TaskEvent.STATE_CHANGED,
+      s => {
+        const snapshot = s as firebase.storage.UploadTaskSnapshot;
+        this.setState({
+          uploadedBytes: snapshot.bytesTransferred,
+          totalBytes: snapshot.totalBytes
+        });
+      },
+      () =>
+        this.setState({
+          errorMessage: "Could not upload. Please try again.",
+          uploadStatus: UploadStatus.NOT_STARTED
+        }),
+      () => {
+        this.setState({ uploadStatus: UploadStatus.UPLOADED });
+        this.requestInvite();
+      }
+    );
   };
 
   requestInvite() {
