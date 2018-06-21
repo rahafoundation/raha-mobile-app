@@ -30,7 +30,7 @@ export const RequestInviteOperationActivityView: React.StatelessComponent<
       to={toMember}
       timestamp={new Date(operation.created_at)}
       videoUri={fromMember.videoUri}
-      ref={activityRef}
+      onRef={activityRef}
     />
   );
 };

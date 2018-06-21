@@ -29,7 +29,7 @@ export const TrustOperationActivityView: React.StatelessComponent<
       from={fromMember}
       to={toMember}
       timestamp={new Date(operation.created_at)}
-      ref={activityRef}
+      onRef={activityRef}
     />
   );
 };

@@ -29,7 +29,7 @@ export const MintOperationActivityView: React.StatelessComponent<
       from={fromMember}
       timestamp={new Date(operation.created_at)}
       amount={new Big(operation.data.amount)}
-      ref={activityRef}
+      onRef={activityRef}
     />
   );
 };
