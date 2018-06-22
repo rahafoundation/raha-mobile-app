@@ -53,7 +53,7 @@ type GetOperationsApiCall = ApiCallDefinition<
 type RequestInviteApiCall = ApiCallDefinition<
   ApiEndpoint.REQUEST_INVITE,
   { memberId: MemberId },
-  { fullName: string; videoUrl: string; creatorMid: string }
+  { fullName: string; videoUrl: string; username: string }
 >;
 type SendInviteApiCall = ApiCallDefinition<
   ApiEndpoint.SEND_INVITE,
