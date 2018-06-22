@@ -73,7 +73,6 @@ const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
       volume={1.0}
       muted
       resizeMode={"cover"}
-      paused // ironically this means it's playing
       repeat
       style={styles.video}
     />
