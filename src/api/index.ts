@@ -12,6 +12,11 @@ import { UnauthenticatedError } from "../errors/ApiCallError/UnauthenticatedErro
 import { NetworkError } from "../errors/ApiCallError/NetworkError";
 
 import { config } from "../data/config";
+import {
+  MintBasicIncomePayload,
+  MintReferralBonusPayload
+} from "../store/reducers/operations";
+
 const API_BASE = config.apiBase;
 
 /* ==============================
@@ -63,7 +68,7 @@ type SendInviteApiCall = ApiCallDefinition<
 type MintApiCall = ApiCallDefinition<
   ApiEndpoint.MINT,
   void,
-  { amount: string }
+  MintBasicIncomePayload | MintReferralBonusPayload
 >;
 type GiveApiCall = ApiCallDefinition<
   ApiEndpoint.GIVE,
