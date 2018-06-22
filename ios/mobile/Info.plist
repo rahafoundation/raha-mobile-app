@@ -63,7 +63,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
@@ -92,20 +92,8 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-
-	<!-- Camera permissions -->
 	<key>NSCameraUsageDescription</key>
 	<string>Raha needs access to your camera to record invite videos.</string>
-
-	<!-- Include this only if you are planning to use the camera roll -->
-	<!-- <key>NSPhotoLibraryAddUsageDescription</key> -->
-	<!-- <string>Your message to user when the photo library is accessed for the first time</string> -->
-
-	<!-- Include this only if you are planning to use the camera roll -->
-	<!-- <key>NSPhotoLibraryUsageDescription</key> -->
-	<!-- <string>Your message to user when the photo library is accessed for the first time</string> -->
-
-	<!-- Include this only if you are planning to use the microphone for video recording -->
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Raha needs access to your microphone to record invite videos.</string>
 </dict>
