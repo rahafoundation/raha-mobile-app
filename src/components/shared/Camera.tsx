@@ -7,7 +7,7 @@
  */
 
 import * as React from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Button } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { RNCamera, CameraType } from "react-native-camera";
 
 type CameraProps = {
@@ -15,21 +15,14 @@ type CameraProps = {
 };
 
 interface CameraState {
-  cameraReady: boolean;
   type: keyof CameraType;
   isVideoRecording: boolean;
 }
 
 export class Camera extends React.Component<CameraProps, CameraState> {
-  private camera?: RNCamera;
-
   state: CameraState = {
-    cameraReady: false,
     type: "front",
     isVideoRecording: false
-  };
-  onCameraReady = () => {
-    this.setState({ cameraReady: true });
   };
 
   // async componentWillMount() {
@@ -47,22 +40,12 @@ export class Camera extends React.Component<CameraProps, CameraState> {
   //   });
   // }
 
-  startRecordVideo = async () => {
-    if (!this.camera) {
-      console.warn("Ref to camera was not available");
-      return;
-    }
-
-    if (!this.state.cameraReady) {
-      console.warn("Camera was not ready");
-      return;
-    }
-
+  startRecordVideo = async (camera: RNCamera) => {
     await new Promise(resolve =>
       this.setState({ isVideoRecording: true }, () => resolve())
     );
 
-    const recordResponse = await this.camera.recordAsync({
+    const recordResponse = await camera.recordAsync({
       quality: RNCamera.Constants.VideoQuality["4:3"],
       maxDuration: 10 // seconds
     });
@@ -72,39 +55,38 @@ export class Camera extends React.Component<CameraProps, CameraState> {
   };
 
   render() {
-    // if (
-    //   !this.state.hasCameraPermission ||
-    //   !this.state.hasAudioRecordPermission
-    // ) {
-    //   return (
-    //     <View>
-    //       <Text>
-    //         In order to verify your identity, you must record a video of
-    //         yourself. Please approve the permissions to continue.
-    //       </Text>
-    //       <Button
-    //         title="Approve Permissions"
-    //         onPress={() => {
-    //           this.requestPermissions();
-    //         }}
-    //       />
-    //     </View>
-    //   );
-    // }
     return (
       <View style={styles.container}>
         <RNCamera
           style={styles.camera}
           type={RNCamera.Constants.Type[this.state.type]}
-          ref={elem => {
-            this.camera = elem ? elem : undefined;
-          }}
-          captureAudio={true}
+          captureAudio
         >
-          <View style={styles.cameraButtons}>
-            {this.renderFlipButton()}
-            {this.renderRecordButton()}
-          </View>
+          {({ camera, status }) => {
+            if (status !== "READY") {
+              return (
+                <View>
+                  <Text>
+                    In order to verify your identity, you must record a video of
+                    yourself. Please approve the permissions to continue.
+                  </Text>
+                  {/* TODO: figure out how to request permissions */}
+                  {/* <Button
+                    title="Approve Permissions"
+                    onPress={() => {
+                      this.requestPermissions();
+                    }} */}
+                  />
+                </View>
+              );
+            }
+            return (
+              <View style={styles.cameraButtons}>
+                {this.renderFlipButton()}
+                {this.renderRecordButton(camera)}
+              </View>
+            );
+          }}
         </RNCamera>
       </View>
     );
@@ -120,25 +102,24 @@ export class Camera extends React.Component<CameraProps, CameraState> {
           });
         }}
         // Flip button will stop recording. To prevent user confusion, disable it.
-        disabled={!this.state.cameraReady || this.state.isVideoRecording}
+        disabled={!this.state.isVideoRecording}
       >
         <Text style={styles.buttonText}>Flip</Text>
       </TouchableOpacity>
     );
   };
 
-  renderRecordButton = () => {
+  renderRecordButton = (camera: RNCamera) => {
     return (
       <TouchableOpacity
         style={styles.recordButton}
         onPress={() => {
           if (!this.state.isVideoRecording) {
-            this.startRecordVideo();
+            this.startRecordVideo(camera);
           } else {
-            this.camera.stopRecording();
+            camera.stopRecording();
           }
         }}
-        disabled={!this.state.cameraReady}
       >
         <Text style={styles.buttonText}>
           {this.state.isVideoRecording ? "Stop" : "Record"}
