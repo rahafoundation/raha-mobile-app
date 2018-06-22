@@ -7,7 +7,7 @@ import { getMembersByIds } from "./members";
 const RAHA_UBI_WEEKLY_RATE = 10;
 const MILLISECONDS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
 
-export function getMemberMintableAmount(
+export function getMintableAmount(
   state: RahaState,
   memberId: MemberId
 ): string | undefined {
