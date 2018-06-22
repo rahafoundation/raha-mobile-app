@@ -6,13 +6,13 @@ import * as React from "react";
 import { format } from "date-fns";
 import { Big } from "big.js";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import { withNavigation } from "react-navigation";
-import { Video, PlaybackObject, PlaybackStatus } from "expo";
+import { withNavigation, NavigationScreenProps } from "react-navigation";
+import Video from "react-native-video";
 
 import { Member } from "../../../store/reducers/members";
 import { RouteName } from "../Navigation";
 
-interface ActivityTemplateProps {
+type ActivityTemplateProps = NavigationScreenProps<{}> & {
   from: Member;
   to?: Member;
   amount?: Big;
@@ -20,9 +20,10 @@ interface ActivityTemplateProps {
   message: string;
   timestamp: Date;
   videoUri?: string;
-}
+};
 
 interface ActivityTemplateState {
+  videoPlaying: boolean;
   videoPressed: boolean; // true if video is unmuted and has user focus. no longer loops.
   videoPlaybackFinished: boolean; // true if video has completed after pressed, not when it loops.
 }
@@ -35,14 +36,15 @@ class ActivityTemplateView extends React.Component<
     videoPressed: false,
     videoPlaybackFinished: false
   } as ActivityTemplateState;
-  videoElem: PlaybackObject | undefined;
+  videoElem: Video | undefined;
 
   /**
    * Start video playback
    */
   public startVideo = async () => {
-    if (!this.videoElem) return;
-    await this.videoElem.playAsync();
+    this.setState({
+      videoPlaying: true
+    });
   };
 
   /**
@@ -50,9 +52,9 @@ class ActivityTemplateView extends React.Component<
    */
   public resetVideo = async () => {
     if (!this.videoElem) return;
-    await this.videoElem.stopAsync();
-    this.videoElem.setPositionAsync(0);
+    this.videoElem.seek(0);
     this.setState({
+      videoPlaying: false,
       videoPressed: false,
       videoPlaybackFinished: false
     });
@@ -68,13 +70,6 @@ class ActivityTemplateView extends React.Component<
       this.setState({ videoPlaybackFinished: false });
     } else {
       this.setState({ videoPressed: true });
-    }
-  };
-
-  private handlePlaybackStatusUpdate = (status: PlaybackStatus) => {
-    if (!status.isLoaded) return;
-    if (status.didJustFinish && this.state.videoPressed) {
-      this.setState({ videoPlaybackFinished: true });
     }
   };
 
@@ -136,15 +131,12 @@ class ActivityTemplateView extends React.Component<
                 style={styles.video}
                 rate={1.0}
                 volume={1.0}
-                usePoster={true}
-                isLooping={!this.state.videoPressed}
-                resizeMode={Video.RESIZE_MODE_COVER}
-                isMuted={!this.state.videoPressed}
-                useNativeControls={
-                  this.state.videoPressed && !this.state.videoPlaybackFinished
-                }
+                repeat={!this.state.videoPressed}
+                resizeMode="cover"
+                muted={!this.state.videoPressed}
+                // ironically paused === true means that it's playing, not paused
+                paused={this.state.videoPlaying}
                 source={{ uri: videoUri }}
-                onPlaybackStatusUpdate={this.handlePlaybackStatusUpdate}
               />
             </TouchableOpacity>
           )}

@@ -6,7 +6,7 @@
 import * as React from "react";
 import * as firebase from "firebase";
 import { View, Text, StyleSheet, Button } from "react-native";
-import { Video } from "expo";
+import Video from "react-native-video";
 import { RouteName } from "../../shared/Navigation";
 import { Member } from "../../../store/reducers/members";
 import { RahaState } from "../../../store";
@@ -208,12 +208,10 @@ class InviteVideoPreviewView extends React.Component<
           }}
           rate={1.0}
           volume={1.0}
-          isMuted={false}
-          usePoster={true}
-          resizeMode={Video.RESIZE_MODE_COVER}
-          shouldPlay
-          isLooping
-          // @ts-ignore Expo typing for Video is missing `style`
+          muted={false}
+          resizeMode="cover"
+          paused // ironically this means it's playing
+          repeat
           style={styles.video}
         />
       )
