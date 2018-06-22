@@ -24,7 +24,7 @@ import { MemberId } from "../../identifiers";
 import { mint } from "../../store/actions/wallet";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { Button } from "../shared/Button";
-import { getLoggedInMemberId } from "../../store/selectors/authentication";
+import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 
 interface NavParams {
   member: Member;
@@ -227,7 +227,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   props
 ) => {
-  const loggedInMemberId = getLoggedInMemberId(state);
+  const loggedInMemberId = getLoggedInFirebaseUserId(state);
   const loggedInMember =
     state.authentication.isLoggedIn && loggedInMemberId
       ? getMembersByIds(state, [loggedInMemberId])[0]

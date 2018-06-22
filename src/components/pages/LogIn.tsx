@@ -9,7 +9,7 @@ import {
 } from "../../store/actions/authentication";
 import { RahaState, RahaThunkDispatch } from "../../store";
 import { RouteName } from "../shared/Navigation";
-import { getLoggedInMemberId } from "../../store/selectors/authentication";
+import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { getMembersByIds } from "../../store/selectors/members";
 import { NavigationScreenProp } from "react-navigation";
 
@@ -89,7 +89,7 @@ const mapStateToProps: MapStateToProps<
 > = state => {
   const isLoggedIn =
     state.authentication.isLoaded && state.authentication.isLoggedIn;
-  const loggedInMemberId = getLoggedInMemberId(state);
+  const loggedInMemberId = getLoggedInFirebaseUserId(state);
   const hasAccount =
     isLoggedIn &&
     !!loggedInMemberId &&
