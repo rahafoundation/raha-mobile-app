@@ -13,8 +13,10 @@ export const app = RNFirebase.initializeApp(
   "raha"
 );
 export const auth = app.auth();
-export const storage = app.storage();
+// uncomment the below line once we get rn-firebase's storage to work
+// export const storage = app.storage();
 
+// remove the below lines once we get rn-firebase's storage to work
 export const webFirebase = firebase.initializeApp(config.firebase[Platform.OS]);
 export const webAuth = webFirebase.auth();
 export const webStorage = webFirebase.storage();
