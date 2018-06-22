@@ -131,9 +131,9 @@ class InviteVideoPreviewView extends React.Component<
           uploadStatus: UploadStatus.NOT_STARTED
         }),
       async () => {
-        this.setState({ uploadStatus: UploadStatus.UPLOADED });
         const videoDownloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
         if (videoDownloadUrl) {
+          this.setState({ uploadStatus: UploadStatus.UPLOADED });
           this.sendInviteRequest(videoDownloadUrl);
         } else {
           this.setState({
