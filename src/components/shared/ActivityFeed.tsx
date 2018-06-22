@@ -12,7 +12,10 @@ import { RahaState } from "../../store";
 import { Operation } from "../../store/reducers/operations";
 import { OperationId } from "../../identifiers";
 import { ActivityItem } from "./ActivityItem/index";
-import { ActivityTemplate } from "./ActivityItem/ActivityTemplate";
+import {
+  ActivityTemplate,
+  ActivityTemplateView
+} from "./ActivityItem/ActivityTemplate";
 
 interface StateProps {
   operations: List<Operation>;
@@ -26,7 +29,7 @@ interface OwnProps {
 type ActivityFeedProps = OwnProps & StateProps;
 
 export class ActivityFeedView extends React.Component<ActivityFeedProps> {
-  activities: { [key in OperationId]?: ActivityTemplate } = {};
+  activities: { [key in OperationId]?: ActivityTemplateView } = {};
 
   private onViewableItemsChanged: FlatListProps<
     Operation
@@ -71,7 +74,7 @@ export class ActivityFeedView extends React.Component<ActivityFeedProps> {
         renderItem={operationItem => (
           <ActivityItem
             operation={operationItem.item}
-            activityRef={(elem: ActivityTemplate) => {
+            activityRef={(elem: ActivityTemplateView) => {
               this.activities[operationItem.item.id] = elem;
             }}
           />

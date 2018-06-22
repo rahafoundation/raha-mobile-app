@@ -5,7 +5,7 @@ import * as React from "react";
 import { Big } from "big.js";
 
 import { GiveOperation } from "../../../store/reducers/operations";
-import { ActivityTemplate } from "./ActivityTemplate";
+import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
 import { Member } from "../../../store/reducers/members";
@@ -13,7 +13,7 @@ import { getMembersByIds } from "../../../store/selectors/members";
 
 type OwnProps = {
   operation: GiveOperation;
-  activityRef?: React.Ref<ActivityTemplate>;
+  activityRef?: React.Ref<ActivityTemplateView>;
 };
 type StateProps = {
   toMember: Member;
@@ -32,6 +32,8 @@ export const GiveOperationActivityView: React.StatelessComponent<
       timestamp={new Date(operation.created_at)}
       amount={new Big(operation.data.amount)}
       donationAmount={new Big(operation.data.donation_amount)}
+      // @ts-ignore Remove this ignore statement when my PR passes
+      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/26714
       onRef={activityRef}
     />
   );

@@ -6,13 +6,13 @@ import * as React from "react";
 import { format } from "date-fns";
 import { Big } from "big.js";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import { withNavigation, NavigationScreenProps } from "react-navigation";
+import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import Video from "react-native-video";
 
 import { Member } from "../../../store/reducers/members";
 import { RouteName } from "../Navigation";
 
-type ActivityTemplateProps = NavigationScreenProps<{}> & {
+interface ActivityTemplateOwnProps {
   from: Member;
   to?: Member;
   amount?: Big;
@@ -20,7 +20,8 @@ type ActivityTemplateProps = NavigationScreenProps<{}> & {
   message: string;
   timestamp: Date;
   videoUri?: string;
-};
+}
+type ActivityTemplateProps = ActivityTemplateOwnProps & NavigationInjectedProps;
 
 interface ActivityTemplateState {
   videoPlaying: boolean;
@@ -28,7 +29,7 @@ interface ActivityTemplateState {
   videoPlaybackFinished: boolean; // true if video has completed after pressed, not when it loops.
 }
 
-class ActivityTemplateView extends React.Component<
+export class ActivityTemplateView extends React.Component<
   ActivityTemplateProps,
   ActivityTemplateState
 > {
@@ -62,14 +63,25 @@ class ActivityTemplateView extends React.Component<
 
   private handleVideoPress = async () => {
     if (!this.videoElem) return;
-    const playbackStatus = await this.videoElem.getStatusAsync();
-    if (!playbackStatus.isLoaded) return;
 
     if (this.state.videoPlaybackFinished) {
-      await this.videoElem.playFromPositionAsync(0);
-      this.setState({ videoPlaybackFinished: false });
-    } else {
-      this.setState({ videoPressed: true });
+      this.videoElem.seek(0);
+      this.setState({ videoPlaybackFinished: false, videoPlaying: true });
+    } else if (!this.state.videoPlaying) {
+      // unpause if paused
+      this.setState({ videoPlaying: true });
+    } else if (this.state.videoPressed) {
+      // just pause it if pressed while playing with sound
+      this.setState({ videoPlaying: false });
+    }
+
+    this.setState({ videoPressed: true });
+  };
+
+  private handleVideoEnded = async () => {
+    if (this.state.videoPressed) {
+      // don't bother if not pressed, since it'll be looping
+      this.setState({ videoPlaybackFinished: true, videoPlaying: false });
     }
   };
 
@@ -118,11 +130,7 @@ class ActivityTemplateView extends React.Component<
         </View>
         <View>
           {videoUri && (
-            <TouchableOpacity
-              onPress={this.handleVideoPress}
-              delayPressIn={20}
-              disabled={this.state.videoPressed}
-            >
+            <TouchableOpacity onPress={this.handleVideoPress} delayPressIn={20}>
               {/* TODO: make own playback controls for smoother customization */}
               <Video
                 ref={(elem: any) => {
@@ -134,9 +142,9 @@ class ActivityTemplateView extends React.Component<
                 repeat={!this.state.videoPressed}
                 resizeMode="cover"
                 muted={!this.state.videoPressed}
-                // ironically paused === true means that it's playing, not paused
-                paused={this.state.videoPlaying}
+                paused={!this.state.videoPlaying}
                 source={{ uri: videoUri }}
+                onEnd={this.handleVideoEnded}
               />
             </TouchableOpacity>
           )}
@@ -209,4 +217,6 @@ const styles = StyleSheet.create({
   }
 });
 
-export const ActivityTemplate = withNavigation(ActivityTemplateView);
+export const ActivityTemplate = withNavigation<ActivityTemplateOwnProps>(
+  ActivityTemplateView
+);

@@ -4,7 +4,7 @@
 import * as React from "react";
 
 import { RequestInviteOperation } from "../../../store/reducers/operations";
-import { ActivityTemplate } from "./ActivityTemplate";
+import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
 import { Member } from "../../../store/reducers/members";
@@ -12,7 +12,7 @@ import { getMembersByIds } from "../../../store/selectors/members";
 
 type OwnProps = {
   operation: RequestInviteOperation;
-  activityRef?: React.Ref<ActivityTemplate>;
+  activityRef?: React.Ref<ActivityTemplateView>;
 };
 type StateProps = {
   fromMember: Member;
@@ -30,6 +30,8 @@ export const RequestInviteOperationActivityView: React.StatelessComponent<
       to={toMember}
       timestamp={new Date(operation.created_at)}
       videoUri={fromMember.videoUri}
+      // @ts-ignore Remove this ignore statement when my PR passes
+      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/26714
       onRef={activityRef}
     />
   );

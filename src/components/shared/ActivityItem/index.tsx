@@ -10,13 +10,13 @@ import { GiveOperationActivity } from "./GiveOperationActivity";
 import { MintOperationActivity } from "./MintOperationActivity";
 import { RequestInviteOperationActivity } from "./RequestInviteOperationActivity";
 import { TrustOperationActivity } from "./TrustOperationActivity";
-import { ActivityTemplate } from "./ActivityTemplate";
+import { ActivityTemplateView } from "./ActivityTemplate";
 
 type ActivityItemProps = {
   operation: Operation;
   // Used to get a handle to the underlying ActivityTemplate component this
   // outputs
-  activityRef?: React.Ref<ActivityTemplate>;
+  activityRef?: React.Ref<ActivityTemplateView>;
 };
 
 export const ActivityItem: React.StatelessComponent<ActivityItemProps> = ({
