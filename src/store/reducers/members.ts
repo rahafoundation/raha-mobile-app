@@ -5,7 +5,7 @@ import { Set, Map } from "immutable";
 import { MemberId, MemberUsername } from "../../identifiers";
 import { OperationsActionType } from "../actions/operations";
 import { MembersAction } from "../actions/members";
-import { Operation, OperationType } from "./operations";
+import { Operation, OperationType, MintType } from "./operations";
 import { OperationInvalidError } from "../../errors/OperationInvalidError";
 import { config } from "../../data/config";
 
@@ -71,7 +71,7 @@ export class Member {
    * ACCOUNT BALANCE METHODS
    * =======================
    */
-  public mintRaha(amount: Big, mintDate: Date) {
+  public mintRaha(amount: Big, mintDate?: Date) {
     return new Member(
       this.memberId,
       this.username,
@@ -80,7 +80,7 @@ export class Member {
       this.invitedBy,
       this.balance.plus(amount),
       this.totalMinted.plus(amount),
-      mintDate,
+      mintDate ? mintDate : this.lastMinted,
       this.trusts,
       this.trustedBy,
       this.invited
@@ -339,12 +339,14 @@ function applyOperation(
         return addMembersToState(prevState, [truster, trusted]);
       }
       case OperationType.MINT: {
-        const { amount } = operation.data;
+        const { amount, type } = operation.data;
 
         assertMemberIdPresentInState(prevState, creator_uid, operation);
         const minter = (prevState.byUserId.get(creator_uid) as Member).mintRaha(
           new Big(amount),
-          new Date(operation.created_at)
+          type === MintType.BASIC_INCOME
+            ? new Date(operation.created_at)
+            : undefined
         );
         return addMembersToState(prevState, [minter]);
       }
