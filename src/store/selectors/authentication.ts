@@ -1,7 +1,6 @@
 import { RahaState } from "../reducers";
-import { auth } from "../../firebaseInit";
+import { auth, storage } from "../../firebaseInit";
 import { MemberId } from "../../identifiers";
-import * as firebase from "firebase";
 
 export async function getAuthToken(
   state: RahaState
@@ -41,8 +40,7 @@ export function getLoggedInMember(state: RahaState) {
 export function getPrivateVideoInviteRef(state: RahaState) {
   const loggedInUserId = getLoggedInMemberId(state);
   return loggedInUserId
-    ? firebase
-        .storage()
+    ? storage
         .ref()
         .child("private-video")
         .child(loggedInUserId)

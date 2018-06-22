@@ -1,5 +1,4 @@
 import { Reducer } from "redux";
-import { User as FirebaseUser } from "firebase";
 
 import {
   AuthenticationActionType,
