@@ -1,9 +1,9 @@
-import firebase from "react-native-firebase";
+import firebase from "firebase";
+import RNFirebase from "react-native-firebase";
 import { GoogleSignin } from "react-native-google-signin";
 
 import { AsyncActionCreator } from "./";
-// import { Google, Facebook } from "expo";
-import { auth } from "../../firebaseInit";
+import { auth, webAuth } from "../../firebaseInit";
 
 import { config } from "../../data/config";
 
@@ -84,12 +84,20 @@ export const googleLogIn: AsyncActionCreator = () => async dispatch => {
     }
 
     // Create a new Firebase credential with the token
-    const credential = firebase.auth.GoogleAuthProvider.credential(
+    const credential = RNFirebase.auth.GoogleAuthProvider.credential(
       googleData.idToken,
       googleData.accessToken
     );
     // Login with the credential
     await auth.signInAndRetrieveDataWithCredential(credential);
+
+    const webCredential = firebase.auth.GoogleAuthProvider.credential(
+      googleData.idToken,
+      googleData.accessToken
+    );
+    // TODO: remove once storage works for react-native-firebase
+    // Also log into the web version of firebase
+    await webAuth.signInAndRetrieveDataWithCredential(webCredential);
   } catch (error) {
     // TODO: does declining permissions go here?
 
@@ -114,7 +122,7 @@ export const facebookLogIn: AsyncActionCreator = () => async dispatch => {
   //   return;
   // }
   // try {
-  //   const credential = firebase.auth.FacebookAuthProvider.credential(
+  //   const credential = auth.FacebookAuthProvider.credential(
   //     facebookData.token
   //   );
   //   await auth.signInAndRetrieveDataWithCredential(credential);
@@ -129,6 +137,6 @@ export const facebookLogIn: AsyncActionCreator = () => async dispatch => {
 };
 
 export const signOut: AsyncActionCreator = () => async dispatch => {
-  await auth.signOut(); // TODO handle error
+  await Promise.all([auth.signOut(), webAuth.signOut()]); // TODO handle error
   dispatch(signOutAction());
 };
