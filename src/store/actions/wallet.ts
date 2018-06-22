@@ -69,8 +69,8 @@ export const mintReferralBonus: AsyncActionCreator = (
           body: {
             type: MintType.REFERRAL_BONUS,
             amount,
-            invite_operation: inviteOperationId,
-            trust_operation: trustOperationId,
+            invite_operation_id: inviteOperationId,
+            trust_operation_id: trustOperationId,
             invited_member_id: invitedMemberId
           }
         },
