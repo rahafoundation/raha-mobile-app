@@ -4,7 +4,7 @@
  */
 
 import * as React from "react";
-import * as firebase from "firebase";
+import firebase from "firebase";
 import { View, Text, StyleSheet, Button } from "react-native";
 import Video from "react-native-video";
 import { RouteName } from "../../shared/Navigation";
@@ -81,10 +81,9 @@ class InviteVideoPreviewView extends React.Component<
       console.warn("videoUri missing from navigator when uploading video.");
       return;
     }
-    this.setState({ uploadStatus: UploadStatus.UPLOADING });
     const response = await fetch(videoUri);
     const blob = await response.blob();
-    //@ts-ignore Expo Blob does not have data type
+    //@ts-ignore Blob does not have data type
     if (blob.data.size > MAX_VIDEO_SIZE) {
       this.setState({
         errorMessage:
@@ -103,18 +102,20 @@ class InviteVideoPreviewView extends React.Component<
     const uploadTask = videoUploadRef.put(blob, metadata);
     uploadTask.on(
       firebase.storage.TaskEvent.STATE_CHANGED,
-      s => {
+      (s: any) => {
         const snapshot = s as firebase.storage.UploadTaskSnapshot;
         this.setState({
+          uploadStatus: UploadStatus.UPLOADING,
           uploadedBytes: snapshot.bytesTransferred,
           totalBytes: snapshot.totalBytes
         });
       },
-      () =>
+      err => {
         this.setState({
           errorMessage: "Could not upload. Please try again.",
           uploadStatus: UploadStatus.NOT_STARTED
-        }),
+        });
+      },
       () => {
         this.setState({ uploadStatus: UploadStatus.UPLOADED });
         this.requestInvite();
@@ -210,7 +211,6 @@ class InviteVideoPreviewView extends React.Component<
           volume={1.0}
           muted={false}
           resizeMode="cover"
-          paused // ironically this means it's playing
           repeat
           style={styles.video}
         />

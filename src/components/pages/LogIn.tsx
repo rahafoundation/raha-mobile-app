@@ -58,7 +58,6 @@ class LogInView extends React.Component<LogInProps> {
             {this.props.existingAuthMethod}.
           </Text>
         )}
-        {/* <Button title="Sign in with Google" onPress={this.props.googleLogIn} /> */}
         <GoogleSigninButton
           style={{ width: 230, height: 48 }}
           color={GoogleSigninButton.Color.Light}
