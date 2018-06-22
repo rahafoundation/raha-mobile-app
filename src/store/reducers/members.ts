@@ -32,6 +32,7 @@ export class Member {
   public readonly fullName: string;
   public readonly createdAt: Date;
   public readonly invitedBy: MemberId | typeof GENESIS_MEMBER;
+  public readonly inviteConfirmed: boolean;
   public readonly balance: Big;
   public readonly totalMinted: Big;
   public readonly lastMinted: Date;
@@ -46,6 +47,7 @@ export class Member {
     fullName: string,
     createdAt: Date,
     invitedBy: MemberId | typeof GENESIS_MEMBER,
+    inviteConfirmed: boolean,
     balance: Big,
     totalMinted: Big,
     lastMinted: Date,
@@ -58,7 +60,7 @@ export class Member {
     this.fullName = fullName;
     this.createdAt = createdAt;
     this.invitedBy = invitedBy;
-
+    this.inviteConfirmed = inviteConfirmed;
     this.trusts = trusts || Set();
     this.trustedBy = trustedBy || Set();
     this.invited = invited || Set();
@@ -78,6 +80,7 @@ export class Member {
       this.fullName,
       this.createdAt,
       this.invitedBy,
+      this.inviteConfirmed,
       this.balance.plus(amount),
       this.totalMinted.plus(amount),
       mintDate,
@@ -94,6 +97,7 @@ export class Member {
       this.fullName,
       this.createdAt,
       this.invitedBy,
+      this.inviteConfirmed,
       this.balance.minus(amount),
       this.totalMinted,
       this.lastMinted,
@@ -110,6 +114,7 @@ export class Member {
       this.fullName,
       this.createdAt,
       this.invitedBy,
+      this.inviteConfirmed,
       this.balance.plus(amount),
       this.totalMinted,
       this.lastMinted,
@@ -143,6 +148,7 @@ export class Member {
       this.fullName,
       this.createdAt,
       this.invitedBy,
+      this.inviteConfirmed,
       this.balance,
       this.totalMinted,
       this.lastMinted,
@@ -162,6 +168,7 @@ export class Member {
       this.fullName,
       this.createdAt,
       this.invitedBy,
+      this.inviteConfirmed,
       this.balance,
       this.totalMinted,
       this.lastMinted,
@@ -181,6 +188,7 @@ export class Member {
       this.fullName,
       this.createdAt,
       this.invitedBy,
+      this.inviteConfirmed || this.invitedBy === memberId,
       this.balance,
       this.totalMinted,
       this.lastMinted,
@@ -245,14 +253,31 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
   return false;
 }
 
+function memberIdPresentInState(prevState: MembersState, memberId: MemberId) {
+  return prevState.byUserId.has(memberId);
+}
+
 function assertMemberIdPresentInState(
   prevState: MembersState,
   memberId: MemberId,
   operation: Operation
 ) {
-  if (!prevState.byUserId.has(memberId)) {
+  if (!memberIdPresentInState(prevState, memberId)) {
     throw new OperationInvalidError(
       `Invalid operation: user ${memberId} not present`,
+      operation
+    );
+  }
+}
+
+function assertMemberIdNotPresentInState(
+  prevState: MembersState,
+  memberId: MemberId,
+  operation: Operation
+) {
+  if (memberIdPresentInState(prevState, memberId)) {
+    throw new OperationInvalidError(
+      `Invalid operation: user ${memberId} already present`,
       operation
     );
   }
@@ -301,6 +326,7 @@ function applyOperation(
               full_name,
               new Date(created_at),
               GENESIS_MEMBER,
+              true,
               new Big(0),
               new Big(0),
               new Date(created_at)
@@ -309,6 +335,8 @@ function applyOperation(
         }
 
         assertMemberIdPresentInState(prevState, to_uid, operation);
+        assertMemberIdNotPresentInState(prevState, creator_uid, operation);
+
         const inviter = (prevState.byUserId.get(to_uid) as Member).inviteMember(
           creator_uid
         );
@@ -318,6 +346,7 @@ function applyOperation(
           full_name,
           new Date(created_at),
           to_uid,
+          false,
           new Big(0),
           new Big(0),
           new Date(created_at),
