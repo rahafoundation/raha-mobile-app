@@ -14,6 +14,7 @@
     "big.js": "^5.1.2",
     "date-fns": "^1.29.0",
     "es6-symbol": "^3.1.1",
+    "firebase": "^5.1.0",
     "immutable": "^4.0.0-rc.9",
     "react": "16.3.1",
     "react-native": "0.55.4",
