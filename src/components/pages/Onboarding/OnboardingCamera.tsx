@@ -22,9 +22,14 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
     let verifiedName = this.props.navigation.getParam("verifiedName");
     if (!invitingMember || !verifiedName) {
       // Should not happen, but in case of bug we can safely navigate back to fill in missing info.
-      console.warn(`Missing invitingMember or verifiedName: ${{invitingMember, verifiedName}}`)
+      console.warn(
+        `Missing invitingMember or verifiedName: ${{
+          invitingMember,
+          verifiedName
+        }}`
+      );
       this.props.navigation.navigate(RouteName.OnboardingInvite);
-      return <View />
+      return <View />;
     }
 
     return (
