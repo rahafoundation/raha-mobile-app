@@ -1,9 +1,9 @@
-import * as firebase from "firebase";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 
 import { auth } from "../firebaseInit";
 import { logInAction, signedOutAction } from "../store/actions/authentication";
+import { RNFirebase } from "react-native-firebase";
 
 type OwnProps = { children: React.ReactNode };
 type DispatchProps = {
@@ -13,14 +13,14 @@ type DispatchProps = {
 type Props = OwnProps & DispatchProps;
 
 class AuthManagerComponent extends React.Component<Props> {
-  private unsubscribe: undefined | firebase.Unsubscribe;
+  private unsubscribe?: () => void;
   public constructor(props: Props) {
     super(props);
     this.unsubscribe = undefined;
   }
 
   public componentWillMount() {
-    this.unsubscribe = auth.onAuthStateChanged(user => {
+    this.unsubscribe = auth.onAuthStateChanged((user: RNFirebase.User) => {
       if (user) {
         this.props.logIn();
       } else {
