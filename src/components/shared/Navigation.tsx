@@ -26,6 +26,7 @@ import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
 import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
+import { Discover, Leaderboard } from "../pages/Discover";
 
 export enum RouteName {
   Home = "Home",
@@ -40,6 +41,7 @@ export enum RouteName {
   Profile = "Profile",
   ProfileTab = "ProfileTab",
   Discover = "Discover",
+  DiscoverTab = "DiscoverTab",
   Mint = "Mint",
   MintTab = "MintTab",
   ReferralBonus = "ReferralBonus",
@@ -93,9 +95,21 @@ const HomeTab = createStackNavigator(
         )
       })
     }
-  } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
+  },
   {
     initialRouteName: RouteName.Home,
+    headerMode: "float"
+  }
+);
+
+const DiscoverTab = createStackNavigator(
+  {
+    Discover: Discover,
+    Leaderboard: Leaderboard,
+    Profile: ProfileRouteConfig
+  },
+  {
+    initialRouteName: RouteName.Discover,
     headerMode: "float"
   }
 );
@@ -129,9 +143,8 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
     HomeTab: {
       screen: HomeTab
     },
-    Discover: {
-      // TODO: Implement page
-      screen: OnboardingCamera
+    DiscoverTab: {
+      screen: DiscoverTab
     },
     MintTab: {
       screen: MintTab
@@ -161,7 +174,7 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
           case RouteName.MintTab:
             iconName = "gift";
             break;
-          case RouteName.Discover:
+          case RouteName.DiscoverTab:
             iconName = "ios-search";
             IconType = Ionicons;
             break;
@@ -208,7 +221,7 @@ const SignedOutNavigator = createStackNavigator(
     InviteVideoPreview: {
       screen: InviteVideoPreview
     }
-  } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
+  },
   {
     headerMode: "screen",
     initialRouteName: RouteName.LogIn
