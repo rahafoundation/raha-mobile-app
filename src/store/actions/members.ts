@@ -55,7 +55,7 @@ export const requestInviteFromMember: AsyncActionCreator = (
   memberId: MemberId,
   fullName: string,
   videoUrl: string,
-  creatorMid: string
+  username: string
 ) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
@@ -71,7 +71,7 @@ export const requestInviteFromMember: AsyncActionCreator = (
           body: {
             fullName,
             videoUrl,
-            creatorMid
+            username
           }
         },
         authToken

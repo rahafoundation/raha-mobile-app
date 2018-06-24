@@ -15,7 +15,7 @@ export async function getAuthToken(
   return authFirebaseUser.getIdToken();
 }
 
-export function getLoggedInMemberId(state: RahaState) {
+export function getLoggedInFirebaseUserId(state: RahaState) {
   return state.authentication.isLoggedIn && auth.currentUser
     ? (auth.currentUser.uid as MemberId)
     : undefined;
@@ -38,7 +38,7 @@ export function getLoggedInMember(state: RahaState) {
 }
 
 export function getPrivateVideoInviteRef(state: RahaState) {
-  const loggedInUserId = getLoggedInMemberId(state);
+  const loggedInUserId = getLoggedInFirebaseUserId(state);
   return loggedInUserId
     ? webStorage
         .ref()

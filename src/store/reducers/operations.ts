@@ -19,9 +19,6 @@ export interface TrustPayload {
   to_uid: MemberId;
   to_mid: MemberUsername;
 }
-export interface MintPayload {
-  amount: string;
-}
 export interface GivePayload {
   to_uid: MemberId;
   amount: string;
@@ -29,6 +26,22 @@ export interface GivePayload {
   donation_to: MemberId;
   donation_amount: string;
 }
+export enum MintType {
+  BASIC_INCOME = "BASIC_INCOME",
+  REFERRAL_BONUS = "REFERRAL_BONUS"
+}
+export interface MintBasicIncomePayload {
+  type: MintType.BASIC_INCOME;
+  amount: string;
+}
+export interface MintReferralBonusPayload {
+  type: MintType.REFERRAL_BONUS;
+  amount: string;
+  invite_operation_id: OperationId;
+  trust_operation_id: OperationId;
+  invited_member_id: MemberId;
+}
+export type MintPayload = MintBasicIncomePayload | MintReferralBonusPayload;
 
 export interface OperationBase {
   id: OperationId;

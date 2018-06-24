@@ -19,7 +19,7 @@ import { MemberList } from "../pages/MemberList";
 import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
 import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
 import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
-import { getLoggedInMemberId } from "../../store/selectors/authentication";
+import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 
 export enum RouteName {
   Home = "Home",
@@ -219,7 +219,7 @@ const mapStateToProps: MapStateToProps<
   RahaState
 > = state => {
   const isLoaded = state.authentication.isLoaded;
-  const loggedInMemberId = getLoggedInMemberId(state);
+  const loggedInMemberId = getLoggedInFirebaseUserId(state);
   const isLoggedIn =
     state.authentication.isLoaded && state.authentication.isLoggedIn;
   const hasAccount =
