@@ -60,7 +60,7 @@ class LogInView extends React.Component<LogInProps> {
         )}
         <GoogleSigninButton
           style={{ width: 230, height: 48 }}
-          color={GoogleSigninButton.Color.Light}
+          color={GoogleSigninButton.Color.Dark}
           size={GoogleSigninButton.Size.Standard}
           onPress={this.props.googleLogIn}
         />
