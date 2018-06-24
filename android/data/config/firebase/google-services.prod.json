@@ -17,57 +17,6 @@
         {
           "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
           "client_type": 3
-        },
-        {
-          "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBvR-LBe_hWy-HzyE1X4OkbEyALOr7COzo"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "677137485282-hei8t5jm6c67kpqk4objefcrlk4bhuqd.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "app.raha.mobile"
-              }
-            }
-          ]
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:677137485282:android:a524a5e79e3fda7d",
-        "android_client_info": {
-          "package_name": "com.raha.mobile"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
-          "client_type": 3
-        },
-        {
-          "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
