@@ -11,7 +11,8 @@ import {
   TouchableHighlight,
   WebView as WebViewNative,
   TextProps,
-  ScrollView
+  ScrollView,
+  Linking
 } from "react-native";
 
 import { MemberSearchBar } from "../shared/MemberSearchBar";
@@ -25,53 +26,97 @@ export const DiscoverWebView: React.StatelessComponent = ({
   return <WebViewNative source={{ uri: navigation.getParam("uri") }} />;
 };
 
-type DiscoverCard = {
+type DiscoverCardRaw = {
   header?: string | string[];
-  main: string | string[];
-  sub?: string | string[];
-  uri?: string;
+  title: string | string[];
+  footer?: string | string[];
+  uri: string;
 };
 
-function mutateAndFlattenArray(objArr: DiscoverCard[]) {
-  for (let obj of objArr) {
-    for (let [prop, val] of Object.entries(obj)) {
-      if (Array.isArray(val)) {
-        obj[prop as keyof typeof obj] =
-          val[Math.floor(val.length * Math.random())];
-      }
-    }
+type DiscoverCard = {
+  header?: string;
+  title: string;
+  footer?: string;
+  uri: (navigation: NavigationScreenProp<{}>) => void;
+};
+
+function convertUriToCallback(uri: string) {
+  if (uri.startsWith("https:")) {
+    return (navigation: NavigationScreenProp<{}>) => {
+      navigation.navigate(RouteName.DiscoverWebView, { uri });
+    };
   }
-  return objArr;
+  if (uri.startsWith("mailto:")) {
+    return (navigation: NavigationScreenProp<{}>) => {
+      Linking.openURL(uri); // TODO check canOpen
+    };
+  }
+  throw Error(`Invalid uri ${uri}, unsupported protocol`);
 }
 
-const DISCOVER_INFO = mutateAndFlattenArray([
+function convertCard(discoverCard: DiscoverCardRaw): DiscoverCard {
+  return Object.entries(discoverCard).reduce(
+    (res, keyValue) => {
+      let [key, origVal] = keyValue;
+      let val: any = origVal;
+      if (Array.isArray(val)) {
+        val = val[Math.floor(val.length * Math.random())];
+      }
+      if (key === "uri") {
+        if (typeof val === "string") {
+          val = convertUriToCallback(val);
+        } else {
+          throw Error(`Invalid value for uri ${val}`);
+        }
+      }
+      res[key as keyof DiscoverCard] = val;
+      return res;
+    },
+    {} as DiscoverCard
+  );
+}
+
+function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
+  return cardArr.map(convertCard);
+}
+
+// TODO below JSON should be available from website.
+const DISCOVER_INFO = convertCardArr([
   {
-    main: "Give people Raha in exchange for posters, resume review, and more!",
-    sub: "Check out the Raha Marketplace",
+    title: "Any feedback or questions? Contact Raha team at hi@raha.app!",
+    uri: "mailto:hi@raha.app"
+  },
+  {
+    title: "Give people Raha in exchange for posters, resume review, and more!",
+    footer: "Check out the Raha Marketplace",
     uri: "https://discuss.raha.app/c/marketplace"
   },
   {
     header: "Did you know?",
-    main: [
+    title: [
       '"Cash transfers have positive impacts, including on children."',
       '"Cash transfers have long-term impacts."',
       '"The poor do not systematically abuse cash transfers (e.g. on alcohol)."'
     ],
-    sub: "Read the research compiled by GiveDirectly",
+    footer: "Read more at GiveDirectly.org",
     uri: "https://www.givedirectly.org/research-on-cash-transfers"
   },
   {
-    main: "View your position in the invite leaderboard!",
+    title: "View your position in the invite leaderboard!",
     uri: "https://web.raha.app/leaderboard"
   },
   {
+    title: "Discuss UBI on the Raha Forum!",
+    uri: "https://discuss.raha.app/"
+  },
+  {
     header: "Raha supports",
-    main: [
+    title: [
       "Universal Basic Income to End Extreme Poverty.",
       "Trusted Identities for Safe and Secure Payments.",
       "Delegative Democracy and Values-Based Development."
     ],
-    sub: "Read the Raha Manifesto",
+    footer: "Read the Raha Manifesto",
     uri: "https://raha.app"
   }
 ]);
@@ -81,8 +126,14 @@ type DiscoverProps = {
 };
 
 const LargeText: React.StatelessComponent<TextProps> = props => (
-  <Text style={{ fontSize: 20 }} {...props} />
+  <Text style={{ fontSize: 18, color: "white" }} {...props} />
 );
+
+const COLORS = ["darkseagreen", "darkturquoise"]
+
+function getCardColor(index: number): string {
+  return COLORS[index % COLORS.length];
+}
 
 function getCard(
   info: DiscoverCard,
@@ -91,19 +142,14 @@ function getCard(
 ) {
   return (
     <TouchableHighlight
-      style={{ height: 100, marginVertical: 10, marginHorizontal: 5 }}
+      style={{ minHeight: 100, margin: 7, backgroundColor: getCardColor(index) }}
       key={index}
-      onPress={() =>
-        info.uri &&
-        navigation.navigate(RouteName.DiscoverWebView, {
-          uri: info.uri
-        })
-      }
+      onPress={() => info.uri(navigation)}
     >
-      <View>
+      <View style={{ flex: 1, justifyContent: "space-between" }}>
         {info.header && <LargeText>{info.header}</LargeText>}
-        <LargeText>{info.main}</LargeText>
-        {info.sub && <LargeText>{info.sub}</LargeText>}
+        <LargeText>{info.title}</LargeText>
+        {info.footer && <LargeText>{info.footer}</LargeText>}
       </View>
     </TouchableHighlight>
   );
@@ -120,6 +166,8 @@ export const Discover: React.StatelessComponent<DiscoverProps> = ({
   return (
     <SafeAreaView>
       <MemberSearchBar
+        lightTheme
+        placeholderText="Search Members"
         keyboardShouldPersistTaps="always"
         onMemberSelected={member => {
           navigation.push(RouteName.Profile, { member: member });
