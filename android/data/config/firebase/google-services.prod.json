@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "677137485282-2n5579aqq1tcmn3fd7vljt5r57i806bk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobile",
+            "certificate_hash": "b47c6db555018c56d601236899448ef11e2ccfa9"
+          }
+        },
+        {
+          "client_id": "677137485282-2p8dhtbk9u02lhecajnovrth7mfb1q8d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobile",
+            "certificate_hash": "91e67e9359ddfa6b783e99fc8540ff4d85b3a096"
+          }
+        },
+        {
+          "client_id": "677137485282-e4vc8190n3bk26ftbcpdovtc2k1jdvad.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobile",
+            "certificate_hash": "c0ba7692d18d1986517c2f0a30a11956ca237c1b"
+          }
+        },
+        {
           "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +53,20 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "677137485282-hei8t5jm6c67kpqk4objefcrlk4bhuqd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "app.raha.mobile"
+              }
+            }
+          ]
         },
         "ads_service": {
           "status": 2

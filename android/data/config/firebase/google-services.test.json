@@ -23,6 +23,22 @@
           }
         },
         {
+          "client_id": "148482003030-avdl394cl4u2sso73sige1dnjk6u1nla.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobileTest",
+            "certificate_hash": "b47c6db555018c56d601236899448ef11e2ccfa9"
+          }
+        },
+        {
+          "client_id": "148482003030-p4in1nic8388u9lri8iv58855ppk8gtg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobileTest",
+            "certificate_hash": "c0ba7692d18d1986517c2f0a30a11956ca237c1b"
+          }
+        },
+        {
           "client_id": "148482003030-ncmledf9fbsog8ie5s66rmf7ko2ljjjm.apps.googleusercontent.com",
           "client_type": 3
         }
