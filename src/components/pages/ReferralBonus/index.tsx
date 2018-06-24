@@ -12,13 +12,6 @@ import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { ReferralThumbnail } from "./ReferralThumbnail";
 import { MemberId } from "../../../identifiers";
 
-/**
- * TODO Ideas for the morning:
- * * Untrusted referrals have a "Trust" button instead of "Mint". This turns into "Mint" on trust action completion.
- * * Members don't disappear from the list after mint operations are completed. They remain in a "Minted!" state, so you can feel good about yourself.
- * * This also means we don't need to recalculate that state in this component, but can instead just take it in as props.
- */
-
 export interface ReferralBonusNavParams {
   unclaimedReferralIds: (MemberId | undefined)[];
 }
