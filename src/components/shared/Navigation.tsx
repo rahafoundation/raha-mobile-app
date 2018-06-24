@@ -42,6 +42,7 @@ export enum RouteName {
   ProfileTab = "ProfileTab",
   Discover = "Discover",
   DiscoverTab = "DiscoverTab",
+  DiscoverWebView = "DiscoverWebView",
   Mint = "Mint",
   MintTab = "MintTab",
   ReferralBonus = "ReferralBonus",
@@ -105,12 +106,12 @@ const HomeTab = createStackNavigator(
 const DiscoverTab = createStackNavigator(
   {
     Discover: Discover,
-    Leaderboard: Leaderboard,
+    DiscoverWebView: DiscoverWebView,
     Profile: ProfileRouteConfig
   },
   {
     initialRouteName: RouteName.Discover,
-    headerMode: "float"
+    headerMode: "none"
   }
 );
 
