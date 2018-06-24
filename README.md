@@ -49,9 +49,17 @@ Run `yarn start:ios`, and it an iPhone emulator running the code should start.
 
 ### ... on physical devices:
 
-You need to set up your environment; please refer to [the instructions
-here](https://facebook.github.io/react-native/docs/running-on-device.html). You
-will need a USB cable to connect your phone to your computer.
+You need to set up your environment.
+
+First start by making sure you've done all the setup instructions in the
+"Building Projects with Native Code" section of the [React Native Getting
+Started guide](http://facebook.github.io/react-native/docs/getting-started.html)
+for your platform. For instance, you need Android Studio if you're building for
+Android, whose installation instructions are explained there.
+
+Then, refer to [the instructions in the "Running On Device
+section"](https://facebook.github.io/react-native/docs/running-on-device.html).
+You will need a USB cable to connect your phone to your computer.
 
 Once you've done so, then plug in your device via USB and...
 
