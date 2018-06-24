@@ -41,14 +41,34 @@ yarn config:test
 **NOTE**: These commands change configuration not just in JavaScript, but also
 in the native apps; so if the app is running already, you'll need to rebuild it.
 
-## Running the app
+## Running the app...
 
-To run it on an iPhone emulator, run `yarn start:ios`, and it an iPhone emulator
-running the code should start.
+### ...on an iPhone emulator:
 
-On physical devices, refer to [the instructions
+Run `yarn start:ios` without an iPhone plugged into your computer, and it an
+iPhone emulator running the code should start.
+
+### ... on physical devices:
+
+You need to set up your environment; please refer to [the instructions
 here](https://facebook.github.io/react-native/docs/running-on-device.html). You
-will need a USb cable to connect your phone to your computer.
+will need a USB cable to connect your phone to your computer.
+
+Once you've done so, then plug in your device via USB and run the proper start
+script below:
+
+```bash
+yarn start:ios
+yarn start:android
+```
+
+Building can take a long time, so bear with it.
+
+#### Troubleshooting
+
+##### Android
+
+- Ensure you are using Java JDK 1.8, as that's the only version supported.
 
 ## Other scripts
 
@@ -64,5 +84,9 @@ recommend navigating to the recommended extensions and installing them:
 
 ![Screenshot of Recommended Extensions pane in
 VSCode](setup-instructions/recommended-extensions.png)
+
+I also recommend you run a script in VSCode that will tell you all the
+TypeScript errors in your entire codebase as you code. To do so, go to Tasks >
+Run Build Task, and then run the `tsc: watch - tsconfig.dev.json` script.
 
 ### Happy hacking!
