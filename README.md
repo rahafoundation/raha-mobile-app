@@ -38,6 +38,9 @@ yarn config:prod
 yarn config:test
 ```
 
+**NOTE**: These commands change configuration not just in JavaScript, but also
+in the native apps; so if the app is running already, you'll need to rebuild it.
+
 ## Running the app
 
 To run it on an iPhone emulator, run `yarn start:ios`, and it an iPhone emulator
