@@ -25,6 +25,10 @@ export const config = {
       messagingSenderId: "677137485282",
       projectId: "raha-5395e",
       persistence: true
+    },
+    web: {
+      clientId:
+        "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com"
     }
   },
   facebook: {

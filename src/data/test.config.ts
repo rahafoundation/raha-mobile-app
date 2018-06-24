@@ -27,6 +27,10 @@ export const config: Config = {
       messagingSenderId: "148482003030",
       projectId: "raha-test",
       persistence: true
+    },
+    web: {
+      clientId:
+        "148482003030-ncmledf9fbsog8ie5s66rmf7ko2ljjjm.apps.googleusercontent.com"
     }
   },
   facebook: {
