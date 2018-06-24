@@ -118,7 +118,9 @@ const ProfileTab = createStackNavigator(
 const MintTab = createStackNavigator(
   {
     Mint: MintRouteConfig,
-    ReferralBonus: ReferralBonusRouteConfig
+    ReferralBonus: ReferralBonusRouteConfig,
+    Profile: ProfileRouteConfig,
+    MemberList: MemberListRouteConfig
   } as { [key in RouteName]: any },
   {
     initialRouteName: RouteName.Mint,
