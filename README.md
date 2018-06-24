@@ -43,9 +43,9 @@ in the native apps; so if the app is running already, you'll need to rebuild it.
 
 ## Running the app...
 
-### ...on an iPhone emulator:
+### ...on an iPhone simulator:
 
-Run `yarn start:ios`, and it an iPhone emulator running the code should start.
+Run `yarn start:ios`, and it an iPhone simulator running the code should start.
 
 ### ... on physical devices:
 
@@ -65,11 +65,40 @@ Once you've done so, then plug in your device via USB and...
 
 #### ... on Android:
 
-If you aren't set up yet for Android development yet, install Android Studio and be sure to
-set `ANDROID_HOME` (eg `export ANDROID_HOME=~/Library/Android/sdk/`)
+If you aren't set up yet for Android development yet, install Android Studio,
+be sure to set `ANDROID_HOME` (eg `export ANDROID_HOME=~/Library/Android/sdk/`)
 and accept all licenses (run `$ANDROID_HOME/tools/bin/sdkmanager --licenses`).
 
-Run `yarn start:android`.
+Run `yarn start:android:test` or `yarn start:android:prod` depending on the
+environment you want to run.
+
+##### Adding your Android debug signature to Firebase
+
+It won't allow you authenticate with Google services until you register your
+computer's signature with Firebase's website. To do so, first run this command
+to see your Android debug signatures:
+
+```bash
+# If it asks you for a keystore password, the default is "android" (without quotes)
+keytool -exportcert -list -v \
+-alias androiddebugkey -keystore ~/.android/debug.keystore
+```
+
+Copy the SHA1 certificate fingerprint. Then, go to the Android configurations
+for both [the test
+app](https://console.firebase.google.com/u/0/project/raha-test/settings/general/android:app.raha.mobileTest)
+and [the prod
+app](https://console.firebase.google.com/u/0/project/raha-5395e/settings/general/android:app.raha.mobile).
+
+Click "Add Fingerprint" under the "SHA certificate fingerprints" section, and
+paste in the same SHA fingerprint in both apps. It looks like this:
+
+![Screenshot of "Add Fingerprint" button in Firebase
+Console](setup-instructions/sha-fingerprint.png)
+
+Now Google Services should all work in development for you.
+
+##### Other tips
 
 It also helps to run `adb reverse tcp:8081 tcp:8081` so that the React Native
 packager can transfer the source code over USB instead of via Wi-Fi, especially
