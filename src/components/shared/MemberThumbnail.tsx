@@ -6,22 +6,16 @@ import * as React from "react";
 import { Text, TouchableOpacity } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 
-import { getInitialsForName } from "../../helpers/username";
+import {
+  getInitialsForName,
+  getMemberColor
+} from "../../helpers/memberDisplay";
 import { Member } from "../../store/reducers/members";
 import { RouteName } from "../shared/Navigation";
 
 type Props = NavigationScreenProps<any> & {
   member: Member;
 };
-
-function getMemberColor(member: Member) {
-  const hue =
-    member.memberId
-      .split("")
-      .map(x => x.charCodeAt(0))
-      .reduce((a, b) => a + b, 0) % 360;
-  return `hsl(${hue}, 100%, 80%)`;
-}
 
 export const MemberThumbnail: React.StatelessComponent<Props> = ({
   navigation,

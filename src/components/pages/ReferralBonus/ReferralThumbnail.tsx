@@ -1,12 +1,15 @@
 import { Big } from "big.js";
 import * as React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { Button } from "react-native-elements";
 import { NavigationScreenProps } from "react-navigation";
 import { connect, MergeProps, MapStateToProps } from "react-redux";
 
 import { ApiEndpoint } from "../../../api";
-import { getInitialsForName } from "../../../helpers/username";
+import {
+  getInitialsForName,
+  getMemberColor
+} from "../../../helpers/memberDisplay";
 import { RahaState } from "../../../store";
 import { trustMember } from "../../../store/actions/members";
 import { mintReferralBonus } from "../../../store/actions/wallet";
@@ -42,15 +45,6 @@ type MergedProps = {
 
 type Props = OwnProps & StateProps & MergedProps;
 
-function getMemberColor(invitedMember: Member) {
-  const hue =
-    invitedMember.memberId
-      .split("")
-      .map(x => x.charCodeAt(0))
-      .reduce((a, b) => a + b, 0) % 360;
-  return `hsl(${hue}, 100%, 80%)`;
-}
-
 const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
   invitedMember,
   navigation,
@@ -71,7 +65,7 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
       loading={isMinting}
       disabled={isMinting}
       title={`Mint +ℝ${REFERRAL_BONUS.toString()}`}
-      buttonStyle={{ flex: 0, backgroundColor: "#4CAF50" }}
+      buttonStyle={styles.mintButton}
       //@ts-ignore Because Button does have a rounded property
       rounded
     />
@@ -81,7 +75,7 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
       loading={isTrusting}
       disabled={isTrusting}
       title="Trust"
-      buttonStyle={{ flex: 0, backgroundColor: "#03A9F4" }}
+      buttonStyle={styles.trustButton}
       //@ts-ignore Because Button does have a rounded property
       rounded
     />
@@ -93,42 +87,31 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
 
   return (
     <TouchableOpacity
-      style={{ height: 75, flex: 1, flexDirection: "row" }}
+      style={styles.row}
       delayPressIn={20}
       onPress={() =>
         navigation.push(RouteName.Profile, { member: invitedMember })
       }
     >
       <Text
-        style={{
-          backgroundColor: getMemberColor(invitedMember),
-          fontSize: 30,
-          textAlign: "center",
-          textAlignVertical: "center",
-          height: 75,
-          width: 75
-        }}
+        style={[
+          styles.memberIcon,
+          {
+            backgroundColor: getMemberColor(invitedMember)
+          }
+        ]}
       >
         {getInitialsForName(invitedMember.fullName)}
       </Text>
-      <View
-        style={{
-          flex: 1,
-          alignSelf: "center"
-        }}
-      >
-        <Text
-          style={{ flex: 0, margin: 8 }}
-          numberOfLines={3}
-          ellipsizeMode="tail"
-        >
+      <View style={styles.messageView}>
+        <Text style={styles.messageText} numberOfLines={3} ellipsizeMode="tail">
           {message}
         </Text>
       </View>
-      <View style={{ width: 150, alignSelf: "center" }}>
+      <View style={styles.actionView}>
         {!!mintBonusApiCallStatus &&
         mintBonusApiCallStatus.status === ApiCallStatusType.SUCCESS ? (
-          <Text style={{ color: "#4CAF50", alignSelf: "center" }}>
+          <Text style={styles.actionText}>
             Minted +ℝ{REFERRAL_BONUS.toString()}
           </Text>
         ) : (
@@ -181,3 +164,42 @@ export const ReferralThumbnail = connect(
   { mintReferralBonus, trustMember },
   mergeProps
 )(ReferralThumbnailComponent);
+
+const styles = StyleSheet.create({
+  row: {
+    height: 75,
+    flex: 1,
+    flexDirection: "row"
+  },
+  memberIcon: {
+    fontSize: 30,
+    textAlign: "center",
+    textAlignVertical: "center",
+    height: 75,
+    width: 75
+  },
+  messageView: {
+    flex: 1,
+    alignSelf: "center"
+  },
+  messageText: {
+    flex: 0,
+    margin: 8
+  },
+  actionView: {
+    width: 150,
+    alignSelf: "center"
+  },
+  actionText: {
+    color: "#4CAF50",
+    alignSelf: "center"
+  },
+  mintButton: {
+    flex: 0,
+    backgroundColor: "#4CAF50"
+  },
+  trustButton: {
+    flex: 0,
+    backgroundColor: "#03A9F4"
+  }
+});
