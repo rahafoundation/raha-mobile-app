@@ -96,6 +96,8 @@ paste in the same SHA fingerprint in both apps. It looks like this:
 ![Screenshot of "Add Fingerprint" button in Firebase
 Console](setup-instructions/sha-fingerprint.png)
 
+Then download the `google-services.json` from the prod app and replace `android/data/config/firebase/google-services.prod.json` and the one from the test app and replace `android/data/config/firebase/google-services.test.json`.
+
 Now Google Services should all work in development for you.
 
 ##### Other tips
