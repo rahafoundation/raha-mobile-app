@@ -37,8 +37,6 @@ export interface MintBasicIncomePayload {
 export interface MintReferralBonusPayload {
   type: MintType.REFERRAL_BONUS;
   amount: string;
-  invite_operation_id: OperationId;
-  trust_operation_id: OperationId;
   invited_member_id: MemberId;
 }
 export type MintPayload = MintBasicIncomePayload | MintReferralBonusPayload;

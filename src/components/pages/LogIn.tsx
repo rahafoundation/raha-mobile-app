@@ -12,7 +12,7 @@ import {
 import { RahaState, RahaThunkDispatch } from "../../store";
 import { RouteName } from "../shared/Navigation";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
-import { getMembersByIds } from "../../store/selectors/members";
+import { getMemberById } from "../../store/selectors/members";
 
 type OwnProps = {
   navigation: NavigationScreenProp<{}>;
@@ -99,7 +99,7 @@ const mapStateToProps: MapStateToProps<
   const hasAccount =
     isLoggedIn &&
     !!loggedInMemberId &&
-    getMembersByIds(state, [loggedInMemberId])[0] !== undefined;
+    getMemberById(state, loggedInMemberId) !== undefined;
   return {
     isLoggedIn,
     hasAccount,

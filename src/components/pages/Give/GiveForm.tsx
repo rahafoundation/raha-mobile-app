@@ -14,7 +14,7 @@ import {
 import { Member } from "../../../store/reducers/members";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
-import { getMembersByIds } from "../../../store/selectors/members";
+import { getMemberById } from "../../../store/selectors/members";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
 
 const MESSAGE_PLACEHOLDER_TEXT = "";
@@ -249,8 +249,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
     toMemberId: ownProps.toMemberId,
     loggedInMember,
     getMemberById: (memberId: MemberId) => {
-      const members = getMembersByIds(state, [memberId]);
-      return members.length > 0 ? members[0] : undefined;
+      return getMemberById(state, memberId);
     },
     apiCallStatus
   };

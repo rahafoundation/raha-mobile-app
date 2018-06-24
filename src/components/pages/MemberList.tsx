@@ -25,11 +25,6 @@ type StateProps = {
 
 type Props = OwnProps & StateProps;
 
-function getInitialsForName(name: string): string {
-  const initials = name.split(" ").map(part => part.charAt(0).toUpperCase());
-  return initials[0] + initials[initials.length - 1];
-}
-
 export const MemberListView: React.StatelessComponent<Props> = ({
   navigation,
   members

@@ -3,6 +3,14 @@ import * as React from "react";
 import { Button } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
+import {
+  createStackNavigator,
+  NavigationContainer,
+  NavigationRouteConfig,
+  NavigationScreenConfigProps
+} from "react-navigation";
+import { connect, MapStateToProps } from "react-redux";
 
 import { Give } from "../pages/Give";
 import { Home } from "../pages/Home";
@@ -10,15 +18,13 @@ import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
 import { Profile } from "../pages/Profile";
 import { InviteVideoPreview } from "../pages/Onboarding/InviteVideoPreview";
-import { getMembersByIds } from "../../../src/store/selectors/members";
+import { getMemberById } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
-import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
-import { createStackNavigator, NavigationContainer } from "react-navigation";
-import { connect, MapStateToProps } from "react-redux";
 import { MemberList } from "../pages/MemberList";
 import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
 import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
 import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
+import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 
 export enum RouteName {
@@ -35,6 +41,8 @@ export enum RouteName {
   ProfileTab = "ProfileTab",
   Discover = "Discover",
   Mint = "Mint",
+  MintTab = "MintTab",
+  ReferralBonus = "ReferralBonus",
   Give = "Give"
 }
 
@@ -47,14 +55,18 @@ const MemberListRouteConfig = {
   }
 };
 
-const ProfileRouteConfig = {
+const ProfileRouteConfig: NavigationRouteConfig = {
   screen: Profile,
-  navigationOptions: ({ navigation }: any) => {
+  navigationOptions: ({ navigation }: NavigationScreenConfigProps) => {
     const member = navigation.getParam("member");
     return {
       title: member ? member.fullName : "Your Profile"
     };
   }
+};
+
+const MintRouteConfig: NavigationRouteConfig = {
+  screen: Mint
 };
 
 const HomeTab = createStackNavigator(
@@ -99,6 +111,19 @@ const ProfileTab = createStackNavigator(
   }
 );
 
+const MintTab = createStackNavigator(
+  {
+    Mint: MintRouteConfig,
+    ReferralBonus,
+    Profile: ProfileRouteConfig,
+    MemberList: MemberListRouteConfig
+  } as { [key in RouteName]: any },
+  {
+    initialRouteName: RouteName.Mint,
+    headerMode: "float"
+  }
+);
+
 const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
     HomeTab: {
@@ -108,16 +133,15 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
       // TODO: Implement page
       screen: OnboardingCamera
     },
-    Mint: {
-      // TODO: Implement page
-      screen: Mint
+    MintTab: {
+      screen: MintTab
     },
     ProfileTab: {
       screen: ProfileTab
     }
   } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
   {
-    initialRouteName: RouteName.Mint,
+    initialRouteName: RouteName.MintTab,
     labeled: false,
     navigationOptions: ({ navigation }: any) => ({
       tabBarIcon: ({ focused }: any) => {
@@ -134,7 +158,7 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
           case RouteName.OnboardingCamera:
             iconName = "account-multiple-plus";
             break;
-          case RouteName.Mint:
+          case RouteName.MintTab:
             iconName = "gift";
             break;
           case RouteName.Discover:
@@ -144,7 +168,7 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
           default:
             throw Error(`Unrecognized route ${routeName}`);
         }
-        const isMint = routeName === RouteName.Mint;
+        const isMint = routeName === RouteName.MintTab;
         if (!focused && !isMint) {
           iconName += "-outline";
         }
@@ -225,7 +249,7 @@ const mapStateToProps: MapStateToProps<
   const hasAccount =
     isLoggedIn &&
     !!loggedInMemberId &&
-    getMembersByIds(state, [loggedInMemberId])[0] !== undefined;
+    getMemberById(state, loggedInMemberId) !== undefined;
   return {
     isLoaded,
     isLoggedIn,

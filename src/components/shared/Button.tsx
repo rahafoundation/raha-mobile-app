@@ -4,18 +4,26 @@
  * - osdiab
  */
 import * as React from "react";
-import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Text,
+  StyleProp,
+  ViewStyle
+} from "react-native";
 
 type ButtonProps = {
   text: string;
   onPress: () => void;
   // TODO: figure out a better API for doing this
   backgroundColor?: string;
+  style?: StyleProp<ViewStyle>;
 };
 
 export const Button: React.StatelessComponent<ButtonProps> = props => {
   return (
-    <TouchableOpacity onPress={props.onPress}>
+    <TouchableOpacity onPress={props.onPress} style={props.style}>
       <View
         style={[
           styles.button,
