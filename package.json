@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "big.js": "^5.1.2",
+    "core-js": "^2.5.7",
     "date-fns": "^1.29.0",
     "es6-symbol": "^3.1.1",
     "firebase": "^5.1.0",
