@@ -1,3 +1,12 @@
+/**
+ * A list element for members invited by the user and for whom the
+ * user has not already claimed their referral bonus.
+ *
+ * If the member has not yet trusted the member, then
+ * they are prompted to do so. Otherwise, they can mint
+ * their referral bonus.
+ */
+
 import { Big } from "big.js";
 import * as React from "react";
 import { Text, TouchableOpacity, View, StyleSheet } from "react-native";

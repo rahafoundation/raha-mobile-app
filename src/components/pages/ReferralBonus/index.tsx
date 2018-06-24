@@ -1,3 +1,8 @@
+/**
+ * A component that displays all invited members for which the logged-in
+ * member has not already minted a referral bonus.
+ */
+
 import * as React from "react";
 import { FlatList } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
