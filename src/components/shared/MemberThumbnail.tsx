@@ -3,25 +3,16 @@
  * TODO: show image instead of random colored background with initials
  */
 import * as React from "react";
-import {
-  FlatList,
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity
-} from "react-native";
+import { Text, TouchableOpacity } from "react-native";
+import { NavigationScreenProps } from "react-navigation";
+
+import { getInitialsForName } from "../../helpers/username";
 import { Member } from "../../store/reducers/members";
 import { RouteName } from "../shared/Navigation";
-import { NavigationScreenProps } from "react-navigation";
 
 type Props = NavigationScreenProps<any> & {
   member: Member;
 };
-
-function getInitialsForName(name: string): string {
-  const initials = name.split(" ").map(part => part.charAt(0).toUpperCase());
-  return initials[0] + initials[initials.length - 1];
-}
 
 function getMemberColor(member: Member) {
   const hue =
