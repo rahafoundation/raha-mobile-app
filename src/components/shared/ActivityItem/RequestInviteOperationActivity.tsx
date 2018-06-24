@@ -8,7 +8,7 @@ import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
 import { Member } from "../../../store/reducers/members";
-import { getMembersByIds } from "../../../store/selectors/members";
+import { getMemberById } from "../../../store/selectors/members";
 
 type OwnProps = {
   operation: RequestInviteOperation;
@@ -42,8 +42,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   ownProps
 ) => {
   const [fromMember, toMember] = [
-    getMembersByIds(state, [ownProps.operation.creator_uid])[0],
-    getMembersByIds(state, [ownProps.operation.data.to_uid])[0]
+    getMemberById(state, ownProps.operation.creator_uid),
+    getMemberById(state, ownProps.operation.data.to_uid)
   ];
   if (!fromMember || !toMember) {
     // TODO: log the following properly, properly handle cases when members are

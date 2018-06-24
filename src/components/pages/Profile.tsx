@@ -19,7 +19,7 @@ import { Member } from "../../store/reducers/members";
 import { signOut } from "../../store/actions/authentication";
 import { RahaThunkDispatch, RahaState } from "../../store";
 import { trustMember } from "../../store/actions/members";
-import { getMembersByIds } from "../../store/selectors/members";
+import { getMemberById } from "../../store/selectors/members";
 import { MemberId } from "../../identifiers";
 import { mintBasicIncome } from "../../store/actions/wallet";
 import { ActivityFeed } from "../shared/ActivityFeed";
@@ -235,7 +235,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   const loggedInMemberId = getLoggedInFirebaseUserId(state);
   const loggedInMember =
     state.authentication.isLoggedIn && loggedInMemberId
-      ? getMembersByIds(state, [loggedInMemberId])[0]
+      ? getMemberById(state, loggedInMemberId)
       : undefined;
   const member: Member = props.navigation.getParam("member", loggedInMember);
   return {

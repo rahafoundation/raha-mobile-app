@@ -3,7 +3,7 @@ import { List, Set } from "immutable";
 
 import { RahaState } from "../";
 import { MemberId, OperationId } from "../../identifiers";
-import { getMembersByIds } from "./members";
+import { getMemberById } from "./members";
 import { getOperationsForCreator, getOperationsForType } from "./operations";
 import {
   OperationType,
@@ -20,8 +20,7 @@ export function getMintableAmount(
   state: RahaState,
   memberId: MemberId
 ): string | undefined {
-  const members = getMembersByIds(state, [memberId]);
-  const member = members && members.length > 0 ? members[0] : undefined;
+  const member = getMemberById(state, memberId);
   if (member) {
     return new Big(new Date().getTime() - member.lastMinted.getTime())
       .div(MILLISECONDS_PER_WEEK)
@@ -39,8 +38,7 @@ export function getUnclaimedReferrals(
   state: RahaState,
   memberId: MemberId
 ): MemberId[] | undefined {
-  const members = getMembersByIds(state, [memberId]);
-  const member = members && members.length === 1 ? members[0] : undefined;
+  const member = getMemberById(state, memberId);
   if (member) {
     const memberMintOperations = getOperationsForType(
       getOperationsForCreator(state.operations, memberId),

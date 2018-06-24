@@ -9,7 +9,10 @@ import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
 import { Member } from "../../../store/reducers/members";
-import { getMembersByIds } from "../../../store/selectors/members";
+import {
+  getMemberById,
+  getMembersByIds
+} from "../../../store/selectors/members";
 
 type OwnProps = {
   operation: MintOperation;
@@ -47,9 +50,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const fromMember = getMembersByIds(state, [
-    ownProps.operation.creator_uid
-  ])[0];
+  const fromMember = getMemberById(state, ownProps.operation.creator_uid);
   if (!fromMember) {
     // TODO: log the following properly, properly handle cases when members are
     // missing instead of throwing uncaught error

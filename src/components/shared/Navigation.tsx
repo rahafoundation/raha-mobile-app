@@ -18,7 +18,7 @@ import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
 import { Profile } from "../pages/Profile";
 import { InviteVideoPreview } from "../pages/Onboarding/InviteVideoPreview";
-import { getMembersByIds } from "../../../src/store/selectors/members";
+import { getMemberById } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
 import { MemberList } from "../pages/MemberList";
 import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
@@ -69,10 +69,6 @@ const MintRouteConfig: NavigationRouteConfig = {
   screen: Mint
 };
 
-const ReferralBonusRouteConfig: NavigationRouteConfig = {
-  screen: ReferralBonus
-};
-
 const HomeTab = createStackNavigator(
   {
     Profile: ProfileRouteConfig,
@@ -118,7 +114,7 @@ const ProfileTab = createStackNavigator(
 const MintTab = createStackNavigator(
   {
     Mint: MintRouteConfig,
-    ReferralBonus: ReferralBonusRouteConfig,
+    ReferralBonus,
     Profile: ProfileRouteConfig,
     MemberList: MemberListRouteConfig
   } as { [key in RouteName]: any },
@@ -253,7 +249,7 @@ const mapStateToProps: MapStateToProps<
   const hasAccount =
     isLoggedIn &&
     !!loggedInMemberId &&
-    getMembersByIds(state, [loggedInMemberId])[0] !== undefined;
+    getMemberById(state, loggedInMemberId) !== undefined;
   return {
     isLoaded,
     isLoggedIn,
