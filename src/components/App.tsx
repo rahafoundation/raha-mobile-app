@@ -2,18 +2,20 @@ import * as React from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 
-import { AuthManager } from "./src/components/AuthManager";
-import { Navigation } from "./src/components/shared/Navigation";
-import { store, persistor } from "./src/store";
-import { refreshMembers } from "./src/store/actions/members";
+import { AuthManager } from "./AuthManager";
+import { Navigation } from "./shared/Navigation";
+import { store, persistor } from "../store";
+import { refreshMembers } from "../store/actions/members";
+import { Text } from "react-native";
 
 // refresh the members/operations on app start
 const onBeforeLift = async () => {
   await refreshMembers()(store.dispatch, store.getState, undefined);
 };
 
-const App: React.StatelessComponent = () => {
+export const App: React.StatelessComponent = () => {
   return (
+    // <Text> hi</Text>
     // TODO: see if there's a better way to make thunk types work properly aside
     // from cast to `any`
     <Provider store={store as any}>
@@ -30,5 +32,3 @@ const App: React.StatelessComponent = () => {
     </Provider>
   );
 };
-
-export default App;
