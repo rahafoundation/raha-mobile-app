@@ -9,16 +9,23 @@ import { getLoggedInMember } from "../../store/selectors/authentication";
 import { SafeAreaView } from "../../shared/SafeAreaView";
 import { Button } from "../shared/Button";
 import { NavigationScreenProps } from "react-navigation";
+import { MemberId } from "../../identifiers";
+import { getUnclaimedReferrals } from "../../store/selectors/me";
 
 type OwnProps = NavigationScreenProps<{}>;
 
 type StateProps = {
   loggedInMember: Member;
+  unclaimedReferralIds?: MemberId[];
 };
 
 type Props = OwnProps & StateProps;
 
-const MintView: React.StatelessComponent<Props> = ({ loggedInMember }) => {
+const MintView: React.StatelessComponent<Props> = ({
+  loggedInMember,
+  unclaimedReferralIds,
+  navigation
+}) => {
   let net = loggedInMember.balance.minus(loggedInMember.totalMinted).toString();
   let netColor;
   if (net.substr(0, 1) === "-") {
@@ -27,6 +34,17 @@ const MintView: React.StatelessComponent<Props> = ({ loggedInMember }) => {
     netColor = "green";
     net = `+${net}`;
   }
+
+  const hasUnclaimedReferrals = unclaimedReferralIds
+    ? unclaimedReferralIds.length > 0
+    : false;
+
+  const navigateToReferralBonuses = hasUnclaimedReferrals
+    ? () => {
+        navigation.navigate(RouteName.ReferralBonus, { unclaimedReferralIds });
+      }
+    : () => {};
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View
@@ -66,11 +84,28 @@ const MintView: React.StatelessComponent<Props> = ({ loggedInMember }) => {
           style={{ flex: 1 }}
           source={require("../../assets/img/Invite.png")}
         />
-        <Button
-          text="Invite +ℝ60"
-          onPress={() => {}}
-          backgroundColor="#2196F3"
-        />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            width: "90%"
+          }}
+        >
+          <Button
+            text="Invite +ℝ60"
+            onPress={() => {}}
+            backgroundColor="#2196F3"
+          />
+          {hasUnclaimedReferrals ? (
+            <Button
+              text="Claim bonuses!"
+              onPress={navigateToReferralBonuses}
+              backgroundColor="#4CAF50"
+            />
+          ) : (
+            undefined
+          )}
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -96,11 +131,12 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
 ) => {
   const loggedInMember = getLoggedInMember(state);
   if (!loggedInMember) {
-    props.navigation.navigate(RouteName.LogIn);
+    // TODO Throw an error.
     return {} as Props;
   }
   return {
-    loggedInMember
+    loggedInMember,
+    unclaimedReferralIds: getUnclaimedReferrals(state, loggedInMember.memberId)
   };
 };
 
