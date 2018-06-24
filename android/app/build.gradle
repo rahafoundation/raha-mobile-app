@@ -126,10 +126,12 @@ android {
         devTest {
             dimension "environment"
             applicationId 'app.raha.mobileTest'
+            resValue "string", "app_name", "Raha Test"
         }
         devProd {
             dimension "environment"
             applicationId 'app.raha.mobile'
+            resValue "string", "app_name", "Raha"
         }
     }
 
