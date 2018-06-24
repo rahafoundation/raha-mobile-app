@@ -57,6 +57,10 @@ Once you've done so, then plug in your device via USB and...
 
 #### ... on Android:
 
+If you aren't set up yet for Android development yet, install Android Studio and be sure to
+set `ANDROID_HOME` (eg `export ANDROID_HOME=~/Library/Android/sdk/`)
+and accept all licenses (run `$ANDROID_HOME/tools/bin/sdkmanager --licenses`).
+
 Run `yarn start:android`.
 
 It also helps to run `adb reverse tcp:8081 tcp:8081` so that the React Native
