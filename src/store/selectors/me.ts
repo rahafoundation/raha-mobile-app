@@ -42,24 +42,19 @@ export function getUnclaimedReferrals(
   const members = getMembersByIds(state, [memberId]);
   const member = members && members.length === 1 ? members[0] : undefined;
   if (member) {
-    const confirmedInvites = member.invited.intersect(member.trusts);
-
     const memberMintOperations = getOperationsForType(
       getOperationsForCreator(state.operations, memberId),
       OperationType.MINT
     ) as List<MintOperation>;
-    const memberIdsOfClaimedBonuses = Set.fromKeys(
-      memberMintOperations
-        .filter(op => op.data.type === MintType.REFERRAL_BONUS)
-        .map(op => {
-          (op.data as MintReferralBonusPayload).invited_member_id;
-        })
-        .values()
+
+    const memberReferralOperations = memberMintOperations.filter(
+      op => op.data.type === MintType.REFERRAL_BONUS
+    );
+    const claimedIds = memberReferralOperations.map(
+      op => (op.data as MintReferralBonusPayload).invited_member_id
     );
 
-    return Array.from(
-      confirmedInvites.subtract(memberIdsOfClaimedBonuses).values()
-    );
+    return Array.from(member.invited.subtract(claimedIds).values());
   }
   return undefined;
 }
