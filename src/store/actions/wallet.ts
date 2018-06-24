@@ -16,7 +16,7 @@ import { OperationsAction, OperationsActionType } from "./operations";
 
 export const mintBasicIncome: AsyncActionCreator = (
   memberId: MemberId,
-  amount: string
+  amount: Big
 ) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
@@ -31,7 +31,7 @@ export const mintBasicIncome: AsyncActionCreator = (
           params: undefined,
           body: {
             type: MintType.BASIC_INCOME,
-            amount
+            amount: amount.toString()
           }
         },
         authToken
@@ -49,10 +49,7 @@ export const mintBasicIncome: AsyncActionCreator = (
 };
 
 export const mintReferralBonus: AsyncActionCreator = (
-  memberId: MemberId,
-  amount: string,
-  inviteOperationId: OperationId,
-  trustOperationId: OperationId,
+  amount: Big,
   invitedMemberId: MemberId
 ) => {
   return wrapApiCallAction(
@@ -68,9 +65,7 @@ export const mintReferralBonus: AsyncActionCreator = (
           params: undefined,
           body: {
             type: MintType.REFERRAL_BONUS,
-            amount,
-            invite_operation_id: inviteOperationId,
-            trust_operation_id: trustOperationId,
+            amount: amount.toString(),
             invited_member_id: invitedMemberId
           }
         },
@@ -84,7 +79,7 @@ export const mintReferralBonus: AsyncActionCreator = (
       dispatch(action);
     },
     ApiEndpoint.MINT,
-    memberId
+    invitedMemberId
   );
 };
 
