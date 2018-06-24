@@ -45,8 +45,7 @@ in the native apps; so if the app is running already, you'll need to rebuild it.
 
 ### ...on an iPhone emulator:
 
-Run `yarn start:ios` without an iPhone plugged into your computer, and it an
-iPhone emulator running the code should start.
+Run `yarn start:ios`, and it an iPhone emulator running the code should start.
 
 ### ... on physical devices:
 
@@ -54,15 +53,31 @@ You need to set up your environment; please refer to [the instructions
 here](https://facebook.github.io/react-native/docs/running-on-device.html). You
 will need a USB cable to connect your phone to your computer.
 
-Once you've done so, then plug in your device via USB and run the proper start
-script below:
+Once you've done so, then plug in your device via USB and...
 
-```bash
-yarn start:ios
-yarn start:android
-```
+#### ... on Android:
 
-Building can take a long time, so bear with it.
+Run `yarn start:android`.
+
+It also helps to run `adb reverse tcp:8081 tcp:8081` so that the React Native
+packager can transfer the source code over USB instead of via Wi-Fi, especially
+in networks that block your computer from connecting to your phone, like in
+public places.
+
+#### ... on iOS:
+
+1.  Open `ios/mobile.xcworkspace` (not `mobile.xcodeproj`!) in XCode, or by
+    running `open path/to/ios/mobile.xcworkspace`.
+1.  Set the build target to your phone in the upper left hand corner, next to
+    the play and stop buttons.
+1.  Build and run the project by pressing the play button, or going to Product >
+    Run.
+
+In either platform, building can take a long time, so bear with it. Once it's
+built, though, if all you change are JavaScript files, you don't need to
+re-build the project; the React Native packager should be running in a Terminal
+window, and so long as it can communicate to your phone, the JavaScript will be
+up to date.
 
 #### Troubleshooting
 
