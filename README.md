@@ -1,26 +1,35 @@
-This project was bootstrapped with [Create React Native
-App](https://github.com/react-community/create-react-native-app).
+The Raha mobile app. Implemented in React Native with TypeScript.
 
-The original guide with more detailed setup and troubleshooting information [is
-available
-here](https://github.com/mathieudutour/create-react-native-app-typescript/blob/master/react-native-scripts/template/README.md).
+NOTE: These instructions are all written for Mac OSX at the moment.
 
 ## Setup
 
+### System dependencies
+
+`react-native` depends on some system programs being available. Follow [the
+installation instructions at `react-native`'s website for "Building Projects
+with Native
+Code"](https://facebook.github.io/react-native/docs/getting-started.html), but
+stop before the "Creating a new application" section (we already created one!).
+
+### Node dependencies
+
 Before you run the app, first ensure `yarn` is installed (we use that instead of
-`npm`):
+`npm` to manage the dependencies and scripts listed in `package.json`):
 
 ```bash
 npm install -g yarn
 ```
 
-Then, install the dependencies of the project:
+Then, `cd` into this directory and install the dependencies of the project:
 
 ```bash
 yarn install
 ```
 
-Finall, copy over either the prod or test config, whichever environment you'd
+### Configuration
+
+Finally, copy over either the prod or test config, whichever environment you'd
 like to develop in.
 
 ```bash
@@ -29,46 +38,70 @@ yarn config:prod
 yarn config:test
 ```
 
-## Running the app
+**NOTE**: These commands change configuration not just in JavaScript, but also
+in the native apps; so if the app is running already, you'll need to rebuild it.
 
-To run it, run `yarn start` and follow the instructions provided. You can
-immediately run the app on an emulator on your machine; on Mac, you can run it
-in an iOS emulator easily; Android has a bit tougher setup (TODO: add some links
-to docs about that).
+## Running the app...
 
-If you have trouble running on an iOS emulator, check [troubleshooting
-instructions
-here](https://github.com/mathieudutour/create-react-native-app-typescript/blob/master/react-native-scripts/template/README.md#ios-simulator-wont-open).
+### ...on an iPhone emulator:
 
-### Running on a physical device
+Run `yarn start:ios`, and it an iPhone emulator running the code should start.
 
-1.  On your device, install (the Expo app)[https://expo.io/tools#client].
-1.  Get your device and dev machine on the same Wi-Fi (if they can't find each
-    other, see the next section about public networks).
-1.  Run `yarn start`.
-1.  Scan the QR code or send your phone a link to run the app via the prompts on
-    your dev machine.
+### ... on physical devices:
 
-#### Running on public networks
+You need to set up your environment; please refer to [the instructions
+here](https://facebook.github.io/react-native/docs/running-on-device.html). You
+will need a USB cable to connect your phone to your computer.
 
-If you want to test it on a physical device but you're on a public network (no
-peer-to-peer connections), `yarn start` won't work. Instead, do the following:
+Once you've done so, then plug in your device via USB and...
 
-1.  Install the [Expo XDE app](https://github.com/expo/xde/releases), which will
-    connect to your phone via a tunnel over the internet. You may need to make
-    an account, which will push the URL to your phone automatically.
-1.  Run Expo XDE on your dev machine. Ensure that the tunnel gets successfully
-    created; you can tell if the URL bar has a url that isn't just an IP address
-    or blank. For example, it might look like
-    `exp://ab-cde.your_username.mobile.exp.direct:80`.
-1.  On your mobile device, run the Expo client app. If you've logged in the URL
-    should be in your projects list; tap it and the app will run.
+#### ... on Android:
+
+Run `yarn start:android`.
+
+It also helps to run `adb reverse tcp:8081 tcp:8081` so that the React Native
+packager can transfer the source code over USB instead of via Wi-Fi, especially
+in networks that block your computer from connecting to your phone, like in
+public places.
+
+#### ... on iOS:
+
+1.  Open `ios/mobile.xcworkspace` (not `mobile.xcodeproj`!) in XCode, or by
+    running `open path/to/ios/mobile.xcworkspace`.
+1.  Set the build target to your phone in the upper left hand corner, next to
+    the play and stop buttons.
+1.  Build and run the project by pressing the play button, or going to Product >
+    Run.
+
+In either platform, building can take a long time, so bear with it. Once it's
+built, though, if all you change are JavaScript files, you don't need to
+re-build the project; the React Native packager should be running in a Terminal
+window, and so long as it can communicate to your phone, the JavaScript will be
+up to date.
+
+#### Troubleshooting
+
+##### Android
+
+- Ensure you are using Java JDK 1.8, as that's the only version supported.
 
 ## Other scripts
 
 ```bash
-# run tests
-yarn test
+yarn test  # run tests
 ```
+
+## Development environment
+
+I recommend [using VSCode](https://code.visualstudio.com/) to edit your code
+because its tooling for TypeScript and React Native is solid. In particular, I
+recommend navigating to the recommended extensions and installing them:
+
+![Screenshot of Recommended Extensions pane in
+VSCode](setup-instructions/recommended-extensions.png)
+
+I also recommend you run a script in VSCode that will tell you all the
+TypeScript errors in your entire codebase as you code. To do so, go to Tasks >
+Run Build Task, and then run the `tsc: watch - tsconfig.dev.json` script.
 
 ### Happy hacking!

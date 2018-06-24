@@ -4,12 +4,34 @@ export const config: Config = {
   apiBase: "https://raha-test.appspot.com/api/",
   publicVideoBucket: "raha-video-test",
   firebase: {
-    apiKey: "AIzaSyDz4sg33FdGUEAawsbnJDf6GKs8TPt5inU",
-    authDomain: "raha-test.firebaseapp.com",
-    databaseURL: "https://raha-test.firebaseio.com",
-    projectId: "raha-test",
-    storageBucket: "raha-test.appspot.com",
-    messagingSenderId: "148482003030"
+    ios: {
+      apiKey: "AIzaSyAHiNHLSZROsuDmrxKd8c24RZRUJVhqia0",
+      authDomain: "raha-test.firebaseapp.com",
+      clientId:
+        "148482003030-485q62hqnch3m2mnue1ps0jdl35ikg7a.apps.googleusercontent.com",
+      databaseURL: "https://raha-test.firebaseio.com",
+      projectId: "raha-test",
+      storageBucket: "raha-test.appspot.com",
+      messagingSenderId: "148482003030",
+      appId: "1:148482003030:ios:4023b851b124d320",
+      persistence: true
+    },
+    android: {
+      clientId:
+        "148482003030-ncmledf9fbsog8ie5s66rmf7ko2ljjjm.apps.googleusercontent.com",
+      appId: "1:148482003030:android:4023b851b124d320",
+      apiKey: "AIzaSyDD_VLTBbiSMIahCMQvDjSnbTJwkF8tb34",
+      authDomain: "raha-test.firebaseapp.com",
+      databaseURL: "https://raha-test.firebaseio.com",
+      storageBucket: "raha-test.appspot.com",
+      messagingSenderId: "148482003030",
+      projectId: "raha-test",
+      persistence: true
+    },
+    web: {
+      clientId:
+        "148482003030-ncmledf9fbsog8ie5s66rmf7ko2ljjjm.apps.googleusercontent.com"
+    }
   },
   facebook: {
     appId: "239560396587704"

@@ -14,7 +14,7 @@ import { Member } from "../../store/reducers/members";
 import { RouteName } from "../shared/Navigation";
 import { NavigationScreenProps } from "react-navigation";
 
-type Props = NavigationScreenProps<{}> & {
+type Props = NavigationScreenProps<any> & {
   member: Member;
 };
 

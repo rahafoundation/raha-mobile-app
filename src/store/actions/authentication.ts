@@ -1,14 +1,11 @@
-import { Action } from "redux";
 import firebase from "firebase";
-import { ActionCreator } from "redux";
+import RNFirebase from "react-native-firebase";
+import { GoogleSignin } from "react-native-google-signin";
 
 import { AsyncActionCreator } from "./";
-import { Google, Facebook } from "expo";
-import { auth } from "../../firebaseInit";
-import { RahaState } from "..";
+import { auth, webAuth } from "../../firebaseInit";
 
 import { config } from "../../data/config";
-import { ThunkDispatch } from "redux-thunk";
 
 const FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE =
   "auth/account-exists-with-different-credential";
@@ -66,41 +63,44 @@ export const signedOutAction = (): SignedOutAction => ({
   type: AuthenticationActionType.SIGNED_OUT
 });
 
+function setupGoogleSignIn() {
+  GoogleSignin.configure({
+    iosClientId: config.firebase.ios.clientId,
+    webClientId: config.firebase.android.clientId
+  });
+}
+setupGoogleSignIn();
+
 /**
  * TODO: if we make actions general, figure out how to distinguish between
  * mobile-specific login methods like this vs platform-independent ones.
  */
 export const googleLogIn: AsyncActionCreator = () => async dispatch => {
-  const {
-    iosClientId,
-    iosStandaloneAppClientId,
-    androidClientId,
-    androidStandaloneAppClientId
-  } = config.google;
-
-  const googleData = await Google.logInAsync({
-    iosClientId,
-    iosStandaloneAppClientId,
-    androidClientId,
-    androidStandaloneAppClientId,
-    scopes: ["profile", "email"]
-  });
-
-  if (googleData.type !== "success") {
-    // TODO: dispatch something that says it failed?
-    return;
-  }
-
   try {
+    const googleData = await GoogleSignin.signIn();
+    if (!googleData.idToken) {
+      // TODO: what to do here?
+      throw new Error("Google idToken was null");
+    }
+
     // Create a new Firebase credential with the token
-    const credential = firebase.auth.GoogleAuthProvider.credential(
+    const credential = RNFirebase.auth.GoogleAuthProvider.credential(
       googleData.idToken,
       googleData.accessToken
     );
-
     // Login with the credential
     await auth.signInAndRetrieveDataWithCredential(credential);
+
+    const webCredential = firebase.auth.GoogleAuthProvider.credential(
+      googleData.idToken,
+      googleData.accessToken
+    );
+    // TODO: remove once storage works for react-native-firebase
+    // Also log into the web version of firebase
+    await webAuth.signInAndRetrieveDataWithCredential(webCredential);
   } catch (error) {
+    // TODO: does declining permissions go here?
+
     if (error.code === FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE) {
       dispatch(existingCredentialAction(AuthMethod.GOOGLE));
       return;
@@ -111,35 +111,32 @@ export const googleLogIn: AsyncActionCreator = () => async dispatch => {
 };
 
 export const facebookLogIn: AsyncActionCreator = () => async dispatch => {
-  const facebookData = await Facebook.logInWithReadPermissionsAsync(
-    config.facebook.appId,
-    {
-      permissions: ["public_profile"]
-    }
-  );
-
-  if (facebookData.type !== "success" || !facebookData.token) {
-    // TODO: dispatch something that says it failed?
-    return;
-  }
-
-  try {
-    const credential = firebase.auth.FacebookAuthProvider.credential(
-      facebookData.token
-    );
-
-    await auth.signInAndRetrieveDataWithCredential(credential);
-  } catch (error) {
-    if (error.code === FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE) {
-      dispatch(existingCredentialAction(AuthMethod.FACEBOOK));
-      return;
-    }
-    // TODO: handle error;
-    throw error;
-  }
+  // const facebookData = await Facebook.logInWithReadPermissionsAsync(
+  //   config.facebook.appId,
+  //   {
+  //     permissions: ["public_profile"]
+  //   }
+  // );
+  // if (facebookData.type !== "success" || !facebookData.token) {
+  //   // TODO: dispatch something that says it failed?
+  //   return;
+  // }
+  // try {
+  //   const credential = auth.FacebookAuthProvider.credential(
+  //     facebookData.token
+  //   );
+  //   await auth.signInAndRetrieveDataWithCredential(credential);
+  // } catch (error) {
+  //   if (error.code === FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE) {
+  //     dispatch(existingCredentialAction(AuthMethod.FACEBOOK));
+  //     return;
+  //   }
+  //   // TODO: handle error;
+  //   throw error;
+  // }
 };
 
 export const signOut: AsyncActionCreator = () => async dispatch => {
-  await auth.signOut(); // TODO handle error
+  await Promise.all([auth.signOut(), webAuth.signOut()]); // TODO handle error
   dispatch(signOutAction());
 };

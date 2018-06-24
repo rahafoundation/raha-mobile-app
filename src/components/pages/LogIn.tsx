@@ -1,6 +1,8 @@
 import * as React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
+import { NavigationScreenProp } from "react-navigation";
+import { GoogleSigninButton } from "react-native-google-signin";
 
 import {
   googleLogIn,
@@ -11,7 +13,6 @@ import { RahaState, RahaThunkDispatch } from "../../store";
 import { RouteName } from "../shared/Navigation";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { getMembersByIds } from "../../store/selectors/members";
-import { NavigationScreenProp } from "react-navigation";
 
 type OwnProps = {
   navigation: NavigationScreenProp<{}>;
@@ -57,11 +58,16 @@ class LogInView extends React.Component<LogInProps> {
             {this.props.existingAuthMethod}.
           </Text>
         )}
-        <Button title="Log in with Google" onPress={this.props.googleLogIn} />
-        <Button
+        <GoogleSigninButton
+          style={{ width: 230, height: 48 }}
+          color={GoogleSigninButton.Color.Dark}
+          size={GoogleSigninButton.Size.Standard}
+          onPress={this.props.googleLogIn}
+        />
+        {/* <Button
           title="Log in with Facebook"
           onPress={this.props.facebookLogIn}
-        />
+        /> */}
         <Button
           title="Sign Up"
           onPress={() =>

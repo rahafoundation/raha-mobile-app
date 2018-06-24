@@ -8,9 +8,9 @@
 console.ignoredYellowBox = ["Setting a timer"];
 
 import * as React from "react";
-import * as firebase from "firebase";
+import firebase from "firebase";
 import { View, Text, StyleSheet, Button } from "react-native";
-import { Video } from "expo";
+import Video from "react-native-video";
 import { RouteName } from "../../shared/Navigation";
 import { Member } from "../../../store/reducers/members";
 import { RahaState } from "../../../store";
@@ -54,7 +54,7 @@ type InviteVideoPreviewProps = ReduxStateProps &
     requestInvite: (videoDownloadUrl: string) => void;
   };
 
-type InviteVideoStateProps = {
+type InviteVideoState = {
   errorMessage?: string;
   uploadStatus: UploadStatus;
   uploadedBytes: number;
@@ -70,7 +70,7 @@ enum UploadStatus {
 
 class InviteVideoPreviewView extends React.Component<
   InviteVideoPreviewProps,
-  InviteVideoStateProps
+  InviteVideoState
 > {
   videoUri?: string;
 
@@ -96,10 +96,9 @@ class InviteVideoPreviewView extends React.Component<
       console.warn("videoUri missing from navigator when uploading video.");
       return;
     }
-    this.setState({ uploadStatus: UploadStatus.UPLOADING });
     const response = await fetch(videoUri);
     const blob = await response.blob();
-    //@ts-ignore Expo Blob does not have data type
+    //@ts-ignore Blob does not have data type
     if (blob.data.size > MAX_VIDEO_SIZE) {
       this.setState({
         errorMessage:
@@ -118,18 +117,20 @@ class InviteVideoPreviewView extends React.Component<
     const uploadTask = videoUploadRef.put(blob, metadata);
     uploadTask.on(
       firebase.storage.TaskEvent.STATE_CHANGED,
-      s => {
+      (s: any) => {
         const snapshot = s as firebase.storage.UploadTaskSnapshot;
         this.setState({
+          uploadStatus: UploadStatus.UPLOADING,
           uploadedBytes: snapshot.bytesTransferred,
           totalBytes: snapshot.totalBytes
         });
       },
-      () =>
+      err => {
         this.setState({
           errorMessage: "Could not upload. Please try again.",
           uploadStatus: UploadStatus.NOT_STARTED
-        }),
+        });
+      },
       async () => {
         const videoDownloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
         if (videoDownloadUrl) {
@@ -152,6 +153,41 @@ class InviteVideoPreviewView extends React.Component<
     this.props.requestInvite(videoDownloadUrl);
     // TODO: When completed, redirect to profile
   }
+
+  private _renderRequestingStatus = () => {
+    const statusType = this.props.requestInviteStatus
+      ? this.props.requestInviteStatus.status
+      : undefined;
+    switch (statusType) {
+      default:
+        console.error(
+          `Upload started but requestInviteStatus was not a valid ApiCallStatus (value: ${JSON.stringify(
+            statusType
+          )}). This should not happpen.`
+        );
+      case ApiCallStatusType.STARTED:
+        return <Text>Requesting invite...</Text>;
+      case ApiCallStatusType.SUCCESS:
+        return <Text>Request successful!</Text>;
+      case ApiCallStatusType.FAILURE:
+        return (
+          <React.Fragment>
+            <Text>Invite request failed.</Text>
+            <Button
+              title="Retry"
+              onPress={() => {
+                const videoDownloadUrl = this.state.videoDownloadUrl;
+                if (videoDownloadUrl) {
+                  this.sendInviteRequest(videoDownloadUrl);
+                } else {
+                  console.error("Missing download URL during request invite.");
+                }
+              }}
+            />
+          </React.Fragment>
+        );
+    }
+  };
 
   componentWillMount() {
     this.videoUri = this.props.navigation.getParam("videoUri");
@@ -208,30 +244,7 @@ class InviteVideoPreviewView extends React.Component<
           {this.state.uploadStatus === UploadStatus.UPLOADED && (
             <Text>Upload success!</Text>
           )}
-          {this.props.requestInviteStatus === ApiCallStatusType.STARTED && (
-            <Text>Requesting invite...</Text>
-          )}
-          {this.props.requestInviteStatus === ApiCallStatusType.SUCCESS && (
-            <Text>Request successful!</Text>
-          )}
-          {this.props.requestInviteStatus === ApiCallStatusType.FAILURE && (
-            <React.Fragment>
-              <Text>Invite request failed.</Text>
-              <Button
-                title="Retry"
-                onPress={() => {
-                  const videoDownloadUrl = this.state.videoDownloadUrl;
-                  if (videoDownloadUrl) {
-                    this.sendInviteRequest(videoDownloadUrl);
-                  } else {
-                    console.error(
-                      "Missing download URL during request invite."
-                    );
-                  }
-                }}
-              />
-            </React.Fragment>
-          )}
+          {this._renderRequestingStatus()}
         </React.Fragment>
       );
     }
@@ -250,12 +263,9 @@ class InviteVideoPreviewView extends React.Component<
           }}
           rate={1.0}
           volume={1.0}
-          isMuted={false}
-          usePoster={true}
-          resizeMode={Video.RESIZE_MODE_COVER}
-          shouldPlay
-          isLooping
-          // @ts-ignore Expo typing for Video is missing `style`
+          muted={false}
+          resizeMode="cover"
+          repeat
           style={styles.video}
         />
       )

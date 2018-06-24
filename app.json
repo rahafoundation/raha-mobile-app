@@ -1,17 +1,4 @@
 {
-  "expo": {
-    "name": "Raha",
-    "slug": "raha",
-    "sdkVersion": "27.0.0",
-    "packagerOpts": {
-      "sourceExts": ["ts", "tsx"],
-      "transformer": "node_modules/react-native-typescript-transformer/index.js"
-    },
-    "ios": {
-      "bundleIdentifier": "app.raha.mobile"
-    },
-    "android": {
-      "package": "app.raha.mobile"
-    }
-  }
+  "name": "Raha",
+  "displayName": "Raha"
 }

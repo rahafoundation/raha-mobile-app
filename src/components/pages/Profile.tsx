@@ -12,7 +12,7 @@ import {
   MergeProps
 } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
-import { Video } from "expo";
+import Video from "react-native-video";
 
 import { RouteName } from "../shared/Navigation";
 import { Member } from "../../store/reducers/members";
@@ -78,11 +78,9 @@ const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
     <Video
       source={{ uri: props.member.videoUri }}
       volume={1.0}
-      isMuted={true}
-      usePoster={true}
-      resizeMode={Video.RESIZE_MODE_COVER}
-      shouldPlay
-      isLooping
+      muted
+      resizeMode={"cover"}
+      repeat
       style={styles.video}
     />
     <Text style={styles.memberUsername}>@{props.member.username}</Text>

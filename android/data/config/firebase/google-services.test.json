@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "148482003030",
+    "firebase_url": "https://raha-test.firebaseio.com",
+    "project_id": "raha-test",
+    "storage_bucket": "raha-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148482003030:android:4023b851b124d320",
+        "android_client_info": {
+          "package_name": "app.raha.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "148482003030-ncmledf9fbsog8ie5s66rmf7ko2ljjjm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDD_VLTBbiSMIahCMQvDjSnbTJwkF8tb34"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
