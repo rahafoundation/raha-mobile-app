@@ -64,9 +64,9 @@ export const signedOutAction = (): SignedOutAction => ({
 });
 
 function setupGoogleSignIn() {
-  const { clientId } = config.firebase.ios;
   GoogleSignin.configure({
-    iosClientId: clientId
+    iosClientId: config.firebase.ios.clientId,
+    webClientId: config.firebase.android.clientId
   });
 }
 setupGoogleSignIn();
