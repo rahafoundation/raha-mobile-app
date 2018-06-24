@@ -121,6 +121,18 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    flavorDimensions "environment"
+    productFlavors {
+        devTest {
+            dimension "environment"
+            applicationId 'app.raha.mobileTest'
+        }
+        devProd {
+            dimension "environment"
+            applicationId 'app.raha.mobile'
+        }
+    }
+
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
