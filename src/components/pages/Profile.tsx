@@ -21,7 +21,7 @@ import { RahaThunkDispatch, RahaState } from "../../store";
 import { trustMember } from "../../store/actions/members";
 import { getMembersByIds } from "../../store/selectors/members";
 import { MemberId } from "../../identifiers";
-import { mint } from "../../store/actions/wallet";
+import { mintBasicIncome } from "../../store/actions/wallet";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { Button } from "../shared/Button";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
@@ -38,11 +38,14 @@ type StateProps = {
 
 type DispatchProps = {
   signOut: () => void;
-  mint: () => void;
+  mintBasicIncome: () => void;
   trust: (memberId: MemberId) => void;
 };
 
-type MergedDispatchProps = Pick<DispatchProps, "mint" | "signOut"> & {
+type MergedDispatchProps = Pick<
+  DispatchProps,
+  "mintBasicIncome" | "signOut"
+> & {
   trust: () => void;
 };
 
@@ -55,7 +58,11 @@ const Actions: React.StatelessComponent<
 > = props =>
   props.isOwnProfile ? (
     <View style={styles.actions}>
-      <Button text="Mint" onPress={props.mint} backgroundColor="#2196F3" />
+      <Button
+        text="Mint"
+        onPress={props.mintBasicIncome}
+        backgroundColor="#2196F3"
+      />
       <Button
         text="Log Out"
         onPress={props.signOut}
@@ -130,7 +137,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = props => (
             <Stats navigation={props.navigation} member={props.member} />
             <Actions
               isOwnProfile={props.isOwnProfile}
-              mint={props.mint}
+              mintBasicIncome={props.mintBasicIncome}
               trust={props.trust}
               signOut={props.signOut}
             />
@@ -217,7 +224,7 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   dispatch: RahaThunkDispatch
 ) => {
   return {
-    mint: () => dispatch(mint()),
+    mintBasicIncome: () => dispatch(mintBasicIncome()),
     trust: (memberId: MemberId) => dispatch(trustMember(memberId)),
     signOut: () => dispatch(signOut())
   };
@@ -250,7 +257,7 @@ const mergeProps: MergeProps<
     ...stateProps,
     trust: () => dispatchProps.trust(stateProps.member.memberId),
     signOut: dispatchProps.signOut,
-    mint: dispatchProps.mint,
+    mintBasicIncome: dispatchProps.mintBasicIncome,
     ...ownProps
   };
 };
