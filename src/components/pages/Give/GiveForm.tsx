@@ -160,7 +160,7 @@ class GiveFormView extends React.Component<Props, State> {
           ) : (
             <View style={styles.searchBar}>
               <MemberSearchBar
-                lightTheme={true}
+                lightTheme
                 onMemberSelected={this.onMemberSelected}
                 excludeMembers={
                   this.props.loggedInMember ? [this.props.loggedInMember] : []

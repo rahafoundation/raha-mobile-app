@@ -26,7 +26,7 @@ import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
 import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
-import { Discover, Leaderboard } from "../pages/Discover";
+import { Discover, DiscoverWebView } from "../pages/Discover";
 
 export enum RouteName {
   Home = "Home",
@@ -103,15 +103,25 @@ const HomeTab = createStackNavigator(
   }
 );
 
+const DiscoverBrowser = createStackNavigator(
+  {
+    DiscoverWebView: DiscoverWebView,
+  },
+  {
+    headerMode: "float"
+  }
+)
+
 const DiscoverTab = createStackNavigator(
   {
     Discover: Discover,
     DiscoverWebView: DiscoverWebView,
+    MemberList: MemberListRouteConfig,
     Profile: ProfileRouteConfig
   },
   {
     initialRouteName: RouteName.Discover,
-    headerMode: "none"
+    headerMode: "float"
   }
 );
 
