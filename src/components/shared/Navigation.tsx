@@ -1,8 +1,8 @@
 import "es6-symbol/implement";
 import * as React from "react";
 import { Button } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+<<<<<<< HEAD
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import {
   createStackNavigator,
@@ -13,25 +13,48 @@ import {
 import { connect, MapStateToProps } from "react-redux";
 
 import { Give as GiveScreen } from "../pages/Give";
+=======
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { createStackNavigator, NavigationContainer } from "react-navigation";
+import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
+import { connect, MapStateToProps } from "react-redux";
+import { RahaState } from "../../../src/store";
+import { getMembersByIds } from "../../../src/store/selectors/members";
+import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
+import { Give } from "../pages/Give";
+>>>>>>> Split out shareable VideoPreview code
 import { Home } from "../pages/Home";
-import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
+<<<<<<< HEAD
 import { Profile as ProfileScreen } from "../pages/Profile";
 import { InviteVideoPreview } from "../pages/Onboarding/InviteVideoPreview";
 import { getMemberById } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
 import { MemberList as MemberListScreen } from "../pages/MemberList";
+=======
+import { MemberList } from "../pages/MemberList";
+import { Mint } from "../pages/Mint";
+>>>>>>> Split out shareable VideoPreview code
 import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
+import {
+  OnboardingInvite,
+  OnboardingInviteView
+} from "../pages/Onboarding/OnboardingInvite";
 import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
+<<<<<<< HEAD
 import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Discover, DiscoverWebView } from "../pages/Discover";
+=======
+import { Profile } from "../pages/Profile";
+import { OnboardingVideoPreview } from "../pages/Onboarding/OnboardingVideoPreview";
+>>>>>>> Split out shareable VideoPreview code
 
 export enum RouteName {
   Home = "Home",
   HomeTab = "HomeTab",
-  InviteVideoPreview = "InviteVideoPreview",
+  OnboardingVideoPreview = "OnboardingVideoPreview",
   OnboardingSplash = "OnboardingSplash",
   OnboardingCamera = "OnboardingCamera",
   OnboardingInvite = "OnboardingInvite",
@@ -189,6 +212,7 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
 
 const SignedOutNavigator = createStackNavigator(
   {
+<<<<<<< HEAD
     OnboardingCamera,
     OnboardingSplash,
     OnboardingInvite,
@@ -196,6 +220,27 @@ const SignedOutNavigator = createStackNavigator(
     Profile,
     InviteVideoPreview
   },
+=======
+    OnboardingCamera: {
+      screen: OnboardingCamera
+    },
+    OnboardingSplash: {
+      screen: OnboardingSplash
+    },
+    OnboardingInvite: {
+      screen: OnboardingInvite
+    },
+    LogIn: {
+      screen: LogIn
+    },
+    Profile: {
+      screen: Profile
+    },
+    OnboardingVideoPreview: {
+      screen: OnboardingVideoPreview
+    }
+  } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
+>>>>>>> Split out shareable VideoPreview code
   {
     headerMode: "screen",
     initialRouteName: RouteName.LogIn

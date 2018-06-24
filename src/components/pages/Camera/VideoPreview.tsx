@@ -1,6 +1,5 @@
 /**
- * Renders the video camera preview screen after recording an invite video then
- * allows the user the upload it.
+ * Renders the video camera preview screen after recording a video then allows the user the upload it.
  */
 
 // Firebase API getDownloadURL call has a setTimeout call that triggers a developer
@@ -31,30 +30,14 @@ const BYTES_PER_MIB = 1024 * 1024;
 const MAX_MB = 60;
 const MAX_VIDEO_SIZE = MAX_MB * BYTES_PER_MIB;
 
-type ReduxStateProps = {
+type VideoPreviewProps = {
+  videoUri: string;
   videoUploadRef?: firebase.storage.Reference;
-  firebaseMemberId?: MemberId;
-  requestInviteStatus?: ApiCallStatus;
+  onVideoUploaded: (videoDownloadUrl: string) => any;
+  onRetakeClicked: () => any;
 };
 
-interface NavParams {
-  invitingMember?: Member;
-  verifiedName?: string;
-  videoUri?: string;
-}
-
-type DispatchProps = {
-  requestInviteFromMember: typeof requestInviteFromMember;
-};
-
-type OwnProps = NavigationScreenProps<NavParams>;
-
-type InviteVideoPreviewProps = ReduxStateProps &
-  OwnProps & {
-    requestInvite: (videoDownloadUrl: string) => void;
-  };
-
-type InviteVideoState = {
+type VideoStateProps = {
   errorMessage?: string;
   uploadStatus: UploadStatus;
   uploadedBytes: number;
@@ -68,26 +51,17 @@ enum UploadStatus {
   UPLOADED
 }
 
-class InviteVideoPreviewView extends React.Component<
-  InviteVideoPreviewProps,
-  InviteVideoState
+export class VideoPreview extends React.Component<
+  VideoPreviewProps,
+  VideoStateProps
 > {
-  videoUri?: string;
-
-  constructor(props: InviteVideoPreviewProps) {
+  constructor(props: VideoPreviewProps) {
     super(props);
     this.state = {
       uploadStatus: UploadStatus.NOT_STARTED,
       uploadedBytes: 0,
       totalBytes: 0
     };
-  }
-
-  navigateToCamera() {
-    this.props.navigation.navigate(RouteName.OnboardingCamera, {
-      invitingMember: this.props.navigation.getParam("invitingMember"),
-      verifiedName: this.props.navigation.getParam("verifiedName")
-    });
   }
 
   uploadVideo = async (videoUploadRef: firebase.storage.Reference) => {
@@ -135,7 +109,7 @@ class InviteVideoPreviewView extends React.Component<
         const videoDownloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
         if (videoDownloadUrl) {
           this.setState({ uploadStatus: UploadStatus.UPLOADED });
-          this.sendInviteRequest(videoDownloadUrl);
+          this.props.onVideoUploaded(videoDownloadUrl);
         } else {
           this.setState({
             errorMessage: "Could not retrieve download URL. Please try again.",
@@ -146,54 +120,9 @@ class InviteVideoPreviewView extends React.Component<
     );
   };
 
-  sendInviteRequest(videoDownloadUrl: string) {
-    this.setState({
-      videoDownloadUrl: videoDownloadUrl
-    });
-    this.props.requestInvite(videoDownloadUrl);
-    // TODO: When completed, redirect to profile
-  }
-
-  private _renderRequestingStatus = () => {
-    const statusType = this.props.requestInviteStatus
-      ? this.props.requestInviteStatus.status
-      : undefined;
-    switch (statusType) {
-      default:
-        console.error(
-          `Upload started but requestInviteStatus was not a valid ApiCallStatus (value: ${JSON.stringify(
-            statusType
-          )}). This should not happpen.`
-        );
-      case ApiCallStatusType.STARTED:
-        return <Text>Requesting invite...</Text>;
-      case ApiCallStatusType.SUCCESS:
-        return <Text>Request successful!</Text>;
-      case ApiCallStatusType.FAILURE:
-        return (
-          <React.Fragment>
-            <Text>Invite request failed.</Text>
-            <Button
-              title="Retry"
-              onPress={() => {
-                const videoDownloadUrl = this.state.videoDownloadUrl;
-                if (videoDownloadUrl) {
-                  this.sendInviteRequest(videoDownloadUrl);
-                } else {
-                  console.error("Missing download URL during request invite.");
-                }
-              }}
-            />
-          </React.Fragment>
-        );
-    }
-  };
-
   componentWillMount() {
-    this.videoUri = this.props.navigation.getParam("videoUri");
-
     // Validate video state.
-    if (!this.videoUri) {
+    if (!this.props.videoUri) {
       console.warn(
         "videoUri missing from navigator when mounting video preview."
       );
@@ -214,7 +143,7 @@ class InviteVideoPreviewView extends React.Component<
       return (
         <React.Fragment>
           {videoUploadRef &&
-            this.videoUri && (
+            this.props.videoUri && (
               <Button
                 title="Upload Video"
                 onPress={() => {
@@ -225,7 +154,7 @@ class InviteVideoPreviewView extends React.Component<
           <Button
             title="Retake"
             onPress={() => {
-              this.navigateToCamera();
+              this.props.onRetakeClicked();
             }}
           />
         </React.Fragment>
@@ -244,7 +173,6 @@ class InviteVideoPreviewView extends React.Component<
           {this.state.uploadStatus === UploadStatus.UPLOADED && (
             <Text>Upload success!</Text>
           )}
-          {this._renderRequestingStatus()}
         </React.Fragment>
       );
     }
@@ -255,11 +183,12 @@ class InviteVideoPreviewView extends React.Component<
   }
 
   renderVideo() {
+    const videoUri = this.props.videoUri;
     return (
-      this.videoUri && (
+      videoUri && (
         <Video
           source={{
-            uri: this.videoUri
+            uri: videoUri
           }}
           rate={1.0}
           volume={1.0}
@@ -292,47 +221,3 @@ const styles = StyleSheet.create({
     aspectRatio: 3 / 4
   }
 });
-
-const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
-  state,
-  ownProps
-) => {
-  const inviter = ownProps.navigation.getParam("invitingMember");
-  const requestInviteStatus = inviter
-    ? getStatusOfApiCall(state, ApiEndpoint.REQUEST_INVITE, inviter.memberId)
-    : undefined;
-  return {
-    videoUploadRef: getPrivateVideoInviteRef(state),
-    requestInviteStatus: requestInviteStatus
-  };
-};
-
-const mergeProps: MergeProps<
-  ReduxStateProps,
-  DispatchProps,
-  OwnProps,
-  InviteVideoPreviewProps
-> = (stateProps, dispatchProps, ownProps) => {
-  return {
-    ...stateProps,
-    requestInvite: (videoUrl: string) => {
-      const inviter = ownProps.navigation.getParam("invitingMember");
-      const verifiedName = ownProps.navigation.getParam("verifiedName");
-      if (inviter && verifiedName) {
-        dispatchProps.requestInviteFromMember(
-          inviter.memberId,
-          verifiedName,
-          videoUrl,
-          getUsername(verifiedName)
-        );
-      }
-    },
-    ...ownProps
-  };
-};
-
-export const InviteVideoPreview = connect(
-  mapStateToProps,
-  { requestInviteFromMember },
-  mergeProps
-)(InviteVideoPreviewView);
