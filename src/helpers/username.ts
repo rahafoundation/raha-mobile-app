@@ -21,3 +21,8 @@ export const getUsername = (displayName: string, seedFn?: () => number) => {
   const userPin = getNumberSuffix(NUMBER_SUFFIX_LENGTH, seedFn || Math.random);
   return userSlug + "." + userPin;
 };
+
+export function getInitialsForName(name: string): string {
+  const initials = name.split(" ").map(part => part.charAt(0).toUpperCase());
+  return initials[0] + initials[initials.length - 1];
+}
