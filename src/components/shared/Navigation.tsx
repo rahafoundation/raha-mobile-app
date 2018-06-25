@@ -12,15 +12,15 @@ import {
 } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
 
-import { Give } from "../pages/Give";
+import { Give as GiveScreen } from "../pages/Give";
 import { Home } from "../pages/Home";
 import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
-import { Profile } from "../pages/Profile";
+import { Profile as ProfileScreen } from "../pages/Profile";
 import { InviteVideoPreview } from "../pages/Onboarding/InviteVideoPreview";
 import { getMemberById } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
-import { MemberList } from "../pages/MemberList";
+import { MemberList as MemberListScreen } from "../pages/MemberList";
 import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
 import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
 import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
@@ -49,8 +49,8 @@ export enum RouteName {
   Give = "Give"
 }
 
-const MemberListRouteConfig = {
-  screen: MemberList,
+const MemberList = {
+  screen: MemberListScreen,
   navigationOptions: ({ navigation }: any) => {
     return {
       title: navigation.getParam("title", "Member List")
@@ -58,8 +58,8 @@ const MemberListRouteConfig = {
   }
 };
 
-const ProfileRouteConfig: NavigationRouteConfig = {
-  screen: Profile,
+const Profile: NavigationRouteConfig = {
+  screen: ProfileScreen,
   navigationOptions: ({ navigation }: NavigationScreenConfigProps) => {
     const member = navigation.getParam("member");
     return {
@@ -68,20 +68,18 @@ const ProfileRouteConfig: NavigationRouteConfig = {
   }
 };
 
-const MintRouteConfig: NavigationRouteConfig = {
-  screen: Mint
+const Give = {
+  screen: GiveScreen,
+  navigationOptions: {
+    title: "Give Raha"
+  }
 };
 
 const HomeTab = createStackNavigator(
   {
-    Profile: ProfileRouteConfig,
-    MemberList: MemberListRouteConfig,
-    Give: {
-      screen: Give,
-      navigationOptions: {
-        title: "Give Raha"
-      }
-    },
+    Profile,
+    MemberList,
+    Give,
     Home: {
       screen: Home,
       navigationOptions: ({ navigation }: any) => ({
@@ -98,72 +96,49 @@ const HomeTab = createStackNavigator(
     }
   },
   {
-    initialRouteName: RouteName.Home,
-    headerMode: "float"
+    initialRouteName: RouteName.Home
   }
 );
-
-const DiscoverBrowser = createStackNavigator(
-  {
-    DiscoverWebView: DiscoverWebView,
-  },
-  {
-    headerMode: "float"
-  }
-)
 
 const DiscoverTab = createStackNavigator(
   {
-    Discover: Discover,
-    DiscoverWebView: DiscoverWebView,
-    MemberList: MemberListRouteConfig,
-    Profile: ProfileRouteConfig
+    Discover,
+    DiscoverWebView
   },
   {
-    initialRouteName: RouteName.Discover,
-    headerMode: "float"
-  }
-);
-
-const ProfileTab = createStackNavigator(
-  {
-    Profile: ProfileRouteConfig,
-    MemberList: MemberListRouteConfig
-  } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
-  {
-    initialRouteName: RouteName.Profile,
-    headerMode: "float"
+    initialRouteName: RouteName.Discover
   }
 );
 
 const MintTab = createStackNavigator(
   {
-    Mint: MintRouteConfig,
+    Mint,
     ReferralBonus,
-    Profile: ProfileRouteConfig,
-    MemberList: MemberListRouteConfig
-  } as { [key in RouteName]: any },
+    Profile,
+    MemberList
+  },
   {
-    initialRouteName: RouteName.Mint,
-    headerMode: "float"
+    initialRouteName: RouteName.Mint
+  }
+);
+
+const ProfileTab = createStackNavigator(
+  {
+    Profile,
+    MemberList
+  },
+  {
+    initialRouteName: RouteName.Profile
   }
 );
 
 const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
-    HomeTab: {
-      screen: HomeTab
-    },
-    DiscoverTab: {
-      screen: DiscoverTab
-    },
-    MintTab: {
-      screen: MintTab
-    },
-    ProfileTab: {
-      screen: ProfileTab
-    }
-  } as { [key in RouteName]: any }, // TODO: once react-nav types in, edit
+    HomeTab,
+    DiscoverTab,
+    MintTab,
+    ProfileTab
+  },
   {
     initialRouteName: RouteName.MintTab,
     labeled: false,
@@ -214,24 +189,12 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
 
 const SignedOutNavigator = createStackNavigator(
   {
-    OnboardingCamera: {
-      screen: OnboardingCamera
-    },
-    OnboardingSplash: {
-      screen: OnboardingSplash
-    },
-    OnboardingInvite: {
-      screen: OnboardingInvite
-    },
-    LogIn: {
-      screen: LogIn
-    },
-    Profile: {
-      screen: Profile
-    },
-    InviteVideoPreview: {
-      screen: InviteVideoPreview
-    }
+    OnboardingCamera,
+    OnboardingSplash,
+    OnboardingInvite,
+    LogIn,
+    Profile,
+    InviteVideoPreview
   },
   {
     headerMode: "screen",
