@@ -98,18 +98,14 @@ class OnboardingVideoPreviewView extends React.Component<
       ? this.props.requestInviteStatus.status
       : undefined;
     switch (statusType) {
-      default:
-        console.error(
-          `Upload started but requestInviteStatus was not a valid ApiCallStatus (value: ${JSON.stringify(
-            statusType
-          )}). This should not happpen.`
-        );
       case ApiCallStatusType.STARTED:
         return <Text>Requesting invite...</Text>;
       case ApiCallStatusType.SUCCESS:
         return <Text>Request successful!</Text>;
       case ApiCallStatusType.FAILURE:
         return <Text>Invite request failed.</Text>;
+      default:
+        return undefined;
     }
   };
 
