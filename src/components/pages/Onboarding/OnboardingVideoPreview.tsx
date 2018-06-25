@@ -113,33 +113,41 @@ class OnboardingVideoPreviewView extends React.Component<
     }
   };
 
-  render() {
+  private _renderRequestInviteButton = () => {
     const videoDownloadUrl = this.state
       ? this.state.videoDownloadUrl
       : undefined;
     return (
+      (!this.props.requestInviteStatus ||
+        this.props.requestInviteStatus.status === ApiCallStatusType.FAILURE) &&
+      videoDownloadUrl && (
+        <Button
+          title="Request Invite"
+          onPress={() => {
+            this.sendInviteRequest(videoDownloadUrl);
+          }}
+        />
+      )
+    );
+  };
+
+  render() {
+    const videoUploadRef = this.props.videoUploadRef;
+    return (
       <View style={styles.container}>
-        {this.videoUri && (
-          <VideoPreview
-            videoUri={this.videoUri}
-            onVideoUploaded={(videoDownloadUrl: string) =>
-              this.sendInviteRequest(videoDownloadUrl)
-            }
-            onRetakeClicked={this.navigateToCamera}
-          />
-        )}
-        {this._renderRequestingStatus()}
-        {(!this.props.requestInviteStatus ||
-          this.props.requestInviteStatus.status ===
-            ApiCallStatusType.FAILURE) &&
-          videoDownloadUrl && (
-            <Button
-              title="Request Invite"
-              onPress={() => {
-                this.sendInviteRequest(videoDownloadUrl);
-              }}
+        {videoUploadRef &&
+          this.videoUri && (
+            <VideoPreview
+              videoUri={this.videoUri}
+              videoUploadRef={videoUploadRef}
+              onVideoUploaded={(videoDownloadUrl: string) =>
+                this.sendInviteRequest(videoDownloadUrl)
+              }
+              onRetakeClicked={this.navigateToCamera}
             />
           )}
+        {this._renderRequestingStatus()}
+        {this._renderRequestInviteButton()}
       </View>
     );
   }

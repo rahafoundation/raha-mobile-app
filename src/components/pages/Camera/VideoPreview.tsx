@@ -10,21 +10,6 @@ import * as React from "react";
 import firebase from "firebase";
 import { View, Text, StyleSheet, Button } from "react-native";
 import Video from "react-native-video";
-import { RouteName } from "../../shared/Navigation";
-import { Member } from "../../../store/reducers/members";
-import { RahaState } from "../../../store";
-import { connect, MapStateToProps, MergeProps } from "react-redux";
-import { getPrivateVideoInviteRef } from "../../../store/selectors/authentication";
-import { NavigationScreenProps } from "react-navigation";
-import { requestInviteFromMember } from "../../../store/actions/members";
-import { MemberId } from "../../../identifiers";
-import { getUsername } from "../../../helpers/username";
-import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { ApiEndpoint } from "../../../api";
-import {
-  ApiCallStatus,
-  ApiCallStatusType
-} from "../../../store/reducers/apiCalls";
 
 const BYTES_PER_MIB = 1024 * 1024;
 const MAX_MB = 60;
@@ -32,7 +17,7 @@ const MAX_VIDEO_SIZE = MAX_MB * BYTES_PER_MIB;
 
 type VideoPreviewProps = {
   videoUri: string;
-  videoUploadRef?: firebase.storage.Reference;
+  videoUploadRef: firebase.storage.Reference;
   onVideoUploaded: (videoDownloadUrl: string) => any;
   onRetakeClicked: () => any;
 };
@@ -65,12 +50,7 @@ export class VideoPreview extends React.Component<
   }
 
   uploadVideo = async (videoUploadRef: firebase.storage.Reference) => {
-    const videoUri = this.props.navigation.getParam("videoUri");
-    if (!videoUri) {
-      console.warn("videoUri missing from navigator when uploading video.");
-      return;
-    }
-    const response = await fetch(videoUri);
+    const response = await fetch(this.props.videoUri);
     const blob = await response.blob();
     //@ts-ignore Blob does not have data type
     if (blob.data.size > MAX_VIDEO_SIZE) {
@@ -129,28 +109,21 @@ export class VideoPreview extends React.Component<
       this.setState({
         errorMessage: "Invalid video. Please try again."
       });
-    } else if (!this.props.videoUploadRef) {
-      this.setState({
-        errorMessage:
-          "Could not find storage to upload video to. Please contact the Raha team."
-      });
     }
   }
 
   renderButtonsOrStatus() {
-    const videoUploadRef = this.props.videoUploadRef;
     if (this.state.uploadStatus === UploadStatus.NOT_STARTED) {
       return (
         <React.Fragment>
-          {videoUploadRef &&
-            this.props.videoUri && (
-              <Button
-                title="Upload Video"
-                onPress={() => {
-                  this.uploadVideo(videoUploadRef);
-                }}
-              />
-            )}
+          {this.props.videoUri && (
+            <Button
+              title="Upload Video"
+              onPress={() => {
+                this.uploadVideo(this.props.videoUploadRef);
+              }}
+            />
+          )}
           <Button
             title="Retake"
             onPress={() => {
