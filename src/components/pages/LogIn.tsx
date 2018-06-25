@@ -7,7 +7,8 @@ import { GoogleSigninButton } from "react-native-google-signin";
 import {
   googleLogIn,
   facebookLogIn,
-  AuthMethod
+  AuthMethod,
+  signOut
 } from "../../store/actions/authentication";
 import { RahaState, RahaThunkDispatch } from "../../store";
 import { RouteName } from "../shared/Navigation";
@@ -27,6 +28,7 @@ type StateProps = {
 type DispatchProps = {
   googleLogIn: () => void;
   facebookLogIn: () => void;
+  signOut: () => void;
 };
 
 type LogInProps = OwnProps & StateProps & DispatchProps;
@@ -46,11 +48,6 @@ class LogInView extends React.Component<LogInProps> {
   render() {
     return (
       <View style={styles.container}>
-        <Text>This is the login page.</Text>
-        <Button
-          title="Cancel"
-          onPress={() => this.props.navigation.navigate(RouteName.Home)}
-        />
         {this.props.existingAuthMethod && (
           <Text>
             It appears you have created an account with that email address
@@ -74,6 +71,7 @@ class LogInView extends React.Component<LogInProps> {
             this.props.navigation.navigate(RouteName.OnboardingSplash)
           }
         />
+        <Button title="Clear" onPress={this.props.signOut} />
       </View>
     );
   }
@@ -113,7 +111,8 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   dispatch: RahaThunkDispatch
 ) => ({
   googleLogIn: () => dispatch(googleLogIn()),
-  facebookLogIn: () => dispatch(facebookLogIn())
+  facebookLogIn: () => dispatch(facebookLogIn()),
+  signOut: () => dispatch(signOut())
 });
 
 export const LogIn = connect(
