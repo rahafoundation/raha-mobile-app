@@ -27,15 +27,15 @@ export const DiscoverWebView: React.StatelessComponent = ({
 };
 
 type DiscoverCardRaw = {
-  header?: string | string[];
-  title: string | string[];
-  footer?: string | string[];
+  header?: string;
+  bodyChoices: string[];
+  footer?: string;
   uri: string;
 };
 
 type DiscoverCard = {
   header?: string;
-  title: string;
+  body: string;
   footer?: string;
   uri: (navigation: NavigationScreenProp<{}>) => void;
 };
@@ -48,32 +48,29 @@ function convertUriToCallback(uri: string) {
   }
   if (uri.startsWith("mailto:")) {
     return (navigation: NavigationScreenProp<{}>) => {
-      Linking.openURL(uri); // TODO check canOpen
+      // TODO test on device. Display proper error or use Linking.canOpen
+      Linking.openURL(uri);
     };
   }
-  throw Error(`Invalid uri ${uri}, unsupported protocol`);
+  console.error(`Invalid uri ${uri}, unsupported protocol`);
+  return (navigation: NavigationScreenProp<{}>) => {}
+}
+
+
+function pickRandomFromArr(arr?: any[]) {
+  if (!arr || arr.length === 0) {
+    return undefined;
+  }
+  return arr[Math.floor(arr.length * Math.random())];
 }
 
 function convertCard(discoverCard: DiscoverCardRaw): DiscoverCard {
-  return Object.entries(discoverCard).reduce(
-    (res, keyValue) => {
-      let [key, origVal] = keyValue;
-      let val: any = origVal;
-      if (Array.isArray(val)) {
-        val = val[Math.floor(val.length * Math.random())];
-      }
-      if (key === "uri") {
-        if (typeof val === "string") {
-          val = convertUriToCallback(val);
-        } else {
-          throw Error(`Invalid value for uri ${val}`);
-        }
-      }
-      res[key as keyof DiscoverCard] = val;
-      return res;
-    },
-    {} as DiscoverCard
-  );
+  return {
+    header: discoverCard.header,
+    body: pickRandomFromArr(discoverCard.bodyChoices),
+    footer: discoverCard.footer,
+    uri: convertUriToCallback(discoverCard.uri)
+  }
 }
 
 function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
@@ -83,17 +80,17 @@ function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
 // TODO below JSON should be available from website.
 const DISCOVER_INFO = convertCardArr([
   {
-    title: "Any feedback or questions? Contact Raha team at hi@raha.app!",
+    bodyChoices: ["Any feedback or questions? Contact Raha team at hi@raha.app!"],
     uri: "mailto:hi@raha.app"
   },
   {
-    title: "Give people Raha in exchange for posters, resume review, and more!",
+    bodyChoices: ["Give people Raha in exchange for posters, resume review, and more!"],
     footer: "Check out the Raha Marketplace",
     uri: "https://discuss.raha.app/c/marketplace"
   },
   {
     header: "Did you know?",
-    title: [
+    bodyChoices: [
       '"Cash transfers have positive impacts, including on children."',
       '"Cash transfers have long-term impacts."',
       '"The poor do not systematically abuse cash transfers (e.g. on alcohol)."'
@@ -102,20 +99,20 @@ const DISCOVER_INFO = convertCardArr([
     uri: "https://www.givedirectly.org/research-on-cash-transfers"
   },
   {
-    title: "View your position in the invite leaderboard!",
+    bodyChoices: ["View your position in the invite leaderboard!"],
     uri: "https://web.raha.app/leaderboard"
   },
   {
-    title: "Discuss UBI on the Raha Forum!",
+    bodyChoices: ["Discuss UBI on the Raha Forum!"],
     uri: "https://discuss.raha.app/"
   },
   {
-    header: "Raha supports",
-    title: [
+    bodyChoices: [
       "Universal Basic Income to End Extreme Poverty.",
       "Trusted Identities for Safe and Secure Payments.",
       "Delegative Democracy and Values-Based Development."
     ],
+    header: "Raha supports",
     footer: "Read the Raha Manifesto",
     uri: "https://raha.app"
   }
@@ -129,7 +126,7 @@ const LargeText: React.StatelessComponent<TextProps> = props => (
   <Text style={{ fontSize: 18, color: "white" }} {...props} />
 );
 
-const COLORS = ["darkseagreen", "darkturquoise"]
+const COLORS = ["darkseagreen", "darkturquoise"];
 
 function getCardColor(index: number): string {
   return COLORS[index % COLORS.length];
@@ -142,13 +139,17 @@ function getCard(
 ) {
   return (
     <TouchableHighlight
-      style={{ minHeight: 100, margin: 7, backgroundColor: getCardColor(index) }}
+      style={{
+        minHeight: 100,
+        margin: 7,
+        backgroundColor: getCardColor(index)
+      }}
       key={index}
       onPress={() => info.uri(navigation)}
     >
       <View style={{ flex: 1, justifyContent: "space-between" }}>
         {info.header && <LargeText>{info.header}</LargeText>}
-        <LargeText>{info.title}</LargeText>
+        <LargeText>{info.body}</LargeText>
         {info.footer && <LargeText>{info.footer}</LargeText>}
       </View>
     </TouchableHighlight>
