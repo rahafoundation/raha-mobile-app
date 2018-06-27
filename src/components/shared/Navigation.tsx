@@ -154,7 +154,7 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
           case RouteName.HomeTab:
             iconName = "home";
             break;
-          case RouteName.OnboardingCamera:
+          case RouteName.OnboardingSplash:
             iconName = "account-multiple-plus";
             break;
           case RouteName.MintTab:

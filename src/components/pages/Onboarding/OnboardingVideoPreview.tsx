@@ -56,19 +56,18 @@ class OnboardingVideoPreviewView extends React.Component<
 > {
   videoUri?: string;
 
-  navigateToCamera() {
+  navigateToCamera = () => {
     this.props.navigation.navigate(RouteName.OnboardingCamera, {
       invitingMember: this.props.navigation.getParam("invitingMember"),
       verifiedName: this.props.navigation.getParam("verifiedName")
     });
-  }
+  };
 
   sendInviteRequest(videoDownloadUrl: string) {
     this.setState({
       videoDownloadUrl: videoDownloadUrl
     });
     this.props.requestInvite(videoDownloadUrl);
-    // TODO: When completed, redirect to profile
   }
 
   componentWillMount() {
