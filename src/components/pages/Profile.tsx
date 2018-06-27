@@ -5,6 +5,7 @@
  */
 import * as React from "react";
 import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import { Button } from "react-native-elements";
 import {
   connect,
   MapDispatchToProps,
@@ -22,7 +23,6 @@ import { trustMember } from "../../store/actions/members";
 import { getMemberById } from "../../store/selectors/members";
 import { MemberId } from "../../identifiers";
 import { ActivityFeed } from "../shared/ActivityFeed";
-import { Button } from "../shared/Button";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { MintButton } from "../shared/MintButton";
 
@@ -56,13 +56,20 @@ const Actions: React.StatelessComponent<
     <View style={styles.actions}>
       <MintButton />
       <Button
-        text="Log Out"
+        title="Log Out"
         onPress={props.signOut}
-        backgroundColor="#2196F3"
+        buttonStyle={{ backgroundColor: "#2196F3" }}
+        //@ts-ignore Because Button does have a rounded property
+        rounded
       />
     </View>
   ) : (
-    <Button text="Trust" onPress={props.trust} />
+    <Button
+      title="Trust"
+      onPress={props.trust}
+      //@ts-ignore Because Button does have a rounded property
+      rounded
+    />
   );
 
 const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (

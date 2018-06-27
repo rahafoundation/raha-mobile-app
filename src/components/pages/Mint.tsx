@@ -1,5 +1,6 @@
 import * as React from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
+import { Button } from "react-native-elements";
 import { connect, MapStateToProps } from "react-redux";
 
 import { Member } from "../../store/reducers/members";
@@ -7,7 +8,6 @@ import { RahaState } from "../../store";
 import { RouteName } from "../shared/Navigation";
 import { getLoggedInMember } from "../../store/selectors/authentication";
 import { SafeAreaView } from "../../shared/SafeAreaView";
-import { Button } from "../shared/Button";
 import { NavigationScreenProps } from "react-navigation";
 import { MemberId } from "../../identifiers";
 import { getUnclaimedReferrals } from "../../store/selectors/me";
@@ -93,15 +93,19 @@ const MintView: React.StatelessComponent<Props> = ({
           }}
         >
           <Button
-            text="Invite +ℝ60"
+            title="Invite +ℝ60"
             onPress={() => {}}
-            backgroundColor="#2196F3"
+            buttonStyle={{ backgroundColor: "#2196F3" }}
+            //@ts-ignore Because Button does have a rounded property
+            rounded
           />
           {hasUnclaimedReferrals ? (
             <Button
-              text="Claim bonuses!"
+              title="Claim bonuses!"
               onPress={navigateToReferralBonuses}
-              backgroundColor="#4CAF50"
+              buttonStyle={{ backgroundColor: "#4CAF50" }}
+              //@ts-ignore Because Button does have a rounded property
+              rounded
             />
           ) : (
             undefined
