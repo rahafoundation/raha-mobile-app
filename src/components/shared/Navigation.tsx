@@ -17,7 +17,7 @@ import { Home } from "../pages/Home";
 import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
 import { Profile as ProfileScreen } from "../pages/Profile";
-import { InviteVideoPreview } from "../pages/Onboarding/InviteVideoPreview";
+import { OnboardingVideoPreview } from "../pages/Onboarding/OnboardingVideoPreview";
 import { getMemberById } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
 import { MemberList as MemberListScreen } from "../pages/MemberList";
@@ -31,7 +31,7 @@ import { Discover, DiscoverWebView } from "../pages/Discover";
 export enum RouteName {
   Home = "Home",
   HomeTab = "HomeTab",
-  InviteVideoPreview = "InviteVideoPreview",
+  OnboardingVideoPreview = "OnboardingVideoPreview",
   OnboardingSplash = "OnboardingSplash",
   OnboardingCamera = "OnboardingCamera",
   OnboardingInvite = "OnboardingInvite",
@@ -154,7 +154,7 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
           case RouteName.HomeTab:
             iconName = "home";
             break;
-          case RouteName.OnboardingCamera:
+          case RouteName.OnboardingSplash:
             iconName = "account-multiple-plus";
             break;
           case RouteName.MintTab:
@@ -194,7 +194,7 @@ const SignedOutNavigator = createStackNavigator(
     OnboardingInvite,
     LogIn,
     Profile,
-    InviteVideoPreview
+    OnboardingVideoPreview
   },
   {
     headerMode: "screen",

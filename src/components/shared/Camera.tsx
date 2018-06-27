@@ -76,7 +76,6 @@ export class Camera extends React.Component<CameraProps, CameraState> {
                     onPress={() => {
                       this.requestPermissions();
                     }} */}
-                  />
                 </View>
               );
             }
@@ -145,7 +144,6 @@ const styles = StyleSheet.create({
   },
   cameraButtons: {
     flex: 1,
-    backgroundColor: "transparent",
     flexDirection: "row",
     alignItems: "flex-end"
   },
