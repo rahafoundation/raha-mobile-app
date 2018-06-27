@@ -19,14 +19,13 @@ const MILLISECONDS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
 export function getMintableAmount(
   state: RahaState,
   memberId: MemberId
-): string | undefined {
+): Big | undefined {
   const member = getMemberById(state, memberId);
   if (member) {
     return new Big(new Date().getTime() - member.lastMinted.getTime())
       .div(MILLISECONDS_PER_WEEK)
       .times(RAHA_UBI_WEEKLY_RATE)
-      .round(2, 0)
-      .toString();
+      .round(2, 0);
   }
   return undefined;
 }
