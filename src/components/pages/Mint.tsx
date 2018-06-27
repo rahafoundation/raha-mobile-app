@@ -11,6 +11,7 @@ import { Button } from "../shared/Button";
 import { NavigationScreenProps } from "react-navigation";
 import { MemberId } from "../../identifiers";
 import { getUnclaimedReferrals } from "../../store/selectors/me";
+import { MintButton } from "../shared/MintButton";
 
 type OwnProps = NavigationScreenProps<{}>;
 
@@ -76,7 +77,7 @@ const MintView: React.StatelessComponent<Props> = ({
           style={{ flex: 1 }}
           source={require("../../assets/img/Mint.png")}
         />
-        <Button text="Mint +ℝ10" onPress={() => {}} backgroundColor="#2196F3" />
+        <MintButton />
       </View>
       <View style={[styles.centerFlex, { marginBottom: 60 }]}>
         <Image
