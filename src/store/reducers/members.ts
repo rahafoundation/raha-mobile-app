@@ -25,6 +25,8 @@ export const GENESIS_MEMBER = Symbol("GENESIS");
 
 /**
  * Members that we're in the process of building up from operations below.
+ * TODO follow Redux recommendation and use plain objects or immutable.js Record instead of class,
+ * see https://redux.js.org/faq/organizing-state#can-i-put-functions-promises-or-other-non-serializable-items-in-my-store-state
  */
 export class Member {
   public readonly memberId: MemberId;
@@ -34,6 +36,7 @@ export class Member {
   public readonly invitedBy: MemberId | typeof GENESIS_MEMBER;
   public readonly inviteConfirmed: boolean;
   public readonly balance: Big;
+  public readonly totalDonated: Big;
   public readonly totalMinted: Big;
   public readonly lastMinted: Date;
 
@@ -49,6 +52,7 @@ export class Member {
     invitedBy: MemberId | typeof GENESIS_MEMBER,
     inviteConfirmed: boolean,
     balance: Big,
+    totalDonated: Big,
     totalMinted: Big,
     lastMinted: Date,
     trusts?: Set<MemberId>,
@@ -65,6 +69,7 @@ export class Member {
     this.trustedBy = trustedBy || Set();
     this.invited = invited || Set();
     this.balance = balance;
+    this.totalDonated = totalDonated;
     this.totalMinted = totalMinted;
     this.lastMinted = lastMinted;
   }
@@ -82,6 +87,7 @@ export class Member {
       this.invitedBy,
       this.inviteConfirmed,
       this.balance.plus(amount),
+      this.totalDonated,
       this.totalMinted.plus(amount),
       mintDate ? mintDate : this.lastMinted,
       this.trusts,
@@ -99,6 +105,7 @@ export class Member {
       this.invitedBy,
       this.inviteConfirmed,
       this.balance.minus(amount),
+      this.totalDonated,
       this.totalMinted,
       this.lastMinted,
       this.trusts,
@@ -107,7 +114,7 @@ export class Member {
     );
   }
 
-  public receiveRaha(amount: Big) {
+  public receiveRaha(amount: Big, donation_amount: Big) {
     return new Member(
       this.memberId,
       this.username,
@@ -116,6 +123,7 @@ export class Member {
       this.invitedBy,
       this.inviteConfirmed,
       this.balance.plus(amount),
+      this.totalDonated.plus(donation_amount),
       this.totalMinted,
       this.lastMinted,
       this.trusts,
@@ -150,6 +158,7 @@ export class Member {
       this.invitedBy,
       this.inviteConfirmed,
       this.balance,
+      this.totalDonated,
       this.totalMinted,
       this.lastMinted,
       this.trusts,
@@ -170,6 +179,7 @@ export class Member {
       this.invitedBy,
       this.inviteConfirmed,
       this.balance,
+      this.totalDonated,
       this.totalMinted,
       this.lastMinted,
       this.trusts.add(memberId),
@@ -190,6 +200,7 @@ export class Member {
       this.invitedBy,
       this.inviteConfirmed || this.invitedBy === memberId,
       this.balance,
+      this.totalDonated,
       this.totalMinted,
       this.lastMinted,
       this.trusts,
@@ -329,6 +340,7 @@ function applyOperation(
               true,
               new Big(0),
               new Big(0),
+              new Big(0),
               new Date(created_at)
             )
           );
@@ -347,6 +359,7 @@ function applyOperation(
           new Date(created_at),
           to_uid,
           false,
+          new Big(0),
           new Big(0),
           new Big(0),
           new Date(created_at),
@@ -393,7 +406,7 @@ function applyOperation(
         );
         const recipient = (prevState.byUserId.get(
           to_uid
-        ) as Member).receiveRaha(new Big(amount));
+        ) as Member).receiveRaha(new Big(amount), new Big(donation_amount));
 
         return addMembersToState(prevState, [giver, recipient]);
       }
