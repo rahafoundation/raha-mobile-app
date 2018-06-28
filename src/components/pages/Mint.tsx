@@ -48,27 +48,31 @@ const MintView: React.StatelessComponent<Props> = ({
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.centerFlex}>
+        <Text style={{ fontSize: 36 }}>
+          ℝ{loggedInMember.balance.toString()}
+        </Text>
+        <Text style={styles.numberLabel}>balance</Text>
+      </View>
       <View
         style={[
           styles.centerFlex,
-          { flexDirection: "row", marginHorizontal: 50 }
+          { flexDirection: "row", marginHorizontal: 10 }
         ]}
       >
         <View style={styles.centerFlex}>
-          <Text style={styles.number}>
-            {loggedInMember.totalMinted.toString()}
+          <Text style={styles.subStat}>
+          ℝ{loggedInMember.totalMinted.toString()}
           </Text>
           <Text style={styles.numberLabel}>minted</Text>
         </View>
         <View style={styles.centerFlex}>
-          <Text style={[styles.number, { color: netColor }]}>{net}</Text>
-          <Text style={styles.numberLabel}>net</Text>
+          <Text style={[styles.subStat, { color: netColor }]}>ℝ{net}</Text>
+          <Text style={styles.numberLabel}>transactions</Text>
         </View>
         <View style={styles.centerFlex}>
-          <Text style={styles.number}>
-            ℝ{loggedInMember.balance.toString()}
-          </Text>
-          <Text style={styles.numberLabel}>balance</Text>
+          <Text style={styles.subStat}>ℝ{loggedInMember.totalDonated.toString()}</Text>
+          <Text style={styles.numberLabel}>donated</Text>
         </View>
       </View>
       <View style={[styles.centerFlex, { marginBottom: 60 }]}>
@@ -102,7 +106,9 @@ const MintView: React.StatelessComponent<Props> = ({
           {hasUnclaimedReferrals ? (
             <Button
               title="Claim bonuses!"
-              onPress={navigateToReferralBonuses}
+              onPress={() => {
+                navigation.navigate(RouteName.ReferralBonus, { unclaimedReferralIds });
+              }}
               buttonStyle={{ backgroundColor: "#4CAF50" }}
               //@ts-ignore Because Button does have a rounded property
               rounded
@@ -122,11 +128,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
-  number: {
-    fontSize: 25
+  subStat: {
+    fontSize: 22
   },
   numberLabel: {
-    color: "#666"
+    color: "#666",
+    fontSize: 14
   }
 });
 
