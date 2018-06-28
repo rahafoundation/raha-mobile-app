@@ -11,7 +11,8 @@ import {
   WebView as WebViewNative,
   TextProps,
   ScrollView,
-  Linking
+  Linking,
+  StyleSheet
 } from "react-native";
 
 import { MemberSearchBar } from "../shared/MemberSearchBar";
@@ -78,16 +79,15 @@ function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
 // TODO below JSON should be available from website.
 const DISCOVER_INFO = convertCardArr([
   {
-    bodyChoices: [
-      "Any feedback or questions? Contact Raha team at hi@raha.app!"
-    ],
+    header: "Feedback or questions?",
+    bodyChoices: ["Contact the Raha team at hi@raha.app!"],
     uri: "mailto:hi@raha.app"
   },
   {
+    header: "Check out the Raha Marketplace",
     bodyChoices: [
-      "Give people Raha in exchange for posters, resume review, and more!"
+      "Buy everything from books and posters to instruments, get your resume reviewed, and more!"
     ],
-    footer: "Check out the Raha Marketplace",
     uri: "https://discuss.raha.app/c/marketplace"
   },
   {
@@ -101,20 +101,24 @@ const DISCOVER_INFO = convertCardArr([
     uri: "https://www.givedirectly.org/research-on-cash-transfers"
   },
   {
-    bodyChoices: ["View your position in the invite leaderboard!"],
+    header: "Climb the leaderboard",
+    bodyChoices: [
+      "Invite more people to mint bonus Raha and get to the top of the leaderboard ranks!"
+    ],
     uri: "https://web.raha.app/leaderboard"
   },
   {
-    bodyChoices: ["Discuss UBI on the Raha Forum!"],
+    header: "Meet the Raha Community",
+    bodyChoices: ["Discuss UBI in the Raha Forums!"],
     uri: "https://discuss.raha.app/"
   },
   {
+    header: "Raha supports",
     bodyChoices: [
       "Universal Basic Income to End Extreme Poverty.",
       "Trusted Identities for Safe and Secure Payments.",
       "Delegative Democracy and Values-Based Development."
     ],
-    header: "Raha supports",
     footer: "Read the Raha Manifesto",
     uri: "https://raha.app"
   }
@@ -124,11 +128,7 @@ type DiscoverProps = {
   navigation: NavigationScreenProp<{}>;
 };
 
-const LargeText: React.StatelessComponent<TextProps> = props => (
-  <Text style={{ fontSize: 18, color: "white" }} {...props} />
-);
-
-const COLORS = ["darkseagreen", "darkturquoise"];
+const COLORS = ["#4FC3F7", "#81C784"];
 
 function getCardColor(index: number): string {
   return COLORS[index % COLORS.length];
@@ -141,18 +141,14 @@ function getCard(
 ) {
   return (
     <TouchableHighlight
-      style={{
-        minHeight: 100,
-        margin: 7,
-        backgroundColor: getCardColor(index)
-      }}
+      style={[styles.card, { backgroundColor: getCardColor(index) }]}
       key={index}
       onPress={() => info.uri(navigation)}
     >
       <View style={{ flex: 1, justifyContent: "space-between" }}>
-        {info.header && <LargeText>{info.header}</LargeText>}
-        <LargeText>{info.body}</LargeText>
-        {info.footer && <LargeText>{info.footer}</LargeText>}
+        {info.header && <Text style={styles.headerText}>{info.header}</Text>}
+        <Text style={styles.bodyText}>{info.body}</Text>
+        {info.footer && <Text style={styles.footerText}>{info.footer}</Text>}
       </View>
     </TouchableHighlight>
   );
@@ -180,3 +176,24 @@ export const Discover: React.StatelessComponent<DiscoverProps> = ({
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    marginTop: 8,
+    marginLeft: 8,
+    marginRight: 8,
+    padding: 8,
+    borderRadius: 3
+  },
+  headerText: {
+    fontSize: 24,
+    marginBottom: 6
+  },
+  bodyText: {
+    fontSize: 16,
+    marginBottom: 4
+  },
+  footerText: {
+    fontSize: 16
+  }
+});
