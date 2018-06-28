@@ -18,7 +18,7 @@ import {
 import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { NavigationScreenProp, withNavigation } from "react-navigation";
 import { RouteName } from "../shared/Navigation";
-import { Container, Text } from "../shared/elements";
+import { Button, Container, Text } from "../shared/elements";
 
 export const DiscoverWebView: React.StatelessComponent = ({
   navigation
@@ -29,14 +29,14 @@ export const DiscoverWebView: React.StatelessComponent = ({
 type DiscoverCardRaw = {
   header?: string;
   bodyChoices: string[];
-  footer?: string;
+  action?: string;
   uri: string;
 };
 
 type DiscoverCard = {
   header?: string;
   body: string;
-  footer?: string;
+  action?: string;
   uri: (navigation: NavigationScreenProp<{}>) => void;
 };
 
@@ -67,7 +67,7 @@ function convertCard(discoverCard: DiscoverCardRaw): DiscoverCard {
   return {
     header: discoverCard.header,
     body: pickRandomFromArr(discoverCard.bodyChoices),
-    footer: discoverCard.footer,
+    action: discoverCard.action,
     uri: convertUriToCallback(discoverCard.uri)
   };
 }
@@ -81,6 +81,7 @@ const DISCOVER_INFO = convertCardArr([
   {
     header: "Feedback or questions?",
     bodyChoices: ["Contact the Raha team at hi@raha.app!"],
+    action: "Send us an email",
     uri: "mailto:hi@raha.app"
   },
   {
@@ -88,6 +89,7 @@ const DISCOVER_INFO = convertCardArr([
     bodyChoices: [
       "Buy everything from books and posters to instruments, get your resume reviewed, and more!"
     ],
+    action: "Visit the marketplace",
     uri: "https://discuss.raha.app/c/marketplace"
   },
   {
@@ -97,7 +99,7 @@ const DISCOVER_INFO = convertCardArr([
       '"Cash transfers have long-term impacts."',
       '"The poor do not systematically abuse cash transfers (e.g. on alcohol)."'
     ],
-    footer: "Read more at GiveDirectly.org",
+    action: "Read more at GiveDirectly.org",
     uri: "https://www.givedirectly.org/research-on-cash-transfers"
   },
   {
@@ -105,11 +107,13 @@ const DISCOVER_INFO = convertCardArr([
     bodyChoices: [
       "Invite more people to mint bonus Raha and get to the top of the leaderboard ranks!"
     ],
+    action: "View the leaderboard",
     uri: "https://web.raha.app/leaderboard"
   },
   {
     header: "Meet the Raha Community",
     bodyChoices: ["Discuss UBI in the Raha Forums!"],
+    action: "Check out the forums",
     uri: "https://discuss.raha.app/"
   },
   {
@@ -119,7 +123,7 @@ const DISCOVER_INFO = convertCardArr([
       "Trusted Identities for Safe and Secure Payments.",
       "Delegative Democracy and Values-Based Development."
     ],
-    footer: "Read the Raha Manifesto",
+    action: "Read the Raha Manifesto",
     uri: "https://raha.app"
   }
 ]);
@@ -143,12 +147,17 @@ function getCard(
     <TouchableHighlight
       style={[styles.card, { backgroundColor: getCardColor(index) }]}
       key={index}
-      onPress={() => info.uri(navigation)}
     >
       <View style={{ flex: 1, justifyContent: "space-between" }}>
         {info.header && <Text style={styles.headerText}>{info.header}</Text>}
         <Text style={styles.bodyText}>{info.body}</Text>
-        {info.footer && <Text style={styles.footerText}>{info.footer}</Text>}
+        {info.action && (
+          <Button
+            title={info.action}
+            buttonStyle={styles.actionButton}
+            onPress={() => info.uri(navigation)}
+          />
+        )}
       </View>
     </TouchableHighlight>
   );
@@ -191,9 +200,9 @@ const styles = StyleSheet.create({
   },
   bodyText: {
     fontSize: 16,
-    marginBottom: 4
+    marginBottom: 8
   },
-  footerText: {
-    fontSize: 16
+  actionButton: {
+    backgroundColor: "transparent"
   }
 });

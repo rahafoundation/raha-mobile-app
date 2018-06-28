@@ -102,7 +102,10 @@ const HomeTab = createStackNavigator(
 
 const DiscoverTab = createStackNavigator(
   {
-    Discover,
+    Discover: {
+      screen: Discover,
+      navigationOptions: { title: "Discover" }
+    },
     DiscoverWebView
   },
   {
@@ -112,8 +115,18 @@ const DiscoverTab = createStackNavigator(
 
 const MintTab = createStackNavigator(
   {
-    Mint,
-    ReferralBonus,
+    Mint: {
+      screen: Mint,
+      navigationOptions: {
+        title: "Mint Raha"
+      }
+    },
+    ReferralBonus: {
+      screen: ReferralBonus,
+      navigationOptions: {
+        title: "Mint your referral bonuses"
+      }
+    },
     Profile,
     MemberList
   },
