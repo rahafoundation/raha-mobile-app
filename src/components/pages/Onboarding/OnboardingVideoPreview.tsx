@@ -4,9 +4,11 @@
  */
 import * as firebase from "firebase";
 import * as React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import DropdownAlert from "react-native-dropdownalert";
 import { NavigationScreenProps } from "react-navigation";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
+
 import { ApiEndpoint } from "../../../api";
 import { getUsername } from "../../../helpers/username";
 import { MemberId } from "../../../identifiers";
@@ -21,7 +23,8 @@ import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { getPrivateVideoInviteRef } from "../../../store/selectors/authentication";
 import { RouteName } from "../../shared/Navigation";
 import { VideoPreview } from "../Camera/VideoPreview";
-import DropdownAlert from "react-native-dropdownalert";
+
+import { Text } from "../../display/Text";
 
 type ReduxStateProps = {
   videoUploadRef?: firebase.storage.Reference;

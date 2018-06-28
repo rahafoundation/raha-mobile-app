@@ -9,8 +9,7 @@
 
 import { Big } from "big.js";
 import * as React from "react";
-import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
-import { Button } from "react-native-elements";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 import { connect, MergeProps, MapStateToProps } from "react-redux";
 
@@ -30,6 +29,9 @@ import { Member } from "../../../store/reducers/members";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { RouteName } from "../../shared/Navigation";
 import { ReferralBonusNavParams } from ".";
+
+import { Button } from "../../display/Button";
+import { Text } from "../../display/Text";
 
 const REFERRAL_BONUS = new Big(60);
 

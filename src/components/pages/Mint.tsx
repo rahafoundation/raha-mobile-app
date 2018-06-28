@@ -1,17 +1,19 @@
 import * as React from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
-import { Button } from "react-native-elements";
+import { StyleSheet, View, Image } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
 import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";
 import { RouteName } from "../shared/Navigation";
 import { getLoggedInMember } from "../../store/selectors/authentication";
-import { SafeAreaView } from "../../shared/SafeAreaView";
 import { NavigationScreenProps } from "react-navigation";
 import { MemberId } from "../../identifiers";
 import { getUnclaimedReferrals } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
+
+import { Button } from "../display/Button";
+import { Container } from "../display/Container";
+import { Text } from "../display/Text";
 
 type OwnProps = NavigationScreenProps<{}>;
 
@@ -47,7 +49,7 @@ const MintView: React.StatelessComponent<Props> = ({
     : () => {};
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <Container>
       <View style={styles.centerFlex}>
         <Text style={{ fontSize: 36 }}>
           ℝ{loggedInMember.balance.toString()}
@@ -62,7 +64,7 @@ const MintView: React.StatelessComponent<Props> = ({
       >
         <View style={styles.centerFlex}>
           <Text style={styles.subStat}>
-          ℝ{loggedInMember.totalMinted.toString()}
+            ℝ{loggedInMember.totalMinted.toString()}
           </Text>
           <Text style={styles.numberLabel}>minted</Text>
         </View>
@@ -71,7 +73,9 @@ const MintView: React.StatelessComponent<Props> = ({
           <Text style={styles.numberLabel}>transactions</Text>
         </View>
         <View style={styles.centerFlex}>
-          <Text style={styles.subStat}>ℝ{loggedInMember.totalDonated.toString()}</Text>
+          <Text style={styles.subStat}>
+            ℝ{loggedInMember.totalDonated.toString()}
+          </Text>
           <Text style={styles.numberLabel}>donated</Text>
         </View>
       </View>
@@ -107,7 +111,9 @@ const MintView: React.StatelessComponent<Props> = ({
             <Button
               title="Claim bonuses!"
               onPress={() => {
-                navigation.navigate(RouteName.ReferralBonus, { unclaimedReferralIds });
+                navigation.navigate(RouteName.ReferralBonus, {
+                  unclaimedReferralIds
+                });
               }}
               buttonStyle={{ backgroundColor: "#4CAF50" }}
               //@ts-ignore Because Button does have a rounded property
@@ -118,7 +124,7 @@ const MintView: React.StatelessComponent<Props> = ({
           )}
         </View>
       </View>
-    </SafeAreaView>
+    </Container>
   );
 };
 

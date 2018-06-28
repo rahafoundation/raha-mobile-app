@@ -8,8 +8,11 @@ console.ignoredYellowBox = ["Setting a timer"];
 
 import * as React from "react";
 import firebase from "firebase";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Video from "react-native-video";
+
+import { Button } from "../../display/Button";
+import { Text } from "../../display/Text";
 
 const BYTES_PER_MIB = 1024 * 1024;
 const MAX_MB = 60;

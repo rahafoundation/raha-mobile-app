@@ -13,6 +13,8 @@ import { getMembersByIds } from "../../store/selectors/members";
 import { MemberThumbnail } from "../shared/MemberThumbnail";
 import { MemberId } from "../../identifiers";
 
+import { Container } from "../display/Container";
+
 interface NavParams {
   memberIds: MemberId[];
 }
@@ -30,13 +32,15 @@ export const MemberListView: React.StatelessComponent<Props> = ({
   members
 }) => {
   return (
-    <FlatList
-      data={members}
-      keyExtractor={m => m.memberId}
-      renderItem={m => (
-        <MemberThumbnail navigation={navigation} member={m.item} />
-      )}
-    />
+    <Container>
+      <FlatList
+        data={members}
+        keyExtractor={m => m.memberId}
+        renderItem={m => (
+          <MemberThumbnail navigation={navigation} member={m.item} />
+        )}
+      />
+    </Container>
   );
 };
 

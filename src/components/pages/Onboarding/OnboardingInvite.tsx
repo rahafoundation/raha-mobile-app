@@ -1,13 +1,15 @@
 import * as React from "react";
 import { Member } from "../../../store/reducers/members";
 import { View, StyleSheet, TextInput } from "react-native";
-import { Text, Button } from "react-native-elements";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../store";
 import { RouteName } from "../../shared/Navigation";
 import { getLoggedInFirebaseUser } from "../../../store/selectors/authentication";
 import { NavigationScreenProps } from "react-navigation";
+
+import { Button } from "../../display/Button";
+import { Text } from "../../display/Text";
 
 /**
  * Page that confirms who the user is trying to get an invite from and their full name.

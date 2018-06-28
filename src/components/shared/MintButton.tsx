@@ -1,6 +1,5 @@
 import { Big } from "big.js";
 import * as React from "react";
-import { Button } from "react-native-elements";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
 import { ApiEndpoint } from "../../api";
@@ -14,6 +13,8 @@ import {
   ApiCallStatusType
 } from "../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
+
+import { Button } from "../display/Button";
 
 interface OwnProps {}
 interface StateProps {

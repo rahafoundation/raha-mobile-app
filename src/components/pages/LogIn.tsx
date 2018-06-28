@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProp } from "react-navigation";
 import { GoogleSigninButton } from "react-native-google-signin";
@@ -14,6 +14,10 @@ import { RahaState, RahaThunkDispatch } from "../../store";
 import { RouteName } from "../shared/Navigation";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { getMemberById } from "../../store/selectors/members";
+
+import { Button } from "../display/Button";
+import { Container } from "../display/Container";
+import { Text } from "../display/Text";
 
 type OwnProps = {
   navigation: NavigationScreenProp<{}>;
@@ -47,7 +51,7 @@ class LogInView extends React.Component<LogInProps> {
 
   render() {
     return (
-      <View style={styles.container}>
+      <Container style={styles.container}>
         {this.props.existingAuthMethod && (
           <Text>
             It appears you have created an account with that email address
@@ -66,15 +70,13 @@ class LogInView extends React.Component<LogInProps> {
           onPress={this.props.facebookLogIn}
         /> */}
         <Button title="Clear" onPress={this.props.signOut} />
-      </View>
+      </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
   }

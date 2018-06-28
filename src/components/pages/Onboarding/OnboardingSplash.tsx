@@ -1,10 +1,12 @@
 import * as React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { Button } from "react-native-elements";
+import { StyleSheet, View } from "react-native";
 
 import { Swiper } from "../../shared/Swiper";
 import { RouteName } from "../../shared/Navigation";
 import { NavigationScreenProps } from "react-navigation";
+
+import { Button } from "../../display/Button";
+import { Text } from "../../display/Text";
 
 type OnboardingProps = NavigationScreenProps<{}>;
 

@@ -1,6 +1,6 @@
 import { Big } from "big.js";
 import * as React from "react";
-import { Button, View, Text, TextInput, StyleSheet } from "react-native";
+import { View, TextInput, StyleSheet } from "react-native";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
 import { ApiEndpoint } from "../../../api";
@@ -17,7 +17,10 @@ import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { getMemberById } from "../../../store/selectors/members";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
 
-const MESSAGE_PLACEHOLDER_TEXT = "";
+import { Button } from "../../display/Button";
+import { Container } from "../../display/Container";
+import { Text } from "../../display/Text";
+
 const MAX_MEMO_LENGTH = 140;
 // Donation rate is currently constant.
 const DONATION_RATE = 3;
@@ -148,7 +151,7 @@ class GiveFormView extends React.Component<Props, State> {
 
   public render() {
     return (
-      <View style={styles.container}>
+      <Container style={styles.container}>
         <View style={styles.toRow}>
           <Text style={styles.label}>To:</Text>
           {this.state.toMember ? (
@@ -230,7 +233,7 @@ class GiveFormView extends React.Component<Props, State> {
             }
           />
         </View>
-      </View>
+      </Container>
     );
   }
 }
@@ -277,8 +280,6 @@ export const GiveForm = connect(
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
     padding: 16
   },
 

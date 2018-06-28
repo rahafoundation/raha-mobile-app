@@ -5,12 +5,14 @@
 import * as React from "react";
 import { format } from "date-fns";
 import { Big } from "big.js";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import Video from "react-native-video";
 
 import { Member } from "../../../store/reducers/members";
 import { RouteName } from "../Navigation";
+
+import { Text } from "../../display/Text";
 
 interface ActivityTemplateOwnProps {
   from: Member;
