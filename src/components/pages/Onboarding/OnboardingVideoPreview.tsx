@@ -4,7 +4,7 @@
  */
 import * as firebase from "firebase";
 import * as React from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import { ApiEndpoint } from "../../../api";
@@ -21,6 +21,7 @@ import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { getPrivateVideoInviteRef } from "../../../store/selectors/authentication";
 import { RouteName } from "../../shared/Navigation";
 import { VideoPreview } from "../Camera/VideoPreview";
+import DropdownAlert from "react-native-dropdownalert";
 
 type ReduxStateProps = {
   videoUploadRef?: firebase.storage.Reference;
@@ -55,6 +56,12 @@ class OnboardingVideoPreviewView extends React.Component<
   OnboardingVideoState
 > {
   videoUri?: string;
+  dropdown: any;
+
+  constructor(props: OnboardingVideoPreviewProps) {
+    super(props);
+    this.videoUri = this.props.navigation.getParam("videoUri");
+  }
 
   navigateToCamera = () => {
     this.props.navigation.navigate(RouteName.OnboardingCamera, {
@@ -70,25 +77,20 @@ class OnboardingVideoPreviewView extends React.Component<
     this.props.requestInvite(videoDownloadUrl);
   }
 
-  componentWillMount() {
-    this.videoUri = this.props.navigation.getParam("videoUri");
-
+  componentDidMount() {
     // Validate video state.
     if (!this.videoUri) {
-      console.warn(
-        "videoUri missing from navigator when mounting video preview."
+      this.dropdown.alertWithType(
+        "error",
+        "Error: Can't show video",
+        "Video was missing."
       );
-
-      // TODO: Replace with alert
-      //   this.setState({
-      //     errorMessage: "Invalid video. Please try again."
-      //   });
     } else if (!this.props.videoUploadRef) {
-      // TODO: Replace with alert
-      //   this.setState({
-      //     errorMessage:
-      //       "Could not find storage to upload video to. Please contact the Raha team."
-      //   });
+      this.dropdown.alertWithType(
+        "error",
+        "Error: Upload",
+        "Can't find storage to upload video to. Please contact the Raha team."
+      );
     }
   }
 
@@ -108,24 +110,6 @@ class OnboardingVideoPreviewView extends React.Component<
     }
   };
 
-  private _renderRequestInviteButton = () => {
-    const videoDownloadUrl = this.state
-      ? this.state.videoDownloadUrl
-      : undefined;
-    return (
-      (!this.props.requestInviteStatus ||
-        this.props.requestInviteStatus.status === ApiCallStatusType.FAILURE) &&
-      videoDownloadUrl && (
-        <Button
-          title="Request Invite"
-          onPress={() => {
-            this.sendInviteRequest(videoDownloadUrl);
-          }}
-        />
-      )
-    );
-  };
-
   render() {
     const videoUploadRef = this.props.videoUploadRef;
     return (
@@ -139,10 +123,18 @@ class OnboardingVideoPreviewView extends React.Component<
                 this.sendInviteRequest(videoDownloadUrl)
               }
               onRetakeClicked={this.navigateToCamera}
+              onVideoPlaybackError={(errorMessage: string) => {
+                console.log("error " + errorMessage);
+                this.dropdown.alertWithType(
+                  "error",
+                  "Error: Video Playback",
+                  errorMessage
+                );
+              }}
             />
           )}
         {this._renderRequestingStatus()}
-        {this._renderRequestInviteButton()}
+        <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
       </View>
     );
   }

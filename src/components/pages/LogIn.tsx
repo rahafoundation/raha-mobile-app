@@ -65,12 +65,6 @@ class LogInView extends React.Component<LogInProps> {
           title="Log in with Facebook"
           onPress={this.props.facebookLogIn}
         /> */}
-        <Button
-          title="Sign Up"
-          onPress={() =>
-            this.props.navigation.navigate(RouteName.OnboardingSplash)
-          }
-        />
         <Button title="Clear" onPress={this.props.signOut} />
       </View>
     );
