@@ -3,7 +3,7 @@
  * TODO: show image instead of random colored background with initials
  */
 import * as React from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 
 import {
@@ -40,14 +40,21 @@ export const MemberThumbnail: React.StatelessComponent<Props> = ({
       >
         {getInitialsForName(member.fullName)}
       </Text>
-      <Text
+      <View
         style={{
-          height: 75,
-          flex: 1
+          flex: 1,
+          alignSelf: "center"
         }}
       >
-        {member.fullName}
-      </Text>
+        <Text
+          style={{
+            flex: 0,
+            margin: 8
+          }}
+        >
+          {member.fullName}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 };
