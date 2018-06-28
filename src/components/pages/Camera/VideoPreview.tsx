@@ -19,11 +19,11 @@ type VideoPreviewProps = {
   videoUri: string;
   videoUploadRef: firebase.storage.Reference;
   onVideoUploaded: (videoDownloadUrl: string) => any;
+  onVideoPlaybackError: (errorMessage: string) => any;
   onRetakeClicked: () => any;
 };
 
 type VideoStateProps = {
-  errorMessage?: string;
   uploadStatus: UploadStatus;
   uploadedBytes: number;
   totalBytes: number;
@@ -54,12 +54,11 @@ export class VideoPreview extends React.Component<
     const blob = await response.blob();
     //@ts-ignore Blob does not have data type
     if (blob.data.size > MAX_VIDEO_SIZE) {
-      this.setState({
-        errorMessage:
-          "The video size is larger than " +
-          MAX_VIDEO_SIZE +
+      this.props.onVideoPlaybackError(
+        "The video size is larger than " +
+          MAX_MB +
           "MB. Please retake your video."
-      });
+      );
       return;
     }
 
@@ -80,8 +79,10 @@ export class VideoPreview extends React.Component<
         });
       },
       err => {
+        this.props.onVideoPlaybackError(
+          "Could not upload. Please try again.\n" + err.message
+        );
         this.setState({
-          errorMessage: "Could not upload. Please try again.",
           uploadStatus: UploadStatus.NOT_STARTED
         });
       },
@@ -91,26 +92,16 @@ export class VideoPreview extends React.Component<
           this.setState({ uploadStatus: UploadStatus.UPLOADED });
           this.props.onVideoUploaded(videoDownloadUrl);
         } else {
+          this.props.onVideoPlaybackError(
+            "Could not retrieve download URL. Please try again."
+          );
           this.setState({
-            errorMessage: "Could not retrieve download URL. Please try again.",
             uploadStatus: UploadStatus.NOT_STARTED
           });
         }
       }
     );
   };
-
-  componentWillMount() {
-    // Validate video state.
-    if (!this.props.videoUri) {
-      console.warn(
-        "videoUri missing from navigator when mounting video preview."
-      );
-      this.setState({
-        errorMessage: "Invalid video. Please try again."
-      });
-    }
-  }
 
   renderButtonsOrStatus() {
     if (this.state.uploadStatus === UploadStatus.NOT_STARTED) {
@@ -151,10 +142,6 @@ export class VideoPreview extends React.Component<
     }
   }
 
-  renderErrorMessage() {
-    return this.state.errorMessage && <Text>{this.state.errorMessage}</Text>;
-  }
-
   renderVideo() {
     const videoUri = this.props.videoUri;
     return (
@@ -177,7 +164,6 @@ export class VideoPreview extends React.Component<
   render() {
     return (
       <View style={styles.container}>
-        {this.renderErrorMessage()}
         {this.renderVideo()}
         {this.renderButtonsOrStatus()}
       </View>
