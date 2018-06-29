@@ -155,6 +155,7 @@ export class VideoPreview extends React.Component<
           rate={1.0}
           volume={1.0}
           muted={false}
+          paused={false}
           resizeMode="cover"
           repeat
           style={styles.video}
