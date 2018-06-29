@@ -2,17 +2,12 @@
  * Component that allows search through members and suggests autocompletions.
  */
 import * as React from "react";
-import {
-  FlatList,
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity
-} from "react-native";
+import { FlatList, View, StyleSheet, TouchableOpacity } from "react-native";
 import { SearchBar } from "react-native-elements";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../store";
-import { MembersState, Member } from "../../store/reducers/members";
+import { Member } from "../../store/reducers/members";
+import { Text } from "../shared/elements";
 
 const NUM_AUTOCOMPLETION_SUGGESTIONS = 3;
 

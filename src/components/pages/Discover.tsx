@@ -7,7 +7,6 @@
 import * as React from "react";
 import {
   View,
-  Text,
   TouchableHighlight,
   WebView as WebViewNative,
   TextProps,
@@ -18,7 +17,7 @@ import {
 import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { NavigationScreenProp, withNavigation } from "react-navigation";
 import { RouteName } from "../shared/Navigation";
-import { SafeAreaView } from "../../shared/SafeAreaView";
+import { Container, Text } from "../shared/elements";
 
 export const DiscoverWebView: React.StatelessComponent = ({
   navigation
@@ -53,9 +52,8 @@ function convertUriToCallback(uri: string) {
     };
   }
   console.error(`Invalid uri ${uri}, unsupported protocol`);
-  return (navigation: NavigationScreenProp<{}>) => {}
+  return (navigation: NavigationScreenProp<{}>) => {};
 }
-
 
 function pickRandomFromArr(arr?: any[]) {
   if (!arr || arr.length === 0) {
@@ -70,7 +68,7 @@ function convertCard(discoverCard: DiscoverCardRaw): DiscoverCard {
     body: pickRandomFromArr(discoverCard.bodyChoices),
     footer: discoverCard.footer,
     uri: convertUriToCallback(discoverCard.uri)
-  }
+  };
 }
 
 function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
@@ -80,11 +78,15 @@ function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
 // TODO below JSON should be available from website.
 const DISCOVER_INFO = convertCardArr([
   {
-    bodyChoices: ["Any feedback or questions? Contact Raha team at hi@raha.app!"],
+    bodyChoices: [
+      "Any feedback or questions? Contact Raha team at hi@raha.app!"
+    ],
     uri: "mailto:hi@raha.app"
   },
   {
-    bodyChoices: ["Give people Raha in exchange for posters, resume review, and more!"],
+    bodyChoices: [
+      "Give people Raha in exchange for posters, resume review, and more!"
+    ],
     footer: "Check out the Raha Marketplace",
     uri: "https://discuss.raha.app/c/marketplace"
   },
@@ -165,7 +167,7 @@ export const Discover: React.StatelessComponent<DiscoverProps> = ({
   // Add padding so last card does not end up hidden by tab bar
   cards.push(<View key="end_padding" style={{ height: 75 }} />);
   return (
-    <SafeAreaView>
+    <Container>
       <MemberSearchBar
         lightTheme
         placeholderText="Search Members"
@@ -175,6 +177,6 @@ export const Discover: React.StatelessComponent<DiscoverProps> = ({
         }}
       />
       <ScrollView>{cards}</ScrollView>
-    </SafeAreaView>
+    </Container>
   );
 };

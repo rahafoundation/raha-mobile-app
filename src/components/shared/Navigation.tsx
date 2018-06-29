@@ -1,6 +1,5 @@
 import "es6-symbol/implement";
 import * as React from "react";
-import { Button } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
@@ -26,6 +25,7 @@ import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
 import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
+import { Button } from "../shared/elements";
 import { Discover, DiscoverWebView } from "../pages/Discover";
 
 export enum RouteName {

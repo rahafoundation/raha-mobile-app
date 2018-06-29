@@ -7,7 +7,6 @@
  */
 import * as React from "react";
 import {
-  Text,
   View,
   SafeAreaView as SafeAreaViewIosOnly,
   ViewProps,
@@ -22,7 +21,6 @@ export const SafeAreaView: React.StatelessComponent<ViewProps> = props => {
   const { children, ...remaining } = props;
   return (
     <View {...remaining}>
-      <View style={{ height: StatusBar.currentHeight }} />
       <View {...props} />
     </View>
   );

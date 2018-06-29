@@ -3,7 +3,7 @@
  * TODO: show image instead of random colored background with initials
  */
 import * as React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 
 import {
@@ -11,6 +11,7 @@ import {
   getMemberColor
 } from "../../helpers/memberDisplay";
 import { Member } from "../../store/reducers/members";
+import { Text } from "../shared/elements";
 import { RouteName } from "../shared/Navigation";
 
 type Props = NavigationScreenProps<any> & {

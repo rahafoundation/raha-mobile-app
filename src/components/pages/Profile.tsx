@@ -4,8 +4,7 @@
  * as ability to Mint.
  */
 import * as React from "react";
-import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
-import { Button } from "react-native-elements";
+import { StyleSheet, TouchableHighlight, View } from "react-native";
 import {
   connect,
   MapDispatchToProps,
@@ -25,6 +24,7 @@ import { MemberId } from "../../identifiers";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { MintButton } from "../shared/MintButton";
+import { Button, Container, Text } from "../shared/elements";
 
 interface NavParams {
   member: Member;
@@ -125,7 +125,7 @@ const Stats: React.StatelessComponent<StatsProps> = props => (
 );
 
 const ProfileView: React.StatelessComponent<ProfileProps> = props => (
-  <View style={styles.container}>
+  <Container>
     <ActivityFeed
       header={
         <View style={styles.header}>
@@ -146,11 +146,10 @@ const ProfileView: React.StatelessComponent<ProfileProps> = props => (
           operation.data.to_uid === props.member.memberId)
       }
     />
-  </View>
+  </Container>
 );
 
 const styles = StyleSheet.create({
-  container: {},
   header: {
     marginBottom: 20,
     backgroundColor: "#efefef",

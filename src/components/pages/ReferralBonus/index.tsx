@@ -16,6 +16,7 @@ import { getMembersByIds } from "../../../store/selectors/members";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { ReferralThumbnail } from "./ReferralThumbnail";
 import { MemberId } from "../../../identifiers";
+import { Container } from "../../shared/elements";
 
 export interface ReferralBonusNavParams {
   unclaimedReferralIds: (MemberId | undefined)[];
@@ -40,13 +41,15 @@ const ReferralsComponent: React.StatelessComponent<Props> = ({
 }) => {
   const members = unclaimedReferralMembers.filter(m => m) as Member[];
   return (
-    <FlatList
-      data={members}
-      keyExtractor={m => m.memberId}
-      renderItem={m => (
-        <ReferralThumbnail invitedMember={m.item} navigation={navigation} />
-      )}
-    />
+    <Container>
+      <FlatList
+        data={members}
+        keyExtractor={m => m.memberId}
+        renderItem={m => (
+          <ReferralThumbnail invitedMember={m.item} navigation={navigation} />
+        )}
+      />
+    </Container>
   );
 };
 

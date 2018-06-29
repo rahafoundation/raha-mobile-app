@@ -4,11 +4,13 @@
  */
 
 import * as React from "react";
-import { Text, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { NavigationScreenProps } from "react-navigation";
+
 import { Camera } from "../../shared/Camera";
+import { Text } from "../../shared/elements";
 import { RouteName } from "../../shared/Navigation";
 import { Member } from "../../../store/reducers/members";
-import { NavigationScreenProps } from "react-navigation";
 
 interface NavParams {
   invitingMember?: Member;

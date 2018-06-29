@@ -62,6 +62,11 @@
     "tslib": "^1.9.0",
     "typescript": "^2.8.3"
   },
+  "rnpm": {
+    "assets": [
+      "./src/assets/fonts/"
+    ]
+  },
   "jest": {
     "preset": "react-native",
     "globals": {
