@@ -65,7 +65,7 @@ export class Camera extends React.Component<CameraProps, CameraState> {
           captureAudio
         >
           {({ camera, status }) => {
-            if (status === "NOT_AUTHORIZED") {
+            if (status !== "READY") {
               return (
                 <View>
                   <Text>
@@ -80,14 +80,13 @@ export class Camera extends React.Component<CameraProps, CameraState> {
                     }} */}
                 </View>
               );
-            } else {
-              return (
-                <View style={styles.cameraButtons}>
-                  {this.renderFlipButton()}
-                  {this.renderRecordButton(camera)}
-                </View>
-              );
             }
+            return (
+              <View style={styles.cameraButtons}>
+                {this.renderFlipButton()}
+                {this.renderRecordButton(camera)}
+              </View>
+            );
           }}
         </RNCamera>
       </View>
