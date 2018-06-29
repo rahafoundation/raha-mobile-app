@@ -173,14 +173,16 @@ export const Discover: React.StatelessComponent<DiscoverProps> = ({
   cards.push(<View key="end_padding" style={{ height: 75 }} />);
   return (
     <Container>
-      <MemberSearchBar
-        lightTheme
-        placeholderText="Search Members"
-        keyboardShouldPersistTaps="always"
-        onMemberSelected={member => {
-          navigation.push(RouteName.Profile, { member: member });
-        }}
-      />
+      <View style={{ marginTop: 8 }}>
+        <MemberSearchBar
+          lightTheme
+          placeholderText="Search Members"
+          keyboardShouldPersistTaps="always"
+          onMemberSelected={member => {
+            navigation.push(RouteName.Profile, { member: member });
+          }}
+        />
+      </View>
       <ScrollView>{cards}</ScrollView>
     </Container>
   );
