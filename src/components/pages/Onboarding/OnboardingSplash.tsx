@@ -6,7 +6,9 @@ import { Swiper } from "../../shared/Swiper";
 import { RouteName } from "../../shared/Navigation";
 import { Button, Text } from "../../shared/elements";
 
-type OnboardingProps = NavigationScreenProps<{}>;
+type OnboardingProps = {
+  onSplashCompleted: () => void;
+};
 
 export class OnboardingSplash extends React.Component<OnboardingProps> {
   render() {
@@ -69,10 +71,8 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
               We're starting a movement, and we'd like you to be a part of it.
             </Text>
             <Button
+              onPress={this.props.onSplashCompleted}
               title="Join Now"
-              onPress={() =>
-                this.props.navigation.navigate(RouteName.OnboardingInvite)
-              }
               //@ts-ignore Because Button does have a rounded property
               rounded
             />
