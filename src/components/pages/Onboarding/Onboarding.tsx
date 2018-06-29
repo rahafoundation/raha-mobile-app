@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Member } from "../../../store/reducers/members";
-import { Text, View, StyleSheet, BackHandler } from "react-native";
+import { View, StyleSheet, BackHandler } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../store";
 import { OnboardingSplash } from "./OnboardingSplash";

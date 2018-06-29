@@ -11,8 +11,8 @@ import { Button, Text } from "../../shared/elements";
 
 type OwnProps = {
   deeplinkInvitingMember?: Member;
-  onVerifiedNameAndInviter: (verifiedName: string, inviter: Member) => any;
   initialDisplayName?: string;
+  onVerifiedNameAndInviter: (verifiedName: string, inviter: Member) => any;
 };
 
 type OnboardingInviteProps = OwnProps;
@@ -32,6 +32,8 @@ export class OnboardingInvite extends React.Component<
   };
 
   render() {
+    const verifiedName = this.state.verifiedName;
+    const invitingMember = this.state.invitingMember;
     return (
       <View style={styles.container}>
         <Text>Please confirm your full name:</Text>
@@ -49,27 +51,20 @@ export class OnboardingInvite extends React.Component<
             });
           }}
         />
-        {this.state.invitingMember && (
-          <React.Fragment>
-            <Button
-              title={`Request invite from ${
-                this.state.invitingMember.fullName
-              }`}
-              onPress={() => {
-                const verifiedName = this.state.verifiedName;
-                const invitingMember = this.state.invitingMember;
-                if (!verifiedName) {
-                } else if (!invitingMember) {
-                } else {
+        {invitingMember &&
+          verifiedName && (
+            <React.Fragment>
+              <Button
+                title={`Request invite from ${invitingMember.fullName}`}
+                onPress={() => {
                   this.props.onVerifiedNameAndInviter(
                     verifiedName,
                     invitingMember
                   );
-                }
-              }}
-            />
-          </React.Fragment>
-        )}
+                }}
+              />
+            </React.Fragment>
+          )}
       </View>
     );
   }
