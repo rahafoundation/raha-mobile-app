@@ -43,7 +43,7 @@ class LogInView extends React.Component<LogInProps> {
       this.props.navigation.navigate(RouteName.Home);
       return;
     }
-    this.props.navigation.navigate(RouteName.OnboardingSplash);
+    this.props.navigation.navigate(RouteName.Onboarding);
   }
 
   render() {
