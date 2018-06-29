@@ -2,11 +2,6 @@ import * as React from "react";
 import { Member } from "../../../store/reducers/members";
 import { View, StyleSheet, TextInput } from "react-native";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
-import { connect, MapStateToProps } from "react-redux";
-import { RahaState } from "../../../store";
-import { RouteName } from "../../shared/Navigation";
-import { getLoggedInFirebaseUser } from "../../../store/selectors/authentication";
-import { NavigationScreenProps } from "react-navigation";
 
 import { Button, Text } from "../../shared/elements";
 
@@ -14,28 +9,26 @@ import { Button, Text } from "../../shared/elements";
  * Page that confirms who the user is trying to get an invite from and their full name.
  */
 
-type ReduxStateProps = {
-  displayName: string | null;
-};
-
-type OwnProps = NavigationScreenProps<{}> & {
+type OwnProps = {
   deeplinkInvitingMember?: Member;
+  onVerifiedNameAndInviter: (verifiedName: string, inviter: Member) => any;
+  initialDisplayName?: string;
 };
 
-type OnboardingInviteProps = ReduxStateProps & OwnProps;
+type OnboardingInviteProps = OwnProps;
 
 type OnboardingInviteState = {
   invitingMember?: Member;
   verifiedName?: string;
 };
 
-export class OnboardingInviteView extends React.Component<
+export class OnboardingInvite extends React.Component<
   OnboardingInviteProps,
   OnboardingInviteState
 > {
   state = {
     invitingMember: this.props.deeplinkInvitingMember,
-    verifiedName: this.props.displayName ? this.props.displayName : undefined
+    verifiedName: this.props.initialDisplayName
   };
 
   render() {
@@ -58,22 +51,22 @@ export class OnboardingInviteView extends React.Component<
         />
         {this.state.invitingMember && (
           <React.Fragment>
-            <Text>
-              By pressing request, I agree that this is my real identity, my
-              full name, and the only time I have joined Raha. I understand that
-              creating duplicate or fake accounts may result in me and people I
-              have invited losing access to our accounts.
-            </Text>
             <Button
               title={`Request invite from ${
                 this.state.invitingMember.fullName
               }`}
-              onPress={() =>
-                this.props.navigation.navigate(RouteName.OnboardingCamera, {
-                  invitingMember: this.state.invitingMember,
-                  verifiedName: this.state.verifiedName
-                })
-              }
+              onPress={() => {
+                const verifiedName = this.state.verifiedName;
+                const invitingMember = this.state.invitingMember;
+                if (!verifiedName) {
+                } else if (!invitingMember) {
+                } else {
+                  this.props.onVerifiedNameAndInviter(
+                    verifiedName,
+                    invitingMember
+                  );
+                }
+              }}
             />
           </React.Fragment>
         )}
@@ -91,15 +84,3 @@ const styles = StyleSheet.create({
     width: "100%"
   }
 });
-
-const mapStateToProps: MapStateToProps<
-  ReduxStateProps,
-  OwnProps,
-  RahaState
-> = state => {
-  const firebaseUser = getLoggedInFirebaseUser(state);
-  return {
-    displayName: firebaseUser ? firebaseUser.displayName : null
-  };
-};
-export const OnboardingInvite = connect(mapStateToProps)(OnboardingInviteView);
