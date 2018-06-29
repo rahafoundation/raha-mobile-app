@@ -124,7 +124,7 @@ const MintTab = createStackNavigator(
     ReferralBonus: {
       screen: ReferralBonus,
       navigationOptions: {
-        title: "Mint your referral bonuses"
+        title: "Bonus Mint!"
       }
     },
     Profile,
