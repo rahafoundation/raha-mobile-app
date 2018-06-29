@@ -1,11 +1,13 @@
 import * as React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProp } from "react-navigation";
 import { GoogleSigninButton } from "react-native-google-signin";
 
 import {
   googleLogIn,
+  initiatePhoneLogIn,
+  confirmPhoneLogIn,
   facebookLogIn,
   AuthMethod,
   signOut
@@ -26,15 +28,22 @@ type StateProps = {
   existingAuthMethod?: AuthMethod;
 };
 
-type DispatchProps = {
+interface DispatchProps {
   googleLogIn: () => void;
+  initiatePhoneLogIn: (phoneNumber: string) => void;
+  confirmPhoneLogIn: (confirmationCode: string) => void;
   facebookLogIn: () => void;
   signOut: () => void;
-};
+}
 
 type LogInProps = OwnProps & StateProps & DispatchProps;
 
-class LogInView extends React.Component<LogInProps> {
+interface LogInState {
+  phoneNumber: string;
+  confirmationCode: string;
+}
+
+class LogInView extends React.Component<LogInProps, LogInState> {
   componentDidUpdate() {
     if (!this.props.isLoggedIn) {
       return;
@@ -44,6 +53,24 @@ class LogInView extends React.Component<LogInProps> {
       return;
     }
     this.props.navigation.navigate(RouteName.OnboardingSplash);
+  }
+
+  private phoneNumberIsValid() {
+    // TODO: something more rigorous than this
+    return (
+      this.state &&
+      this.state.phoneNumber &&
+      this.state.phoneNumber.match(/([+][0-9]+)?[0-9]+/)
+    );
+  }
+
+  private confirmationCodeIsValid() {
+    // TODO: something more rigorous than this
+    return (
+      this.state &&
+      this.state.confirmationCode &&
+      this.state.confirmationCode.match(/[0-9]{6}/)
+    );
   }
 
   render() {
@@ -61,6 +88,32 @@ class LogInView extends React.Component<LogInProps> {
           color={GoogleSigninButton.Color.Dark}
           size={GoogleSigninButton.Size.Standard}
           onPress={this.props.googleLogIn}
+        />
+        <Text>Input your phone number here</Text>
+        <TextInput
+          onChange={event =>
+            this.setState({ phoneNumber: event.nativeEvent.text })
+          }
+          placeholder={"Your phone number"}
+        />
+        <Button
+          title="Log in by SMS"
+          onPress={() => this.props.initiatePhoneLogIn(this.state.phoneNumber)}
+          disabled={!this.phoneNumberIsValid()}
+        />
+        <Text>Input your confirmation code here</Text>
+        <TextInput
+          onChange={event =>
+            this.setState({ confirmationCode: event.nativeEvent.text })
+          }
+          placeholder={"verification code"}
+        />
+        <Button
+          title="Submit verification code"
+          onPress={() =>
+            this.props.confirmPhoneLogIn(this.state.confirmationCode)
+          }
+          disabled={!this.confirmationCodeIsValid()}
         />
         {/* <Button
           title="Log in with Facebook"
@@ -104,6 +157,10 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   dispatch: RahaThunkDispatch
 ) => ({
   googleLogIn: () => dispatch(googleLogIn()),
+  initiatePhoneLogIn: (phoneNumber: string) =>
+    dispatch(initiatePhoneLogIn(phoneNumber)),
+  confirmPhoneLogIn: (confirmationCode: string) =>
+    dispatch(confirmPhoneLogIn(confirmationCode)),
   facebookLogIn: () => dispatch(facebookLogIn()),
   signOut: () => dispatch(signOut())
 });
