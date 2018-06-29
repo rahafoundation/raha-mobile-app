@@ -89,10 +89,12 @@ class MemberSearchBarView extends React.Component<
       <View style={styles.container}>
         <SearchBar
           placeholder={this.props.placeholderText}
+          containerStyle={this.props.lightTheme ? styles.lightStyle : {}}
           style={styles.searchBar}
           lightTheme={this.props.lightTheme ? this.props.lightTheme : false}
           onChangeText={text => this.suggestMembers(text)}
           onClearText={() => this.clearSuggestions()}
+          round
         />
         <FlatList
           keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
@@ -143,7 +145,8 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50,
     backgroundColor: "#eee",
-    alignItems: "center"
+    alignItems: "center",
+    borderRadius: 3
   },
   memberText: {
     flexGrow: 1
@@ -151,6 +154,11 @@ const styles = StyleSheet.create({
   memberSubtext: {
     flexGrow: 1,
     color: "#555"
+  },
+  lightStyle: {
+    backgroundColor: "#fff",
+    borderTopColor: "#fff",
+    borderBottomColor: "#fff"
   }
 });
 

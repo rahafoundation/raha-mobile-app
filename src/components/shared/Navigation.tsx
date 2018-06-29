@@ -84,6 +84,9 @@ const HomeTab = createStackNavigator(
             onPress={() => {
               navigation.navigate(RouteName.Give);
             }}
+            buttonStyle={{ backgroundColor: "#2196F3" }}
+            //@ts-ignore Because Button does have a rounded property
+            rounded
           />
         )
       })
