@@ -10,7 +10,7 @@ import * as React from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { RNCamera, CameraType } from "react-native-camera";
 
-import { Text } from "../display/Text";
+import { Text } from "../shared/elements";
 
 type CameraProps = {
   onVideoRecorded: (uri: string) => any;

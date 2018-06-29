@@ -14,10 +14,7 @@ import { RahaState, RahaThunkDispatch } from "../../store";
 import { RouteName } from "../shared/Navigation";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { getMemberById } from "../../store/selectors/members";
-
-import { Button } from "../display/Button";
-import { Container } from "../display/Container";
-import { Text } from "../display/Text";
+import { Button, Container, Text } from "../shared/elements";
 
 type OwnProps = {
   navigation: NavigationScreenProp<{}>;

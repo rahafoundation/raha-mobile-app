@@ -11,8 +11,7 @@ import firebase from "firebase";
 import { View, StyleSheet } from "react-native";
 import Video from "react-native-video";
 
-import { Button } from "../../display/Button";
-import { Text } from "../../display/Text";
+import { Button, Text } from "../../shared/elements";
 
 const BYTES_PER_MIB = 1024 * 1024;
 const MAX_MB = 60;

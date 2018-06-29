@@ -3,8 +3,7 @@ import { View } from "react-native";
 
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { OperationType } from "../../store/reducers/operations";
-
-import { Container } from "../display/Container";
+import { Container } from "../shared/elements";
 
 export const Home: React.StatelessComponent = () => {
   return (

@@ -16,10 +16,7 @@ import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { getMemberById } from "../../../store/selectors/members";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
-
-import { Button } from "../../display/Button";
-import { Container } from "../../display/Container";
-import { Text } from "../../display/Text";
+import { Button, Container, Text } from "../../shared/elements";
 
 const MAX_MEMO_LENGTH = 140;
 // Donation rate is currently constant.

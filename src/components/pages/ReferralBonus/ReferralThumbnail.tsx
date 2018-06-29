@@ -28,10 +28,8 @@ import {
 import { Member } from "../../../store/reducers/members";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { RouteName } from "../../shared/Navigation";
+import { Button, Text } from "../../shared/elements";
 import { ReferralBonusNavParams } from ".";
-
-import { Button } from "../../display/Button";
-import { Text } from "../../display/Text";
 
 const REFERRAL_BONUS = new Big(60);
 

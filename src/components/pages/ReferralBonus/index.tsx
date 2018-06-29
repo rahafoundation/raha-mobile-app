@@ -16,8 +16,7 @@ import { getMembersByIds } from "../../../store/selectors/members";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { ReferralThumbnail } from "./ReferralThumbnail";
 import { MemberId } from "../../../identifiers";
-
-import { Container } from "../../display/Container";
+import { Container } from "../../shared/elements";
 
 export interface ReferralBonusNavParams {
   unclaimedReferralIds: (MemberId | undefined)[];

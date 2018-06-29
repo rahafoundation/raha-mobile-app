@@ -25,9 +25,8 @@ import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
 import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
+import { Button } from "../shared/elements";
 import { Discover, DiscoverWebView } from "../pages/Discover";
-
-import { Button } from "../display/Button";
 
 export enum RouteName {
   Home = "Home",

@@ -3,10 +3,7 @@ import * as React from "react";
 import { StyleSheet } from "react-native";
 
 import { Member } from "../../../store/reducers/members";
-
-import { Button } from "../../display/Button";
-import { Container } from "../../display/Container";
-import { Text } from "../../display/Text";
+import { Button, Container, Text } from "../../shared/elements";
 
 type OwnProps = {
   toMember: Member;

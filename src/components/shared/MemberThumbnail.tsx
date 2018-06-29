@@ -11,9 +11,8 @@ import {
   getMemberColor
 } from "../../helpers/memberDisplay";
 import { Member } from "../../store/reducers/members";
+import { Text } from "../shared/elements";
 import { RouteName } from "../shared/Navigation";
-
-import { Text } from "../display/Text";
 
 type Props = NavigationScreenProps<any> & {
   member: Member;

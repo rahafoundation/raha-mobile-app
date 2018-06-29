@@ -5,12 +5,12 @@
 
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
-import { Camera } from "../../shared/Camera";
-import { RouteName } from "../../shared/Navigation";
-import { Member } from "../../../store/reducers/members";
 import { NavigationScreenProps } from "react-navigation";
 
-import { Text } from "../../display/Text";
+import { Camera } from "../../shared/Camera";
+import { Text } from "../../shared/elements";
+import { RouteName } from "../../shared/Navigation";
+import { Member } from "../../../store/reducers/members";
 
 interface NavParams {
   invitingMember?: Member;

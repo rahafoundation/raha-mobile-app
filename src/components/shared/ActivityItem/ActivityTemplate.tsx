@@ -10,9 +10,8 @@ import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import Video from "react-native-video";
 
 import { Member } from "../../../store/reducers/members";
+import { Text } from "../../shared/elements";
 import { RouteName } from "../Navigation";
-
-import { Text } from "../../display/Text";
 
 interface ActivityTemplateOwnProps {
   from: Member;

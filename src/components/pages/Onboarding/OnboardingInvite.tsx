@@ -8,8 +8,7 @@ import { RouteName } from "../../shared/Navigation";
 import { getLoggedInFirebaseUser } from "../../../store/selectors/authentication";
 import { NavigationScreenProps } from "react-navigation";
 
-import { Button } from "../../display/Button";
-import { Text } from "../../display/Text";
+import { Button, Text } from "../../shared/elements";
 
 /**
  * Page that confirms who the user is trying to get an invite from and their full name.

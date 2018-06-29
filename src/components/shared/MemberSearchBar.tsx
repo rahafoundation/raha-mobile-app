@@ -7,8 +7,7 @@ import { SearchBar } from "react-native-elements";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../store";
 import { Member } from "../../store/reducers/members";
-
-import { Text } from "../display/Text";
+import { Text } from "../shared/elements";
 
 const NUM_AUTOCOMPLETION_SUGGESTIONS = 3;
 

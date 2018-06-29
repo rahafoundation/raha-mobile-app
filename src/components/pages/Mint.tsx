@@ -10,10 +10,7 @@ import { NavigationScreenProps } from "react-navigation";
 import { MemberId } from "../../identifiers";
 import { getUnclaimedReferrals } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
-
-import { Button } from "../display/Button";
-import { Container } from "../display/Container";
-import { Text } from "../display/Text";
+import { Button, Container, Text } from "../shared/elements";
 
 type OwnProps = NavigationScreenProps<{}>;
 

@@ -17,9 +17,7 @@ import {
 import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { NavigationScreenProp, withNavigation } from "react-navigation";
 import { RouteName } from "../shared/Navigation";
-
-import { Container } from "../display/Container";
-import { Text } from "../display/Text";
+import { Container, Text } from "../shared/elements";
 
 export const DiscoverWebView: React.StatelessComponent = ({
   navigation

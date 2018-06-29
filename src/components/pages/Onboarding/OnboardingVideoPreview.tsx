@@ -21,10 +21,9 @@ import {
 import { Member } from "../../../store/reducers/members";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { getPrivateVideoInviteRef } from "../../../store/selectors/authentication";
+import { Text } from "../../shared/elements";
 import { RouteName } from "../../shared/Navigation";
 import { VideoPreview } from "../Camera/VideoPreview";
-
-import { Text } from "../../display/Text";
 
 type ReduxStateProps = {
   videoUploadRef?: firebase.storage.Reference;

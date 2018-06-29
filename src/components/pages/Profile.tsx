@@ -24,10 +24,7 @@ import { MemberId } from "../../identifiers";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { MintButton } from "../shared/MintButton";
-
-import { Button } from "../display/Button";
-import { Container } from "../display/Container";
-import { Text } from "../display/Text";
+import { Button, Container, Text } from "../shared/elements";
 
 interface NavParams {
   member: Member;
