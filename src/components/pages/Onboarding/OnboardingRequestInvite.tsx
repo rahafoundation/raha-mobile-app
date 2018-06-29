@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, Button } from "react-native";
+import { StyleSheet, Button, Linking } from "react-native";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import { ApiEndpoint } from "../../../api";
 import { getUsername } from "../../../helpers/username";
@@ -28,16 +28,34 @@ type OwnProps = {
   videoDownloadUrl: string;
 };
 
+type OnboardingRequestInviteState = {
+  uniqueIdentity: boolean;
+  accountInactivity: boolean;
+  validAge: boolean;
+  privacyPolicy: boolean;
+  termsOfService: boolean;
+  codeOfConduct: boolean;
+};
+
 type OnboardingRequestInviteProps = OwnProps &
   ReduxStateProps & {
     requestInvite: (videoDownloadUrl: string) => void;
   };
 
 class OnboardingRequestInviteView extends React.Component<
-  OnboardingRequestInviteProps
+  OnboardingRequestInviteProps,
+  OnboardingRequestInviteState
 > {
   constructor(props: OnboardingRequestInviteProps) {
     super(props);
+    this.state = {
+      uniqueIdentity: false,
+      accountInactivity: false,
+      validAge: false,
+      privacyPolicy: false,
+      termsOfService: false,
+      codeOfConduct: false
+    };
   }
 
   sendInviteRequest = () => {
@@ -63,12 +81,46 @@ class OnboardingRequestInviteView extends React.Component<
   render() {
     return (
       <React.Fragment>
-        <Text>
-          By pressing submit, I agree that this is my real identity, my full
-          name, and the only time I have joined Raha. I understand that creating
-          duplicate or fake accounts may result in me and people I have invited
-          losing access to our accounts.
+        <Text style={styles.text}>
+          By clicking Submit, I agree that this is my real identity, my full
+          name, and the only time I have joined Raha. I am at least 13 years
+          old. I understand that creating duplicate or fake accounts may result
+          in me and people I have invited losing access to our accounts.
         </Text>
+        <Text style={styles.text}>
+          I understand and agree that after 1 year of inactivity, all of my Raha
+          will be irrevocably and irretrievably donated to fund basic income,
+          with 80% going directly to members and 20% to the member-owned Raha
+          Parliament.
+        </Text>
+        <Text style={styles.text}>
+          I have also read and agree to the{" "}
+          <Text
+            style={styles.linkText}
+            onPress={() =>
+              Linking.openURL("https://web.raha.app/terms-of-service")
+            }
+          >
+            Terms of Service
+          </Text>,{" "}
+          <Text
+            style={styles.linkText}
+            onPress={() =>
+              Linking.openURL("https://web.raha.app/privacy-policy")
+            }
+          >
+            Privacy Policy
+          </Text>, and{" "}
+          <Text
+            style={styles.linkText}
+            onPress={() =>
+              Linking.openURL("https://web.raha.app/code-of-conduct")
+            }
+          >
+            Code of Conduct
+          </Text>.
+        </Text>
+
         <Button title="Submit" onPress={this.sendInviteRequest} />
         {this._renderRequestingStatus()}
       </React.Fragment>
@@ -77,8 +129,11 @@ class OnboardingRequestInviteView extends React.Component<
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
+  linkText: {
+    color: "#0074D9"
+  },
+  text: {
+    margin: 12
   }
 });
 
