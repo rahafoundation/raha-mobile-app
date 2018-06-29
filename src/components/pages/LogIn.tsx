@@ -1,7 +1,10 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
-import { NavigationScreenProp } from "react-navigation";
+import {
+  NavigationScreenProp,
+  NavigationEventSubscription
+} from "react-navigation";
 import { GoogleSigninButton } from "react-native-google-signin";
 
 import {
@@ -35,6 +38,29 @@ type DispatchProps = {
 type LogInProps = OwnProps & StateProps & DispatchProps;
 
 class LogInView extends React.Component<LogInProps> {
+  componentFocusedListener?: NavigationEventSubscription;
+
+  componentDidMount() {
+    // If this LoginView becomes focused, the user was determined to be logged out. Verify that the
+    // user is logged out and if they are not, force sign them out.
+    this.componentFocusedListener = this.props.navigation.addListener(
+      "didFocus",
+      this.verifySignedOut
+    );
+  }
+
+  componentWillUnmount() {
+    if (this.componentFocusedListener) {
+      this.componentFocusedListener.remove();
+    }
+  }
+
+  verifySignedOut = () => {
+    if (this.props.isLoggedIn) {
+      this.props.signOut();
+    }
+  };
+
   componentDidUpdate() {
     if (!this.props.isLoggedIn) {
       return;
@@ -66,7 +92,6 @@ class LogInView extends React.Component<LogInProps> {
           title="Log in with Facebook"
           onPress={this.props.facebookLogIn}
         /> */}
-        <Button title="Clear" onPress={this.props.signOut} />
       </Container>
     );
   }
