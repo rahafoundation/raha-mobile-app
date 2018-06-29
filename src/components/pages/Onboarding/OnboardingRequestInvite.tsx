@@ -82,10 +82,10 @@ class OnboardingRequestInviteView extends React.Component<
     return (
       <React.Fragment>
         <Text style={styles.text}>
-          By clicking Submit, I agree that this is my real identity, my full
-          name, and the only time I have joined Raha. I am at least 13 years
-          old. I understand that creating duplicate or fake accounts may result
-          in me and people I have invited losing access to our accounts.
+          By clicking Join, I agree that this is my real identity, my full name,
+          and the only time I have joined Raha. I am at least 13 years old. I
+          understand that creating duplicate or fake accounts may result in me
+          and people I have invited losing access to our accounts.
         </Text>
         <Text style={styles.text}>
           I understand and agree that after 1 year of inactivity, all of my Raha
@@ -121,7 +121,7 @@ class OnboardingRequestInviteView extends React.Component<
           </Text>.
         </Text>
 
-        <Button title="Submit" onPress={this.sendInviteRequest} />
+        <Button title="Join" onPress={this.sendInviteRequest} />
         {this._renderRequestingStatus()}
       </React.Fragment>
     );
