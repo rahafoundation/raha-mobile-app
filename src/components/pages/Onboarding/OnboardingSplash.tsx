@@ -1,9 +1,7 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
-import { NavigationScreenProps } from "react-navigation";
 
 import { Swiper } from "../../shared/Swiper";
-import { RouteName } from "../../shared/Navigation";
 import { Button, Text } from "../../shared/elements";
 
 type OnboardingProps = {

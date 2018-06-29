@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, Text, Button } from "react-native";
+import { StyleSheet, Button } from "react-native";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import { ApiEndpoint } from "../../../api";
 import { getUsername } from "../../../helpers/username";
@@ -11,6 +11,7 @@ import {
 } from "../../../store/reducers/apiCalls";
 import { Member } from "../../../store/reducers/members";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
+import { Text } from "../../shared/elements";
 
 type ReduxStateProps = {
   requestInviteStatus?: ApiCallStatus;
