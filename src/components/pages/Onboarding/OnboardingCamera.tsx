@@ -4,7 +4,7 @@
  */
 
 import * as React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Camera } from "../../shared/Camera";
 import { Text } from "../../shared/elements";
 
@@ -19,7 +19,7 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
   render() {
     return (
       <React.Fragment>
-        <Text style={styles.text}>
+        <Text style={styles.headerText}>
           Please record a video with {this.props.inviterFullName} to verify your
           identity.
         </Text>
@@ -28,24 +28,39 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
             this.props.onVideoRecorded(uri);
           }}
         />
-        <Text style={styles.text}>Example of what to say:</Text>
-        <Text style={styles.text}>
-          {this.props.inviterFullName}: "Hi, my name is{" "}
-          {this.props.inviterFullName}, and I'm inviting{" "}
-          {this.props.verifiedFullName} to Raha."
-        </Text>
-        <Text style={styles.text}>
-          You: "My name is {this.props.verifiedFullName} and I'm joining Raha
-          because I believe every life has value."
-        </Text>
+        <View style={styles.promptContainer}>
+          <Text style={styles.promptHeader}>Example of what to say:</Text>
+          <Text style={styles.text}>
+            {`"Hi, my name is ${this.props.inviterFullName} and I'm inviting ${
+              this.props.verifiedFullName
+            } to Raha."`}
+          </Text>
+          <Text style={styles.text}>
+            "My name is {this.props.verifiedFullName} and I'm joining Raha
+            because I believe every life has value."
+          </Text>
+        </View>
       </React.Fragment>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  headerText: {
+    margin: 4,
+    textAlign: "center",
+    fontSize: 12
+  },
   text: {
     fontSize: 12,
     textAlign: "center"
+  },
+  promptHeader: {
+    fontSize: 10,
+    marginBottom: 4,
+    textAlign: "center"
+  },
+  promptContainer: {
+    margin: 12
   }
 });
