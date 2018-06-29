@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import RNFirebase from "react-native-firebase";
+import RNFirebase, { RNFirebase as FirebaseTypes } from "react-native-firebase";
 import { GoogleSignin } from "react-native-google-signin";
 
 import { AsyncActionCreator } from "./";
@@ -12,14 +12,20 @@ const FIREBASE_EXISTING_CREDENTIAL_ERROR_CODE =
 
 export enum AuthMethod {
   GOOGLE = "Google",
-  FACEBOOK = "Facebook"
+  FACEBOOK = "Facebook",
+  PHONE = "phone"
 }
 
 export const enum AuthenticationActionType {
   LOG_IN = "AUTHENTICATION.LOG_IN",
   EXISTING_CREDENTIAL = "AUTHENTICATION.EXISTING_CREDENTIAL",
   SIGN_OUT = "AUTHENTICATION.SIGN_OUT",
-  SIGNED_OUT = "AUTHENTICATION.SIGNED_OUT"
+  SIGNED_OUT = "AUTHENTICATION.SIGNED_OUT",
+  PHONE_LOGIN_INITIATED = "AUTHENTICATION.PHONE_LOGIN_INITIATED",
+  PHONE_LOGIN_PENDING_CONFIRMATION = "AUTHENTICATION.PHONE_LOGIN_PENDING_CONFIRMATION",
+  PHONE_LOGIN_FAILED = "AUTHENTICATION.PHONE_LOGIN_FAILED",
+  PHONE_LOGIN_COMPLETE = "AUTHENTICATION.PHONE_LOGIN_COMPLETE",
+  PHONE_LOGIN_CANCELED = "AUTHENTICATION.PHONE_LOGIN_CANCELED"
 }
 
 export interface LogInAction {
@@ -38,11 +44,21 @@ export interface SignedOutAction {
   type: AuthenticationActionType.SIGNED_OUT;
 }
 
+export interface PhoneLoginAction {
+  type:
+    | AuthenticationActionType.PHONE_LOGIN_CANCELED
+    | AuthenticationActionType.PHONE_LOGIN_COMPLETE
+    | AuthenticationActionType.PHONE_LOGIN_FAILED
+    | AuthenticationActionType.PHONE_LOGIN_PENDING_CONFIRMATION
+    | AuthenticationActionType.PHONE_LOGIN_INITIATED;
+}
+
 export type AuthenticationAction =
   | ExistingCredentialAction
   | LogInAction
   | SignOutAction
-  | SignedOutAction;
+  | SignedOutAction
+  | PhoneLoginAction;
 
 export const logInAction = (): LogInAction => ({
   type: AuthenticationActionType.LOG_IN
@@ -70,6 +86,39 @@ function setupGoogleSignIn() {
   });
 }
 setupGoogleSignIn();
+
+let confirmResult: FirebaseTypes.ConfirmationResult;
+export const initiatePhoneLogIn: AsyncActionCreator = (
+  phoneNumber: string
+) => async dispatch => {
+  try {
+    dispatch({ type: AuthenticationActionType.PHONE_LOGIN_INITIATED });
+    confirmResult = await auth.signInWithPhoneNumber(phoneNumber);
+    dispatch({
+      type: AuthenticationActionType.PHONE_LOGIN_PENDING_CONFIRMATION
+    });
+    // TODO: do we need to do anything?
+  } catch (err) {
+    dispatch({ type: AuthenticationActionType.PHONE_LOGIN_FAILED });
+    console.error("Initiating phone log in failed", JSON.stringify(err));
+    // TODO: do something
+    return;
+  }
+};
+
+export const confirmPhoneLogIn: AsyncActionCreator = (
+  confirmationCode: string
+) => async dispatch => {
+  try {
+    await confirmResult.confirm(confirmationCode);
+    dispatch({ type: AuthenticationActionType.PHONE_LOGIN_COMPLETE });
+  } catch (err) {
+    dispatch({ type: AuthenticationActionType.PHONE_LOGIN_FAILED });
+    console.error("Confirming phone log in failed", JSON.stringify(err));
+    // TODO: do something
+    return;
+  }
+};
 
 /**
  * TODO: if we make actions general, figure out how to distinguish between
