@@ -1,10 +1,8 @@
-import * as firebase from "firebase";
 import * as React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, Button } from "react-native";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import { ApiEndpoint } from "../../../api";
 import { getUsername } from "../../../helpers/username";
-import { MemberId } from "../../../identifiers";
 import { RahaState } from "../../../store";
 import { requestInviteFromMember } from "../../../store/actions/members";
 import {
@@ -13,11 +11,8 @@ import {
 } from "../../../store/reducers/apiCalls";
 import { Member } from "../../../store/reducers/members";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { getPrivateVideoInviteRef } from "../../../store/selectors/authentication";
 
 type ReduxStateProps = {
-  videoUploadRef?: firebase.storage.Reference;
-  firebaseMemberId?: MemberId;
   requestInviteStatus?: ApiCallStatus;
   videoDownloadUrl?: string;
 };
@@ -44,9 +39,9 @@ class OnboardingRequestInviteView extends React.Component<
     super(props);
   }
 
-  sendInviteRequest() {
+  sendInviteRequest = () => {
     this.props.requestInvite(this.props.videoDownloadUrl);
-  }
+  };
 
   private _renderRequestingStatus = () => {
     const statusType = this.props.requestInviteStatus
@@ -96,7 +91,6 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
     ownProps.invitingMember.memberId
   );
   return {
-    videoUploadRef: getPrivateVideoInviteRef(state),
     requestInviteStatus: requestInviteStatus
   };
 };

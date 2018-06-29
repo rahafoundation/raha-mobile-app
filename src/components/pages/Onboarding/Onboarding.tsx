@@ -12,6 +12,7 @@ import {
 import DropdownAlert from "react-native-dropdownalert";
 import { OnboardingCamera } from "./OnboardingCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
+import { OnboardingRequestInvite } from "./OnboardingRequestInvite";
 
 /**
  * Parent component for Onboarding flow.
@@ -116,10 +117,10 @@ export class OnboardingView extends React.Component<
   };
 
   _verifyInviter = () => {
-    const invitingMemberName = this.state.invitingMember
-      ? this.state.invitingMember.fullName
+    const invitingMember = this.state.invitingMember
+      ? this.state.invitingMember
       : undefined;
-    if (!invitingMemberName) {
+    if (!invitingMember) {
       this.dropdown.alertWithType(
         "error",
         "Error: Missing inviter",
@@ -129,7 +130,7 @@ export class OnboardingView extends React.Component<
         step: OnboardingStep.VERIFY_INVITE
       });
     }
-    return invitingMemberName;
+    return invitingMember;
   };
 
   _verifyVideoUri = () => {
@@ -212,14 +213,14 @@ export class OnboardingView extends React.Component<
       case OnboardingStep.CAMERA: {
         // Shouldn't happen, but if any required field is cleared or the onboarding
         // flow is screwed up, redirect to the correct step.
-        const invitingMemberName = this._verifyFullName();
-        const verifiedFullName = this._verifyInviter();
-        if (!invitingMemberName || !verifiedFullName) {
+        const verifiedFullName = this._verifyFullName();
+        const inviter = this._verifyInviter();
+        if (!inviter || !verifiedFullName) {
           return <React.Fragment />;
         }
         return (
           <OnboardingCamera
-            inviterFullName={invitingMemberName}
+            inviterFullName={inviter.fullName}
             verifiedFullName={verifiedFullName}
             onVideoRecorded={(videoUri: string) => {
               this.setState({
@@ -243,7 +244,7 @@ export class OnboardingView extends React.Component<
             onVideoUploaded={(videoDownloadUrl: string) =>
               this.setState({
                 videoDownloadUrl: videoDownloadUrl,
-                step: OnboardingStep.CAMERA
+                step: OnboardingStep.REQUEST_INVITE
               })
             }
             onRetakeClicked={() => {
@@ -259,6 +260,21 @@ export class OnboardingView extends React.Component<
                 step: OnboardingStep.CAMERA
               });
             }}
+          />
+        );
+      }
+      case OnboardingStep.REQUEST_INVITE: {
+        const fullName = this._verifyFullName();
+        const invitingMember = this._verifyInviter();
+        const videoDownloadUrl = this._verifyVideoDownloadUrl();
+        if (!invitingMember || !fullName || !videoDownloadUrl) {
+          return <React.Fragment />;
+        }
+        return (
+          <OnboardingRequestInvite
+            verifiedName={fullName}
+            invitingMember={invitingMember}
+            videoDownloadUrl={videoDownloadUrl}
           />
         );
       }
