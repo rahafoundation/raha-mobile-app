@@ -148,9 +148,6 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
           case RouteName.HomeTab:
             iconName = "home";
             break;
-          case RouteName.Onboarding:
-            iconName = "account-multiple-plus";
-            break;
           case RouteName.MintTab:
             iconName = "gift";
             break;
