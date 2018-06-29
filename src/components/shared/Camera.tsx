@@ -131,6 +131,9 @@ export class Camera extends React.Component<CameraProps, CameraState> {
 }
 
 const styles = StyleSheet.create({
+  errorText: {
+    color: "white"
+  },
   preview: {
     flex: 1,
     justifyContent: "flex-end",

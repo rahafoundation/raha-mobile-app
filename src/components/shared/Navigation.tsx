@@ -16,13 +16,10 @@ import { Home } from "../pages/Home";
 import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
 import { Profile as ProfileScreen } from "../pages/Profile";
-import { OnboardingVideoPreview } from "../pages/Onboarding/OnboardingVideoPreview";
 import { getMemberById } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
 import { MemberList as MemberListScreen } from "../pages/MemberList";
-import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
-import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
-import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
+import { Onboarding } from "../pages/Onboarding/Onboarding";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button } from "../shared/elements";
@@ -31,10 +28,7 @@ import { Discover, DiscoverWebView } from "../pages/Discover";
 export enum RouteName {
   Home = "Home",
   HomeTab = "HomeTab",
-  OnboardingVideoPreview = "OnboardingVideoPreview",
-  OnboardingSplash = "OnboardingSplash",
-  OnboardingCamera = "OnboardingCamera",
-  OnboardingInvite = "OnboardingInvite",
+  Onboarding = "Onboarding",
   LogIn = "LogIn",
   MemberList = "MemberList",
   OtherProfile = "OtherProfile",
@@ -167,9 +161,6 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
           case RouteName.HomeTab:
             iconName = "home";
             break;
-          case RouteName.OnboardingSplash:
-            iconName = "account-multiple-plus";
-            break;
           case RouteName.MintTab:
             iconName = "gift";
             break;
@@ -202,12 +193,9 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
 
 const SignedOutNavigator = createStackNavigator(
   {
-    OnboardingCamera,
-    OnboardingSplash,
-    OnboardingInvite,
+    Onboarding,
     LogIn,
-    Profile,
-    OnboardingVideoPreview
+    Profile
   },
   {
     headerMode: "screen",
