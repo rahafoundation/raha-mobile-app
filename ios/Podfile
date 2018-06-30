@@ -11,6 +11,8 @@ target 'mobile' do
 
   # Pods for mobile
 
+  pod 'react-native-google-analytics-bridge', :path => '../node_modules/react-native-google-analytics-bridge'
+
   target 'mobileTests' do
     inherit! :search_paths
     # Pods for testing

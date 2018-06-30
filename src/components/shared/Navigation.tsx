@@ -7,7 +7,9 @@ import {
   createStackNavigator,
   NavigationContainer,
   NavigationRouteConfig,
-  NavigationScreenConfigProps
+  NavigationScreenConfigProps,
+  NavigationState,
+  NavigationStateRoute
 } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
 
@@ -24,6 +26,8 @@ import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button } from "../shared/elements";
 import { Discover, DiscoverWebView } from "../pages/Discover";
+import { tracker } from "../../services/GoogleAnalytics";
+import { GoogleAnalyticsTracker } from "react-native-google-analytics-bridge";
 
 export enum RouteName {
   Home = "Home",
@@ -41,6 +45,39 @@ export enum RouteName {
   MintTab = "MintTab",
   ReferralBonus = "ReferralBonus",
   Give = "Give"
+}
+
+/**
+ * Gets the current screen from navigation state.
+ * Source: https://reactnavigation.org/docs/en/screen-tracking.html
+ */
+function getActiveRouteName(
+  navigationState: NavigationState | NavigationStateRoute<any>
+): string | null {
+  if (!navigationState) {
+    return null;
+  }
+  const route = navigationState.routes[navigationState.index];
+  // dive into nested navigators
+  //@ts-ignore kind of crappy way of figuring out route type
+  if (route.routes) {
+    return getActiveRouteName(route as NavigationStateRoute<any>);
+  }
+  return route.routeName;
+}
+
+function trackPageChanges(
+  prevState: NavigationState,
+  currentState: NavigationState
+) {
+  const currentScreen = getActiveRouteName(currentState);
+  const prevScreen = getActiveRouteName(prevState);
+
+  if (prevScreen !== currentScreen) {
+    if (currentScreen) {
+      tracker.trackScreenView(currentScreen);
+    }
+  }
 }
 
 const MemberList = {
@@ -221,9 +258,9 @@ class NavigationView extends React.Component<Props> {
     const { hasAccount } = this.props;
 
     if (hasAccount) {
-      return <SignedInNavigator />;
+      return <SignedInNavigator onNavigationStateChange={trackPageChanges} />;
     } else {
-      return <SignedOutNavigator />;
+      return <SignedOutNavigator onNavigationStateChange={trackPageChanges} />;
     }
   }
 }
