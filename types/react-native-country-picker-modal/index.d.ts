@@ -63,6 +63,8 @@ declare module "react-native-country-picker-modal" {
   }
   export default class CountryPicker extends React.Component<
     CountryPickerProps
-  > {}
+  > {
+    openModal: () => void;
+  }
   export function getAllCountries(): Country[];
 }
