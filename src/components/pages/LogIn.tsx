@@ -12,14 +12,15 @@ import DeviceInfo from "react-native-device-info";
 import {
   initiatePhoneLogIn,
   confirmPhoneLogIn,
-  signOut
+  signOut,
+  cancelPhoneLogIn
 } from "../../store/actions/authentication";
 import { RahaState, RahaThunkDispatch } from "../../store";
 import { RouteName } from "../shared/Navigation";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { getMemberById } from "../../store/selectors/members";
 import { Button, Container, Text } from "../shared/elements";
-import { PhoneLoginStatus } from "../../store/reducers/authentication";
+import { PhoneLogInStatus } from "../../store/reducers/authentication";
 import { FormLabel } from "react-native-elements";
 import {
   PhoneNumberUtil,
@@ -41,10 +42,11 @@ type OwnProps = {
 type StateProps = {
   isLoggedIn: boolean;
   hasAccount: boolean;
-  phoneLoginStatus?: RahaState["authentication"]["phoneLoginStatus"];
+  phoneLogInStatus?: RahaState["authentication"]["phoneLogInStatus"];
 };
 
 interface DispatchProps {
+  cancelPhoneLogIn: () => void;
   initiatePhoneLogIn: (phoneNumber: string) => void;
   confirmPhoneLogIn: (confirmationCode: string) => void;
   signOut: () => void;
@@ -148,7 +150,9 @@ class PhoneNumberForm extends React.Component<
           />
         </View>
         <Button
-          title="Request SMS Code"
+          title={
+            this.props.waitingForCode ? "Requesting..." : "Request SMS Code"
+          }
           onPress={this._handleSubmit}
           disabled={
             this.props.waitingForCode ||
@@ -164,20 +168,47 @@ class PhoneNumberForm extends React.Component<
 
 interface ConfirmationCodeFormProps {
   onSubmit: (phoneNumber: string) => void;
+  onTriggerResend: () => void;
   signOut: () => void;
   waitingForConfirmation: boolean;
+  sentTime: Date;
 }
 
 interface ConfirmationCodeFormState {
   confirmationCode: string;
+  timeLeft: number;
+  timerInterval: any;
 }
 
+const RESEND_DELAY_SECONDS = 30;
 class ConfirmationCodeForm extends React.Component<
   ConfirmationCodeFormProps,
   ConfirmationCodeFormState
 > {
-  state: ConfirmationCodeFormState = { confirmationCode: "" };
+  constructor(props: ConfirmationCodeFormProps) {
+    super(props);
+    this.state = {
+      confirmationCode: "",
+      timeLeft: this._calculateTimeLeft(),
+      timerInterval: setInterval(this._calculateTimeLeft, 1000)
+    };
+  }
 
+  _calculateTimeLeft = () => {
+    // this is in seconds
+    const timeElapsed = Math.floor(
+      (Date.now() - this.props.sentTime.getTime()) / 1000
+    );
+    const timeLeft = Math.max(RESEND_DELAY_SECONDS - timeElapsed, 0);
+    if (timeLeft === 0) {
+      clearInterval(this.state.timerInterval);
+      this.setState({ timerInterval: undefined });
+    }
+    this.setState({
+      timeLeft
+    });
+    return timeLeft;
+  };
   _handleSubmit = () => {
     if (!confirmationCodeIsValid(this.state.confirmationCode)) {
       return;
@@ -189,16 +220,34 @@ class ConfirmationCodeForm extends React.Component<
     return (
       <React.Fragment>
         <FormLabel>Verification code from SMS</FormLabel>
-        <TextInput
-          onChange={event =>
-            this.setState({ confirmationCode: event.nativeEvent.text })
-          }
-          keyboardType="numeric"
-          placeholder={"123456"}
-          onSubmitEditing={this._handleSubmit}
-        />
+        <View style={styles.confirmationInput}>
+          <TextInput
+            maxLength={6}
+            style={styles.confirmationNumberInput}
+            onChange={event =>
+              this.setState({ confirmationCode: event.nativeEvent.text })
+            }
+            keyboardType="numeric"
+            placeholder={"123456"}
+            onSubmitEditing={this._handleSubmit}
+          />
+          <Button
+            style={styles.resendButton}
+            title={
+              this.state.timeLeft === 0
+                ? "Resend code"
+                : `Resend in ${this.state.timeLeft}s`
+            }
+            onPress={this.props.onTriggerResend}
+            disabled={this.state.timeLeft !== 0}
+          />
+        </View>
         <Button
-          title="Submit verification code"
+          title={
+            this.props.waitingForConfirmation
+              ? "Submitting..."
+              : "Submit verification code"
+          }
           onPress={this._handleSubmit}
           disabled={
             this.props.waitingForConfirmation ||
@@ -225,19 +274,19 @@ class LogInView extends React.Component<LogInProps, LogInState> {
   }
 
   render() {
-    const status = this.props.phoneLoginStatus
-      ? this.props.phoneLoginStatus.status
+    const status = this.props.phoneLogInStatus
+      ? this.props.phoneLogInStatus.status
       : undefined;
     if (
       !status ||
-      status === PhoneLoginStatus.SENDING_PHONE_NUMBER ||
-      status === PhoneLoginStatus.SENDING_PHONE_NUMBER_FAILED
+      status === PhoneLogInStatus.SENDING_PHONE_NUMBER ||
+      status === PhoneLogInStatus.SENDING_PHONE_NUMBER_FAILED
     ) {
       return (
         <Container>
           {/* TODO: show errors */}
           <PhoneNumberForm
-            waitingForCode={status === PhoneLoginStatus.SENDING_PHONE_NUMBER}
+            waitingForCode={status === PhoneLogInStatus.SENDING_PHONE_NUMBER}
             onSubmit={this.props.initiatePhoneLogIn}
             signOut={this.props.signOut}
           />
@@ -250,12 +299,15 @@ class LogInView extends React.Component<LogInProps, LogInState> {
         {/* TODO: show errors */}
         <ConfirmationCodeForm
           onSubmit={this.props.confirmPhoneLogIn}
-          signOut={this.props.signOut}
+          onTriggerResend={this.props.cancelPhoneLogIn}
+          sentTime={new Date()}
           waitingForConfirmation={
-            !!this.props.phoneLoginStatus &&
-            this.props.phoneLoginStatus.status ===
-              PhoneLoginStatus.SENDING_CONFIRMATION
+            !!this.props.phoneLogInStatus &&
+            this.props.phoneLogInStatus.status ===
+              PhoneLogInStatus.SENDING_CONFIRMATION
           }
+          // TODO: remove
+          signOut={this.props.signOut}
         />
       </Container>
     );
@@ -272,10 +324,27 @@ const styles = StyleSheet.create({
     marginBottom: 25
   },
   callingCode: {
-    marginLeft: 15
+    marginLeft: 15,
+    fontSize: 20
   },
   phoneNumberInput: {
     flex: 1,
+    fontSize: 20,
+    marginLeft: 15
+  },
+  confirmationInput: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 25
+  },
+  confirmationNumberInput: {
+    flexGrow: 1,
+    fontSize: 20
+  },
+  resendButton: {
     marginLeft: 15
   }
 });
@@ -295,13 +364,14 @@ const mapStateToProps: MapStateToProps<
   return {
     isLoggedIn,
     hasAccount,
-    phoneLoginStatus: state.authentication.phoneLoginStatus
+    phoneLogInStatus: state.authentication.phoneLogInStatus
   };
 };
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   dispatch: RahaThunkDispatch
 ) => ({
+  cancelPhoneLogIn: () => dispatch(cancelPhoneLogIn()),
   initiatePhoneLogIn: (phoneNumber: string) =>
     dispatch(initiatePhoneLogIn(phoneNumber)),
   confirmPhoneLogIn: (confirmationCode: string) =>
