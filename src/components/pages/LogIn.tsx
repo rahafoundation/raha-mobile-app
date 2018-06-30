@@ -100,6 +100,15 @@ class PhoneNumberForm extends React.Component<
 
   private _handlePhoneInput: TextInputProps["onChange"] = event => {
     const text = event.nativeEvent.text;
+    if (phoneNumberIsValid(text, this.state.country)) {
+      const phoneNumberData = phoneUtil.parse(text, this.state.country.cca2);
+      const formatted = phoneUtil.format(
+        phoneNumberData,
+        PhoneNumberFormat.NATIONAL
+      );
+      this.setState({ phoneNumber: formatted });
+      return;
+    }
     const formatter = new AsYouTypeFormatter(this.state.country.cca2);
     const formattedNumber = text.split("").reduce((_, char) => {
       return formatter.inputDigit(char);
