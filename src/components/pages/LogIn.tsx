@@ -2,14 +2,10 @@ import * as React from "react";
 import { StyleSheet, TextInput } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProp } from "react-navigation";
-import { GoogleSigninButton } from "react-native-google-signin";
 
 import {
-  googleLogIn,
   initiatePhoneLogIn,
   confirmPhoneLogIn,
-  facebookLogIn,
-  AuthMethod,
   signOut
 } from "../../store/actions/authentication";
 import { RahaState, RahaThunkDispatch } from "../../store";
@@ -25,14 +21,12 @@ type OwnProps = {
 type StateProps = {
   isLoggedIn: boolean;
   hasAccount: boolean;
-  existingAuthMethod?: AuthMethod;
+  phoneLoginStatus?: RahaState["authentication"]["phoneLoginStatus"];
 };
 
 interface DispatchProps {
-  googleLogIn: () => void;
   initiatePhoneLogIn: (phoneNumber: string) => void;
   confirmPhoneLogIn: (confirmationCode: string) => void;
-  facebookLogIn: () => void;
   signOut: () => void;
 }
 
@@ -76,19 +70,6 @@ class LogInView extends React.Component<LogInProps, LogInState> {
   render() {
     return (
       <Container style={styles.container}>
-        {this.props.existingAuthMethod && (
-          <Text>
-            It appears you have created an account with that email address
-            before; please log in using a different method than{" "}
-            {this.props.existingAuthMethod}.
-          </Text>
-        )}
-        <GoogleSigninButton
-          style={{ width: 230, height: 48 }}
-          color={GoogleSigninButton.Color.Dark}
-          size={GoogleSigninButton.Size.Standard}
-          onPress={this.props.googleLogIn}
-        />
         <Text>Input your phone number here</Text>
         <TextInput
           onChange={event =>
@@ -115,10 +96,6 @@ class LogInView extends React.Component<LogInProps, LogInState> {
           }
           disabled={!this.confirmationCodeIsValid()}
         />
-        {/* <Button
-          title="Log in with Facebook"
-          onPress={this.props.facebookLogIn}
-        /> */}
         <Button title="Clear" onPress={this.props.signOut} />
       </Container>
     );
@@ -147,21 +124,17 @@ const mapStateToProps: MapStateToProps<
   return {
     isLoggedIn,
     hasAccount,
-    existingAuthMethod: state.authentication.isLoaded
-      ? undefined
-      : state.authentication.existingAuthMethod
+    phoneLoginStatus: state.authentication.phoneLoginStatus
   };
 };
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   dispatch: RahaThunkDispatch
 ) => ({
-  googleLogIn: () => dispatch(googleLogIn()),
   initiatePhoneLogIn: (phoneNumber: string) =>
     dispatch(initiatePhoneLogIn(phoneNumber)),
   confirmPhoneLogIn: (confirmationCode: string) =>
     dispatch(confirmPhoneLogIn(confirmationCode)),
-  facebookLogIn: () => dispatch(facebookLogIn()),
   signOut: () => dispatch(signOut())
 });
 
