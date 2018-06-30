@@ -61,8 +61,8 @@ interface DispatchProps {
 type LogInProps = OwnProps & StateProps & DispatchProps;
 
 interface LogInState {
-  phoneNumber: string;
-  confirmationCode: string;
+  phoneNumber?: string;
+  phoneNumberSentTime?: Date;
 }
 
 function confirmationCodeIsValid(code?: string) {
@@ -221,6 +221,16 @@ class ConfirmationCodeForm extends React.Component<
     };
   }
 
+  componentDidUpdate(prevProps: ConfirmationCodeFormProps) {
+    // reset the countdown if the verification code was resent
+    if (this.props.sentTime !== prevProps.sentTime) {
+      this.setState({
+        timeLeft: this._calculateTimeLeft(),
+        timerInterval: setInterval(this._calculateTimeLeft, 1000)
+      });
+    }
+  }
+
   _calculateTimeLeft = () => {
     // this is in seconds
     const timeElapsed = Math.floor(
@@ -289,7 +299,21 @@ class ConfirmationCodeForm extends React.Component<
 }
 
 class LogInView extends React.Component<LogInProps, LogInState> {
-  componentDidUpdate() {
+  state: LogInState = {};
+
+  componentDidUpdate(prevProps: LogInProps) {
+    // set the sent time for the resend timer, which occurs when you get to
+    // WAITING_FOR_CONFIRMATION_INPUT state (see the initiatePhoneLogIn action)
+    if (
+      this.props.phoneLogInStatus &&
+      prevProps.phoneLogInStatus !== this.props.phoneLogInStatus &&
+      this.props.phoneLogInStatus.status ===
+        PhoneLogInStatus.WAITING_FOR_CONFIRMATION_INPUT
+    ) {
+      this.setState({ phoneNumberSentTime: new Date() });
+    }
+
+    // redirect on firebase auth events
     if (!this.props.isLoggedIn) {
       return;
     }
@@ -300,21 +324,36 @@ class LogInView extends React.Component<LogInProps, LogInState> {
     this.props.navigation.navigate(RouteName.OnboardingSplash);
   }
 
+  _handleInitiatePhoneLogIn = (number: string) => {
+    this.props.initiatePhoneLogIn(number);
+    this.setState({ phoneNumber: number });
+  };
+
+  _resetPhoneLogIn = () => {
+    this.setState({
+      phoneNumber: undefined,
+      phoneNumberSentTime: undefined
+    });
+    this.props.cancelPhoneLogIn();
+  };
+
   render() {
     const status = this.props.phoneLogInStatus
       ? this.props.phoneLogInStatus.status
       : undefined;
     if (
-      !status ||
-      status === PhoneLogInStatus.SENDING_PHONE_NUMBER ||
-      status === PhoneLogInStatus.SENDING_PHONE_NUMBER_FAILED
+      !this.state.phoneNumberSentTime &&
+      (!status ||
+        status === PhoneLogInStatus.SENDING_PHONE_NUMBER ||
+        status === PhoneLogInStatus.SENDING_PHONE_NUMBER_FAILED)
     ) {
       return (
         <Container>
           {/* TODO: show errors */}
           <PhoneNumberForm
             waitingForCode={status === PhoneLogInStatus.SENDING_PHONE_NUMBER}
-            onSubmit={this.props.initiatePhoneLogIn}
+            onSubmit={number => this._handleInitiatePhoneLogIn(number)}
+            // TODO: remove
             signOut={this.props.signOut}
           />
         </Container>
@@ -326,8 +365,19 @@ class LogInView extends React.Component<LogInProps, LogInState> {
         {/* TODO: show errors */}
         <ConfirmationCodeForm
           onSubmit={this.props.confirmPhoneLogIn}
-          onTriggerResend={this.props.cancelPhoneLogIn}
-          sentTime={new Date()}
+          onTriggerResend={() => {
+            if (!this.state.phoneNumber) {
+              console.error(
+                "Phone number was expected to be present, defensively resetting state"
+              );
+              this._resetPhoneLogIn();
+              return;
+            }
+            this._handleInitiatePhoneLogIn(this.state.phoneNumber);
+          }}
+          // defensively set sentTime to the current time if it wasn't set,
+          // which may briefly happen between state updates
+          sentTime={this.state.phoneNumberSentTime || new Date()}
           waitingForConfirmation={
             !!this.props.phoneLogInStatus &&
             this.props.phoneLogInStatus.status ===
