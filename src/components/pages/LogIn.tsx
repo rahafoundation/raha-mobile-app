@@ -1,5 +1,11 @@
 import * as React from "react";
-import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+  View,
+  TouchableOpacity
+} from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProp } from "react-navigation";
 import CountryPicker, {
@@ -97,6 +103,7 @@ class PhoneNumberForm extends React.Component<
       countries.get("US")
     ) as Country // default the country to USA if can't find device's
   };
+  countryPicker?: CountryPicker | null;
 
   private _handlePhoneInput: TextInputProps["onChange"] = event => {
     const text = event.nativeEvent.text;
@@ -141,14 +148,25 @@ class PhoneNumberForm extends React.Component<
         <FormLabel>Phone number</FormLabel>
         <View style={styles.phoneInput}>
           <CountryPicker
+            ref={elem => {
+              this.countryPicker = elem;
+            }}
             cca2={this.state.country.cca2}
             showCallingCode
             onChange={this._handleCountryInput}
             filterable
           />
-          <Text style={styles.callingCode}>
-            +{this.state.country.callingCode}
-          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              if (this.countryPicker) {
+                this.countryPicker.openModal();
+              }
+            }}
+          >
+            <Text style={styles.callingCode}>
+              +{this.state.country.callingCode}
+            </Text>
+          </TouchableOpacity>
           <TextInput
             style={styles.phoneNumberInput}
             keyboardType="phone-pad"
