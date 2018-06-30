@@ -1,28 +1,33 @@
 import { Reducer } from "redux";
 
 import {
-  AuthenticationActionType,
-  AuthenticationAction
+  FirebaseAuthActionType,
+  AuthenticationAction,
+  PhoneLoginActionType
 } from "../actions/authentication";
 
-enum PhoneLoginStatus {
-  STARTED = "STARTED",
-  PENDING_CONFIRMATION = "PENDING_CONFIRMATION",
-  FAILED = "FAILED",
-  SUCCESS = "SUCCESS"
+export enum PhoneLoginStatus {
+  SENDING_PHONE_NUMBER = "SENDING_PHONE_NUMBER",
+  WAITING_FOR_CONFIRMATION_INPUT = "WAITING_FOR_CONFIRMATION_INPUT",
+  SENDING_CONFIRMATION = "SENDING_CONFIRMATION",
+  SENDING_PHONE_NUMBER_FAILED = "SENDING_PHONE_NUMBER_FAILED",
+  SENDING_CONFIRMATION_FAILED = "SENDING_CONFIRMATION_FAILED"
 }
+
 export interface AuthenticationState {
   isLoaded: boolean;
   isLoggedIn: boolean;
   phoneLoginStatus?:
     | {
         status:
-          | PhoneLoginStatus.STARTED
-          | PhoneLoginStatus.SUCCESS
-          | PhoneLoginStatus.PENDING_CONFIRMATION;
+          | PhoneLoginStatus.SENDING_PHONE_NUMBER
+          | PhoneLoginStatus.WAITING_FOR_CONFIRMATION_INPUT
+          | PhoneLoginStatus.SENDING_CONFIRMATION;
       }
     | {
-        status: PhoneLoginStatus.FAILED;
+        status:
+          | PhoneLoginStatus.SENDING_PHONE_NUMBER_FAILED
+          | PhoneLoginStatus.SENDING_CONFIRMATION_FAILED;
         errorMessage: string;
       };
 }
@@ -38,47 +43,64 @@ export const reducer: Reducer<AuthenticationState> = (
 ) => {
   const action = untypedAction as AuthenticationAction;
   switch (action.type) {
-    case AuthenticationActionType.LOG_IN:
+    case FirebaseAuthActionType.LOG_IN: {
+      // clear phone login status since we will transition out of the phone
+      // login flow now
+      const { phoneLoginStatus, ...rest } = state;
       return {
-        ...state,
+        ...rest,
         isLoaded: true,
-        isLoggedIn: true,
-        existingAuthMethod: undefined
+        isLoggedIn: true
       };
-    case AuthenticationActionType.SIGN_OUT:
-    case AuthenticationActionType.SIGNED_OUT:
+    }
+    case FirebaseAuthActionType.SIGN_OUT:
+    case FirebaseAuthActionType.SIGNED_OUT:
+      // clear phone login status just in case.
+      const { phoneLoginStatus, ...rest } = state;
       return {
-        ...state,
+        ...rest,
         isLoaded: true,
-        isLoggedIn: false,
-        existingAuthMethod: undefined
+        isLoggedIn: false
       };
-    case AuthenticationActionType.PHONE_LOGIN_CANCELED: {
+    case PhoneLoginActionType.PHONE_LOGIN_CANCELED: {
+      // clear phone login status
       const { phoneLoginStatus, ...rest } = state;
       return rest;
     }
-    case AuthenticationActionType.PHONE_LOGIN_SUCCESS:
+    case PhoneLoginActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER:
       return {
         ...state,
-        phoneLoginStatus: { status: PhoneLoginStatus.SUCCESS }
+        phoneLoginStatus: { status: PhoneLoginStatus.SENDING_PHONE_NUMBER }
       };
-    case AuthenticationActionType.PHONE_LOGIN_PENDING_CONFIRMATION:
-      return {
-        ...state,
-        phoneLoginStatus: { status: PhoneLoginStatus.PENDING_CONFIRMATION }
-      };
-    case AuthenticationActionType.PHONE_LOGIN_FAILED:
+    case PhoneLoginActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED:
       return {
         ...state,
         phoneLoginStatus: {
-          status: PhoneLoginStatus.FAILED,
+          status: PhoneLoginStatus.SENDING_PHONE_NUMBER_FAILED,
           errorMessage: action.errorMessage
         }
       };
-    case AuthenticationActionType.PHONE_LOGIN_STARTED:
+    case PhoneLoginActionType.PHONE_LOGIN_WAITING_FOR_CONFIRMATION_INPUT:
       return {
         ...state,
-        phoneLoginStatus: { status: PhoneLoginStatus.STARTED }
+        phoneLoginStatus: {
+          status: PhoneLoginStatus.WAITING_FOR_CONFIRMATION_INPUT
+        }
+      };
+    case PhoneLoginActionType.PHONE_LOGIN_SENDING_CONFIRMATION:
+      return {
+        ...state,
+        phoneLoginStatus: {
+          status: PhoneLoginStatus.SENDING_CONFIRMATION
+        }
+      };
+    case PhoneLoginActionType.PHONE_LOGIN_SENDING_CONFIRMATION_FAILED:
+      return {
+        ...state,
+        phoneLoginStatus: {
+          status: PhoneLoginStatus.SENDING_CONFIRMATION_FAILED,
+          errorMessage: action.errorMessage
+        }
       };
     default:
       return state;
