@@ -670,9 +670,22 @@
   version "4.0.5"
   resolved "https://registry.npmjs.org/@types/big.js/-/big.js-4.0.5.tgz#62c61697646269e39191f24e55e8272f05f21fc0"
 
+"@types/body-parser@*":
+  version "1.17.0"
+  resolved "https://registry.npmjs.org/@types/body-parser/-/body-parser-1.17.0.tgz#9f5c9d9bd04bb54be32d5eb9fc0d8c974e6cf58c"
+  dependencies:
+    "@types/connect" "*"
+    "@types/node" "*"
+
 "@types/cheerio@*":
   version "0.22.8"
   resolved "https://registry.npmjs.org/@types/cheerio/-/cheerio-0.22.8.tgz#5702f74f78b73e13f1eb1bd435c2c9de61a250d4"
+
+"@types/connect@*":
+  version "3.4.32"
+  resolved "https://registry.npmjs.org/@types/connect/-/connect-3.4.32.tgz#aa0e9616b9435ccad02bc52b5b454ffc2c70ba28"
+  dependencies:
+    "@types/node" "*"
 
 "@types/enzyme-adapter-react-16@^1.0.2":
   version "1.0.2"
@@ -691,6 +704,22 @@
   version "1.2.0"
   resolved "https://registry.npmjs.org/@types/events/-/events-1.2.0.tgz#81a6731ce4df43619e5c8c945383b3e62a89ea86"
 
+"@types/express-serve-static-core@*":
+  version "4.16.0"
+  resolved "https://registry.npmjs.org/@types/express-serve-static-core/-/express-serve-static-core-4.16.0.tgz#fdfe777594ddc1fe8eb8eccce52e261b496e43e7"
+  dependencies:
+    "@types/events" "*"
+    "@types/node" "*"
+    "@types/range-parser" "*"
+
+"@types/express@*":
+  version "4.16.0"
+  resolved "https://registry.npmjs.org/@types/express/-/express-4.16.0.tgz#6d8bc42ccaa6f35cf29a2b7c3333cb47b5a32a19"
+  dependencies:
+    "@types/body-parser" "*"
+    "@types/express-serve-static-core" "*"
+    "@types/serve-static" "*"
+
 "@types/glob@*":
   version "5.0.35"
   resolved "https://registry.npmjs.org/@types/glob/-/glob-5.0.35.tgz#1ae151c802cece940443b5ac246925c85189f32a"
@@ -707,6 +736,10 @@
   version "22.2.3"
   resolved "https://registry.npmjs.org/@types/jest/-/jest-22.2.3.tgz#0157c0316dc3722c43a7b71de3fdf3acbccef10d"
 
+"@types/mime@*":
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/@types/mime/-/mime-2.0.0.tgz#5a7306e367c539b9f6543499de8dd519fac37a8b"
+
 "@types/minimatch@*":
   version "3.0.3"
   resolved "https://registry.npmjs.org/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
@@ -714,6 +747,14 @@
 "@types/node@*":
   version "10.5.1"
   resolved "https://registry.npmjs.org/@types/node/-/node-10.5.1.tgz#d578446f4abff5c0b49ade9b4e5274f6badaadfc"
+
+"@types/q@^0":
+  version "0.0.37"
+  resolved "https://registry.npmjs.org/@types/q/-/q-0.0.37.tgz#7d6a934b35ee2f0ed0646d286eba559599021c9e"
+
+"@types/range-parser@*":
+  version "1.2.2"
+  resolved "https://registry.npmjs.org/@types/range-parser/-/range-parser-1.2.2.tgz#fa8e1ad1d474688a757140c91de6dace6f4abc8d"
 
 "@types/react-native-google-signin@^0.12.2":
   version "0.12.2"
@@ -767,6 +808,21 @@
   resolved "https://registry.npmjs.org/@types/react/-/react-16.4.6.tgz#5024957c6bcef4f02823accf5974faba2e54fada"
   dependencies:
     csstype "^2.2.0"
+
+"@types/serve-static@*":
+  version "1.13.2"
+  resolved "https://registry.npmjs.org/@types/serve-static/-/serve-static-1.13.2.tgz#f5ac4d7a6420a99a6a45af4719f4dcd8cd907a48"
+  dependencies:
+    "@types/express-serve-static-core" "*"
+    "@types/mime" "*"
+
+"@types/twilio@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.npmjs.org/@types/twilio/-/twilio-0.0.9.tgz#dac8236bf714a85955cb6bc63273b2c56c9c484b"
+  dependencies:
+    "@types/express" "*"
+    "@types/node" "*"
+    "@types/q" "^0"
 
 abab@^1.0.4:
   version "1.0.4"
