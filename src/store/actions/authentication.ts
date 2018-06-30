@@ -2,8 +2,9 @@ import { RNFirebase as FirebaseTypes } from "react-native-firebase";
 
 import { AsyncActionCreator } from "./";
 import { auth, webAuth } from "../../firebaseInit";
+import { ActionCreator } from "redux";
 
-export const enum PhoneLoginActionType {
+export const enum PhoneLogInActionType {
   PHONE_LOGIN_SENDING_PHONE_NUMBER = "AUTHENTICATION.PHONE_LOGIN_SENDING_PHONE_NUMBER",
   PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED = "AUTHENTICATION.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED",
   PHONE_LOGIN_WAITING_FOR_CONFIRMATION_INPUT = "AUTHENTICATION.PHONE_LOGIN_WAITING_FOR_CONFIRMATION_INPUT",
@@ -17,7 +18,7 @@ export const enum FirebaseAuthActionType {
   SIGNED_OUT = "AUTHENTICATION.SIGNED_OUT"
 }
 export type AuthenticationActionType =
-  | PhoneLoginActionType
+  | PhoneLogInActionType
   | FirebaseAuthActionType;
 
 export interface LogInAction {
@@ -31,18 +32,18 @@ export interface SignedOutAction {
   type: FirebaseAuthActionType.SIGNED_OUT;
 }
 
-export type PhoneLoginAction =
+export type PhoneLogInAction =
   | {
       type:
-        | PhoneLoginActionType.PHONE_LOGIN_CANCELED
-        | PhoneLoginActionType.PHONE_LOGIN_WAITING_FOR_CONFIRMATION_INPUT
-        | PhoneLoginActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER
-        | PhoneLoginActionType.PHONE_LOGIN_SENDING_CONFIRMATION;
+        | PhoneLogInActionType.PHONE_LOGIN_CANCELED
+        | PhoneLogInActionType.PHONE_LOGIN_WAITING_FOR_CONFIRMATION_INPUT
+        | PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER
+        | PhoneLogInActionType.PHONE_LOGIN_SENDING_CONFIRMATION;
     }
   | {
       type:
-        | PhoneLoginActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED
-        | PhoneLoginActionType.PHONE_LOGIN_SENDING_CONFIRMATION_FAILED;
+        | PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED
+        | PhoneLogInActionType.PHONE_LOGIN_SENDING_CONFIRMATION_FAILED;
       errorMessage: string;
     };
 
@@ -50,18 +51,22 @@ export type AuthenticationAction =
   | LogInAction
   | SignOutAction
   | SignedOutAction
-  | PhoneLoginAction;
+  | PhoneLogInAction;
 
-export const logInAction = (): LogInAction => ({
+export const logInAction: ActionCreator<LogInAction> = (): LogInAction => ({
   type: FirebaseAuthActionType.LOG_IN
 });
 
-const signOutAction = (): SignOutAction => ({
+const signOutAction: ActionCreator<SignOutAction> = (): SignOutAction => ({
   type: FirebaseAuthActionType.SIGN_OUT
 });
 
-export const signedOutAction = (): SignedOutAction => ({
+export const signedOutAction: ActionCreator<SignedOutAction> = () => ({
   type: FirebaseAuthActionType.SIGNED_OUT
+});
+
+export const cancelPhoneLogIn: ActionCreator<PhoneLogInAction> = () => ({
+  type: PhoneLogInActionType.PHONE_LOGIN_CANCELED
 });
 
 let confirmResult: FirebaseTypes.ConfirmationResult;
@@ -70,16 +75,16 @@ export const initiatePhoneLogIn: AsyncActionCreator = (
 ) => async dispatch => {
   try {
     dispatch({
-      type: PhoneLoginActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER
+      type: PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER
     });
     confirmResult = await auth.signInWithPhoneNumber(phoneNumber);
     dispatch({
-      type: PhoneLoginActionType.PHONE_LOGIN_WAITING_FOR_CONFIRMATION_INPUT
+      type: PhoneLogInActionType.PHONE_LOGIN_WAITING_FOR_CONFIRMATION_INPUT
     });
     // TODO: do we need to do anything?
   } catch (err) {
     dispatch({
-      type: PhoneLoginActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED,
+      type: PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED,
       // TODO: this is probably not what we want to display
       errorMessage: err.message
     });
@@ -93,14 +98,14 @@ export const confirmPhoneLogIn: AsyncActionCreator = (
 ) => async dispatch => {
   try {
     dispatch({
-      type: PhoneLoginActionType.PHONE_LOGIN_SENDING_CONFIRMATION
+      type: PhoneLogInActionType.PHONE_LOGIN_SENDING_CONFIRMATION
     });
     await confirmResult.confirm(confirmationCode);
     // no need to dispatch success since firebase auth is listening for changes,
     // it will get triggered automatically
   } catch (err) {
     dispatch({
-      type: PhoneLoginActionType.PHONE_LOGIN_SENDING_CONFIRMATION_FAILED,
+      type: PhoneLogInActionType.PHONE_LOGIN_SENDING_CONFIRMATION_FAILED,
       // TODO: this probably isn't what we want to display
       errorMessage: err.message
     });
