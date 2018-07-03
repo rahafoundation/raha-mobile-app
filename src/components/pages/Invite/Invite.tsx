@@ -7,11 +7,11 @@ import { VideoPreview } from "../Camera/VideoPreview";
 import { MapStateToProps, connect } from "react-redux";
 import {
   getLoggedInMember,
-  getPrivateVideoInviteRef
+  getInviteVideoRef
 } from "../../../store/selectors/authentication";
 import { Member } from "../../../store/reducers/members";
 import { RahaState } from "../../../store";
-import { v4 as uuid } from "uuid";
+import { generateToken } from "../../../helpers/token";
 
 enum InviteStep {
   CAMERA,
@@ -23,9 +23,7 @@ type ReduxStateProps = {
   loggedInMember?: Member;
 };
 
-type OwnProps = {
-  videoUploadRef: firebase.storage.Reference;
-};
+type OwnProps = {};
 
 type InviteProps = ReduxStateProps & OwnProps;
 
@@ -37,12 +35,14 @@ type InviteState = {
 };
 
 export class InviteView extends React.Component<InviteProps, InviteState> {
-  inviteId: string;
+  inviteToken: string;
+  videoUploadRef: firebase.storage.Reference;
   dropdown: any;
 
   constructor(props: InviteProps) {
     super(props);
-    this.inviteId = uuid();
+    this.inviteToken = generateToken();
+    this.videoUploadRef = getInviteVideoRef(this.inviteToken);
     this.state = {
       step: InviteStep.CAMERA
     };
@@ -107,7 +107,7 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
         return (
           <VideoPreview
             videoUri={videoUri}
-            videoUploadRef={this.props.videoUploadRef}
+            videoUploadRef={this.videoUploadRef}
             onVideoUploaded={(videoDownloadUrl: string) =>
               this.setState({
                 videoDownloadUrl: videoDownloadUrl

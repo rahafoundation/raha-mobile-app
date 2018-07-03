@@ -26,8 +26,7 @@ export class InviteCameraView extends React.Component<InviteCameraProps> {
     return (
       <React.Fragment>
         <Text style={styles.headerText}>
-          Please record a video with the person you're inviting to verify their
-          identity.
+          Please record a video with the person you're inviting.
         </Text>
         <Camera
           onVideoRecorded={uri => {
