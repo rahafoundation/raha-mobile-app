@@ -24,13 +24,16 @@ import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button } from "../shared/elements";
 import { Discover, DiscoverWebView } from "../pages/Discover";
+import { Invite } from "../pages/Invite/Invite";
 
 export enum RouteName {
+  Give = "Give",
   Home = "Home",
   HomeTab = "HomeTab",
-  Onboarding = "Onboarding",
+  Invite = "Invite",
   LogIn = "LogIn",
   MemberList = "MemberList",
+  Onboarding = "Onboarding",
   OtherProfile = "OtherProfile",
   Profile = "Profile",
   ProfileTab = "ProfileTab",
@@ -39,8 +42,7 @@ export enum RouteName {
   DiscoverWebView = "DiscoverWebView",
   Mint = "Mint",
   MintTab = "MintTab",
-  ReferralBonus = "ReferralBonus",
-  Give = "Give"
+  ReferralBonus = "ReferralBonus"
 }
 
 const MemberList = {
@@ -112,6 +114,12 @@ const DiscoverTab = createStackNavigator(
 
 const MintTab = createStackNavigator(
   {
+    Invite: {
+      screen: Invite,
+      navigationOptions: {
+        title: "Invite"
+      }
+    },
     Mint: {
       screen: Mint,
       navigationOptions: {

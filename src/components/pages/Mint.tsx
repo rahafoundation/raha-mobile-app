@@ -99,7 +99,9 @@ const MintView: React.StatelessComponent<Props> = ({
         >
           <Button
             title="Invite +ℝ60"
-            onPress={() => {}}
+            onPress={() => {
+              navigation.navigate(RouteName.Invite);
+            }}
             buttonStyle={{ backgroundColor: "#2196F3" }}
             //@ts-ignore Because Button does have a rounded property
             rounded
