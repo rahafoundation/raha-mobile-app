@@ -29,7 +29,6 @@ type InviteProps = ReduxStateProps & OwnProps;
 
 type InviteState = {
   step: InviteStep;
-  verifiedName?: string;
   videoUri?: string;
   videoDownloadUrl?: string;
 };
@@ -102,6 +101,7 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
       case InviteStep.VIDEO_PREVIEW: {
         const videoUri = this._verifyVideoUri();
         if (!videoUri) {
+          console.error("Missing video URI for VideoPreview step");
           return <React.Fragment />;
         }
         return (
@@ -132,6 +132,7 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
       }
       default:
     }
+    console.error("Unexpected step " + this.state.step);
     return undefined;
   }
 
