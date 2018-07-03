@@ -33,7 +33,6 @@ type ReduxStateProps = {
 
 type OwnProps = {
   deeplinkInvitingMember?: Member;
-  navigation: any;
 };
 
 type OnboardingProps = ReduxStateProps & OwnProps;
@@ -52,14 +51,13 @@ export class OnboardingView extends React.Component<
 > {
   dropdown: any;
 
-  state = {
-    step: OnboardingStep.SPLASH,
-    invitingMember: this.props.deeplinkInvitingMember,
-    verifiedName: undefined,
-    videoUri: undefined,
-    videoDownloadUrl: undefined
-  };
-
+  constructor(props: OnboardingProps) {
+    super(props);
+    this.state = {
+      step: OnboardingStep.SPLASH,
+      invitingMember: this.props.deeplinkInvitingMember
+    };
+  }
   componentDidMount() {
     BackHandler.addEventListener("hardwareBackPress", this._handleBackPress);
   }
@@ -69,35 +67,16 @@ export class OnboardingView extends React.Component<
   }
 
   _handleBackPress = () => {
-    switch (this.state.step) {
-      case OnboardingStep.VERIFY_INVITE: {
-        this.setState({
-          step: OnboardingStep.SPLASH
-        });
-        return true;
-      }
-      case OnboardingStep.CAMERA: {
-        this.setState({
-          step: OnboardingStep.VERIFY_INVITE
-        });
-        return true;
-      }
-      case OnboardingStep.VIDEO_PREVIEW: {
-        this.setState({
-          step: OnboardingStep.CAMERA
-        });
-        return true;
-      }
-      case OnboardingStep.REQUEST_INVITE: {
-        this.setState({
-          step: OnboardingStep.VIDEO_PREVIEW
-        });
-        return true;
-      }
-      case OnboardingStep.SPLASH:
-      default:
-        // Exit out of Onboarding flow.
-        return false;
+    const index = this.state.step.valueOf();
+    if (index === 0) {
+      // Exit out of Onboarding flow.
+      return false;
+    } else {
+      const previousStepKey = OnboardingStep[index - 1];
+      this.setState({
+        step: OnboardingStep[previousStepKey as keyof typeof OnboardingStep]
+      });
+      return true;
     }
   };
 
