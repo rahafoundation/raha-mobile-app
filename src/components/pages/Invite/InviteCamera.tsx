@@ -76,6 +76,9 @@ const mapStateToProps: MapStateToProps<
   RahaState
 > = state => {
   const loggedInMember = getLoggedInMember(state);
+  if (!loggedInMember) {
+    console.warn("Missing logged in member while trying to invite");
+  }
   // Should never be undefined if you're never logged in, but if you are magically, you get to be Midoriya!
   return {
     ownFullName: loggedInMember ? loggedInMember.fullName : "Izuku Midoriya"
