@@ -65,7 +65,7 @@ export class Camera extends React.Component<CameraProps, CameraState> {
           captureAudio
         >
           {({ camera, status }) => {
-            if (status !== "READY") {
+            if (status === "NOT_AUTHORIZED") {
               return (
                 <View>
                   <Text>
