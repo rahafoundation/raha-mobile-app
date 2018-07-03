@@ -47,3 +47,11 @@ export function getPrivateVideoInviteRef(state: RahaState) {
         .child("invite.mp4")
     : undefined;
 }
+
+export function getInviteVideoRef(token: string) {
+  return webStorage
+    .ref()
+    .child("invite-video")
+    .child(token)
+    .child("invite.mp4");
+}
