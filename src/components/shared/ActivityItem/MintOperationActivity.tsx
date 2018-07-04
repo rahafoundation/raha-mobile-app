@@ -28,10 +28,18 @@ export const MintOperationActivityView: React.StatelessComponent<
   MintOperationActivityProps
 > = ({ operation, fromMember, activityRef, referredMemberFullName }) => {
   let message;
-  if (operation.data.type === MintType.BASIC_INCOME) {
-    message = "I just minted some Raha.";
-  } else if (operation.data.type === MintType.REFERRAL_BONUS) {
-    message = `I just minted some Raha for referring ${referredMemberFullName}.`;
+  switch (operation.data.type) {
+    case MintType.BASIC_INCOME:
+      message = "I just minted some Raha.";
+      break;
+    case MintType.REFERRAL_BONUS:
+      message = `I just minted some Raha for referring ${referredMemberFullName}.`;
+      break;
+    default:
+      console.error(
+        `This should never happen. mint type: ${operation.data.type}`
+      );
+      return <React.Fragment />;
   }
 
   return (
