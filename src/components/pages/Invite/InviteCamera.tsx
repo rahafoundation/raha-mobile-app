@@ -24,7 +24,7 @@ type InviteCameraProps = ReduxStateProps & OwnProps;
 export class InviteCameraView extends React.Component<InviteCameraProps> {
   render() {
     return (
-      <React.Fragment>
+      <View style={{ flex: 1 }}>
         <Text style={styles.headerText}>
           Please record a video with the person you're inviting.
         </Text>
@@ -45,7 +45,7 @@ export class InviteCameraView extends React.Component<InviteCameraProps> {
             life has value."
           </Text>
         </View>
-      </React.Fragment>
+      </View>
     );
   }
 }
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   promptContainer: {
-    margin: 12
+    padding: 8
   }
 });
 
