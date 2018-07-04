@@ -32,8 +32,6 @@ export const GiveOperationActivityView: React.StatelessComponent<
       timestamp={new Date(operation.created_at)}
       amount={new Big(operation.data.amount)}
       donationAmount={new Big(operation.data.donation_amount)}
-      // @ts-ignore Remove this ignore statement when my PR passes
-      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/26714
       onRef={activityRef}
     />
   );

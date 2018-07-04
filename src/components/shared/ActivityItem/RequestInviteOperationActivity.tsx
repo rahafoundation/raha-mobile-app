@@ -30,8 +30,6 @@ export const RequestInviteOperationActivityView: React.StatelessComponent<
       to={toMember}
       timestamp={new Date(operation.created_at)}
       videoUri={fromMember.videoUri}
-      // @ts-ignore Remove this ignore statement when my PR passes
-      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/26714
       onRef={activityRef}
     />
   );

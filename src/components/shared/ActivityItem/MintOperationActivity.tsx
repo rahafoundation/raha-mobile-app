@@ -33,14 +33,13 @@ export const MintOperationActivityView: React.StatelessComponent<
   } else if (operation.data.type === MintType.REFERRAL_BONUS) {
     message = `I just minted some Raha for referring ${referredMemberFullName}.`;
   }
+
   return (
     <ActivityTemplate
       message={message}
       from={fromMember}
       timestamp={new Date(operation.created_at)}
       amount={new Big(operation.data.amount)}
-      // @ts-ignore Remove this ignore statement when my PR passes
-      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/26714
       onRef={activityRef}
     />
   );
