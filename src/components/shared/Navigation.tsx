@@ -1,5 +1,6 @@
 import "es6-symbol/implement";
 import * as React from "react";
+import { TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
@@ -56,7 +57,7 @@ const MemberList = {
 
 const Profile: NavigationRouteConfig = {
   screen: ProfileScreen,
-  navigationOptions: ({ navigation }: NavigationScreenConfigProps) => {
+  navigationOptions: ({ navigation }: any) => {
     const member = navigation.getParam("member");
     return {
       title: member ? member.fullName : "Your Profile"
@@ -148,7 +149,18 @@ const ProfileTab = createStackNavigator(
     MemberList
   },
   {
-    initialRouteName: RouteName.Profile
+    initialRouteName: RouteName.Profile,
+    navigationOptions: ({ navigation }: any) => ({
+      headerRight: (
+        <TouchableOpacity
+          onPress={() => {
+            console.error("TODO");
+          }}
+        >
+          <Icon name="dots-vertical" size={25} />
+        </TouchableOpacity>
+      )
+    })
   }
 );
 
