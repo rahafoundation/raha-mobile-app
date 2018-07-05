@@ -148,7 +148,9 @@ const DiscoverTab = createStackNavigator(
       screen: Discover,
       navigationOptions: { title: "Discover" }
     },
-    DiscoverWebView
+    DiscoverWebView,
+    Profile,
+    MemberList
   },
   {
     initialRouteName: RouteName.Discover
