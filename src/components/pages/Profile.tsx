@@ -41,17 +41,9 @@ type DispatchProps = {
   trust: (memberId: MemberId) => void;
 };
 
-type MergedDispatchProps = Pick<DispatchProps, "signOut"> & {
-  trust: () => void;
-};
+type ProfileProps = StateProps & OwnProps & DispatchProps;
 
-type MergedProps = StateProps & OwnProps & MergedDispatchProps;
-
-type ProfileProps = MergedProps;
-
-const Actions: React.StatelessComponent<
-  { isOwnProfile: boolean } & MergedDispatchProps
-> = props =>
+const Actions: React.StatelessComponent<ProfileProps> = props =>
   props.isOwnProfile ? (
     <View style={styles.actions}>
       <MintButton />
@@ -66,7 +58,7 @@ const Actions: React.StatelessComponent<
   ) : (
     <Button
       title="Trust"
-      onPress={props.trust}
+      onPress={() => props.trust(props.member.memberId)}
       //@ts-ignore Because Button does have a rounded property
       rounded
     />
@@ -132,11 +124,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = props => (
           <Thumbnail member={props.member} />
           <View style={styles.interactions}>
             <Stats navigation={props.navigation} member={props.member} />
-            <Actions
-              isOwnProfile={props.isOwnProfile}
-              trust={props.trust}
-              signOut={props.signOut}
-            />
+            <Actions {...props}/>
           </View>
         </View>
       }
@@ -241,22 +229,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   };
 };
 
-const mergeProps: MergeProps<
-  StateProps,
-  DispatchProps,
-  OwnProps,
-  MergedProps
-> = (stateProps, dispatchProps, ownProps) => {
-  return {
-    ...stateProps,
-    trust: () => dispatchProps.trust(stateProps.member.memberId),
-    signOut: dispatchProps.signOut,
-    ...ownProps
-  };
-};
-
 export const Profile = connect(
   mapStateToProps,
-  mapDispatchToProps,
-  mergeProps
+  mapDispatchToProps
 )(ProfileView);
