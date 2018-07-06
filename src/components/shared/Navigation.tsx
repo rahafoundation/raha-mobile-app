@@ -10,7 +10,8 @@ import {
   NavigationRouteConfig,
   NavigationScreenConfigProps,
   NavigationState,
-  NavigationStateRoute
+  NavigationStateRoute,
+  NavigationRoute
 } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
 
@@ -31,21 +32,25 @@ import { Invite } from "../pages/Invite/Invite";
 
 /**
  * Gets the current screen from navigation state.
- * Source: https://reactnavigation.org/docs/en/screen-tracking.html
+ * Adapted from: https://reactnavigation.org/docs/en/screen-tracking.html
  */
-function getActiveRouteName(
-  navigationState: NavigationState | NavigationStateRoute<any>
-): string | null {
+function getActiveRouteName(navigationState: NavigationState): string | null {
   if (!navigationState) {
     return null;
   }
-  const route = navigationState.routes[navigationState.index];
+
+  let memoizedNavigationRoute: NavigationStateRoute<any> | NavigationRoute =
+    navigationState.routes[navigationState.index];
+
   // dive into nested navigators
   //@ts-ignore kind of crappy way of figuring out route type
-  if (route.routes) {
-    return getActiveRouteName(route as NavigationStateRoute<any>);
+  while (memoizedNavigationRoute.routes) {
+    memoizedNavigationRoute =
+      //@ts-ignore kind of crappy way of figuring out route type
+      memoizedNavigationRoute.routes[memoizedNavigationRoute.index];
   }
-  return route.routeName;
+
+  return memoizedNavigationRoute.routeName;
 }
 
 /**
@@ -59,10 +64,8 @@ function trackPageChanges(
   const currentScreen = getActiveRouteName(currentState);
   const prevScreen = getActiveRouteName(prevState);
 
-  if (prevScreen !== currentScreen) {
-    if (currentScreen) {
-      firebase.analytics().setCurrentScreen(currentScreen);
-    }
+  if (currentScreen && prevScreen !== currentScreen) {
+    firebase.analytics().setCurrentScreen(currentScreen);
   }
 }
 
