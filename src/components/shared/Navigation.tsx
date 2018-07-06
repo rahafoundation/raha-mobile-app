@@ -1,6 +1,5 @@
 import "es6-symbol/implement";
 import * as React from "react";
-import firebase from "react-native-firebase";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
@@ -15,6 +14,7 @@ import {
 } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
 
+import { app } from "../../firebaseInit";
 import { Give as GiveScreen } from "../pages/Give";
 import { Home } from "../pages/Home";
 import { Mint } from "../pages/Mint";
@@ -65,7 +65,7 @@ function trackPageChanges(
   const prevScreen = getActiveRouteName(prevState);
 
   if (currentScreen && prevScreen !== currentScreen) {
-    firebase.analytics().setCurrentScreen(currentScreen);
+    app.analytics().setCurrentScreen(currentScreen);
   }
 }
 
