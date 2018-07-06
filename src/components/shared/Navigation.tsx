@@ -30,6 +30,7 @@ import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication"
 import { Button } from "../shared/elements";
 import { Discover, DiscoverWebView } from "../pages/Discover";
 import { Invite } from "../pages/Invite/Invite";
+import { Account } from '../pages/Account';
 
 /**
  * Gets the current screen from navigation state.
@@ -71,6 +72,7 @@ function trackPageChanges(
 }
 
 export enum RouteName {
+  Account = "Account",
   Give = "Give",
   Home = "Home",
   HomeTab = "HomeTab",
@@ -189,7 +191,13 @@ const MintTab = createStackNavigator(
 const ProfileTab = createStackNavigator(
   {
     Profile,
-    MemberList
+    MemberList,
+    Account: {
+      screen: Account,
+      navigationOptions: {
+        title: "Account"
+      }
+    },
   },
   {
     initialRouteName: RouteName.Profile,
@@ -197,7 +205,7 @@ const ProfileTab = createStackNavigator(
       headerRight: (
         <TouchableOpacity
           onPress={() => {
-            console.error("TODO");
+            navigation.navigate(RouteName.Account)
           }}
         >
           <Icon name="dots-vertical" size={25} />
