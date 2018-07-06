@@ -7,10 +7,14 @@ import {
   createStackNavigator,
   NavigationContainer,
   NavigationRouteConfig,
-  NavigationScreenConfigProps
+  NavigationScreenConfigProps,
+  NavigationState,
+  NavigationStateRoute,
+  NavigationRoute
 } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
 
+import { app } from "../../firebaseInit";
 import { Give as GiveScreen } from "../pages/Give";
 import { Home } from "../pages/Home";
 import { Mint } from "../pages/Mint";
@@ -25,6 +29,45 @@ import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication"
 import { Button } from "../shared/elements";
 import { Discover, DiscoverWebView } from "../pages/Discover";
 import { Invite } from "../pages/Invite/Invite";
+
+/**
+ * Gets the current screen from navigation state.
+ * Adapted from: https://reactnavigation.org/docs/en/screen-tracking.html
+ */
+function getActiveRouteName(navigationState: NavigationState): string | null {
+  if (!navigationState) {
+    return null;
+  }
+
+  let memoizedNavigationRoute: NavigationStateRoute<any> | NavigationRoute =
+    navigationState.routes[navigationState.index];
+
+  // dive into nested navigators
+  //@ts-ignore kind of crappy way of figuring out route type
+  while (memoizedNavigationRoute.routes) {
+    memoizedNavigationRoute =
+      //@ts-ignore kind of crappy way of figuring out route type
+      memoizedNavigationRoute.routes[memoizedNavigationRoute.index];
+  }
+
+  return memoizedNavigationRoute.routeName;
+}
+
+/**
+ * To track firebase analytics information in real time in a debug
+ * environment, run: `adb shell setprop debug.firebase.analytics.app`.
+ */
+function trackPageChanges(
+  prevState: NavigationState,
+  currentState: NavigationState
+) {
+  const currentScreen = getActiveRouteName(currentState);
+  const prevScreen = getActiveRouteName(prevState);
+
+  if (currentScreen && prevScreen !== currentScreen) {
+    app.analytics().setCurrentScreen(currentScreen);
+  }
+}
 
 export enum RouteName {
   Give = "Give",
@@ -229,9 +272,9 @@ class NavigationView extends React.Component<Props> {
     const { hasAccount } = this.props;
 
     if (hasAccount) {
-      return <SignedInNavigator />;
+      return <SignedInNavigator onNavigationStateChange={trackPageChanges} />;
     } else {
-      return <SignedOutNavigator />;
+      return <SignedOutNavigator onNavigationStateChange={trackPageChanges} />;
     }
   }
 }
