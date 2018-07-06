@@ -8,22 +8,19 @@ import { StyleSheet, TouchableHighlight, View } from "react-native";
 import {
   connect,
   MapDispatchToProps,
-  MapStateToProps,
-  MergeProps
+  MapStateToProps
 } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
 import Video from "react-native-video";
 
 import { RouteName } from "../shared/Navigation";
 import { Member } from "../../store/reducers/members";
-import { signOut } from "../../store/actions/authentication";
 import { RahaThunkDispatch, RahaState } from "../../store";
 import { trustMember } from "../../store/actions/members";
 import { getMemberById } from "../../store/selectors/members";
 import { MemberId } from "../../identifiers";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
-import { MintButton } from "../shared/MintButton";
 import { Button, Container, Text } from "../shared/elements";
 
 interface NavParams {
@@ -37,32 +34,10 @@ type StateProps = {
 };
 
 type DispatchProps = {
-  signOut: () => void;
   trust: (memberId: MemberId) => void;
 };
 
 type ProfileProps = StateProps & OwnProps & DispatchProps;
-
-const Actions: React.StatelessComponent<ProfileProps> = props =>
-  props.isOwnProfile ? (
-    <View style={styles.actions}>
-      <MintButton />
-      <Button
-        title="Log Out"
-        onPress={props.signOut}
-        buttonStyle={{ backgroundColor: "#2196F3" }}
-        //@ts-ignore Because Button does have a rounded property
-        rounded
-      />
-    </View>
-  ) : (
-    <Button
-      title="Trust"
-      onPress={() => props.trust(props.member.memberId)}
-      //@ts-ignore Because Button does have a rounded property
-      rounded
-    />
-  );
 
 const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
   <View style={styles.thumbnail}>
@@ -124,7 +99,14 @@ const ProfileView: React.StatelessComponent<ProfileProps> = props => (
           <Thumbnail member={props.member} />
           <View style={styles.interactions}>
             <Stats navigation={props.navigation} member={props.member} />
-            <Actions {...props}/>
+            {!props.isOwnProfile &&
+            // TODO add Give button
+            <Button
+              title="Trust"
+              onPress={() => props.trust(props.member.memberId)}
+              //@ts-ignore Because Button does have a rounded property
+              rounded
+            />}
           </View>
         </View>
       }
@@ -207,8 +189,7 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   dispatch: RahaThunkDispatch
 ) => {
   return {
-    trust: (memberId: MemberId) => dispatch(trustMember(memberId)),
-    signOut: () => dispatch(signOut())
+    trust: (memberId: MemberId) => dispatch(trustMember(memberId))
   };
 };
 
