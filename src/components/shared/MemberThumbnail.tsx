@@ -16,11 +16,13 @@ import { RouteName } from "../shared/Navigation";
 
 type Props = NavigationScreenProps<any> & {
   member: Member;
+  score?: Number;
 };
 
 export const MemberThumbnail: React.StatelessComponent<Props> = ({
   navigation,
-  member
+  member,
+  score
 }) => {
   return (
     <TouchableOpacity
@@ -54,6 +56,16 @@ export const MemberThumbnail: React.StatelessComponent<Props> = ({
         >
           {member.fullName}
         </Text>
+        {score !== undefined && (
+          <Text
+            style={{
+              flex: 0,
+              margin: 8
+            }}
+          >
+            {score}
+          </Text>
+        )}
       </View>
     </TouchableOpacity>
   );

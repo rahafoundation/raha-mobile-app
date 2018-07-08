@@ -29,6 +29,7 @@ import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button } from "../shared/elements";
 import { Discover, DiscoverWebView } from "../pages/Discover";
+import { LeaderBoard } from "../pages/LeaderBoard";
 import { Invite } from "../pages/Invite/Invite";
 import { Account } from '../pages/Account';
 
@@ -86,6 +87,7 @@ export enum RouteName {
   Discover = "Discover",
   DiscoverTab = "DiscoverTab",
   DiscoverWebView = "DiscoverWebView",
+  LeaderBoard = "LeaderBoard",
   Mint = "Mint",
   MintTab = "MintTab",
   ReferralBonus = "ReferralBonus"
@@ -152,6 +154,7 @@ const DiscoverTab = createStackNavigator(
       navigationOptions: { title: "Discover" }
     },
     DiscoverWebView,
+    LeaderBoard,
     Profile,
     MemberList
   },
@@ -223,7 +226,7 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
     ProfileTab
   },
   {
-    initialRouteName: RouteName.MintTab,
+    initialRouteName: RouteName.DiscoverTab,
     labeled: false,
     navigationOptions: ({ navigation }: any) => ({
       tabBarIcon: ({ focused }: any) => {

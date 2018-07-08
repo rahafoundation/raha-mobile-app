@@ -8,8 +8,7 @@ import * as React from "react";
 import {
   View,
   TouchableHighlight,
-  WebView as WebViewNative,
-  TextProps,
+  WebView,
   ScrollView,
   Linking,
   StyleSheet
@@ -20,10 +19,12 @@ import { NavigationScreenProp, withNavigation } from "react-navigation";
 import { RouteName } from "../shared/Navigation";
 import { Button, Container, Text } from "../shared/elements";
 
+const INTERNAL_ROUTE_PROTOCOL = "route:"
+
 export const DiscoverWebView: React.StatelessComponent = ({
   navigation
 }: any) => {
-  return <WebViewNative source={{ uri: navigation.getParam("uri") }} />;
+  return <WebView source={{ uri: navigation.getParam("uri") }} />;
 };
 
 type DiscoverCardRaw = {
@@ -50,6 +51,11 @@ function convertUriToCallback(uri: string) {
     return (navigation: NavigationScreenProp<{}>) => {
       // TODO test on device. Display proper error or use Linking.canOpen
       Linking.openURL(uri);
+    };
+  }
+  if (uri.startsWith(INTERNAL_ROUTE_PROTOCOL)) {
+    return (navigation: NavigationScreenProp<{}>) => {
+      navigation.navigate(uri.substr(INTERNAL_ROUTE_PROTOCOL.length));
     };
   }
   console.error(`Invalid uri ${uri}, unsupported protocol`);
@@ -108,7 +114,7 @@ const DISCOVER_INFO = convertCardArr([
       "Invite more people to mint bonus Raha and get to the top of the leaderboard ranks!"
     ],
     action: "View the leaderboard",
-    uri: "https://web.raha.app/leaderboard"
+    uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard"  // Why does RouteName.LeaderBoard break?
   },
   {
     header: "Meet the Raha Community",
