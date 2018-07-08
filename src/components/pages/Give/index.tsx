@@ -4,8 +4,11 @@ import * as React from "react";
 import { Member } from "../../../store/reducers/members";
 import { GiveForm } from "./GiveForm";
 import { Success } from "./Success";
+import { NavigationScreenProp } from 'react-navigation';
 
-type Props = {};
+type Props = {
+  navigation: NavigationScreenProp<{}>;
+};
 
 type State = {
   operationIdentifer: string;
@@ -24,7 +27,10 @@ function getOperationIdentifer(): string {
 export class Give extends React.Component<Props, State> {
   public constructor(props: Props) {
     super(props);
-    this.state = { operationIdentifer: getOperationIdentifer() };
+    this.state = {
+      toMember: props.navigation.getParam("toMember", undefined),
+      operationIdentifer: getOperationIdentifer()
+    };
   }
 
   onSuccess = (toMember: Member, amount: Big, memo: string) => {
@@ -55,7 +61,8 @@ export class Give extends React.Component<Props, State> {
       />
     ) : (
       <GiveForm
-        identifier={this.state.operationIdentifer}
+        toMemberId={toMember && toMember.memberId}
+        identifier={operationIdentifer}
         onSuccessCallback={this.onSuccess}
       />
     );
