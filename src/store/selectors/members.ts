@@ -4,7 +4,6 @@ import { Map as ImmutableMap } from "immutable";
 import { RahaState } from "../reducers";
 import { MemberId, MemberUsername } from "../../identifiers";
 import { Member, GENESIS_MEMBER } from "../reducers/members";
-import { debug } from 'util';
 
 export function getMemberById(
   state: RahaState,
@@ -69,8 +68,14 @@ function incVotesForAncestors(
   ancestors.forEach(a => incrementKey(votesByUid, a));
 }
 
-function getSortedMembersAndScore(state: RahaState, rankFn: (member: Member) => number): [Member, number][] {
-  let membersAndScore = state.members.byUserId.valueSeq().map((m): [Member, number]  => [m, rankFn(m)]).toArray();
+function getSortedMembersAndScore(
+  state: RahaState,
+  rankFn: (member: Member) => number
+): [Member, number][] {
+  let membersAndScore = state.members.byUserId
+    .valueSeq()
+    .map((m): [Member, number] => [m, rankFn(m)])
+    .toArray();
   membersAndScore.sort((a, b) => b[1] - a[1]);
   return membersAndScore;
 }
