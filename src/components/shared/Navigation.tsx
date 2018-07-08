@@ -11,7 +11,9 @@ import {
   NavigationScreenConfigProps,
   NavigationState,
   NavigationStateRoute,
-  NavigationRoute
+  NavigationRoute,
+  NavigationRouteConfigMap,
+  StackNavigatorConfig
 } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
 
@@ -119,11 +121,20 @@ const Give = {
   }
 };
 
-const HomeTab = createStackNavigator(
-  {
+export function createTabNavigator(
+  routeConfigMap: NavigationRouteConfigMap,
+  stackConfig?: StackNavigatorConfig
+): NavigationContainer {
+  return createStackNavigator({
+    ...routeConfigMap,
     Profile,
     MemberList,
-    Give,
+    Give
+  }, stackConfig);
+}
+
+const HomeTab = createTabNavigator(
+  {
     Home: {
       screen: Home,
       navigationOptions: ({ navigation }: any) => ({
@@ -147,23 +158,21 @@ const HomeTab = createStackNavigator(
   }
 );
 
-const DiscoverTab = createStackNavigator(
+const DiscoverTab = createTabNavigator(
   {
     Discover: {
       screen: Discover,
       navigationOptions: { title: "Discover" }
     },
     DiscoverWebView,
-    LeaderBoard,
-    Profile,
-    MemberList
+    LeaderBoard
   },
   {
     initialRouteName: RouteName.Discover
   }
 );
 
-const MintTab = createStackNavigator(
+const MintTab = createTabNavigator(
   {
     Invite: {
       screen: Invite,
@@ -182,25 +191,21 @@ const MintTab = createStackNavigator(
       navigationOptions: {
         title: "Bonus Mint!"
       }
-    },
-    Profile,
-    MemberList
+    }
   },
   {
     initialRouteName: RouteName.Mint
   }
 );
 
-const ProfileTab = createStackNavigator(
+const ProfileTab = createTabNavigator(
   {
-    Profile,
-    MemberList,
     Account: {
       screen: Account,
       navigationOptions: {
         title: "Account"
       }
-    },
+    }
   },
   {
     initialRouteName: RouteName.Profile,

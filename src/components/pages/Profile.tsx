@@ -99,14 +99,23 @@ const ProfileView: React.StatelessComponent<ProfileProps> = props => (
           <Thumbnail member={props.member} />
           <View style={styles.interactions}>
             <Stats navigation={props.navigation} member={props.member} />
-            {!props.isOwnProfile &&
-            // TODO add Give button
-            <Button
-              title="Trust"
-              onPress={() => props.trust(props.member.memberId)}
-              //@ts-ignore Because Button does have a rounded property
-              rounded
-            />}
+            {
+              !props.isOwnProfile &&
+            <View style={styles.actions}>
+              <Button
+                title="Trust"
+                onPress={() => props.trust(props.member.memberId)}
+                //@ts-ignore Because Button does have a rounded property
+                rounded
+              />
+              <Button
+                title="Give"
+                onPress={() => props.navigation.navigate(RouteName.Give, {toMember: props.member})}
+                //@ts-ignore Because Button does have a rounded property
+                rounded
+              />
+            </View>
+          }
           </View>
         </View>
       }
