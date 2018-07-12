@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, TextInput } from "react-native";
+import { Button, TextInput, View } from "react-native";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 import { ApiEndpoint } from "../../../api";
 import { RahaState } from "../../../store";
@@ -21,7 +21,8 @@ type OwnProps = {
 };
 
 type SendInviteState = {
-  email: string;
+  email?: string;
+  enteredInvalidEmail: boolean;
 };
 
 type SendInviteProps = OwnProps &
@@ -32,17 +33,19 @@ type SendInviteProps = OwnProps &
 class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
   constructor(props: SendInviteProps) {
     super(props);
+    this.state = {
+      enteredInvalidEmail: false
+    };
   }
 
   sendInvite = () => {
-    console.log(
-      "sending invite with " +
-        this.props.videoToken +
-        " and " +
-        this.state.email
-    );
-    // TODO: Validate email
-    this.props.sendInvite(this.props.videoToken, this.state.email);
+    const enteredEmail = this.state.email;
+    // TODO: Check if already a member
+    if (!enteredEmail || !validator.isEmail(enteredEmail)) {
+      this.setState({ enteredInvalidEmail: true });
+      return;
+    }
+    this.props.sendInvite(this.props.videoToken, enteredEmail);
   };
 
   private _renderSendingStatus = () => {
@@ -65,17 +68,19 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
     return (
       <React.Fragment>
         <TextInput
+          style={{ fontSize: 18, marginTop: 24, textAlign: "center" }}
           placeholder="What's your friend's email?"
-          onChangeText={text => this.setState({ email: text.trim() })}
+          onChangeText={text => {
+            this.setState({
+              email: text.trim(),
+              enteredInvalidEmail: false
+            });
+          }}
         />
-        <Button
-          title="Invite"
-          onPress={this.sendInvite}
-          // disabled={
-          //   this.props.sendInviteStatus &&
-          //   this.props.sendInviteStatus.status !== ApiCallStatusType.FAILURE
-          // }
-        />
+        {this.state.enteredInvalidEmail && (
+          <Text>Please enter a valid email.</Text>
+        )}
+        {<Button title="Invite" onPress={this.sendInvite} />}
         {this._renderSendingStatus()}
       </React.Fragment>
     );
