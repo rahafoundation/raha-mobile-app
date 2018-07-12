@@ -29,7 +29,9 @@ export const TrustOperationActivityView: React.StatelessComponent<
       from={fromMember}
       to={toMember}
       timestamp={new Date(operation.created_at)}
-      onRef={activityRef}
+      // TODO: uncast once omar's typing PR is accepted
+      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/27055
+      onRef={activityRef as any}
     />
   );
 };

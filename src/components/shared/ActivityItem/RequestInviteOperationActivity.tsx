@@ -30,7 +30,9 @@ export const RequestInviteOperationActivityView: React.StatelessComponent<
       to={toMember}
       timestamp={new Date(operation.created_at)}
       videoUri={fromMember.videoUri}
-      onRef={activityRef}
+      // TODO: uncast once omar's typing PR is accepted
+      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/27055
+      onRef={activityRef as any}
     />
   );
 };

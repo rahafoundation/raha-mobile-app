@@ -32,7 +32,9 @@ export const GiveOperationActivityView: React.StatelessComponent<
       timestamp={new Date(operation.created_at)}
       amount={new Big(operation.data.amount)}
       donationAmount={new Big(operation.data.donation_amount)}
-      onRef={activityRef}
+      // TODO: uncast once omar's typing PR is accepted
+      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/27055
+      onRef={activityRef as any}
     />
   );
 };

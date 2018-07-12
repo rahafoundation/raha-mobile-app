@@ -37,7 +37,7 @@ export const MintOperationActivityView: React.StatelessComponent<
       break;
     default:
       console.error(
-        `This should never happen. mint type: ${operation.data.type}`
+        `This should never happen. mint type: ${(operation.data as any).type}`
       );
       return <React.Fragment />;
   }
@@ -48,7 +48,9 @@ export const MintOperationActivityView: React.StatelessComponent<
       from={fromMember}
       timestamp={new Date(operation.created_at)}
       amount={new Big(operation.data.amount)}
-      onRef={activityRef}
+      // TODO: uncast once omar's typing PR is accepted
+      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/27055
+      onRef={activityRef as any}
     />
   );
 };
