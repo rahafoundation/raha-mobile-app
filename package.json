@@ -54,7 +54,7 @@
     "@types/react-redux": "^6.0.0",
     "@types/react-test-renderer": "^16.0.1",
     "@types/twilio": "^0.0.9",
-    "babel-jest": "23.0.1",
+    "babel-jest": "^23.4.0",
     "babel-preset-react-native": "4.0.0",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
@@ -78,9 +78,11 @@
     "preset": "react-native",
     "globals": {
       "ts-jest": {
-        "useBabelrc": true
+        "useBabelrc": true,
+        "tsConfigFile": "tsconfig.test.json"
       }
     },
+    "testRegex": "/src/.*\\.test\\.(ts|tsx)?$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -90,6 +92,7 @@
       "node"
     ],
     "transform": {
+      "^.+\\.jsx?$": "babel-jest",
       "^.+\\.tsx?$": "ts-jest"
     },
     "setupFiles": [
