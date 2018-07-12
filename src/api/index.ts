@@ -63,7 +63,7 @@ type RequestInviteApiCall = ApiCallDefinition<
 type SendInviteApiCall = ApiCallDefinition<
   ApiEndpoint.SEND_INVITE,
   void,
-  { inviteEmail: string }
+  { inviteEmail: string; videoToken: string }
 >;
 type MintApiCall = ApiCallDefinition<
   ApiEndpoint.MINT,

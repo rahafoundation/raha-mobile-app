@@ -12,6 +12,7 @@ import {
 import { Member } from "../../../store/reducers/members";
 import { RahaState } from "../../../store";
 import { generateToken } from "../../../helpers/token";
+import { SendInvite } from "./SendInvite";
 
 enum InviteStep {
   CAMERA,
@@ -110,8 +111,8 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
             videoUploadRef={this.videoUploadRef}
             onVideoUploaded={(videoDownloadUrl: string) =>
               this.setState({
-                videoDownloadUrl: videoDownloadUrl
-                // TODO: step: InviteStep.SEND_INVITE
+                videoDownloadUrl: videoDownloadUrl,
+                step: InviteStep.SEND_INVITE
               })
             }
             onRetakeClicked={() => {
@@ -130,6 +131,10 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
           />
         );
       }
+      case InviteStep.SEND_INVITE: {
+        return <SendInvite videoToken={this.inviteToken} />;
+      }
+
       default:
     }
     console.error("Unexpected step " + this.state.step);
