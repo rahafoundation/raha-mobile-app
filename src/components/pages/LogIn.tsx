@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  BackHandler,
   StyleSheet,
   TextInput,
   TextInputProps,
@@ -195,6 +196,7 @@ class PhoneNumberForm extends React.Component<
 
 interface ConfirmationCodeFormProps {
   onSubmit: (phoneNumber: string) => void;
+  onCancel: () => void;
   onTriggerResend: () => void;
   signOut: () => void;
   waitingForConfirmation: boolean;
@@ -219,6 +221,19 @@ class ConfirmationCodeForm extends React.Component<
       timeLeft: this._calculateTimeLeft(),
       timerInterval: setInterval(this._calculateTimeLeft, 1000)
     };
+  }
+
+  _handleBackPress = () => {
+    this.props.onCancel();
+    return true;
+  };
+
+  componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this._handleBackPress);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this._handleBackPress);
   }
 
   componentDidUpdate(prevProps: ConfirmationCodeFormProps) {
@@ -279,6 +294,11 @@ class ConfirmationCodeForm extends React.Component<
             disabled={this.state.timeLeft !== 0}
           />
         </View>
+        <Button
+          title="Cancel"
+          onPress={this.props.onCancel}
+          disabled={this.props.waitingForConfirmation}
+        />
         <Button
           title={
             this.props.waitingForConfirmation
@@ -364,6 +384,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
       <Container>
         {/* TODO: show errors */}
         <ConfirmationCodeForm
+          onCancel={this._resetPhoneLogIn}
           onSubmit={this.props.confirmPhoneLogIn}
           onTriggerResend={() => {
             if (!this.state.phoneNumber) {
