@@ -88,7 +88,10 @@ export const requestInviteFromMember: AsyncActionCreator = (
   );
 };
 
-export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
+export const sendInvite: AsyncActionCreator = (
+  inviteEmail: string,
+  videoToken: string
+) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
       const authToken = await getAuthToken(getState());
@@ -101,13 +104,14 @@ export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
           endpoint: ApiEndpoint.SEND_INVITE,
           params: undefined,
           body: {
-            inviteEmail
+            inviteEmail,
+            videoToken
           }
         },
         authToken
       );
     },
     ApiEndpoint.SEND_INVITE,
-    inviteEmail
+    videoToken
   );
 };
