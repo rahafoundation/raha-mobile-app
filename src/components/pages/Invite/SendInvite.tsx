@@ -10,6 +10,7 @@ import {
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { Text } from "../../shared/elements";
+import validator from "validator";
 
 type ReduxStateProps = {
   sendInviteStatus?: ApiCallStatus;
