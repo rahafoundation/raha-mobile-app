@@ -2,12 +2,13 @@ import * as React from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
+import { MemberId } from "@raha/api/dist/shared/models/identifiers";
+
 import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";
 import { RouteName } from "../shared/Navigation";
 import { getLoggedInMember } from "../../store/selectors/authentication";
 import { NavigationScreenProps } from "react-navigation";
-import { MemberId } from "../../identifiers";
 import { getUnclaimedReferrals } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
 import { Button, Container, Text } from "../shared/elements";

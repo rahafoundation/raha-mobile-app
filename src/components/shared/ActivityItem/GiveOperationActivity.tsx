@@ -4,7 +4,8 @@
 import * as React from "react";
 import { Big } from "big.js";
 
-import { GiveOperation } from "../../../store/reducers/operations";
+import { GiveOperation } from "@raha/api/dist/shared/models/Operation";
+
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";

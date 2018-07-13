@@ -1,4 +1,4 @@
-import { ApiEndpoint } from "../../api";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
 import { ApiCallError } from "../../errors/ApiCallError";
 import { AsyncAction } from "./";
 
@@ -9,7 +9,7 @@ export const enum ApiCallsActionType {
 }
 
 export interface ApiCallsActionBase {
-  endpoint: ApiEndpoint;
+  endpoint: ApiEndpointName;
   identifier: string;
 }
 
@@ -44,7 +44,7 @@ export type ApiCallsAction =
  */
 export const wrapApiCallAction: (
   asyncAction: AsyncAction,
-  endpoint: ApiEndpoint,
+  endpoint: ApiEndpointName,
   identifier: string
 ) => AsyncAction = (asyncAction, endpoint, identifier) => {
   return async (dispatch, getState, extraArgument) => {

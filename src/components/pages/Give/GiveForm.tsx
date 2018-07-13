@@ -3,8 +3,9 @@ import * as React from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
-import { ApiEndpoint } from "../../../api";
-import { MemberId } from "../../../identifiers";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+import { MemberId } from "@raha/api/dist/shared/models/identifiers";
+
 import { RahaState } from "../../../store";
 import { give } from "../../../store/actions/wallet";
 import {
@@ -242,7 +243,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   const loggedInMember = getLoggedInMember(state);
   const apiCallStatus = getStatusOfApiCall(
     state,
-    ApiEndpoint.GIVE,
+    ApiEndpointName.GIVE,
     ownProps.identifier
   );
   return {

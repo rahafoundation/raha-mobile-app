@@ -9,9 +9,10 @@ import DropdownAlert from "react-native-dropdownalert";
 import { NavigationScreenProps } from "react-navigation";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
-import { ApiEndpoint } from "../../../api";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+import { MemberId } from "@raha/api/dist/shared/models/identifiers";
+
 import { getUsername } from "../../../helpers/username";
-import { MemberId } from "../../../identifiers";
 import { RahaState } from "../../../store";
 import { requestInviteFromMember } from "../../../store/actions/members";
 import {
@@ -154,7 +155,11 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
 ) => {
   const inviter = ownProps.navigation.getParam("invitingMember");
   const requestInviteStatus = inviter
-    ? getStatusOfApiCall(state, ApiEndpoint.REQUEST_INVITE, inviter.memberId)
+    ? getStatusOfApiCall(
+        state,
+        ApiEndpointName.REQUEST_INVITE,
+        inviter.memberId
+      )
     : undefined;
   return {
     videoUploadRef: getPrivateVideoInviteRef(state),

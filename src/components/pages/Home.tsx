@@ -1,8 +1,8 @@
 import * as React from "react";
-import { View } from "react-native";
+
+import { OperationType } from "@raha/api/dist/shared/models/Operation";
 
 import { ActivityFeed } from "../shared/ActivityFeed";
-import { OperationType } from "../../store/reducers/operations";
 import { Container } from "../shared/elements";
 
 export const Home: React.StatelessComponent = () => {

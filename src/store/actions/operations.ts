@@ -1,26 +1,26 @@
-import { Operation } from "../reducers/operations";
-import { ApiEndpoint, callApi, GetOperationsApiEndpoint } from "../../api";
+import { ActionCreator } from "redux";
+
+import { list as callListOperations } from "@raha/api/dist/client/operations/list";
+import { Operation } from "@raha/api/dist/shared/models/Operation";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+
 import { AsyncAction, AsyncActionCreator } from "./";
 import { wrapApiCallAction } from "./apiCalls";
-import { ActionCreator } from "redux";
+import { config } from "../../data/config";
 
 // TODO: these operations methods are likely correct, but long term inefficient.
 // We can rely on it now given that the number and size of operations are small,
 // but later rely on cached results instead.
 export const refreshOperationsAction: AsyncAction = wrapApiCallAction(
   async dispatch => {
-    const operations = await callApi<GetOperationsApiEndpoint>({
-      endpoint: ApiEndpoint.GET_OPERATIONS,
-      params: undefined,
-      body: undefined
-    });
+    const { body } = await callListOperations(config.apiBase);
     const action: OperationsAction = {
       type: OperationsActionType.SET_OPERATIONS,
-      operations
+      operations: body
     };
     dispatch(action);
   },
-  ApiEndpoint.GET_OPERATIONS,
+  ApiEndpointName.GET_OPERATIONS,
   Date.now().toString()
 );
 

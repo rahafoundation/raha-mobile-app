@@ -14,13 +14,14 @@ import {
 import { NavigationScreenProps } from "react-navigation";
 import Video from "react-native-video";
 
+import { MemberId } from "@raha/api/dist/shared/models/identifiers";
+
 import { RouteName } from "../shared/Navigation";
 import { Member } from "../../store/reducers/members";
 import { signOut } from "../../store/actions/authentication";
 import { RahaThunkDispatch, RahaState } from "../../store";
 import { trustMember } from "../../store/actions/members";
 import { getMemberById } from "../../store/selectors/members";
-import { MemberId } from "../../identifiers";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { MintButton } from "../shared/MintButton";

@@ -1,11 +1,22 @@
+/**
+ * TODO: Would be nice if this at some point were actually an API model.
+ */
 import { Reducer } from "redux";
 import { Big } from "big.js";
 
+import {
+  Operation,
+  OperationType,
+  MintType
+} from "@raha/api/dist/shared/models/Operation";
+import {
+  MemberId,
+  MemberUsername
+} from "@raha/api/dist/shared/models/identifiers";
+
 import { Set, Map } from "immutable";
-import { MemberId, MemberUsername } from "../../identifiers";
 import { OperationsActionType } from "../actions/operations";
 import { MembersAction } from "../actions/members";
-import { Operation, OperationType, MintType } from "./operations";
 import { OperationInvalidError } from "../../errors/OperationInvalidError";
 import { config } from "../../data/config";
 

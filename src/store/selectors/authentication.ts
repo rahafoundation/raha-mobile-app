@@ -1,6 +1,7 @@
+import { MemberId } from "@raha/api/dist/shared/models/identifiers";
+
 import { RahaState } from "../reducers";
 import { auth, webStorage } from "../../firebaseInit";
-import { MemberId } from "../../identifiers";
 
 export async function getAuthToken(
   state: RahaState

@@ -1,9 +1,8 @@
 import { ApiCallError } from "./";
-import { ApiCall, resolveApiEndpoint } from "../../api";
+import { ApiCall } from "../../../node_modules/@raha/api/dist/shared/types/ApiEndpoint/ApiCall";
 
 function apiCallToString(apiCall: ApiCall) {
-  const { url, method } = resolveApiEndpoint(apiCall);
-  return `${method} ${url}`;
+  return `${apiCall.location.method}, ${apiCall.location.uri}`;
 }
 
 export class InvalidApiRequestError extends ApiCallError {
@@ -12,8 +11,8 @@ export class InvalidApiRequestError extends ApiCallError {
   constructor(failedApiCall: ApiCall) {
     super(
       `${apiCallToString(failedApiCall)} ${
-        "params" in failedApiCall
-          ? `with params ${JSON.stringify(failedApiCall.params)}`
+        "params" in failedApiCall.request
+          ? `with params ${JSON.stringify(failedApiCall.request.params)}`
           : ""
       } failed.`
     );

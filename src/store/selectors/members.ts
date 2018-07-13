@@ -1,5 +1,9 @@
+import {
+  MemberId,
+  MemberUsername
+} from "@raha/api/dist/shared/models/identifiers";
+
 import { RahaState } from "../reducers";
-import { MemberId, MemberUsername } from "../../identifiers";
 import { Member } from "../reducers/members";
 
 export function getMemberById(

@@ -4,7 +4,11 @@
 import * as React from "react";
 import { Big } from "big.js";
 
-import { MintOperation, MintType } from "../../../store/reducers/operations";
+import {
+  MintOperation,
+  MintType
+} from "@raha/api/dist/shared/models/Operation";
+
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
