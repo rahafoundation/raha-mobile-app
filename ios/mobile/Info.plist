@@ -46,6 +46,16 @@
 				<string>app.raha.mobile</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>app.raha.mobile</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>raha</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
@@ -62,8 +72,12 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Raha needs access to your camera to record invite videos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Raha needs access to your microphone to record invite videos.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
@@ -93,9 +107,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSCameraUsageDescription</key>
-	<string>Raha needs access to your camera to record invite videos.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Raha needs access to your microphone to record invite videos.</string>
 </dict>
 </plist>
