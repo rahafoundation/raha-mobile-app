@@ -158,8 +158,9 @@ dependencies {
     }
 
     implementation "com.google.android.gms:play-services-base:15.0.1"
+    implementation "com.google.android.gms:play-services-auth:15.0.1"
     implementation "com.google.firebase:firebase-core:16.0.1"
-    implementation "com.google.firebase:firebase-auth:16.0.2"
+    implementation "com.google.firebase:firebase-auth:16.0.1"
     implementation "com.google.firebase:firebase-storage:16.0.1"
 
     compile project(':react-native-camera')
@@ -173,7 +174,6 @@ dependencies {
     compile(project(":react-native-google-signin")){
         exclude group: "com.google.android.gms"
     }
-    compile 'com.google.android.gms:play-services-auth:15.0.0'
     // end react-native-google-signin
 }
 
