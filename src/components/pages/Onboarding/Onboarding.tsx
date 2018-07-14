@@ -4,7 +4,8 @@ import { View, StyleSheet, BackHandler } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../store";
 import { OnboardingSplash } from "./OnboardingSplash";
-import { OnboardingInvite } from "./OnboardingInvite";
+import { SelectInviter } from "./SelectInviter";
+import { VerifyName } from "./VerifyName";
 import {
   getLoggedInFirebaseUser,
   getPrivateVideoInviteRef
@@ -21,7 +22,8 @@ import { NavigationScreenProps } from "react-navigation";
 
 enum OnboardingStep {
   SPLASH,
-  VERIFY_INVITE,
+  SELECT_INVITER,
+  VERIFY_NAME,
   CAMERA,
   VIDEO_PREVIEW,
   REQUEST_INVITE
@@ -92,7 +94,7 @@ export class OnboardingView extends React.Component<
         "Need to verify full name before this step."
       );
       this.setState({
-        step: OnboardingStep.VERIFY_INVITE
+        step: OnboardingStep.VERIFY_NAME
       });
     }
     return verifiedFullName;
@@ -109,7 +111,7 @@ export class OnboardingView extends React.Component<
         "Need person to request invite from before this step."
       );
       this.setState({
-        step: OnboardingStep.VERIFY_INVITE
+        step: OnboardingStep.SELECT_INVITER
       });
     }
     return invitingMember;
@@ -167,25 +169,33 @@ export class OnboardingView extends React.Component<
           <OnboardingSplash
             onSplashCompleted={() => {
               this.setState({
-                step: OnboardingStep.VERIFY_INVITE
+                step: OnboardingStep.SELECT_INVITER
               });
             }}
           />
         );
       }
-      case OnboardingStep.VERIFY_INVITE: {
+      case OnboardingStep.SELECT_INVITER: {
         return (
-          <OnboardingInvite
+          <SelectInviter
+            onSelectedInviter={(inviter: Member) => {
+              this.setState({
+                invitingMember: inviter,
+                step: OnboardingStep.VERIFY_NAME
+              });
+            }}
+          />
+        );
+      }
+      case OnboardingStep.VERIFY_NAME: {
+        return (
+          <VerifyName
             initialDisplayName={
               this.props.displayName ? this.props.displayName : undefined
             }
-            onVerifiedNameAndInviter={(
-              verifiedName: string,
-              inviter: Member
-            ) => {
+            onVerifiedName={(verifiedName: string) => {
               this.setState({
                 verifiedName: verifiedName,
-                invitingMember: inviter,
                 step: OnboardingStep.CAMERA
               });
             }}
@@ -226,7 +236,7 @@ export class OnboardingView extends React.Component<
             onVideoUploaded={(videoDownloadUrl: string) =>
               this.setState({
                 videoDownloadUrl: videoDownloadUrl,
-                step: OnboardingStep.REQUEST_INVITE
+                step: OnboardingStep.VERIFY_NAME
               })
             }
             onRetakeClicked={() => {

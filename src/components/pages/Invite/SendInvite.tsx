@@ -40,7 +40,6 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
 
   sendInvite = () => {
     const enteredEmail = this.state.email;
-    // TODO: Check if already a member
     if (!enteredEmail || !validator.isEmail(enteredEmail)) {
       this.setState({ enteredInvalidEmail: true });
       return;
