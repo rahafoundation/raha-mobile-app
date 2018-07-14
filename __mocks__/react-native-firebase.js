@@ -1,5 +1,6 @@
 exports.default = {
   initializeApp: () => ({
-    auth: () => {}
+    auth: () => {},
+    storage: () => {}
   })
 };
