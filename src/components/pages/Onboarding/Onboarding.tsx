@@ -13,6 +13,7 @@ import DropdownAlert from "react-native-dropdownalert";
 import { OnboardingCamera } from "./OnboardingCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
 import { OnboardingRequestInvite } from "./OnboardingRequestInvite";
+import { NavigationScreenProps } from "react-navigation";
 
 /**
  * Parent component for Onboarding flow.
@@ -26,14 +27,17 @@ enum OnboardingStep {
   REQUEST_INVITE
 }
 
+interface OnboardingParams {
+  videoToken?: string;
+  inviterUsername?: string;
+}
+
 type ReduxStateProps = {
   displayName: string | null;
   videoUploadRef?: firebase.storage.Reference;
 };
 
-type OwnProps = {
-  deeplinkInvitingMember?: Member;
-};
+type OwnProps = NavigationScreenProps<OnboardingParams>;
 
 type OnboardingProps = ReduxStateProps & OwnProps;
 
@@ -54,8 +58,7 @@ export class OnboardingView extends React.Component<
   constructor(props: OnboardingProps) {
     super(props);
     this.state = {
-      step: OnboardingStep.SPLASH,
-      invitingMember: this.props.deeplinkInvitingMember
+      step: OnboardingStep.SPLASH
     };
   }
   componentDidMount() {
