@@ -11,6 +11,7 @@
 #import <React/RCTRootView.h>
 #import <Firebase.h>
 #import <RNGoogleSignin/RNGoogleSignin.h>
+#import <React/RCTLinkingManager.h>
 
 @implementation AppDelegate
 
@@ -39,8 +40,8 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-
-  return [RNGoogleSignin application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
+  return [RNGoogleSignin application:application openURL:url sourceApplication:sourceApplication annotation:annotation]
+  || [RCTLinkingManager application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
 }
 // replace above with instructions at end of this doc if FBSDK is installed
 // https://github.com/react-native-community/react-native-google-signin/blob/master/ios-guide.md

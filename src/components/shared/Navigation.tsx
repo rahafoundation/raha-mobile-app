@@ -33,7 +33,7 @@ import { Button } from "../shared/elements";
 import { Discover, DiscoverWebView } from "../pages/Discover";
 import { LeaderBoard } from "../pages/LeaderBoard";
 import { Invite } from "../pages/Invite/Invite";
-import { Account } from '../pages/Account';
+import { Account } from "../pages/Account";
 
 /**
  * Gets the current screen from navigation state.
@@ -95,6 +95,8 @@ export enum RouteName {
   ReferralBonus = "ReferralBonus"
 }
 
+const DEEPLINK_BASE = "raha://";
+
 const MemberList = {
   screen: MemberListScreen,
   navigationOptions: ({ navigation }: any) => {
@@ -125,12 +127,15 @@ export function createTabNavigator(
   routeConfigMap: NavigationRouteConfigMap,
   stackConfig?: StackNavigatorConfig
 ): NavigationContainer {
-  return createStackNavigator({
-    ...routeConfigMap,
-    Profile,
-    MemberList,
-    Give
-  }, stackConfig);
+  return createStackNavigator(
+    {
+      ...routeConfigMap,
+      Profile,
+      MemberList,
+      Give
+    },
+    stackConfig
+  );
 }
 
 const HomeTab = createTabNavigator(
@@ -213,7 +218,7 @@ const ProfileTab = createTabNavigator(
       headerRight: (
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate(RouteName.Account)
+            navigation.navigate(RouteName.Account);
           }}
         >
           <Icon name="dots-vertical" size={25} />
@@ -277,7 +282,10 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
 
 const SignedOutNavigator = createStackNavigator(
   {
-    Onboarding,
+    Onboarding: {
+      screen: Onboarding,
+      path: "invite"
+    },
     LogIn,
     Profile
   },
@@ -304,7 +312,12 @@ class NavigationView extends React.Component<Props> {
     if (hasAccount) {
       return <SignedInNavigator onNavigationStateChange={trackPageChanges} />;
     } else {
-      return <SignedOutNavigator onNavigationStateChange={trackPageChanges} />;
+      return (
+        <SignedOutNavigator
+          uriPrefix={DEEPLINK_BASE}
+          onNavigationStateChange={trackPageChanges}
+        />
+      );
     }
   }
 }
