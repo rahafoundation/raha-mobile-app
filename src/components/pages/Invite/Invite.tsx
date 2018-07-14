@@ -5,6 +5,8 @@ import { InviteCamera } from "./InviteCamera";
 import DropdownAlert from "react-native-dropdownalert";
 import { VideoPreview } from "../Camera/VideoPreview";
 import { MapStateToProps, connect } from "react-redux";
+import { RNFirebase } from "react-native-firebase";
+
 import {
   getLoggedInMember,
   getInviteVideoRef
@@ -36,7 +38,7 @@ type InviteState = {
 
 export class InviteView extends React.Component<InviteProps, InviteState> {
   inviteToken: string;
-  videoUploadRef: firebase.storage.Reference;
+  videoUploadRef: RNFirebase.storage.Reference;
   dropdown: any;
 
   constructor(props: InviteProps) {

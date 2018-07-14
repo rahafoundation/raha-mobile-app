@@ -7,7 +7,7 @@
 console.ignoredYellowBox = ["Setting a timer"];
 
 import * as React from "react";
-import firebase from "firebase";
+import { RNFirebase } from "react-native-firebase";
 import { View, StyleSheet } from "react-native";
 import Video from "react-native-video";
 
@@ -19,7 +19,7 @@ const MAX_VIDEO_SIZE = MAX_MB * BYTES_PER_MIB;
 
 type VideoPreviewProps = {
   videoUri: string;
-  videoUploadRef: firebase.storage.Reference;
+  videoUploadRef: RNFirebase.storage.Reference;
   onVideoUploaded: (videoDownloadUrl: string) => any;
   onVideoPlaybackError: (errorMessage: string) => any;
   onRetakeClicked: () => any;
@@ -51,7 +51,7 @@ export class VideoPreview extends React.Component<
     };
   }
 
-  uploadVideo = async (videoUploadRef: firebase.storage.Reference) => {
+  uploadVideo = async (videoUploadRef: RNFirebase.storage.Reference) => {
     const response = await fetch(this.props.videoUri);
     const blob = await response.blob();
     //@ts-ignore Blob does not have data type
@@ -69,9 +69,9 @@ export class VideoPreview extends React.Component<
       //@ts-ignore Expo Blob does not have data type
       contentType: blob.data.type
     };
-    const uploadTask = videoUploadRef.put(blob, metadata);
+    const uploadTask = videoUploadRef.put(this.props.videoUri, metadata);
     uploadTask.on(
-      firebase.storage.TaskEvent.STATE_CHANGED,
+      "state_changed",
       (s: any) => {
         const snapshot = s as firebase.storage.UploadTaskSnapshot;
         this.setState({
@@ -87,22 +87,21 @@ export class VideoPreview extends React.Component<
         this.setState({
           uploadStatus: UploadStatus.NOT_STARTED
         });
-      },
-      async () => {
-        const videoDownloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-        if (videoDownloadUrl) {
-          this.setState({ uploadStatus: UploadStatus.UPLOADED });
-          this.props.onVideoUploaded(videoDownloadUrl);
-        } else {
-          this.props.onVideoPlaybackError(
-            "Could not retrieve download URL. Please try again."
-          );
-          this.setState({
-            uploadStatus: UploadStatus.NOT_STARTED
-          });
-        }
       }
     );
+    const snapshot = await uploadTask;
+    const videoDownloadUrl = await videoUploadRef.getDownloadURL();
+    if (videoDownloadUrl) {
+      this.setState({ uploadStatus: UploadStatus.UPLOADED });
+      this.props.onVideoUploaded(videoDownloadUrl);
+    } else {
+      this.props.onVideoPlaybackError(
+        "Could not retrieve download URL. Please try again."
+      );
+      this.setState({
+        uploadStatus: UploadStatus.NOT_STARTED
+      });
+    }
   };
 
   renderButtonsOrStatus() {

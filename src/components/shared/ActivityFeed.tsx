@@ -14,7 +14,6 @@ import { OperationId } from "@raha/api/dist/shared/models/identifiers";
 import { RahaState } from "../../store";
 import { ActivityItem } from "./ActivityItem/index";
 import {
-  ActivityTemplate,
   ActivityTemplateView
 } from "./ActivityItem/ActivityTemplate";
 

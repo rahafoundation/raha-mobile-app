@@ -14,9 +14,9 @@ export const app = RNFirebase.initializeApp(
 );
 export const auth = app.auth();
 // uncomment the below line once we get rn-firebase's storage to work
-// export const storage = app.storage();
+export const storage = app.storage();
 
 // remove the below lines once we get rn-firebase's storage to work
 export const webFirebase = firebase.initializeApp(config.firebase[Platform.OS]);
 export const webAuth = webFirebase.auth();
-export const webStorage = webFirebase.storage();
+// export const webStorage = webFirebase.storage();
