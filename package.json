@@ -17,7 +17,6 @@
     "core-js": "^2.5.7",
     "date-fns": "^1.29.0",
     "es6-symbol": "^3.1.1",
-    "firebase": "^5.1.0",
     "google-libphonenumber": "^3.1.8",
     "immutable": "^4.0.0-rc.9",
     "react": "16.3.1",
