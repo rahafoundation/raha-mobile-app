@@ -888,9 +888,9 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-navigation@^2.0.10":
-  version "2.0.10"
-  resolved "https://registry.npmjs.org/@types/react-navigation/-/react-navigation-2.0.10.tgz#62e01bd6ea4aec3f407d1158ab9bcc1e57c8873c"
+"@types/react-navigation@^2.0.11":
+  version "2.0.11"
+  resolved "https://registry.npmjs.org/@types/react-navigation/-/react-navigation-2.0.11.tgz#04988b56bc1411854da14d165aba02980df142df"
   dependencies:
     "@types/react" "*"
     "@types/react-native" "*"
