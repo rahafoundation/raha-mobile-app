@@ -73,7 +73,7 @@ export class VideoPreview extends React.Component<
     uploadTask.on(
       "state_changed",
       (s: any) => {
-        const snapshot = s as firebase.storage.UploadTaskSnapshot;
+        const snapshot = s as RNFirebase.storage.UploadTaskSnapshot;
         this.setState({
           uploadStatus: UploadStatus.UPLOADING,
           uploadedBytes: snapshot.bytesTransferred,

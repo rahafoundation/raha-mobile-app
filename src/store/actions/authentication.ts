@@ -1,7 +1,7 @@
 import { RNFirebase as FirebaseTypes } from "react-native-firebase";
 
 import { AsyncActionCreator } from "./";
-import { auth, webAuth } from "../../firebaseInit";
+import { auth } from "../../firebaseInit";
 import { ActionCreator } from "redux";
 
 export const enum PhoneLogInActionType {
@@ -117,10 +117,10 @@ export const confirmPhoneLogIn: AsyncActionCreator = (
 export const initiateEmailLogIn: AsyncActionCreator = (
   emailAddress: string
 ) => async dispatch => {
-  auth.sendSignInLinkToEmail(emailAddress, )
-}
+  auth.sendSignInLinkToEmail(emailAddress);
+};
 
 export const signOut: AsyncActionCreator = () => async dispatch => {
-  await Promise.all([auth.signOut(), webAuth.signOut()]); // TODO handle error
+  await auth.signOut(); // TODO handle error
   dispatch(signOutAction());
 };
