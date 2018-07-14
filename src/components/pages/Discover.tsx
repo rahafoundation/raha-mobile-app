@@ -8,34 +8,36 @@ import * as React from "react";
 import {
   View,
   TouchableHighlight,
-  WebView as WebViewNative,
-  TextProps,
+  WebView,
   ScrollView,
-  Linking
+  Linking,
+  StyleSheet
 } from "react-native";
 
 import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { NavigationScreenProp, withNavigation } from "react-navigation";
 import { RouteName } from "../shared/Navigation";
-import { Container, Text } from "../shared/elements";
+import { Button, Container, Text } from "../shared/elements";
+
+const INTERNAL_ROUTE_PROTOCOL = "route:"
 
 export const DiscoverWebView: React.StatelessComponent = ({
   navigation
 }: any) => {
-  return <WebViewNative source={{ uri: navigation.getParam("uri") }} />;
+  return <WebView source={{ uri: navigation.getParam("uri") }} />;
 };
 
 type DiscoverCardRaw = {
   header?: string;
   bodyChoices: string[];
-  footer?: string;
+  action?: string;
   uri: string;
 };
 
 type DiscoverCard = {
   header?: string;
   body: string;
-  footer?: string;
+  action?: string;
   uri: (navigation: NavigationScreenProp<{}>) => void;
 };
 
@@ -49,6 +51,11 @@ function convertUriToCallback(uri: string) {
     return (navigation: NavigationScreenProp<{}>) => {
       // TODO test on device. Display proper error or use Linking.canOpen
       Linking.openURL(uri);
+    };
+  }
+  if (uri.startsWith(INTERNAL_ROUTE_PROTOCOL)) {
+    return (navigation: NavigationScreenProp<{}>) => {
+      navigation.navigate(uri.substr(INTERNAL_ROUTE_PROTOCOL.length));
     };
   }
   console.error(`Invalid uri ${uri}, unsupported protocol`);
@@ -66,7 +73,7 @@ function convertCard(discoverCard: DiscoverCardRaw): DiscoverCard {
   return {
     header: discoverCard.header,
     body: pickRandomFromArr(discoverCard.bodyChoices),
-    footer: discoverCard.footer,
+    action: discoverCard.action,
     uri: convertUriToCallback(discoverCard.uri)
   };
 }
@@ -78,16 +85,17 @@ function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
 // TODO below JSON should be available from website.
 const DISCOVER_INFO = convertCardArr([
   {
-    bodyChoices: [
-      "Any feedback or questions? Contact Raha team at hi@raha.app!"
-    ],
+    header: "Feedback or questions?",
+    bodyChoices: ["Contact the Raha team at hi@raha.app!"],
+    action: "Send us an email",
     uri: "mailto:hi@raha.app"
   },
   {
+    header: "Check out the Raha Marketplace",
     bodyChoices: [
-      "Give people Raha in exchange for posters, resume review, and more!"
+      "Buy everything from books and posters to instruments, get your resume reviewed, and more!"
     ],
-    footer: "Check out the Raha Marketplace",
+    action: "Visit the marketplace",
     uri: "https://discuss.raha.app/c/marketplace"
   },
   {
@@ -97,25 +105,31 @@ const DISCOVER_INFO = convertCardArr([
       '"Cash transfers have long-term impacts."',
       '"The poor do not systematically abuse cash transfers (e.g. on alcohol)."'
     ],
-    footer: "Read more at GiveDirectly.org",
+    action: "Read more at GiveDirectly.org",
     uri: "https://www.givedirectly.org/research-on-cash-transfers"
   },
   {
-    bodyChoices: ["View your position in the invite leaderboard!"],
-    uri: "https://web.raha.app/leaderboard"
+    header: "Climb the leaderboard",
+    bodyChoices: [
+      "Invite more people to mint bonus Raha and get to the top of the leaderboard ranks!"
+    ],
+    action: "View the leaderboard",
+    uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard"  // Why does RouteName.LeaderBoard break?
   },
   {
-    bodyChoices: ["Discuss UBI on the Raha Forum!"],
+    header: "Meet the Raha Community",
+    bodyChoices: ["Discuss UBI in the Raha Forums!"],
+    action: "Check out the forums",
     uri: "https://discuss.raha.app/"
   },
   {
+    header: "Raha supports",
     bodyChoices: [
       "Universal Basic Income to End Extreme Poverty.",
       "Trusted Identities for Safe and Secure Payments.",
       "Delegative Democracy and Values-Based Development."
     ],
-    header: "Raha supports",
-    footer: "Read the Raha Manifesto",
+    action: "Read the Raha Manifesto",
     uri: "https://raha.app"
   }
 ]);
@@ -124,11 +138,7 @@ type DiscoverProps = {
   navigation: NavigationScreenProp<{}>;
 };
 
-const LargeText: React.StatelessComponent<TextProps> = props => (
-  <Text style={{ fontSize: 18, color: "white" }} {...props} />
-);
-
-const COLORS = ["darkseagreen", "darkturquoise"];
+const COLORS = ["#4FC3F7", "#81C784"];
 
 function getCardColor(index: number): string {
   return COLORS[index % COLORS.length];
@@ -141,18 +151,19 @@ function getCard(
 ) {
   return (
     <TouchableHighlight
-      style={{
-        minHeight: 100,
-        margin: 7,
-        backgroundColor: getCardColor(index)
-      }}
+      style={[styles.card, { backgroundColor: getCardColor(index) }]}
       key={index}
-      onPress={() => info.uri(navigation)}
     >
       <View style={{ flex: 1, justifyContent: "space-between" }}>
-        {info.header && <LargeText>{info.header}</LargeText>}
-        <LargeText>{info.body}</LargeText>
-        {info.footer && <LargeText>{info.footer}</LargeText>}
+        {info.header && <Text style={styles.headerText}>{info.header}</Text>}
+        <Text style={styles.bodyText}>{info.body}</Text>
+        {info.action && (
+          <Button
+            title={info.action}
+            buttonStyle={styles.actionButton}
+            onPress={() => info.uri(navigation)}
+          />
+        )}
       </View>
     </TouchableHighlight>
   );
@@ -168,15 +179,38 @@ export const Discover: React.StatelessComponent<DiscoverProps> = ({
   cards.push(<View key="end_padding" style={{ height: 75 }} />);
   return (
     <Container>
-      <MemberSearchBar
-        lightTheme
-        placeholderText="Search Members"
-        keyboardShouldPersistTaps="always"
-        onMemberSelected={member => {
-          navigation.push(RouteName.Profile, { member: member });
-        }}
-      />
+      <View style={{ marginTop: 8 }}>
+        <MemberSearchBar
+          lightTheme
+          placeholderText="Search Members"
+          keyboardShouldPersistTaps="always"
+          onMemberSelected={member => {
+            navigation.push(RouteName.Profile, { member: member });
+          }}
+        />
+      </View>
       <ScrollView>{cards}</ScrollView>
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    marginTop: 8,
+    marginLeft: 8,
+    marginRight: 8,
+    padding: 8,
+    borderRadius: 3
+  },
+  headerText: {
+    fontSize: 24,
+    marginBottom: 6
+  },
+  bodyText: {
+    fontSize: 16,
+    marginBottom: 8
+  },
+  actionButton: {
+    backgroundColor: "transparent"
+  }
+});

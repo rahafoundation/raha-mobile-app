@@ -5,67 +5,62 @@
 
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
-import { NavigationScreenProps } from "react-navigation";
-
 import { Camera } from "../../shared/Camera";
 import { Text } from "../../shared/elements";
-import { RouteName } from "../../shared/Navigation";
-import { Member } from "../../../store/reducers/members";
 
-interface NavParams {
-  invitingMember?: Member;
-  verifiedName?: string;
-}
-type OnboardingCameraProps = NavigationScreenProps<NavParams>;
+type OwnProps = {
+  inviterFullName: string;
+  verifiedFullName: string;
+  onVideoRecorded: (videoUri: string) => void;
+};
+type OnboardingCameraProps = OwnProps;
 
 export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
   render() {
-    let invitingMember = this.props.navigation.getParam("invitingMember");
-    let verifiedName = this.props.navigation.getParam("verifiedName");
-    if (!invitingMember || !verifiedName) {
-      // Should not happen, but in case of bug we can safely navigate back to fill in missing info.
-      console.warn(
-        `Missing invitingMember or verifiedName: ${{
-          invitingMember,
-          verifiedName
-        }}`
-      );
-      this.props.navigation.navigate(RouteName.OnboardingInvite);
-      return <View />;
-    }
-
     return (
-      <React.Fragment>
-        <Text style={styles.text}>
-          Please record a video with {invitingMember.fullName} to verify your
+      <View style={{ flex: 1 }}>
+        <Text style={styles.headerText}>
+          Please record a video with {this.props.inviterFullName} to verify your
           identity.
         </Text>
         <Camera
           onVideoRecorded={uri => {
-            this.props.navigation.navigate(RouteName.OnboardingVideoPreview, {
-              videoUri: uri,
-              invitingMember: invitingMember,
-              verifiedName: verifiedName
-            });
+            this.props.onVideoRecorded(uri);
           }}
         />
-        <Text style={styles.text}>Example of what to say:</Text>
-        <Text style={styles.text}>
-          {invitingMember.fullName}: "Hi, my name is {invitingMember.fullName},
-          and I'm inviting {verifiedName} to Raha."
-        </Text>
-        <Text style={styles.text}>
-          You: "My name is {verifiedName} and I'm joining Raha because I believe
-          every life has value."
-        </Text>
-      </React.Fragment>
+        <View style={styles.promptContainer}>
+          <Text style={styles.promptHeader}>Example of what to say:</Text>
+          <Text style={styles.text}>
+            {`"Hi, my name is ${this.props.inviterFullName} and I'm inviting ${
+              this.props.verifiedFullName
+            } to Raha."`}
+          </Text>
+          <Text style={styles.text}>
+            "My name is {this.props.verifiedFullName} and I'm joining Raha
+            because I believe every life has value."
+          </Text>
+        </View>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  headerText: {
+    margin: 4,
+    textAlign: "center",
+    fontSize: 12
+  },
   text: {
     fontSize: 12,
     textAlign: "center"
+  },
+  promptHeader: {
+    fontSize: 10,
+    marginBottom: 4,
+    textAlign: "center"
+  },
+  promptContainer: {
+    padding: 8
   }
 });

@@ -838,9 +838,9 @@
   version "1.1.0"
   resolved "https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
 
-"@raha/api@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/@raha/api/-/api-0.0.3.tgz#3ff12779ecf75eb8e42a165d324669de094f45ec"
+"@raha/api@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@raha/api/-/api-0.0.4.tgz#80280a22b31bd6806a461f1be5d5c427cb4e510b"
   dependencies:
     "@google-cloud/firestore" "^0.14.1"
     "@google-cloud/storage" "^1.6.0"
@@ -1092,6 +1092,10 @@
 "@types/url-join@^0.8.2":
   version "0.8.2"
   resolved "https://registry.npmjs.org/@types/url-join/-/url-join-0.8.2.tgz#1181ecbe1d97b7034e0ea1e35e62e86cc26b422d"
+
+"@types/validator@^9.4.1":
+  version "9.4.1"
+  resolved "https://registry.yarnpkg.com/@types/validator/-/validator-9.4.1.tgz#bea5a290e61f1cbf12af3fd878706aeec2ba0087"
 
 abab@^1.0.4:
   version "1.0.4"
@@ -1908,6 +1912,10 @@ babel-plugin-transform-regenerator@^6.5.0:
   resolved "https://registry.npmjs.org/babel-plugin-transform-regenerator/-/babel-plugin-transform-regenerator-6.26.0.tgz#e0703696fbde27f0a3efcacf8b4dca2f7b3a8f2f"
   dependencies:
     regenerator-transform "^0.10.0"
+
+babel-plugin-transform-remove-console@^6.9.4:
+  version "6.9.4"
+  resolved "https://registry.npmjs.org/babel-plugin-transform-remove-console/-/babel-plugin-transform-remove-console-6.9.4.tgz#b980360c067384e24b357a588d807d3c83527780"
 
 babel-plugin-transform-strict-mode@^6.24.1:
   version "6.24.1"
@@ -7764,6 +7772,10 @@ require-main-filename@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/require-main-filename/-/require-main-filename-1.0.1.tgz#97f717b69d48784f5f526a6c5aa8ffdda055a4d1"
 
+reselect@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/reselect/-/reselect-3.0.1.tgz#efdaa98ea7451324d092b2b2163a6a1d7a9a2147"
+
 resolve-cwd@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/resolve-cwd/-/resolve-cwd-2.0.0.tgz#00a9f7387556e27038eae232caa372a6a59b665a"
@@ -8902,6 +8914,10 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
+
+validator@^10.4.0:
+  version "10.4.0"
+  resolved "https://registry.yarnpkg.com/validator/-/validator-10.4.0.tgz#ee99a44afb3bb5ed350a159f056ca72a204cfc3c"
 
 vary@^1.1.2, vary@~1.1.2:
   version "1.1.2"

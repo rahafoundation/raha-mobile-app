@@ -8,8 +8,7 @@ import { StyleSheet, TouchableHighlight, View } from "react-native";
 import {
   connect,
   MapDispatchToProps,
-  MapStateToProps,
-  MergeProps
+  MapStateToProps
 } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
 import Video from "react-native-video";
@@ -18,13 +17,11 @@ import { MemberId } from "@raha/api/dist/shared/models/identifiers";
 
 import { RouteName } from "../shared/Navigation";
 import { Member } from "../../store/reducers/members";
-import { signOut } from "../../store/actions/authentication";
 import { RahaThunkDispatch, RahaState } from "../../store";
 import { trustMember } from "../../store/actions/members";
 import { getMemberById } from "../../store/selectors/members";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
-import { MintButton } from "../shared/MintButton";
 import { Button, Container, Text } from "../shared/elements";
 
 interface NavParams {
@@ -38,40 +35,10 @@ type StateProps = {
 };
 
 type DispatchProps = {
-  signOut: () => void;
   trust: (memberId: MemberId) => void;
 };
 
-type MergedDispatchProps = Pick<DispatchProps, "signOut"> & {
-  trust: () => void;
-};
-
-type MergedProps = StateProps & OwnProps & MergedDispatchProps;
-
-type ProfileProps = MergedProps;
-
-const Actions: React.StatelessComponent<
-  { isOwnProfile: boolean } & MergedDispatchProps
-> = props =>
-  props.isOwnProfile ? (
-    <View style={styles.actions}>
-      <MintButton />
-      <Button
-        title="Log Out"
-        onPress={props.signOut}
-        buttonStyle={{ backgroundColor: "#2196F3" }}
-        //@ts-ignore Because Button does have a rounded property
-        rounded
-      />
-    </View>
-  ) : (
-    <Button
-      title="Trust"
-      onPress={props.trust}
-      //@ts-ignore Because Button does have a rounded property
-      rounded
-    />
-  );
+type ProfileProps = StateProps & OwnProps & DispatchProps;
 
 const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
   <View style={styles.thumbnail}>
@@ -133,11 +100,23 @@ const ProfileView: React.StatelessComponent<ProfileProps> = props => (
           <Thumbnail member={props.member} />
           <View style={styles.interactions}>
             <Stats navigation={props.navigation} member={props.member} />
-            <Actions
-              isOwnProfile={props.isOwnProfile}
-              trust={props.trust}
-              signOut={props.signOut}
-            />
+            {
+              !props.isOwnProfile &&
+            <View style={styles.actions}>
+              <Button
+                title="Trust"
+                onPress={() => props.trust(props.member.memberId)}
+                //@ts-ignore Because Button does have a rounded property
+                rounded
+              />
+              <Button
+                title="Give"
+                onPress={() => props.navigation.navigate(RouteName.Give, {toMember: props.member})}
+                //@ts-ignore Because Button does have a rounded property
+                rounded
+              />
+            </View>
+          }
           </View>
         </View>
       }
@@ -220,8 +199,7 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   dispatch: RahaThunkDispatch
 ) => {
   return {
-    trust: (memberId: MemberId) => dispatch(trustMember(memberId)),
-    signOut: () => dispatch(signOut())
+    trust: (memberId: MemberId) => dispatch(trustMember(memberId))
   };
 };
 
@@ -242,22 +220,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   };
 };
 
-const mergeProps: MergeProps<
-  StateProps,
-  DispatchProps,
-  OwnProps,
-  MergedProps
-> = (stateProps, dispatchProps, ownProps) => {
-  return {
-    ...stateProps,
-    trust: () => dispatchProps.trust(stateProps.member.memberId),
-    signOut: dispatchProps.signOut,
-    ...ownProps
-  };
-};
-
 export const Profile = connect(
   mapStateToProps,
-  mapDispatchToProps,
-  mergeProps
+  mapDispatchToProps
 )(ProfileView);

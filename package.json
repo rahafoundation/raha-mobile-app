@@ -12,7 +12,7 @@
     "config:test": "cp ./src/data/test.config.ts ./src/data/config.ts && cp ./ios/data/config/firebase/GoogleService-Info.test.plist ./ios/mobile/GoogleService-Info.plist && cp ./android/data/config/firebase/google-services.test.json ./android/app/google-services.json"
   },
   "dependencies": {
-    "@raha/api": "^0.0.3",
+    "@raha/api": "^0.0.4",
     "big.js": "^5.1.2",
     "core-js": "^2.5.7",
     "date-fns": "^1.29.0",
@@ -38,7 +38,9 @@
     "redux-persist": "^5.9.1",
     "redux-persist-transform-immutable": "^5.0.0",
     "redux-thunk": "^2.3.0",
-    "twilio": "^3.17.4"
+    "reselect": "^3.0.1",
+    "twilio": "^3.17.4",
+    "validator": "^10.4.0"
   },
   "devDependencies": {
     "@types/big.js": "^4.0.4",
@@ -55,7 +57,9 @@
     "@types/react-redux": "^6.0.0",
     "@types/react-test-renderer": "^16.0.1",
     "@types/twilio": "^0.0.9",
+    "@types/validator": "^9.4.1",
     "babel-jest": "^23.4.0",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "babel-preset-react-native": "4.0.0",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",

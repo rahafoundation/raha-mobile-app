@@ -1,5 +1,6 @@
 import "es6-symbol/implement";
 import * as React from "react";
+import { TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
@@ -7,47 +8,94 @@ import {
   createStackNavigator,
   NavigationContainer,
   NavigationRouteConfig,
-  NavigationScreenConfigProps
+  NavigationScreenConfigProps,
+  NavigationState,
+  NavigationStateRoute,
+  NavigationRoute,
+  NavigationRouteConfigMap,
+  StackNavigatorConfig
 } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
 
+import { app } from "../../firebaseInit";
 import { Give as GiveScreen } from "../pages/Give";
 import { Home } from "../pages/Home";
 import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
 import { Profile as ProfileScreen } from "../pages/Profile";
-import { OnboardingVideoPreview } from "../pages/Onboarding/OnboardingVideoPreview";
 import { getMemberById } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
 import { MemberList as MemberListScreen } from "../pages/MemberList";
-import { OnboardingCamera } from "../pages/Onboarding/OnboardingCamera";
-import { OnboardingSplash } from "../pages/Onboarding/OnboardingSplash";
-import { OnboardingInvite } from "../pages/Onboarding/OnboardingInvite";
+import { Onboarding } from "../pages/Onboarding/Onboarding";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button } from "../shared/elements";
 import { Discover, DiscoverWebView } from "../pages/Discover";
+import { LeaderBoard } from "../pages/LeaderBoard";
+import { Invite } from "../pages/Invite/Invite";
+import { Account } from "../pages/Account";
+
+/**
+ * Gets the current screen from navigation state.
+ * Adapted from: https://reactnavigation.org/docs/en/screen-tracking.html
+ */
+function getActiveRouteName(navigationState: NavigationState): string | null {
+  if (!navigationState) {
+    return null;
+  }
+
+  let memoizedNavigationRoute: NavigationStateRoute<any> | NavigationRoute =
+    navigationState.routes[navigationState.index];
+
+  // dive into nested navigators
+  //@ts-ignore kind of crappy way of figuring out route type
+  while (memoizedNavigationRoute.routes) {
+    memoizedNavigationRoute =
+      //@ts-ignore kind of crappy way of figuring out route type
+      memoizedNavigationRoute.routes[memoizedNavigationRoute.index];
+  }
+
+  return memoizedNavigationRoute.routeName;
+}
+
+/**
+ * To track firebase analytics information in real time in a debug
+ * environment, run: `adb shell setprop debug.firebase.analytics.app`.
+ */
+function trackPageChanges(
+  prevState: NavigationState,
+  currentState: NavigationState
+) {
+  const currentScreen = getActiveRouteName(currentState);
+  const prevScreen = getActiveRouteName(prevState);
+
+  if (currentScreen && prevScreen !== currentScreen) {
+    app.analytics().setCurrentScreen(currentScreen);
+  }
+}
 
 export enum RouteName {
+  Account = "Account",
+  Give = "Give",
   Home = "Home",
   HomeTab = "HomeTab",
-  OnboardingVideoPreview = "OnboardingVideoPreview",
-  OnboardingSplash = "OnboardingSplash",
-  OnboardingCamera = "OnboardingCamera",
-  OnboardingInvite = "OnboardingInvite",
+  Invite = "Invite",
   LogIn = "LogIn",
   MemberList = "MemberList",
+  Onboarding = "Onboarding",
   OtherProfile = "OtherProfile",
   Profile = "Profile",
   ProfileTab = "ProfileTab",
   Discover = "Discover",
   DiscoverTab = "DiscoverTab",
   DiscoverWebView = "DiscoverWebView",
+  LeaderBoard = "LeaderBoard",
   Mint = "Mint",
   MintTab = "MintTab",
-  ReferralBonus = "ReferralBonus",
-  Give = "Give"
+  ReferralBonus = "ReferralBonus"
 }
+
+const DEEPLINK_BASE = "raha://";
 
 const MemberList = {
   screen: MemberListScreen,
@@ -60,7 +108,7 @@ const MemberList = {
 
 const Profile: NavigationRouteConfig = {
   screen: ProfileScreen,
-  navigationOptions: ({ navigation }: NavigationScreenConfigProps) => {
+  navigationOptions: ({ navigation }: any) => {
     const member = navigation.getParam("member");
     return {
       title: member ? member.fullName : "Your Profile"
@@ -75,11 +123,23 @@ const Give = {
   }
 };
 
-const HomeTab = createStackNavigator(
+export function createTabNavigator(
+  routeConfigMap: NavigationRouteConfigMap,
+  stackConfig?: StackNavigatorConfig
+): NavigationContainer {
+  return createStackNavigator(
+    {
+      ...routeConfigMap,
+      Profile,
+      MemberList,
+      Give
+    },
+    stackConfig
+  );
+}
+
+const HomeTab = createTabNavigator(
   {
-    Profile,
-    MemberList,
-    Give,
     Home: {
       screen: Home,
       navigationOptions: ({ navigation }: any) => ({
@@ -90,6 +150,9 @@ const HomeTab = createStackNavigator(
             onPress={() => {
               navigation.navigate(RouteName.Give);
             }}
+            buttonStyle={{ backgroundColor: "#2196F3" }}
+            //@ts-ignore Because Button does have a rounded property
+            rounded
           />
         )
       })
@@ -100,35 +163,68 @@ const HomeTab = createStackNavigator(
   }
 );
 
-const DiscoverTab = createStackNavigator(
+const DiscoverTab = createTabNavigator(
   {
-    Discover,
-    DiscoverWebView
+    Discover: {
+      screen: Discover,
+      navigationOptions: { title: "Discover" }
+    },
+    DiscoverWebView,
+    LeaderBoard
   },
   {
     initialRouteName: RouteName.Discover
   }
 );
 
-const MintTab = createStackNavigator(
+const MintTab = createTabNavigator(
   {
-    Mint,
-    ReferralBonus,
-    Profile,
-    MemberList
+    Invite: {
+      screen: Invite,
+      navigationOptions: {
+        title: "Invite"
+      }
+    },
+    Mint: {
+      screen: Mint,
+      navigationOptions: {
+        title: "Mint Raha"
+      }
+    },
+    ReferralBonus: {
+      screen: ReferralBonus,
+      navigationOptions: {
+        title: "Bonus Mint!"
+      }
+    }
   },
   {
     initialRouteName: RouteName.Mint
   }
 );
 
-const ProfileTab = createStackNavigator(
+const ProfileTab = createTabNavigator(
   {
-    Profile,
-    MemberList
+    Account: {
+      screen: Account,
+      navigationOptions: {
+        title: "Account"
+      }
+    }
   },
   {
-    initialRouteName: RouteName.Profile
+    initialRouteName: RouteName.Profile,
+    navigationOptions: ({ navigation }: any) => ({
+      headerRight: (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate(RouteName.Account);
+          }}
+        >
+          <Icon name="dots-vertical" size={25} />
+        </TouchableOpacity>
+      )
+    })
   }
 );
 
@@ -140,7 +236,7 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
     ProfileTab
   },
   {
-    initialRouteName: RouteName.MintTab,
+    initialRouteName: RouteName.DiscoverTab,
     labeled: false,
     navigationOptions: ({ navigation }: any) => ({
       tabBarIcon: ({ focused }: any) => {
@@ -153,9 +249,6 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
             break;
           case RouteName.HomeTab:
             iconName = "home";
-            break;
-          case RouteName.OnboardingSplash:
-            iconName = "account-multiple-plus";
             break;
           case RouteName.MintTab:
             iconName = "gift";
@@ -189,12 +282,12 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
 
 const SignedOutNavigator = createStackNavigator(
   {
-    OnboardingCamera,
-    OnboardingSplash,
-    OnboardingInvite,
+    Onboarding: {
+      screen: Onboarding,
+      path: "invite"
+    },
     LogIn,
-    Profile,
-    OnboardingVideoPreview
+    Profile
   },
   {
     headerMode: "screen",
@@ -217,9 +310,14 @@ class NavigationView extends React.Component<Props> {
     const { hasAccount } = this.props;
 
     if (hasAccount) {
-      return <SignedInNavigator />;
+      return <SignedInNavigator onNavigationStateChange={trackPageChanges} />;
     } else {
-      return <SignedOutNavigator />;
+      return (
+        <SignedOutNavigator
+          uriPrefix={DEEPLINK_BASE}
+          onNavigationStateChange={trackPageChanges}
+        />
+      );
     }
   }
 }

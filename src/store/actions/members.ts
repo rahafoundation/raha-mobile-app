@@ -79,7 +79,10 @@ export const requestInviteFromMember: AsyncActionCreator = (
   );
 };
 
-export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
+export const sendInvite: AsyncActionCreator = (
+  inviteEmail: string,
+  videoToken: string
+) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
       const authToken = await getAuthToken(getState());
@@ -87,7 +90,7 @@ export const sendInvite: AsyncActionCreator = (inviteEmail: string) => {
         throw new UnauthenticatedError();
       }
 
-      await callSendInvite(config.apiBase, authToken, inviteEmail);
+      await callSendInvite(config.apiBase, authToken, inviteEmail, videoToken);
     },
     ApiEndpointName.SEND_INVITE,
     inviteEmail

@@ -8,7 +8,11 @@ import {
   TouchableOpacity
 } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
-import { NavigationScreenProp } from "react-navigation";
+
+import {
+  NavigationScreenProp,
+  NavigationEventSubscription
+} from "react-navigation";
 import CountryPicker, {
   getAllCountries,
   CountryPickerProps,
@@ -319,7 +323,29 @@ class ConfirmationCodeForm extends React.Component<
 }
 
 class LogInView extends React.Component<LogInProps, LogInState> {
+  componentFocusedListener?: NavigationEventSubscription;
   state: LogInState = {};
+
+  componentDidMount() {
+    // If this LoginView becomes focused, the user was determined to be logged out. Verify that the
+    // user is logged out and if they are not, force sign them out.
+    this.componentFocusedListener = this.props.navigation.addListener(
+      "didFocus",
+      this.verifySignedOut
+    );
+  }
+
+  componentWillUnmount() {
+    if (this.componentFocusedListener) {
+      this.componentFocusedListener.remove();
+    }
+  }
+
+  verifySignedOut = () => {
+    if (this.props.isLoggedIn) {
+      this.props.signOut();
+    }
+  };
 
   componentDidUpdate(prevProps: LogInProps) {
     // set the sent time for the resend timer, which occurs when you get to
@@ -341,7 +367,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
       this.props.navigation.navigate(RouteName.Home);
       return;
     }
-    this.props.navigation.navigate(RouteName.OnboardingSplash);
+    this.props.navigation.navigate(RouteName.Onboarding);
   }
 
   _handleInitiatePhoneLogIn = (number: string) => {

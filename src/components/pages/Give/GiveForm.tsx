@@ -1,6 +1,11 @@
 import { Big } from "big.js";
 import * as React from "react";
-import { View, TextInput, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import {
+  FormLabel,
+  FormInput,
+  FormValidationMessage
+} from "react-native-elements";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
 import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
@@ -151,13 +156,15 @@ class GiveFormView extends React.Component<Props, State> {
     return (
       <Container style={styles.container}>
         <View style={styles.toRow}>
-          <Text style={styles.label}>To:</Text>
           {this.state.toMember ? (
-            <View style={styles.selectedMember}>
-              <Text onPress={this.clearTo}>
-                {this.state.toMember.fullName} ({this.state.toMember.username})
-              </Text>
-            </View>
+            <React.Fragment>
+              <FormLabel>To:</FormLabel>
+              <View style={styles.selectedMember}>
+                <Text onPress={this.clearTo}>
+                  {this.state.toMember.fullName} ({this.state.toMember.username})
+                </Text>
+              </View>
+            </React.Fragment>
           ) : (
             <View style={styles.searchBar}>
               <MemberSearchBar
@@ -166,57 +173,62 @@ class GiveFormView extends React.Component<Props, State> {
                 excludeMembers={
                   this.props.loggedInMember ? [this.props.loggedInMember] : []
                 }
+                placeholderText="To..."
               />
             </View>
           )}
         </View>
         {this.state.toMember ? (
-          <Text style={styles.section}>
+          <FormValidationMessage
+            labelStyle={styles.helper}
+            containerStyle={styles.section}
+          >
             {this.state.toMember.fullName} is currently donating {DONATION_RATE}%
             of all Raha they receive back to the Raha basic income pool. This
             donation will be used to fund future basic income distributions for
             everyone in the Raha network.
-          </Text>
+          </FormValidationMessage>
         ) : (
           <React.Fragment />
         )}
-
-        <View style={styles.section}>
-          <Text style={styles.label}>Amount</Text>
-          <TextInput
-            style={styles.input}
+        <View>
+          <FormLabel>Amount</FormLabel>
+          <FormInput
             keyboardType="numeric"
             value={this.state.amount && this.state.amount.toString()}
             onChangeText={this.onChangeAmount}
             placeholder="0.00"
           />
-          <Text style={styles.helper}>
+          <FormValidationMessage labelStyle={styles.helper}>
             Your balance:{" "}
             {this.props.loggedInMember
               ? this.props.loggedInMember.balance.toString()
               : 0}{" "}
             Raha
-          </Text>
+          </FormValidationMessage>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.label}>Message</Text>
-          <TextInput
-            style={styles.input}
+        <View>
+          <FormLabel>Message</FormLabel>
+          <FormInput
             value={this.state.memo}
             onChangeText={this.onChangeMemo}
             multiline={true}
             placeholder="for being so amazing!"
+            autoCapitalize="none"
           />
-          <Text style={styles.helper}>
+          <FormValidationMessage labelStyle={styles.helper}>
             {MAX_MEMO_LENGTH - this.state.memo.length} characters remaining
-          </Text>
+          </FormValidationMessage>
         </View>
         {this.state.toMember && this.state.amount ? (
-          <Text style={styles.section}>
+          <FormValidationMessage
+            labelStyle={styles.helper}
+            containerStyle={styles.section}
+          >
             You will give {this.state.amount.toString()} Raha to{" "}
             {this.state.toMember.fullName}
             {this.state.memo ? ` ${this.state.memo}` : ""}.
-          </Text>
+          </FormValidationMessage>
         ) : (
           <React.Fragment />
         )}
@@ -229,6 +241,9 @@ class GiveFormView extends React.Component<Props, State> {
               (this.props.apiCallStatus &&
                 this.props.apiCallStatus.status === ApiCallStatusType.STARTED)
             }
+            buttonStyle={{ backgroundColor: "#2196F3" }}
+            //@ts-ignore Because Button does have a rounded property
+            rounded
           />
         </View>
       </Container>
@@ -278,21 +293,16 @@ export const GiveForm = connect(
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16
+    padding: 8
   },
 
   section: {
-    marginTop: 8
-  },
-
-  label: {
-    fontWeight: "bold",
-    paddingRight: 8
+    marginTop: 16
   },
 
   toRow: {
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "baseline"
   },
 
   searchBar: {
@@ -303,14 +313,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#64B5F6",
     padding: 4,
     borderRadius: 3
-  },
-
-  input: {
-    borderColor: "#eee",
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderRadius: 3,
-    padding: 4
   },
 
   helper: {

@@ -7,7 +7,7 @@
  */
 
 import * as React from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
 import { RNCamera, CameraType } from "react-native-camera";
 
 import { Text } from "../shared/elements";
@@ -65,7 +65,7 @@ export class Camera extends React.Component<CameraProps, CameraState> {
           captureAudio
         >
           {({ camera, status }) => {
-            if (status !== "READY") {
+            if (status === "NOT_AUTHORIZED") {
               return (
                 <View>
                   <Text>
@@ -85,6 +85,7 @@ export class Camera extends React.Component<CameraProps, CameraState> {
               <View style={styles.cameraButtons}>
                 {this.renderFlipButton()}
                 {this.renderRecordButton(camera)}
+                <View style={{ flex: 1 }} />
               </View>
             );
           }}
@@ -94,9 +95,10 @@ export class Camera extends React.Component<CameraProps, CameraState> {
   }
 
   renderFlipButton = () => {
+    const opacity = { opacity: this.state.isVideoRecording ? 0.5 : 1 };
     return (
       <TouchableOpacity
-        style={styles.flipButton}
+        style={[styles.flipButton, opacity]}
         onPress={() => {
           this.setState({
             type: this.state.type === "back" ? "front" : "back"
@@ -105,7 +107,14 @@ export class Camera extends React.Component<CameraProps, CameraState> {
         // Flip button will stop recording. To prevent user confusion, disable it.
         disabled={this.state.isVideoRecording}
       >
-        <Text style={styles.buttonText}>Flip</Text>
+        <Image
+          style={{
+            flex: 1,
+            width: 40
+          }}
+          resizeMode="contain"
+          source={require("../../assets/img/flip.png")}
+        />
       </TouchableOpacity>
     );
   };
@@ -122,38 +131,55 @@ export class Camera extends React.Component<CameraProps, CameraState> {
           }
         }}
       >
-        <Text style={styles.buttonText}>
-          {this.state.isVideoRecording ? "Stop" : "Record"}
-        </Text>
+        <Image
+          style={{
+            flex: 1,
+            width: 80
+          }}
+          resizeMode="contain"
+          source={
+            this.state.isVideoRecording
+              ? require("../../assets/img/record_stop.png")
+              : require("../../assets/img/record.png")
+          }
+        />
       </TouchableOpacity>
     );
   };
 }
 
 const styles = StyleSheet.create({
+  errorText: {
+    color: "white"
+  },
   preview: {
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center"
   },
   container: {
-    backgroundColor: "#ddd",
-    flex: 1
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
   },
   camera: {
-    width: "100%",
-    aspectRatio: 3 / 4
+    flex: 1,
+    aspectRatio: 3 / 4,
+    flexDirection: "column",
+    justifyContent: "flex-end"
   },
   cameraButtons: {
-    flex: 1,
+    height: "25%",
     flexDirection: "row",
-    alignItems: "flex-end"
+    justifyContent: "space-evenly"
   },
   flipButton: {
-    flex: 0.2
+    flex: 1,
+    alignItems: "center"
   },
   recordButton: {
-    flex: 1
+    flex: 1,
+    alignItems: "center"
   },
   buttonText: {
     fontSize: 18,
