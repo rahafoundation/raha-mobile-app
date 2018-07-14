@@ -52,9 +52,7 @@ export const MintOperationActivityView: React.StatelessComponent<
       from={fromMember}
       timestamp={new Date(operation.created_at)}
       amount={new Big(operation.data.amount)}
-      // TODO: uncast once omar's typing PR is accepted
-      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/27055
-      onRef={activityRef as any}
+      onRef={activityRef}
     />
   );
 };
