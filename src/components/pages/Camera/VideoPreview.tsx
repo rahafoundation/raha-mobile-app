@@ -21,7 +21,7 @@ type VideoPreviewProps = {
   videoUri: string;
   videoUploadRef: firebase.storage.Reference;
   onVideoUploaded: (videoDownloadUrl: string) => any;
-  onVideoPlaybackError: (errorMessage: string) => any;
+  onError: (errorType: string, errorMessage: string) => any;
   onRetakeClicked: () => any;
 };
 
@@ -56,7 +56,8 @@ export class VideoPreview extends React.Component<
     const blob = await response.blob();
     //@ts-ignore Blob does not have data type
     if (blob.data.size > MAX_VIDEO_SIZE) {
-      this.props.onVideoPlaybackError(
+      this.props.onError(
+        "Error: Video Upload",
         "The video size is larger than " +
           MAX_MB +
           "MB. Please retake your video."
@@ -81,7 +82,8 @@ export class VideoPreview extends React.Component<
         });
       },
       err => {
-        this.props.onVideoPlaybackError(
+        this.props.onError(
+          "Error: Video Upload",
           "Could not upload. Please try again.\n" + err.message
         );
         this.setState({
@@ -94,7 +96,8 @@ export class VideoPreview extends React.Component<
           this.setState({ uploadStatus: UploadStatus.UPLOADED });
           this.props.onVideoUploaded(videoDownloadUrl);
         } else {
-          this.props.onVideoPlaybackError(
+          this.props.onError(
+            "Error: Video Upload Error",
             "Could not retrieve download URL. Please try again."
           );
           this.setState({
@@ -156,6 +159,12 @@ export class VideoPreview extends React.Component<
           volume={1.0}
           muted={false}
           paused={false}
+          onError={error => {
+            this.props.onError(
+              "Error: Video Playback Error",
+              error.error.errorString
+            );
+          }}
           resizeMode="cover"
           repeat
           style={styles.video}
