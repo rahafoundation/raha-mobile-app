@@ -12,5 +12,4 @@ export const app = RNFirebase.initializeApp(
   "raha"
 );
 export const auth = app.auth();
-// uncomment the below line once we get rn-firebase's storage to work
 export const storage = app.storage();
