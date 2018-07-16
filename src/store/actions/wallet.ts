@@ -5,9 +5,9 @@ import { MemberId } from "@raha/api/dist/shared/models/identifiers";
 import { mint as callMint } from "@raha/api/dist/client/me/mint";
 import { give as callGive } from "@raha/api/dist/client/members/give";
 import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+import { UnauthenticatedError } from "@raha/api/dist/client/errors/UnauthenticatedError";
 
 import { getAuthToken } from "../selectors/authentication";
-import { UnauthenticatedError } from "../../errors/ApiCallError/UnauthenticatedError";
 import { AsyncActionCreator } from "./";
 import { wrapApiCallAction } from "./apiCalls";
 import { OperationsAction, OperationsActionType } from "./operations";

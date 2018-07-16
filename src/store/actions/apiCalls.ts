@@ -1,5 +1,6 @@
 import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
-import { ApiCallError } from "../../errors/ApiCallError";
+import { ApiCallError } from "@raha/api/dist/client/errors";
+
 import { AsyncAction } from "./";
 
 export const enum ApiCallsActionType {

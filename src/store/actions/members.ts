@@ -3,6 +3,7 @@ import { requestInvite as callRequestInvite } from "@raha/api/dist/client/member
 import { sendInvite as callSendInvite } from "@raha/api/dist/client/me/sendInvite";
 import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
 import { MemberId } from "@raha/api/dist/shared/models/identifiers";
+import { UnauthenticatedError } from "@raha/api/dist/client/errors/UnauthenticatedError";
 
 import {
   SetOperationsAction,
@@ -14,7 +15,6 @@ import {
 import { AsyncActionCreator } from "./";
 import { wrapApiCallAction } from "./apiCalls";
 import { getAuthToken } from "../selectors/authentication";
-import { UnauthenticatedError } from "../../errors/ApiCallError/UnauthenticatedError";
 import { config } from "../../data/config";
 
 export type MembersAction = SetOperationsAction | AddOperationsAction;
