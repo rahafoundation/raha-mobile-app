@@ -12,6 +12,8 @@ import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { Text } from "../../shared/elements";
 import validator from "validator";
 
+const ENABLE_SEND_INVITE = false;
+
 type ReduxStateProps = {
   sendInviteStatus?: ApiCallStatus;
 };
@@ -63,7 +65,20 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
     }
   };
 
+  private _renderTemporaryPage = () => {
+    return (
+      <Text>
+        We're working on an easier way to invite your friends! For now, please
+        send invites through the web app.
+      </Text>
+    );
+  };
+
   render() {
+    if (!ENABLE_SEND_INVITE) {
+      return this._renderTemporaryPage();
+    }
+
     return (
       <React.Fragment>
         <TextInput

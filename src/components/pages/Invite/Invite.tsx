@@ -118,12 +118,8 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
             onRetakeClicked={() => {
               this.setState({ step: InviteStep.CAMERA });
             }}
-            onVideoPlaybackError={(errorMessage: string) => {
-              this.dropdown.alertWithType(
-                "error",
-                "Error: Video Playback",
-                errorMessage
-              );
+            onError={(errorType: string, errorMessage: string) => {
+              this.dropdown.alertWithType("error", errorType, errorMessage);
               this.setState({
                 step: InviteStep.CAMERA
               });
