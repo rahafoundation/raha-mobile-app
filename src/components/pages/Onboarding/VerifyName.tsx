@@ -30,7 +30,6 @@ export class VerifyName extends React.Component<
   };
 
   render() {
-    const verifiedName = this.state.verifiedName;
     return (
       <View style={styles.container}>
         <Text style={{ fontSize: 18 }}>Please confirm your full name:</Text>
@@ -39,17 +38,19 @@ export class VerifyName extends React.Component<
           onChangeText={text => this.setState({ verifiedName: text })}
           value={this.state.verifiedName}
         />
-
-        {verifiedName && (
-          <React.Fragment>
-            <Button
-              title={`Confirm`}
-              onPress={() => {
-                this.props.onVerifiedName(verifiedName);
-              }}
-            />
-          </React.Fragment>
-        )}
+        <Button
+          title={`Confirm`}
+          disabled={
+            this.state.verifiedName === undefined ||
+            this.state.verifiedName.length === 0
+          }
+          onPress={() => {
+            const verifiedName = this.state.verifiedName;
+            if (verifiedName) {
+              this.props.onVerifiedName(verifiedName.trim());
+            }
+          }}
+        />
       </View>
     );
   }
