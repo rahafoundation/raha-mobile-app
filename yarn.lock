@@ -732,9 +732,9 @@
   version "1.1.0"
   resolved "https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
 
-"@raha/api@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.npmjs.org/@raha/api/-/api-0.0.5.tgz#be8800d93262bc0b334260c8d61b9c88f34e0e12"
+"@raha/api@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.npmjs.org/@raha/api/-/api-0.0.8.tgz#9a8aed67efabe48bb179f05ac2ec5a5ec26eb2d4"
   dependencies:
     "@google-cloud/firestore" "^0.14.1"
     "@google-cloud/storage" "^1.6.0"
@@ -745,6 +745,7 @@
     async-busboy "^0.6.2"
     big.js "^5.0.3"
     coconutjs "^2.2.0"
+    enum-values "^1.2.1"
     firebase-admin "^5.12.0"
     http-status "^1.2.0"
     koa "^2.5.0"
@@ -2979,6 +2980,10 @@ ent@^2.2.0:
 entities@^1.1.1, entities@~1.1.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/entities/-/entities-1.1.1.tgz#6e5c2d0a5621b5dadaecef80b90edfb5cd7772f0"
+
+enum-values@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.npmjs.org/enum-values/-/enum-values-1.2.1.tgz#c74c7f076fe63c15dee2e4af0f51fd6cd0ce2f62"
 
 envinfo@^3.0.0:
   version "3.11.1"

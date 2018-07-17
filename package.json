@@ -12,7 +12,7 @@
     "config:test": "cp ./src/data/test.config.ts ./src/data/config.ts && cp ./ios/data/config/firebase/GoogleService-Info.test.plist ./ios/mobile/GoogleService-Info.plist && cp ./android/data/config/firebase/google-services.test.json ./android/app/google-services.json"
   },
   "dependencies": {
-    "@raha/api": "^0.0.5",
+    "@raha/api": "^0.0.8",
     "big.js": "^5.1.2",
     "core-js": "^2.5.7",
     "date-fns": "^1.29.0",
