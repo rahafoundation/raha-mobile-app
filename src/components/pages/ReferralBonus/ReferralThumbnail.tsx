@@ -13,7 +13,8 @@ import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 import { connect, MergeProps, MapStateToProps } from "react-redux";
 
-import { ApiEndpoint } from "../../../api";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+
 import {
   getInitialsForName,
   getMemberColor
@@ -138,12 +139,12 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return {
     trustApiCallStatus: getStatusOfApiCall(
       state,
-      ApiEndpoint.TRUST_MEMBER,
+      ApiEndpointName.TRUST_MEMBER,
       ownProps.invitedMember.memberId
     ),
     mintBonusApiCallStatus: getStatusOfApiCall(
       state,
-      ApiEndpoint.MINT,
+      ApiEndpointName.MINT,
       ownProps.invitedMember.memberId
     )
   };

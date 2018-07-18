@@ -12,18 +12,21 @@
     "config:test": "cp ./src/data/test.config.ts ./src/data/config.ts && cp ./ios/data/config/firebase/GoogleService-Info.test.plist ./ios/mobile/GoogleService-Info.plist && cp ./android/data/config/firebase/google-services.test.json ./android/app/google-services.json"
   },
   "dependencies": {
+    "@raha/api": "^0.0.8",
     "big.js": "^5.1.2",
     "core-js": "^2.5.7",
     "date-fns": "^1.29.0",
     "es6-symbol": "^3.1.1",
-    "firebase": "^5.1.0",
+    "google-libphonenumber": "^3.1.8",
     "immutable": "^4.0.0-rc.9",
     "react": "16.3.1",
     "react-native": "0.55.4",
     "react-native-camera": "^1.1.4",
+    "react-native-country-picker-modal": "^0.6.2",
+    "react-native-device-info": "^0.21.5",
     "react-native-dropdownalert": "^3.4.0",
     "react-native-elements": "^0.19.1",
-    "react-native-firebase": "^4.2.0",
+    "react-native-firebase": "^4.3.0",
     "react-native-google-signin": "^0.12.0",
     "react-native-vector-icons": "^4.6.0",
     "react-native-video": "^2.3.1",
@@ -42,28 +45,30 @@
     "@types/big.js": "^4.0.4",
     "@types/enzyme": "^3.1.10",
     "@types/enzyme-adapter-react-16": "^1.0.2",
-    "@types/jest": "^22.2.3",
+    "@types/google-libphonenumber": "^7.4.16",
+    "@types/jest": "^23.1.5",
     "@types/react": "^16.3.14",
     "@types/react-native": "^0.55.12",
     "@types/react-native-google-signin": "^0.12.2",
     "@types/react-native-vector-icons": "^4.6.1",
     "@types/react-native-video": "^2.0.4",
-    "@types/react-navigation": "^2.0.6",
+    "@types/react-navigation": "^2.0.11",
     "@types/react-redux": "^6.0.0",
     "@types/react-test-renderer": "^16.0.1",
     "@types/validator": "^9.4.1",
-    "babel-jest": "23.0.1",
+    "babel-jest": "^23.4.0",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "babel-preset-react-native": "4.0.0",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
+    "jest": "^23.4.0",
     "jsdom": "^11.10.0",
     "react-native-mock-render": "^0.0.25",
     "react-native-scripts-ts": "1.15.0",
     "react-native-typescript-transformer": "^1.2.10",
     "react-test-renderer": "16.3.2",
     "remote-redux-devtools": "^0.5.12",
-    "ts-jest": "^22.4.6",
+    "ts-jest": "^23.0.0",
     "tslib": "^1.9.0",
     "typescript": "^2.8.3"
   },
@@ -76,9 +81,11 @@
     "preset": "react-native",
     "globals": {
       "ts-jest": {
-        "useBabelrc": true
+        "useBabelrc": true,
+        "tsConfigFile": "tsconfig.test.json"
       }
     },
+    "testRegex": "/src/.*\\.test\\.(ts|tsx)?$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -88,8 +95,12 @@
       "node"
     ],
     "transform": {
+      "^.+\\.jsx?$": "babel-jest",
       "^.+\\.tsx?$": "ts-jest"
     },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(react-native|react-navigation-material-bottom-tabs|react-native-vector-icons|react-native-paper|react-navigation-tabs|react-native-elements|react-native-video|react-navigation|react-native-country-picker-modal|react-native-safe-area-view|react-native-device-info|react-native-dropdownalert|react-native-camera)/)"
+    ],
     "setupFiles": [
       "<rootDir>/scripts/jest/setup"
     ]

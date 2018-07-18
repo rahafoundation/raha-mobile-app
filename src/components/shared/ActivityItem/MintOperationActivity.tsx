@@ -4,7 +4,11 @@
 import * as React from "react";
 import { Big } from "big.js";
 
-import { MintOperation, MintType } from "../../../store/reducers/operations";
+import {
+  MintOperation,
+  MintType
+} from "@raha/api/dist/shared/models/Operation";
+
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
@@ -28,19 +32,26 @@ export const MintOperationActivityView: React.StatelessComponent<
   MintOperationActivityProps
 > = ({ operation, fromMember, activityRef, referredMemberFullName }) => {
   let message;
-  if (operation.data.type === MintType.BASIC_INCOME) {
-    message = "I just minted some Raha.";
-  } else if (operation.data.type === MintType.REFERRAL_BONUS) {
-    message = `I just minted some Raha for referring ${referredMemberFullName}.`;
+  switch (operation.data.type) {
+    case MintType.BASIC_INCOME:
+      message = "I just minted some Raha.";
+      break;
+    case MintType.REFERRAL_BONUS:
+      message = `I just minted some Raha for referring ${referredMemberFullName}.`;
+      break;
+    default:
+      console.error(
+        `This should never happen. mint type: ${(operation.data as any).type}`
+      );
+      return <React.Fragment />;
   }
+
   return (
     <ActivityTemplate
       message={message}
       from={fromMember}
       timestamp={new Date(operation.created_at)}
       amount={new Big(operation.data.amount)}
-      // @ts-ignore Remove this ignore statement when my PR passes
-      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/26714
       onRef={activityRef}
     />
   );

@@ -8,14 +8,12 @@ import { FlatList, StyleSheet, FlatListProps } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import { List } from "immutable";
 
+import { Operation } from "@raha/api/dist/shared/models/Operation";
+import { OperationId } from "@raha/api/dist/shared/models/identifiers";
+
 import { RahaState } from "../../store";
-import { Operation } from "../../store/reducers/operations";
-import { OperationId } from "../../identifiers";
 import { ActivityItem } from "./ActivityItem/index";
-import {
-  ActivityTemplate,
-  ActivityTemplateView
-} from "./ActivityItem/ActivityTemplate";
+import { ActivityTemplateView } from "./ActivityItem/ActivityTemplate";
 
 interface StateProps {
   operations: List<Operation>;
@@ -74,7 +72,12 @@ export class ActivityFeedView extends React.Component<ActivityFeedProps> {
         renderItem={operationItem => (
           <ActivityItem
             operation={operationItem.item}
-            activityRef={(elem: ActivityTemplateView) => {
+            activityRef={elem => {
+              if (!elem) {
+                // TODO: ensure this degrades well if this is observed to occur
+                console.error("Unexpected: ActivityItem ref has no value");
+                return;
+              }
               this.activities[operationItem.item.id] = elem;
             }}
           />

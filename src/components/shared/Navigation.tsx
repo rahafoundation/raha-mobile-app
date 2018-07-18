@@ -338,10 +338,7 @@ const mapStateToProps: MapStateToProps<
   return {
     isLoaded,
     isLoggedIn,
-    hasAccount,
-    existingAuthMethod: state.authentication.isLoaded
-      ? undefined
-      : state.authentication.existingAuthMethod
+    hasAccount
   };
 };
 

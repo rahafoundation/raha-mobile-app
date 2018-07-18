@@ -4,7 +4,8 @@
 import * as React from "react";
 import { Big } from "big.js";
 
-import { GiveOperation } from "../../../store/reducers/operations";
+import { GiveOperation } from "@raha/api/dist/shared/models/Operation";
+
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
@@ -32,8 +33,6 @@ export const GiveOperationActivityView: React.StatelessComponent<
       timestamp={new Date(operation.created_at)}
       amount={new Big(operation.data.amount)}
       donationAmount={new Big(operation.data.donation_amount)}
-      // @ts-ignore Remove this ignore statement when my PR passes
-      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/26714
       onRef={activityRef}
     />
   );

@@ -1,5 +1,6 @@
 import { Reducer } from "redux";
-import { ApiEndpoint } from "../../api";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+
 import { ApiCallsAction, ApiCallsActionType } from "../actions/apiCalls";
 import { Map } from "immutable";
 
@@ -15,7 +16,7 @@ export interface ApiCallStatus {
 
 // call identifier => status of that call
 type ApiEndpointState = Map<string, ApiCallStatus>;
-export type ApiCallsState = Map<ApiEndpoint, ApiEndpointState>;
+export type ApiCallsState = Map<ApiEndpointName, ApiEndpointState>;
 
 export const reducer: Reducer<ApiCallsState> = (
   prevState = Map(),

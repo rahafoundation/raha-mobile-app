@@ -1,8 +1,10 @@
 import { List } from "immutable";
 
-import { RahaState } from "../reducers";
-import { OperationType, Operation } from "../reducers/operations";
-import { MemberId } from "../../identifiers";
+import {
+  Operation,
+  OperationType
+} from "@raha/api/dist/shared/models/Operation";
+import { MemberId } from "@raha/api/dist/shared/models/identifiers";
 
 export function getOperationsForType(
   operations: List<Operation>,

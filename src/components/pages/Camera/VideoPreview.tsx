@@ -7,7 +7,7 @@
 console.ignoredYellowBox = ["Setting a timer"];
 
 import * as React from "react";
-import firebase from "firebase";
+import { RNFirebase } from "react-native-firebase";
 import { View, StyleSheet } from "react-native";
 import { VideoPlayer } from "react-native-video-processing";
 
@@ -19,7 +19,7 @@ const MAX_VIDEO_SIZE = MAX_MB * BYTES_PER_MIB;
 
 type VideoPreviewProps = {
   videoUri: string;
-  videoUploadRef: firebase.storage.Reference;
+  videoUploadRef: RNFirebase.storage.Reference;
   onVideoUploaded: (videoDownloadUrl: string) => any;
   onError: (errorType: string, errorMessage: string) => any;
   onRetakeClicked: () => any;
@@ -69,7 +69,7 @@ export class VideoPreview extends React.Component<
   };
 
   uploadVideo = async (
-    videoUploadRef: firebase.storage.Reference,
+    videoUploadRef: RNFirebase.storage.Reference,
     videoUri: string
   ) => {
     const response = await fetch(videoUri);
@@ -89,11 +89,11 @@ export class VideoPreview extends React.Component<
       //@ts-ignore Expo Blob does not have data type
       contentType: blob.data.type
     };
-    const uploadTask = videoUploadRef.put(blob, metadata);
+    const uploadTask = videoUploadRef.put(this.props.videoUri, metadata);
     uploadTask.on(
-      firebase.storage.TaskEvent.STATE_CHANGED,
+      "state_changed",
       (s: any) => {
-        const snapshot = s as firebase.storage.UploadTaskSnapshot;
+        const snapshot = s as RNFirebase.storage.UploadTaskSnapshot;
         this.setState({
           uploadStatus: UploadStatus.UPLOADING,
           uploadedBytes: snapshot.bytesTransferred,
@@ -125,6 +125,19 @@ export class VideoPreview extends React.Component<
         }
       }
     );
+    const snapshot = await uploadTask;
+    const videoDownloadUrl = await videoUploadRef.getDownloadURL();
+    if (videoDownloadUrl) {
+      this.setState({ uploadStatus: UploadStatus.UPLOADED });
+      this.props.onVideoUploaded(videoDownloadUrl);
+    } else {
+      this.props.onVideoPlaybackError(
+        "Could not retrieve download URL. Please try again."
+      );
+      this.setState({
+        uploadStatus: UploadStatus.NOT_STARTED
+      });
+    }
   };
 
   renderButtonsOrStatus() {

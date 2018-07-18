@@ -1,3 +1,10 @@
+import { trust as callTrust } from "@raha/api/dist/client/members/trust";
+import { requestInvite as callRequestInvite } from "@raha/api/dist/client/members/requestInvite";
+import { sendInvite as callSendInvite } from "@raha/api/dist/client/me/sendInvite";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+import { MemberId } from "@raha/api/dist/shared/models/identifiers";
+import { UnauthenticatedError } from "@raha/api/dist/client/errors/UnauthenticatedError";
+
 import {
   SetOperationsAction,
   AddOperationsAction,
@@ -8,15 +15,7 @@ import {
 import { AsyncActionCreator } from "./";
 import { wrapApiCallAction } from "./apiCalls";
 import { getAuthToken } from "../selectors/authentication";
-import {
-  callApi,
-  TrustMemberApiEndpoint,
-  ApiEndpoint,
-  RequestInviteApiEndpoint,
-  SendInviteApiEndpoint
-} from "../../api";
-import { MemberId } from "../../identifiers";
-import { UnauthenticatedError } from "../../errors/ApiCallError/UnauthenticatedError";
+import { config } from "../../data/config";
 
 export type MembersAction = SetOperationsAction | AddOperationsAction;
 export const refreshMembers: AsyncActionCreator = () => {
@@ -30,23 +29,19 @@ export const trustMember: AsyncActionCreator = (memberId: MemberId) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
       const authToken = await getAuthToken(getState());
+      if (!authToken) {
+        throw new UnauthenticatedError();
+      }
 
-      const response = await callApi<TrustMemberApiEndpoint>(
-        {
-          endpoint: ApiEndpoint.TRUST_MEMBER,
-          params: { memberId: memberId },
-          body: undefined
-        },
-        authToken
-      );
+      const { body } = await callTrust(config.apiBase, authToken, memberId);
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [response]
+        operations: [body]
       };
       dispatch(action);
     },
-    ApiEndpoint.TRUST_MEMBER,
+    ApiEndpointName.TRUST_MEMBER,
     memberId
   );
 };
@@ -64,26 +59,22 @@ export const requestInviteFromMember: AsyncActionCreator = (
         throw new UnauthenticatedError();
       }
 
-      const response = await callApi<RequestInviteApiEndpoint>(
-        {
-          endpoint: ApiEndpoint.REQUEST_INVITE,
-          params: { memberId: memberId },
-          body: {
-            fullName,
-            videoUrl,
-            username
-          }
-        },
-        authToken
+      const { body } = await callRequestInvite(
+        config.apiBase,
+        authToken,
+        memberId,
+        fullName,
+        videoUrl,
+        username
       );
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [response]
+        operations: [body]
       };
       dispatch(action);
     },
-    ApiEndpoint.REQUEST_INVITE,
+    ApiEndpointName.REQUEST_INVITE,
     memberId
   );
 };
@@ -99,19 +90,9 @@ export const sendInvite: AsyncActionCreator = (
         throw new UnauthenticatedError();
       }
 
-      await callApi<SendInviteApiEndpoint>(
-        {
-          endpoint: ApiEndpoint.SEND_INVITE,
-          params: undefined,
-          body: {
-            inviteEmail,
-            videoToken
-          }
-        },
-        authToken
-      );
+      await callSendInvite(config.apiBase, authToken, inviteEmail, videoToken);
     },
-    ApiEndpoint.SEND_INVITE,
-    videoToken
+    ApiEndpointName.SEND_INVITE,
+    inviteEmail
   );
 };

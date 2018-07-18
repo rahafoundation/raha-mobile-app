@@ -1,8 +1,12 @@
 import { createSelector } from "reselect";
 import { Map as ImmutableMap } from "immutable";
 
+import {
+  MemberId,
+  MemberUsername
+} from "@raha/api/dist/shared/models/identifiers";
+
 import { RahaState } from "../reducers";
-import { MemberId, MemberUsername } from "../../identifiers";
 import { Member, GENESIS_MEMBER } from "../reducers/members";
 
 export function getMemberById(

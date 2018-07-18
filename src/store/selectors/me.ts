@@ -1,17 +1,17 @@
 import Big from "big.js";
-import { List, Set } from "immutable";
+import { List } from "immutable";
 
-import { RahaState } from "../";
-import { MemberId, OperationId } from "../../identifiers";
-import { getMemberById } from "./members";
-import { getOperationsForCreator, getOperationsForType } from "./operations";
+import { MemberId } from "@raha/api/dist/shared/models/identifiers";
 import {
-  OperationType,
   MintOperation,
+  OperationType,
   MintType,
   MintReferralBonusPayload
-} from "../reducers/operations";
-import { Member } from "../reducers/members";
+} from "@raha/api/dist/shared/models/Operation";
+
+import { RahaState } from "../";
+import { getMemberById } from "./members";
+import { getOperationsForCreator, getOperationsForType } from "./operations";
 
 const RAHA_UBI_WEEKLY_RATE = 10;
 const MILLISECONDS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;

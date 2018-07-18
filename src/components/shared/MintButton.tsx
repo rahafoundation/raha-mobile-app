@@ -2,8 +2,9 @@ import { Big } from "big.js";
 import * as React from "react";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
-import { ApiEndpoint } from "../../api";
-import { MemberId } from "../../identifiers";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+import { MemberId } from "@raha/api/dist/shared/models/identifiers";
+
 import { RahaState } from "../../store";
 import { mintBasicIncome } from "../../store/actions/wallet";
 import { getLoggedInMember } from "../../store/selectors/authentication";
@@ -63,7 +64,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
       mintableAmount: getMintableAmount(state, loggedInMember.memberId),
       mintApiCallStatus: getStatusOfApiCall(
         state,
-        ApiEndpoint.MINT,
+        ApiEndpointName.MINT,
         loggedInMember.memberId
       )
     };

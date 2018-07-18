@@ -61,9 +61,9 @@ PODS:
   - nanopb/encode (0.3.8)
 
 DEPENDENCIES:
-  - Firebase/Auth
-  - Firebase/Core
-  - Firebase/Storage
+  - Firebase/Auth (~> 5.3.0)
+  - Firebase/Core (~> 5.3.0)
+  - Firebase/Storage (~> 5.3.0)
   - Google/SignIn
 
 SPEC REPOS:
@@ -105,6 +105,6 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
 
-PODFILE CHECKSUM: dace2b199307bd4d9921dd7d7945e39b41afba34
+PODFILE CHECKSUM: 6aa93285f8fd955a2d010d666f5ec37d9defa09a
 
 COCOAPODS: 1.5.3

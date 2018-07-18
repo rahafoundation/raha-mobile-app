@@ -1,7 +1,9 @@
 import * as React from "react";
 import { StyleSheet, Button, Linking } from "react-native";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
-import { ApiEndpoint } from "../../../api";
+
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+
 import { getUsername } from "../../../helpers/username";
 import { RahaState } from "../../../store";
 import { requestInviteFromMember } from "../../../store/actions/members";
@@ -143,7 +145,7 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
 ) => {
   const requestInviteStatus = getStatusOfApiCall(
     state,
-    ApiEndpoint.REQUEST_INVITE,
+    ApiEndpointName.REQUEST_INVITE,
     ownProps.invitingMember.memberId
   );
   return {

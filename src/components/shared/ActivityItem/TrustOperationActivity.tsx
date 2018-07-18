@@ -3,7 +3,8 @@
  */
 import * as React from "react";
 
-import { TrustOperation } from "../../../store/reducers/operations";
+import { TrustOperation } from "@raha/api/dist/shared/models/Operation";
+
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
@@ -29,8 +30,6 @@ export const TrustOperationActivityView: React.StatelessComponent<
       from={fromMember}
       to={toMember}
       timestamp={new Date(operation.created_at)}
-      // @ts-ignore Remove this ignore statement when my PR passes
-      // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/26714
       onRef={activityRef}
     />
   );

@@ -1,18 +1,17 @@
 import { Big } from "big.js";
 
-import {
-  ApiEndpoint,
-  callApi,
-  MintApiEndpoint,
-  GiveApiEndpoint
-} from "../../api";
-import { MemberId, OperationId } from "../../identifiers";
-import { MintType } from "../reducers/operations";
+import { MintType } from "@raha/api/dist/shared/models/Operation";
+import { MemberId } from "@raha/api/dist/shared/models/identifiers";
+import { mint as callMint } from "@raha/api/dist/client/me/mint";
+import { give as callGive } from "@raha/api/dist/client/members/give";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+import { UnauthenticatedError } from "@raha/api/dist/client/errors/UnauthenticatedError";
+
 import { getAuthToken } from "../selectors/authentication";
-import { UnauthenticatedError } from "../../errors/ApiCallError/UnauthenticatedError";
 import { AsyncActionCreator } from "./";
 import { wrapApiCallAction } from "./apiCalls";
 import { OperationsAction, OperationsActionType } from "./operations";
+import { config } from "../../data/config";
 
 export const mintBasicIncome: AsyncActionCreator = (
   memberId: MemberId,
@@ -25,25 +24,18 @@ export const mintBasicIncome: AsyncActionCreator = (
         throw new UnauthenticatedError();
       }
 
-      const response = await callApi<MintApiEndpoint>(
-        {
-          endpoint: ApiEndpoint.MINT,
-          params: undefined,
-          body: {
-            type: MintType.BASIC_INCOME,
-            amount: amount.toString()
-          }
-        },
-        authToken
-      );
+      const { body } = await callMint(config.apiBase, authToken, {
+        type: MintType.BASIC_INCOME,
+        amount
+      });
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [response]
+        operations: [body]
       };
       dispatch(action);
     },
-    ApiEndpoint.MINT,
+    ApiEndpointName.MINT,
     memberId
   );
 };
@@ -59,26 +51,19 @@ export const mintReferralBonus: AsyncActionCreator = (
         throw new UnauthenticatedError();
       }
 
-      const response = await callApi<MintApiEndpoint>(
-        {
-          endpoint: ApiEndpoint.MINT,
-          params: undefined,
-          body: {
-            type: MintType.REFERRAL_BONUS,
-            amount: amount.toString(),
-            invited_member_id: invitedMemberId
-          }
-        },
-        authToken
-      );
+      const { body } = await callMint(config.apiBase, authToken, {
+        type: MintType.REFERRAL_BONUS,
+        amount,
+        invited_member_id: invitedMemberId
+      });
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [response]
+        operations: [body]
       };
       dispatch(action);
     },
-    ApiEndpoint.MINT,
+    ApiEndpointName.MINT,
     invitedMemberId
   );
 };
@@ -96,25 +81,21 @@ export const give: AsyncActionCreator = (
         throw new UnauthenticatedError();
       }
 
-      const response = await callApi<GiveApiEndpoint>(
-        {
-          endpoint: ApiEndpoint.GIVE,
-          params: { memberId },
-          body: {
-            amount: amount.toString(),
-            memo
-          }
-        },
-        authToken
+      const { body } = await callGive(
+        config.apiBase,
+        authToken,
+        memberId,
+        amount,
+        memo
       );
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [response]
+        operations: [body]
       };
       dispatch(action);
     },
-    ApiEndpoint.GIVE,
+    ApiEndpointName.GIVE,
     operationIdentifier
   );
 };

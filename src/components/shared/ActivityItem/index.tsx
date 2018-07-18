@@ -3,9 +3,13 @@
  */
 
 import * as React from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 
-import { OperationType, Operation } from "../../../store/reducers/operations";
+import {
+  Operation,
+  OperationType
+} from "@raha/api/dist/shared/models/Operation";
+
 import { GiveOperationActivity } from "./GiveOperationActivity";
 import { MintOperationActivity } from "./MintOperationActivity";
 import { RequestInviteOperationActivity } from "./RequestInviteOperationActivity";

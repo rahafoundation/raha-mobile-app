@@ -1,9 +1,10 @@
 import * as React from "react";
-import { connect, Dispatch } from "react-redux";
+import { connect } from "react-redux";
 
 import { auth } from "../firebaseInit";
 import { logInAction, signedOutAction } from "../store/actions/authentication";
 import { RNFirebase } from "react-native-firebase";
+import { Dispatch } from "redux";
 
 type OwnProps = { children: React.ReactNode };
 type DispatchProps = {

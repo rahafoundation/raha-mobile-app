@@ -1,5 +1,4 @@
 import RNFirebase from "react-native-firebase";
-import firebase from "firebase";
 
 import { config } from "./data/config";
 import { Platform } from "react-native";
@@ -13,10 +12,4 @@ export const app = RNFirebase.initializeApp(
   "raha"
 );
 export const auth = app.auth();
-// uncomment the below line once we get rn-firebase's storage to work
-// export const storage = app.storage();
-
-// remove the below lines once we get rn-firebase's storage to work
-export const webFirebase = firebase.initializeApp(config.firebase[Platform.OS]);
-export const webAuth = webFirebase.auth();
-export const webStorage = webFirebase.storage();
+export const storage = app.storage();

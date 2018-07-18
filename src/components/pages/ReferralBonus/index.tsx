@@ -8,14 +8,13 @@ import { FlatList } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
+import { MemberId } from "@raha/api/dist/shared/models/identifiers";
+
 import { RahaState } from "../../../store";
 import { mintReferralBonus } from "../../../store/actions/wallet";
 import { Member } from "../../../store/reducers/members";
-import { getUnclaimedReferrals } from "../../../store/selectors/me";
 import { getMembersByIds } from "../../../store/selectors/members";
-import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { ReferralThumbnail } from "./ReferralThumbnail";
-import { MemberId } from "../../../identifiers";
 import { Container } from "../../shared/elements";
 
 export interface ReferralBonusNavParams {

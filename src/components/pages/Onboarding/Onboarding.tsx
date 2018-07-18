@@ -2,6 +2,10 @@ import * as React from "react";
 import { Member } from "../../../store/reducers/members";
 import { View, StyleSheet, BackHandler } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
+import DropdownAlert from "react-native-dropdownalert";
+import { NavigationScreenProps } from "react-navigation";
+import { RNFirebase } from "react-native-firebase";
+
 import { RahaState } from "../../../store";
 import { OnboardingSplash } from "./OnboardingSplash";
 import { SelectInviter } from "./SelectInviter";
@@ -11,11 +15,9 @@ import {
   getPrivateVideoInviteRef,
   getInviteVideoRef
 } from "../../../store/selectors/authentication";
-import DropdownAlert from "react-native-dropdownalert";
 import { OnboardingCamera } from "./OnboardingCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
 import { OnboardingRequestInvite } from "./OnboardingRequestInvite";
-import { NavigationScreenProps } from "react-navigation";
 import { getMemberByUsername } from "../../../store/selectors/members";
 
 /**
@@ -38,7 +40,7 @@ interface OnboardingParams {
 
 type ReduxStateProps = {
   displayName: string | null;
-  videoUploadRef?: firebase.storage.Reference;
+  videoUploadRef?: RNFirebase.storage.Reference;
   deeplinkInvitingMember?: Member;
   deeplinkVideoDownloadUrl?: string;
 };

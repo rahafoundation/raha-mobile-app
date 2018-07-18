@@ -134,6 +134,20 @@ up to date.
 yarn test  # run tests
 ```
 
+### Testing Gotchas
+
+Tests still don't run. :( We're working on getting them to work... but
+`react-native` is proving difficult.
+
+- If you add a library and tests break becuase of errors like `SyntaxError` for
+  an `import` statement being present or other things that look like the
+  javascript isn't being downcompiled to something Node can understand, you
+  should add the offending package to the `transformIgnorePatterns` field in
+  `package.json`. Jest requires code from external dependencies to use code Node
+  can natively run, but many `react-native` libraries
+  don't downcompile their code before publishing, causing the issue.
+  [More details here](https://jestjs.io/docs/en/tutorial-react-native#transformignorepatterns-customization).
+
 ## Development environment
 
 I recommend [using VSCode](https://code.visualstudio.com/) to edit your code

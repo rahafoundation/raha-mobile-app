@@ -1,4 +1,5 @@
-import { ApiEndpoint } from "../../api";
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+
 import { ApiCallStatus } from "../reducers/apiCalls";
 import { RahaState } from "../reducers";
 import { Map } from "immutable";
@@ -10,7 +11,7 @@ import { Map } from "immutable";
  */
 export function getStatusOfApiCall(
   state: RahaState,
-  endpoint: ApiEndpoint,
+  endpoint: ApiEndpointName,
   identifier: string
 ): ApiCallStatus | undefined {
   return state.apiCalls

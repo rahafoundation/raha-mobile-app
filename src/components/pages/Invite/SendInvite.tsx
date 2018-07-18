@@ -1,7 +1,10 @@
 import * as React from "react";
-import { Button, TextInput, View } from "react-native";
-import { connect, MapStateToProps, MergeProps } from "react-redux";
-import { ApiEndpoint } from "../../../api";
+import { Button, TextInput } from "react-native";
+import { connect, MapStateToProps } from "react-redux";
+import validator from "validator";
+
+import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+
 import { RahaState } from "../../../store";
 import { sendInvite } from "../../../store/actions/members";
 import {
@@ -10,7 +13,6 @@ import {
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { Text } from "../../shared/elements";
-import validator from "validator";
 
 const ENABLE_SEND_INVITE = false;
 
@@ -107,7 +109,7 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
 ) => {
   const sendInviteStatus = getStatusOfApiCall(
     state,
-    ApiEndpoint.SEND_INVITE,
+    ApiEndpointName.SEND_INVITE,
     ownProps.videoToken
   );
   return {
