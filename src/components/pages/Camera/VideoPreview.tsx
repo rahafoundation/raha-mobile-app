@@ -66,10 +66,9 @@ export class VideoPreview extends React.Component<
         this.uploadVideo(this.props.videoUploadRef, newSource);
       })
       .catch((error: any) => {
-        console.log(error);
         this.props.onError(
           "Error: Video Transcoding",
-          "Unable to compress video " + error
+          "Unable to compress video: " + error
         );
       });
   };
