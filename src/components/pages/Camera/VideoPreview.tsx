@@ -60,17 +60,12 @@ export class VideoPreview extends React.Component<
       bitrateMultiplier: 3,
       minimumBitrate: 300000
     };
-    this.videoPlayerRef
-      .compress(options)
-      .then((newSource: string) => {
-        this.uploadVideo(this.props.videoUploadRef, newSource);
-      })
-      .catch((error: any) => {
-        this.props.onError(
-          "Error: Video Transcoding",
-          "Unable to compress video: " + error
-        );
-      });
+    try {
+      const newSource = await this.videoPlayerRef.compress(options);
+      this.uploadVideo(this.props.videoUploadRef, newSource);
+    } catch (error) {
+      this.props.onError("Error: Video Upload", error);
+    }
   };
 
   uploadVideo = async (
