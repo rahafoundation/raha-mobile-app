@@ -1,8 +1,13 @@
 import { RNFirebase as FirebaseTypes } from "react-native-firebase";
+import { ActionCreator } from "redux";
+
+import { validateMobileNumber as callValidateMobileNumber } from "@raha/api/dist/client/me/validateMobileNumber";
+import { ApiCallFailedError } from "@raha/api/dist/client/errors/ApiCallFailedError";
+import { ERROR_CODE as DISALLOWED_TYPE_ERROR_CODE } from "@raha/api/dist/shared/errors/RahaApiError/me/validateMobileNumber/DisallowedTypeError";
 
 import { AsyncActionCreator } from "./";
 import { auth } from "../../firebaseInit";
-import { ActionCreator } from "redux";
+import { config } from "../../data/config";
 
 export const enum PhoneLogInActionType {
   PHONE_LOGIN_SENDING_PHONE_NUMBER = "AUTHENTICATION.PHONE_LOGIN_SENDING_PHONE_NUMBER",
@@ -77,18 +82,32 @@ export const initiatePhoneLogIn: AsyncActionCreator = (
     dispatch({
       type: PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER
     });
+
+    await callValidateMobileNumber(config.apiBase, phoneNumber);
+
     confirmResult = await auth.signInWithPhoneNumber(phoneNumber);
     dispatch({
       type: PhoneLogInActionType.PHONE_LOGIN_WAITING_FOR_CONFIRMATION_INPUT
     });
-    // TODO: do we need to do anything?
   } catch (err) {
+    // TODO: this is probably not what we want to display
+    let errorMessage = err.message;
+    // get API returned error message if parseable
+    // TODO: generate messages based on the error code
+    if (err instanceof ApiCallFailedError) {
+      try {
+        const responseBody = await err.response.json();
+        errorMessage = responseBody.message;
+      } catch (err2) {
+        // no-op
+      }
+    }
+
     dispatch({
       type: PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED,
-      // TODO: this is probably not what we want to display
-      errorMessage: err.message
+      errorMessage
     });
-    console.error("Initiating phone log in failed", JSON.stringify(err));
+    console.error("Initiating phone log in failed", errorMessage);
     return;
   }
 };

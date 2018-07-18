@@ -7,6 +7,7 @@ import {
 } from "../actions/authentication";
 
 export enum PhoneLogInStatus {
+  WAITING_FOR_PHONE_NUMBER_INPUT = "WAITING_FOR_PHONE_NUMBER_INPUT",
   SENDING_PHONE_NUMBER = "SENDING_PHONE_NUMBER",
   WAITING_FOR_CONFIRMATION_INPUT = "WAITING_FOR_CONFIRMATION_INPUT",
   SENDING_CONFIRMATION = "SENDING_CONFIRMATION",
@@ -17,9 +18,10 @@ export enum PhoneLogInStatus {
 export interface AuthenticationState {
   isLoaded: boolean;
   isLoggedIn: boolean;
-  phoneLogInStatus?:
+  phoneLogInStatus:
     | {
         status:
+          | PhoneLogInStatus.WAITING_FOR_PHONE_NUMBER_INPUT
           | PhoneLogInStatus.SENDING_PHONE_NUMBER
           | PhoneLogInStatus.WAITING_FOR_CONFIRMATION_INPUT
           | PhoneLogInStatus.SENDING_CONFIRMATION;
@@ -33,6 +35,7 @@ export interface AuthenticationState {
 }
 
 const initialState: AuthenticationState = {
+  phoneLogInStatus: { status: PhoneLogInStatus.WAITING_FOR_PHONE_NUMBER_INPUT },
   isLoaded: false,
   isLoggedIn: false
 };
@@ -44,28 +47,34 @@ export const reducer: Reducer<AuthenticationState> = (
   const action = untypedAction as AuthenticationAction;
   switch (action.type) {
     case FirebaseAuthActionType.LOG_IN: {
-      // clear phone login status since we will transition out of the phone
-      // login flow now
-      const { phoneLogInStatus, ...rest } = state;
       return {
-        ...rest,
+        // clear phone login status since we will transition out of the phone
+        // login flow now
+        phoneLogInStatus: {
+          status: PhoneLogInStatus.WAITING_FOR_PHONE_NUMBER_INPUT
+        },
         isLoaded: true,
         isLoggedIn: true
       };
     }
     case FirebaseAuthActionType.SIGN_OUT:
     case FirebaseAuthActionType.SIGNED_OUT:
-      // clear phone login status just in case.
-      const { phoneLogInStatus, ...rest } = state;
       return {
-        ...rest,
+        // clear phone login status just in case.
+        phoneLogInStatus: {
+          status: PhoneLogInStatus.WAITING_FOR_PHONE_NUMBER_INPUT
+        },
         isLoaded: true,
         isLoggedIn: false
       };
     case PhoneLogInActionType.PHONE_LOGIN_CANCELED: {
       // clear phone login status
-      const { phoneLogInStatus, ...rest } = state;
-      return rest;
+      return {
+        ...state,
+        phoneLogInStatus: {
+          status: PhoneLogInStatus.WAITING_FOR_PHONE_NUMBER_INPUT
+        }
+      };
     }
     case PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER:
       return {

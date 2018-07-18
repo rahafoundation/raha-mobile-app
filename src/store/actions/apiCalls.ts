@@ -1,7 +1,7 @@
 import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
 import { ApiCallError } from "@raha/api/dist/client/errors";
 
-import { AsyncAction } from "./";
+import { AsyncAction } from ".";
 
 export const enum ApiCallsActionType {
   STARTED = "API_CALLS.STARTED",
@@ -68,7 +68,7 @@ export const wrapApiCallAction: (
       return result;
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.error("API Call failed: ", err);
+      console.error("API Call failed:", err);
       const failureAction: ApiCallsAction = {
         type: ApiCallsActionType.FAILURE,
         endpoint,
