@@ -8,14 +8,17 @@ import { RNFirebase } from "react-native-firebase";
 
 import { RahaState } from "../../../store";
 import { OnboardingSplash } from "./OnboardingSplash";
-import { OnboardingInvite } from "./OnboardingInvite";
+import { SelectInviter } from "./SelectInviter";
+import { VerifyName } from "./VerifyName";
 import {
   getLoggedInFirebaseUser,
-  getPrivateVideoInviteRef
+  getPrivateVideoInviteRef,
+  getInviteVideoRef
 } from "../../../store/selectors/authentication";
 import { OnboardingCamera } from "./OnboardingCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
 import { OnboardingRequestInvite } from "./OnboardingRequestInvite";
+import { getMemberByUsername } from "../../../store/selectors/members";
 
 /**
  * Parent component for Onboarding flow.
@@ -23,7 +26,8 @@ import { OnboardingRequestInvite } from "./OnboardingRequestInvite";
 
 enum OnboardingStep {
   SPLASH,
-  VERIFY_INVITE,
+  SELECT_INVITER,
+  VERIFY_NAME,
   CAMERA,
   VIDEO_PREVIEW,
   REQUEST_INVITE
@@ -37,6 +41,8 @@ interface OnboardingParams {
 type ReduxStateProps = {
   displayName: string | null;
   videoUploadRef?: RNFirebase.storage.Reference;
+  deeplinkInvitingMember?: Member;
+  deeplinkVideoDownloadUrl?: string;
 };
 
 type OwnProps = NavigationScreenProps<OnboardingParams>;
@@ -56,11 +62,15 @@ export class OnboardingView extends React.Component<
   OnboardingState
 > {
   dropdown: any;
+  steps: OnboardingStep[];
 
   constructor(props: OnboardingProps) {
     super(props);
+    this.steps = [];
     this.state = {
-      step: OnboardingStep.SPLASH
+      step: OnboardingStep.SPLASH,
+      invitingMember: this.props.deeplinkInvitingMember,
+      videoDownloadUrl: this.props.deeplinkVideoDownloadUrl
     };
   }
   componentDidMount() {
@@ -71,17 +81,45 @@ export class OnboardingView extends React.Component<
     BackHandler.removeEventListener("hardwareBackPress", this._handleBackPress);
   }
 
+  componentDidUpdate(prevProps: OnboardingProps, prevState: OnboardingState) {
+    // Track forward changes in steps so we can handle backpresses.
+    if (prevState && this.state.step > prevState.step) {
+      this.steps.push(prevState.step);
+    }
+  }
+
   _handleBackPress = () => {
-    const index = this.state.step.valueOf();
-    if (index === 0) {
+    const previousStep = this.steps.pop();
+    if (previousStep === undefined) {
       // Exit out of Onboarding flow.
       return false;
     } else {
-      const previousStepKey = OnboardingStep[index - 1];
       this.setState({
-        step: OnboardingStep[previousStepKey as keyof typeof OnboardingStep]
+        step: previousStep
       });
       return true;
+    }
+  };
+
+  _checkValidDeeplink = () => {
+    const inviterUsername = this.props.navigation.getParam("inviterUsername");
+    if (inviterUsername && !this.props.deeplinkInvitingMember) {
+      this.dropdown.alertWithType(
+        "error",
+        "Error: Invalid Deeplink",
+        "Invalid inviter in deeplink"
+      );
+      return;
+    }
+
+    const videoToken = this.props.navigation.getParam("videoToken");
+    if (videoToken && !this.props.deeplinkVideoDownloadUrl) {
+      this.dropdown.alertWithType(
+        "error",
+        "Error: Invalid Deeplink",
+        "Invalid video token in deeplink"
+      );
+      return;
     }
   };
 
@@ -94,7 +132,7 @@ export class OnboardingView extends React.Component<
         "Need to verify full name before this step."
       );
       this.setState({
-        step: OnboardingStep.VERIFY_INVITE
+        step: OnboardingStep.VERIFY_NAME
       });
     }
     return verifiedFullName;
@@ -111,7 +149,7 @@ export class OnboardingView extends React.Component<
         "Need person to request invite from before this step."
       );
       this.setState({
-        step: OnboardingStep.VERIFY_INVITE
+        step: OnboardingStep.SELECT_INVITER
       });
     }
     return invitingMember;
@@ -153,11 +191,8 @@ export class OnboardingView extends React.Component<
       this.dropdown.alertWithType(
         "error",
         "Error: Upload",
-        "Invalid video. Please retry."
+        "Invalid video storage. Please retry."
       );
-      this.setState({
-        step: OnboardingStep.VIDEO_PREVIEW
-      });
     }
     return videoUploadRef;
   };
@@ -169,26 +204,38 @@ export class OnboardingView extends React.Component<
           <OnboardingSplash
             onSplashCompleted={() => {
               this.setState({
-                step: OnboardingStep.VERIFY_INVITE
+                step: this.props.deeplinkInvitingMember
+                  ? OnboardingStep.VERIFY_NAME
+                  : OnboardingStep.SELECT_INVITER
               });
             }}
           />
         );
       }
-      case OnboardingStep.VERIFY_INVITE: {
+      case OnboardingStep.SELECT_INVITER: {
         return (
-          <OnboardingInvite
+          <SelectInviter
+            onSelectedInviter={(inviter: Member) => {
+              this.setState({
+                invitingMember: inviter,
+                step: OnboardingStep.VERIFY_NAME
+              });
+            }}
+          />
+        );
+      }
+      case OnboardingStep.VERIFY_NAME: {
+        return (
+          <VerifyName
             initialDisplayName={
               this.props.displayName ? this.props.displayName : undefined
             }
-            onVerifiedNameAndInviter={(
-              verifiedName: string,
-              inviter: Member
-            ) => {
+            onVerifiedName={(verifiedName: string) => {
               this.setState({
                 verifiedName: verifiedName,
-                invitingMember: inviter,
-                step: OnboardingStep.CAMERA
+                step: this.props.deeplinkVideoDownloadUrl
+                  ? OnboardingStep.REQUEST_INVITE
+                  : OnboardingStep.CAMERA
               });
             }}
           />
@@ -234,12 +281,8 @@ export class OnboardingView extends React.Component<
             onRetakeClicked={() => {
               this.setState({ step: OnboardingStep.CAMERA });
             }}
-            onVideoPlaybackError={(errorMessage: string) => {
-              this.dropdown.alertWithType(
-                "error",
-                "Error: Video Playback",
-                errorMessage
-              );
+            onError={(errorType: string, errorMessage: string) => {
+              this.dropdown.alertWithType("error", errorType, errorMessage);
               this.setState({
                 step: OnboardingStep.CAMERA
               });
@@ -284,16 +327,24 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps: MapStateToProps<
-  ReduxStateProps,
-  OwnProps,
-  RahaState
-> = state => {
+const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
+  state,
+  ownProps
+) => {
   const firebaseUser = getLoggedInFirebaseUser(state);
-
+  const inviterUsername = ownProps.navigation.getParam("inviterUsername");
+  const invitingMember = inviterUsername
+    ? getMemberByUsername(state, inviterUsername)
+    : undefined;
+  const videoToken = ownProps.navigation.getParam("videoToken");
+  const videoDownloadUrl = videoToken
+    ? getInviteVideoRef(videoToken).toString()
+    : undefined;
   return {
     displayName: firebaseUser ? firebaseUser.displayName : null,
-    videoUploadRef: getPrivateVideoInviteRef(state)
+    videoUploadRef: getPrivateVideoInviteRef(state),
+    deeplinkInvitingMember: invitingMember,
+    deeplinkVideoDownloadUrl: videoDownloadUrl
   };
 };
 export const Onboarding = connect(mapStateToProps)(OnboardingView);

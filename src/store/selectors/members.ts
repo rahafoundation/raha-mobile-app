@@ -23,6 +23,13 @@ export function getMembersByIds(
   return ids.map(id => getMemberById(state, id));
 }
 
+export function getMemberByUsername(
+  state: RahaState,
+  username: MemberUsername
+): Member | undefined {
+  return state.members.byMemberUsername.get(username, undefined);
+}
+
 export function getMembersByUsernames(
   state: RahaState,
   usernames: MemberUsername[]

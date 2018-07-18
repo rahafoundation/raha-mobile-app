@@ -9,7 +9,7 @@ console.ignoredYellowBox = ["Setting a timer"];
 import * as React from "react";
 import { RNFirebase } from "react-native-firebase";
 import { View, StyleSheet } from "react-native";
-import Video from "react-native-video";
+import { VideoPlayer } from "react-native-video-processing";
 
 import { Button, Text } from "../../shared/elements";
 
@@ -21,7 +21,7 @@ type VideoPreviewProps = {
   videoUri: string;
   videoUploadRef: RNFirebase.storage.Reference;
   onVideoUploaded: (videoDownloadUrl: string) => any;
-  onVideoPlaybackError: (errorMessage: string) => any;
+  onError: (errorType: string, errorMessage: string) => any;
   onRetakeClicked: () => any;
 };
 
@@ -42,6 +42,8 @@ export class VideoPreview extends React.Component<
   VideoPreviewProps,
   VideoStateProps
 > {
+  videoPlayerRef?: any;
+
   constructor(props: VideoPreviewProps) {
     super(props);
     this.state = {
@@ -51,12 +53,31 @@ export class VideoPreview extends React.Component<
     };
   }
 
-  uploadVideo = async (videoUploadRef: RNFirebase.storage.Reference) => {
-    const response = await fetch(this.props.videoUri);
+  compressAndUploadVideo = async () => {
+    const options = {
+      width: 480,
+      height: 640,
+      bitrateMultiplier: 3,
+      minimumBitrate: 300000
+    };
+    try {
+      const newSource = await this.videoPlayerRef.compress(options);
+      this.uploadVideo(this.props.videoUploadRef, newSource);
+    } catch (error) {
+      this.props.onError("Error: Video Upload", error);
+    }
+  };
+
+  uploadVideo = async (
+    videoUploadRef: RNFirebase.storage.Reference,
+    videoUri: string
+  ) => {
+    const response = await fetch(videoUri);
     const blob = await response.blob();
     //@ts-ignore Blob does not have data type
     if (blob.data.size > MAX_VIDEO_SIZE) {
-      this.props.onVideoPlaybackError(
+      this.props.onError(
+        "Error: Video Upload",
         "The video size is larger than " +
           MAX_MB +
           "MB. Please retake your video."
@@ -64,7 +85,6 @@ export class VideoPreview extends React.Component<
       return;
     }
 
-    // TODO: Transcode video to make it smaller.
     const metadata = {
       //@ts-ignore Expo Blob does not have data type
       contentType: blob.data.type
@@ -81,12 +101,28 @@ export class VideoPreview extends React.Component<
         });
       },
       err => {
-        this.props.onVideoPlaybackError(
+        this.props.onError(
+          "Error: Video Upload",
           "Could not upload. Please try again.\n" + err.message
         );
         this.setState({
           uploadStatus: UploadStatus.NOT_STARTED
         });
+      },
+      async () => {
+        const videoDownloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+        if (videoDownloadUrl) {
+          this.setState({ uploadStatus: UploadStatus.UPLOADED });
+          this.props.onVideoUploaded(videoDownloadUrl);
+        } else {
+          this.props.onError(
+            "Error: Video Upload Error",
+            "Could not retrieve download URL. Please try again."
+          );
+          this.setState({
+            uploadStatus: UploadStatus.NOT_STARTED
+          });
+        }
       }
     );
     const snapshot = await uploadTask;
@@ -112,7 +148,7 @@ export class VideoPreview extends React.Component<
             <Button
               title="Upload Video"
               onPress={() => {
-                this.uploadVideo(this.props.videoUploadRef);
+                this.compressAndUploadVideo();
               }}
             />
           )}
@@ -147,17 +183,13 @@ export class VideoPreview extends React.Component<
     const videoUri = this.props.videoUri;
     return (
       videoUri && (
-        <Video
-          source={{
-            uri: videoUri
-          }}
-          rate={1.0}
-          volume={1.0}
-          muted={false}
-          paused={false}
-          resizeMode="cover"
-          repeat
+        <VideoPlayer
           style={styles.video}
+          ref={(ref: any) => (this.videoPlayerRef = ref)}
+          play={true}
+          replay={true}
+          source={videoUri}
+          resizeMode={VideoPlayer.Constants.resizeMode.COVER}
         />
       )
     );

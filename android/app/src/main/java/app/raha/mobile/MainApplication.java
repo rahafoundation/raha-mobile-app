@@ -16,6 +16,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.shahenlibrary.RNVideoProcessingPackage;
 
 // react-native-google-signin
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
@@ -43,6 +44,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebaseAuthPackage(),
             new RNFirebaseStoragePackage(),
             new RNCameraPackage(),
+            new RNVideoProcessingPackage(),
             new ReactVideoPackage(),
             new VectorIconsPackage()
       );
