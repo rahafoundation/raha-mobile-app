@@ -1,4 +1,5 @@
 import * as React from "react";
+import DropdownAlert from "react-native-dropdownalert";
 import {
   BackHandler,
   StyleSheet,
@@ -39,6 +40,7 @@ import {
   AsYouTypeFormatter
 } from "google-libphonenumber";
 import { Map } from "immutable";
+import { withDropdown } from "../shared/DropdownProvider";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 const countries = getAllCountries().reduce<Map<string, Country>>(
@@ -53,7 +55,7 @@ type OwnProps = {
 type StateProps = {
   isLoggedIn: boolean;
   hasAccount: boolean;
-  phoneLogInStatus?: RahaState["authentication"]["phoneLogInStatus"];
+  phoneLogInStatus: RahaState["authentication"]["phoneLogInStatus"];
 };
 
 interface DispatchProps {
@@ -325,6 +327,7 @@ class ConfirmationCodeForm extends React.Component<
 class LogInView extends React.Component<LogInProps, LogInState> {
   componentFocusedListener?: NavigationEventSubscription;
   state: LogInState = {};
+  dropdown?: any;
 
   componentDidMount() {
     // If this LoginView becomes focused, the user was determined to be logged out. Verify that the
@@ -348,6 +351,18 @@ class LogInView extends React.Component<LogInProps, LogInState> {
   };
 
   componentDidUpdate(prevProps: LogInProps) {
+    // if there's an error, display it
+    if (
+      "errorMessage" in this.props.phoneLogInStatus &&
+      !("errorMessage" in prevProps.phoneLogInStatus)
+    ) {
+      this.dropdown.alertWithType(
+        "error",
+        "Error: Log In Failed",
+        this.props.phoneLogInStatus.errorMessage
+      );
+    }
+
     // set the sent time for the resend timer, which occurs when you get to
     // WAITING_FOR_CONFIRMATION_INPUT state (see the initiatePhoneLogIn action)
     if (
@@ -383,56 +398,66 @@ class LogInView extends React.Component<LogInProps, LogInState> {
     this.props.cancelPhoneLogIn();
   };
 
-  render() {
-    const status = this.props.phoneLogInStatus
-      ? this.props.phoneLogInStatus.status
-      : undefined;
-    if (
-      !this.state.phoneNumberSentTime &&
-      (!status ||
-        status === PhoneLogInStatus.SENDING_PHONE_NUMBER ||
-        status === PhoneLogInStatus.SENDING_PHONE_NUMBER_FAILED)
-    ) {
-      return (
-        <Container>
-          {/* TODO: show errors */}
+  _renderContents = () => {
+    switch (this.props.phoneLogInStatus.status) {
+      default:
+        // send to start of flow if unexpected
+        console.error(
+          "phoneLogInStatus was an unexpected value:",
+          this.props.phoneLogInStatus
+        );
+      case PhoneLogInStatus.WAITING_FOR_PHONE_NUMBER_INPUT:
+      case PhoneLogInStatus.SENDING_PHONE_NUMBER:
+      case PhoneLogInStatus.SENDING_PHONE_NUMBER_FAILED:
+        return (
           <PhoneNumberForm
-            waitingForCode={status === PhoneLogInStatus.SENDING_PHONE_NUMBER}
+            waitingForCode={
+              this.props.phoneLogInStatus.status ===
+              PhoneLogInStatus.SENDING_PHONE_NUMBER
+            }
             onSubmit={number => this._handleInitiatePhoneLogIn(number)}
             // TODO: remove
             signOut={this.props.signOut}
           />
-        </Container>
-      );
-    }
+        );
 
+      case PhoneLogInStatus.WAITING_FOR_CONFIRMATION_INPUT:
+      case PhoneLogInStatus.SENDING_CONFIRMATION:
+      case PhoneLogInStatus.SENDING_CONFIRMATION_FAILED:
+        return (
+          <ConfirmationCodeForm
+            onCancel={this._resetPhoneLogIn}
+            onSubmit={this.props.confirmPhoneLogIn}
+            onTriggerResend={() => {
+              if (!this.state.phoneNumber) {
+                console.error(
+                  "Phone number was expected to be present, defensively resetting state"
+                );
+                this._resetPhoneLogIn();
+                return;
+              }
+              this._handleInitiatePhoneLogIn(this.state.phoneNumber);
+            }}
+            // defensively set sentTime to the current time if it wasn't set,
+            // which may briefly happen between state updates
+            sentTime={this.state.phoneNumberSentTime || new Date()}
+            waitingForConfirmation={
+              !!this.props.phoneLogInStatus &&
+              this.props.phoneLogInStatus.status ===
+                PhoneLogInStatus.SENDING_CONFIRMATION
+            }
+            // TODO: remove
+            signOut={this.props.signOut}
+          />
+        );
+    }
+  };
+
+  render() {
     return (
       <Container>
-        {/* TODO: show errors */}
-        <ConfirmationCodeForm
-          onCancel={this._resetPhoneLogIn}
-          onSubmit={this.props.confirmPhoneLogIn}
-          onTriggerResend={() => {
-            if (!this.state.phoneNumber) {
-              console.error(
-                "Phone number was expected to be present, defensively resetting state"
-              );
-              this._resetPhoneLogIn();
-              return;
-            }
-            this._handleInitiatePhoneLogIn(this.state.phoneNumber);
-          }}
-          // defensively set sentTime to the current time if it wasn't set,
-          // which may briefly happen between state updates
-          sentTime={this.state.phoneNumberSentTime || new Date()}
-          waitingForConfirmation={
-            !!this.props.phoneLogInStatus &&
-            this.props.phoneLogInStatus.status ===
-              PhoneLogInStatus.SENDING_CONFIRMATION
-          }
-          // TODO: remove
-          signOut={this.props.signOut}
-        />
+        {this._renderContents()}
+        <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
       </Container>
     );
   }
