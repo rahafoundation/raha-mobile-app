@@ -103,6 +103,7 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -151,6 +152,9 @@ android {
 }
 
 dependencies {
+    // Multidex support for < Android 5.0 (API level 21)
+    implementation 'com.android.support:multidex:1.0.3'
+
     compile project(':react-native-google-signin')
     compile(project(':react-native-firebase')) {
         transitive = false
