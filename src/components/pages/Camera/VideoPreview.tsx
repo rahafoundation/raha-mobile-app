@@ -9,7 +9,7 @@ console.ignoredYellowBox = ["Setting a timer"];
 import * as React from "react";
 import firebase from "firebase";
 import { View, StyleSheet } from "react-native";
-import Video from "react-native-video";
+import { VideoPlayer } from "react-native-video-processing";
 
 import { Button, Text } from "../../shared/elements";
 
@@ -42,6 +42,8 @@ export class VideoPreview extends React.Component<
   VideoPreviewProps,
   VideoStateProps
 > {
+  videoPlayerRef?: any;
+
   constructor(props: VideoPreviewProps) {
     super(props);
     this.state = {
@@ -51,8 +53,32 @@ export class VideoPreview extends React.Component<
     };
   }
 
-  uploadVideo = async (videoUploadRef: firebase.storage.Reference) => {
-    const response = await fetch(this.props.videoUri);
+  compressAndUploadVideo = async () => {
+    const options = {
+      width: 480,
+      height: 640,
+      bitrateMultiplier: 3,
+      minimumBitrate: 300000
+    };
+    this.videoPlayerRef
+      .compress(options)
+      .then((newSource: string) => {
+        this.uploadVideo(this.props.videoUploadRef, newSource);
+      })
+      .catch((error: any) => {
+        console.log(error);
+        this.props.onError(
+          "Error: Video Transcoding",
+          "Unable to compress video " + error
+        );
+      });
+  };
+
+  uploadVideo = async (
+    videoUploadRef: firebase.storage.Reference,
+    videoUri: string
+  ) => {
+    const response = await fetch(videoUri);
     const blob = await response.blob();
     //@ts-ignore Blob does not have data type
     if (blob.data.size > MAX_VIDEO_SIZE) {
@@ -65,7 +91,6 @@ export class VideoPreview extends React.Component<
       return;
     }
 
-    // TODO: Transcode video to make it smaller.
     const metadata = {
       //@ts-ignore Expo Blob does not have data type
       contentType: blob.data.type
@@ -116,7 +141,7 @@ export class VideoPreview extends React.Component<
             <Button
               title="Upload Video"
               onPress={() => {
-                this.uploadVideo(this.props.videoUploadRef);
+                this.compressAndUploadVideo();
               }}
             />
           )}
@@ -151,23 +176,13 @@ export class VideoPreview extends React.Component<
     const videoUri = this.props.videoUri;
     return (
       videoUri && (
-        <Video
-          source={{
-            uri: videoUri
-          }}
-          rate={1.0}
-          volume={1.0}
-          muted={false}
-          paused={false}
-          onError={error => {
-            this.props.onError(
-              "Error: Video Playback Error",
-              error.error.errorString
-            );
-          }}
-          resizeMode="cover"
-          repeat
+        <VideoPlayer
           style={styles.video}
+          ref={(ref: any) => (this.videoPlayerRef = ref)}
+          play={true}
+          replay={true}
+          source={videoUri}
+          resizeMode={VideoPlayer.Constants.resizeMode.COVER}
         />
       )
     );
