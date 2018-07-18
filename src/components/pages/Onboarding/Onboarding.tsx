@@ -273,7 +273,7 @@ export class OnboardingView extends React.Component<
             onVideoUploaded={(videoDownloadUrl: string) =>
               this.setState({
                 videoDownloadUrl: videoDownloadUrl,
-                step: OnboardingStep.VERIFY_NAME
+                step: OnboardingStep.REQUEST_INVITE
               })
             }
             onRetakeClicked={() => {
