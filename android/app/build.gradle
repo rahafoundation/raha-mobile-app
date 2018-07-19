@@ -107,6 +107,16 @@ android {
             abiFilters "armeabi-v7a", "x86"
         }
     }
+    signingConfigs {
+        release {
+            if (project.hasProperty('RAHA_RELEASE_STORE_FILE')) {
+                storeFile file(RAHA_RELEASE_STORE_FILE)
+                storePassword RAHA_RELEASE_STORE_PASSWORD
+                keyAlias RAHA_RELEASE_KEY_ALIAS
+                keyPassword RAHA_RELEASE_KEY_PASSWORD
+            }
+        }
+    }
     splits {
         abi {
             reset()
@@ -117,6 +127,7 @@ android {
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
