@@ -1,6 +1,6 @@
 import { BackHandler } from "react-native";
 import * as React from "react";
-import { Container } from "../../shared/elements";
+import { Container, Text } from "../../shared/elements";
 import { InviteCamera } from "./InviteCamera";
 import DropdownAlert from "react-native-dropdownalert";
 import { VideoPreview } from "../Camera/VideoPreview";
@@ -16,7 +16,10 @@ import { RahaState } from "../../../store";
 import { generateToken } from "../../../helpers/token";
 import { SendInvite } from "./SendInvite";
 
+const ENABLE_SEND_INVITE = false;
+
 enum InviteStep {
+  WIP,
   CAMERA,
   VIDEO_PREVIEW,
   SEND_INVITE
@@ -46,7 +49,7 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
     this.inviteToken = generateToken();
     this.videoUploadRef = getInviteVideoRef(this.inviteToken);
     this.state = {
-      step: InviteStep.CAMERA
+      step: ENABLE_SEND_INVITE ? InviteStep.CAMERA : InviteStep.WIP
     };
   }
 
@@ -89,6 +92,19 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
 
   _renderStep() {
     switch (this.state.step) {
+      case InviteStep.WIP: {
+        return (
+          <Text
+            style={{
+              textAlign: "center",
+              fontSize: 18
+            }}
+          >
+            Sorry! We're working on an easier way to invite your friends. For
+            now, please send invites through the web app.
+          </Text>
+        );
+      }
       case InviteStep.CAMERA: {
         return (
           <InviteCamera
