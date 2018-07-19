@@ -1,14 +1,21 @@
 import * as React from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import HockeyApp from "react-native-hockeyapp";
 
 import { AuthManager } from "./AuthManager";
 import { Navigation } from "./shared/Navigation";
 import { store, persistor } from "../store";
 import { refreshMembers } from "../store/actions/members";
+import { config } from "../data/config";
+
+HockeyApp.configure(config.hockeyAppId, true);
 
 // refresh the members/operations on app start
 const onBeforeLift = async () => {
+  HockeyApp.start();
+  HockeyApp.checkForUpdate();
+
   await refreshMembers()(store.dispatch, store.getState, undefined);
 };
 

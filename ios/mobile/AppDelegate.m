@@ -12,6 +12,7 @@
 #import <Firebase.h>
 #import <RNGoogleSignin/RNGoogleSignin.h>
 #import <React/RCTLinkingManager.h>
+#import "RNHockeyApp.h"
 
 @implementation AppDelegate
 
@@ -40,10 +41,15 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+  if( [[BITHockeyManager sharedHockeyManager].authenticator handleOpenURL:url
+                                                        sourceApplication:sourceApplication
+                                                               annotation:annotation]) {
+    return YES;
+  }
+  
   return [RNGoogleSignin application:application openURL:url sourceApplication:sourceApplication annotation:annotation]
   || [RCTLinkingManager application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
 }
 // replace above with instructions at end of this doc if FBSDK is installed
-// https://github.com/react-native-community/react-native-google-signin/blob/master/ios-guide.md
-
+// https://github.com/react-native-community/react-native-google-signin/blob/master/ios-guide.m
 @end
