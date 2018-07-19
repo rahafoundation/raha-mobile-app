@@ -68,3 +68,13 @@
 -dontwarn java.nio.file.*
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -dontwarn okio.**
+
+# gms
+-dontwarn com.google.android.gms.**
+
+# react-native-video-processing
+-dontwarn com.googlecode.mp4parser.authoring.tracks.mjpeg.**
+-dontwarn com.google.android.exoplayer2.**
+
+# react-native-firebase
+-dontwarn io.invertase.firebase.**
