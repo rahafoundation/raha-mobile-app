@@ -7200,6 +7200,10 @@ react-native-google-signin@^0.12.0:
   version "0.12.0"
   resolved "https://registry.npmjs.org/react-native-google-signin/-/react-native-google-signin-0.12.0.tgz#fc549593adbc92ed2a5a683a957f157650ece961"
 
+react-native-hockeyapp@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.npmjs.org/react-native-hockeyapp/-/react-native-hockeyapp-0.5.3.tgz#34fafe0369c723a3746f077d3b25f126e9e536ee"
+
 react-native-mock-render@^0.0.25:
   version "0.0.25"
   resolved "https://registry.npmjs.org/react-native-mock-render/-/react-native-mock-render-0.0.25.tgz#a0d5478ff429c9c394146bb503bf21f451323f73"
