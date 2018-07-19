@@ -19,7 +19,7 @@ import { SendInvite } from "./SendInvite";
 const ENABLE_SEND_INVITE = false;
 
 enum InviteStep {
-  WIP,
+  WIP, // Temp step to signal that this flow is still WIP
   CAMERA,
   VIDEO_PREVIEW,
   SEND_INVITE
