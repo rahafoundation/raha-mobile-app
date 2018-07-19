@@ -54,6 +54,9 @@ PODS:
   - GoogleUtilities (1.3.2):
     - GoogleSymbolUtilities (~> 1.1)
   - GTMSessionFetcher/Core (1.1.15)
+  - HockeySDK (5.1.2):
+    - HockeySDK/DefaultLib (= 5.1.2)
+  - HockeySDK/DefaultLib (5.1.2)
   - nanopb (0.3.8):
     - nanopb/decode (= 0.3.8)
     - nanopb/encode (= 0.3.8)
@@ -65,6 +68,7 @@ DEPENDENCIES:
   - Firebase/Core (~> 5.3.0)
   - Firebase/Storage (~> 5.3.0)
   - Google/SignIn
+  - HockeySDK
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -84,6 +88,7 @@ SPEC REPOS:
     - GoogleToolboxForMac
     - GoogleUtilities
     - GTMSessionFetcher
+    - HockeySDK
     - nanopb
 
 SPEC CHECKSUMS:
@@ -103,8 +108,9 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
   GoogleUtilities: 8bbc733218aad26306f9d4a253823986110e3358
   GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
+  HockeySDK: 38b7e2726af1ea86ae97ce4b5de33ab0817e3500
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
 
-PODFILE CHECKSUM: 6aa93285f8fd955a2d010d666f5ec37d9defa09a
+PODFILE CHECKSUM: 9fb86ac4847a355038cb6bd0a3745f0c9aed6e5b
 
 COCOAPODS: 1.5.3

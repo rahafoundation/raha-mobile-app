@@ -17,6 +17,9 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.shahenlibrary.RNVideoProcessingPackage;
+import com.slowpath.hockeyapp.RNHockeyAppModule;
+import com.slowpath.hockeyapp.RNHockeyAppPackage;
+
 
 // react-native-google-signin
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
@@ -46,7 +49,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNCameraPackage(),
             new RNVideoProcessingPackage(),
             new ReactVideoPackage(),
-            new VectorIconsPackage()
+            new VectorIconsPackage(),
+            new RNHockeyAppPackage(MainApplication.this)
       );
     }
 
