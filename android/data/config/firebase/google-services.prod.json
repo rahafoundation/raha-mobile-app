@@ -39,6 +39,14 @@
           }
         },
         {
+          "client_id": "677137485282-ii2s77den2koij4a58f7hihbctdaecfr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobile",
+            "certificate_hash": "187a59e10a58b883e752a99a20822868d90e39a5"
+          }
+        },
+        {
           "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
           "client_type": 3
         }
