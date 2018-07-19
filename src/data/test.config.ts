@@ -3,6 +3,8 @@ import { Config } from "./prod.config";
 export const config: Config = {
   apiBase: "https://raha-test.appspot.com/api/",
   publicVideoBucket: "raha-video-test",
+  // TODO: should this be different for test?
+  hockeyAppId: "6121b83feab845e1b221a95984d3c12b",
   firebase: {
     ios: {
       apiKey: "AIzaSyAHiNHLSZROsuDmrxKd8c24RZRUJVhqia0",

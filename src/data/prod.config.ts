@@ -1,6 +1,7 @@
 export const config = {
   apiBase: "https://raha-5395e.appspot.com/api/",
   publicVideoBucket: "raha-video",
+  hockeyAppId: "6121b83feab845e1b221a95984d3c12b",
   firebase: {
     ios: {
       apiKey: "AIzaSyCMp31nMIR5KMJegtRIVT3y7aX71sadysY",
