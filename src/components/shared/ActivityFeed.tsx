@@ -75,7 +75,7 @@ export class ActivityFeedView extends React.Component<ActivityFeedProps> {
             activityRef={elem => {
               if (!elem) {
                 // TODO: ensure this degrades well if this is observed to occur
-                console.error("Unexpected: ActivityItem ref has no value");
+                // console.error("Unexpected: ActivityItem ref has no value");
                 return;
               }
               this.activities[operationItem.item.id] = elem;
