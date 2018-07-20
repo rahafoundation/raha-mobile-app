@@ -205,7 +205,7 @@ export class OnboardingView extends React.Component<
       return (
         <React.Fragment>
           <Text style={{ textAlign: "center" }}>
-            Welcome to Raha! Please log in to accept your invite.
+            Welcome to Raha! Please sign up with your mobile number to accept your invite.
           </Text>
           <LogIn navigation={this.props.navigation} />
         </React.Fragment>
