@@ -19,6 +19,8 @@ import { OnboardingCamera } from "./OnboardingCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
 import { OnboardingRequestInvite } from "./OnboardingRequestInvite";
 import { getMemberByUsername } from "../../../store/selectors/members";
+import { LogIn } from "../LogIn";
+import { Text } from "../../shared/elements";
 
 /**
  * Parent component for Onboarding flow.
@@ -43,6 +45,7 @@ type ReduxStateProps = {
   videoUploadRef?: RNFirebase.storage.Reference;
   deeplinkInvitingMember?: Member;
   deeplinkVideoDownloadUrl?: string;
+  isLoggedIn: boolean;
 };
 
 type OwnProps = NavigationScreenProps<OnboardingParams>;
@@ -198,6 +201,17 @@ export class OnboardingView extends React.Component<
   };
 
   _renderOnboardingStep() {
+    if (!this.props.isLoggedIn) {
+      return (
+        <React.Fragment>
+          <Text style={{ textAlign: "center" }}>
+            Welcome to Raha! Please sign up with your mobile number to accept your invite.
+          </Text>
+          <LogIn navigation={this.props.navigation} />
+        </React.Fragment>
+      );
+    }
+
     switch (this.state.step) {
       case OnboardingStep.SPLASH: {
         return (
@@ -322,8 +336,7 @@ export class OnboardingView extends React.Component<
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#ddd"
+    flex: 1
   }
 });
 
@@ -344,7 +357,8 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
     displayName: firebaseUser ? firebaseUser.displayName : null,
     videoUploadRef: getPrivateVideoInviteRef(state),
     deeplinkInvitingMember: invitingMember,
-    deeplinkVideoDownloadUrl: videoDownloadUrl
+    deeplinkVideoDownloadUrl: videoDownloadUrl,
+    isLoggedIn: state.authentication.isLoaded && state.authentication.isLoggedIn
   };
 };
 export const Onboarding = connect(mapStateToProps)(OnboardingView);
