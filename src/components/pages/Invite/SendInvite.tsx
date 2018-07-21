@@ -1,4 +1,5 @@
 import * as React from "react";
+import { TextInput } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import validator from "validator";
 
@@ -12,7 +13,6 @@ import {
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { Text, Button } from "../../shared/elements";
-import { TextInput } from "../../../../node_modules/@types/react-native";
 
 type ReduxStateProps = {
   sendInviteStatus?: ApiCallStatus;
@@ -29,7 +29,7 @@ type SendInviteState = {
 
 type SendInviteProps = OwnProps &
   ReduxStateProps & {
-    sendInvite: (videoToken: string, email: string) => void;
+    sendInvite: (email: string, videoToken: string) => void;
   };
 
 class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
@@ -46,7 +46,7 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
       this.setState({ enteredInvalidEmail: true });
       return;
     }
-    this.props.sendInvite(this.props.videoToken, enteredEmail);
+    this.props.sendInvite(enteredEmail, this.props.videoToken);
   };
 
   private _renderSendingStatus = () => {
