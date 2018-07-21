@@ -49,8 +49,8 @@ export const trustMember: AsyncActionCreator = (memberId: MemberId) => {
 export const requestInviteFromMember: AsyncActionCreator = (
   memberId: MemberId,
   fullName: string,
-  videoUrl: string,
-  username: string
+  username: string,
+  videoToken?: string
 ) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
@@ -64,8 +64,8 @@ export const requestInviteFromMember: AsyncActionCreator = (
         authToken,
         memberId,
         fullName,
-        videoUrl,
-        username
+        username,
+        videoToken
       );
 
       const action: OperationsAction = {

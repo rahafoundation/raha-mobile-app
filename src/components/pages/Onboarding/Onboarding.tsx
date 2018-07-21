@@ -45,6 +45,7 @@ type ReduxStateProps = {
   videoUploadRef?: RNFirebase.storage.Reference;
   deeplinkInvitingMember?: Member;
   deeplinkVideoDownloadUrl?: string;
+  deeplinkVideoToken?: string;
   isLoggedIn: boolean;
 };
 
@@ -121,6 +122,24 @@ export class OnboardingView extends React.Component<
         "error",
         "Error: Invalid Deeplink",
         "Invalid video token in deeplink"
+      );
+      return;
+    }
+
+    if (videoToken && !inviterUsername) {
+      this.dropdown.alertWithType(
+        "error",
+        "Error: Invalid Deeplink",
+        "Missing inviter in deeplink"
+      );
+      return;
+    }
+
+    if (!inviterUsername && videoToken) {
+      this.dropdown.alertWithType(
+        "error",
+        "Error: Invalid Deeplink",
+        "Missing invite video token in deeplink"
       );
       return;
     }
@@ -205,7 +224,8 @@ export class OnboardingView extends React.Component<
       return (
         <React.Fragment>
           <Text style={{ textAlign: "center" }}>
-            Welcome to Raha! Please sign up with your mobile number to accept your invite.
+            Welcome to Raha! Please sign up with your mobile number to accept
+            your invite.
           </Text>
           <LogIn navigation={this.props.navigation} />
         </React.Fragment>
@@ -315,7 +335,7 @@ export class OnboardingView extends React.Component<
           <OnboardingRequestInvite
             verifiedName={fullName}
             invitingMember={invitingMember}
-            videoDownloadUrl={videoDownloadUrl}
+            videoToken={this.props.deeplinkVideoToken}
           />
         );
       }
@@ -353,11 +373,14 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
   const videoDownloadUrl = videoToken
     ? getInviteVideoRef(videoToken).toString()
     : undefined;
+  // TODO: Don't process deeplink until done
+
   return {
     displayName: firebaseUser ? firebaseUser.displayName : null,
     videoUploadRef: getPrivateVideoInviteRef(state),
     deeplinkInvitingMember: invitingMember,
     deeplinkVideoDownloadUrl: videoDownloadUrl,
+    deeplinkVideoToken: videoToken,
     isLoggedIn: state.authentication.isLoaded && state.authentication.isLoggedIn
   };
 };
