@@ -78,6 +78,7 @@ export class OnboardingView extends React.Component<
     };
   }
   componentDidMount() {
+    this._checkValidDeeplink();
     BackHandler.addEventListener("hardwareBackPress", this._handleBackPress);
   }
 
@@ -107,41 +108,13 @@ export class OnboardingView extends React.Component<
 
   _checkValidDeeplink = () => {
     const inviterUsername = this.props.navigation.getParam("inviterUsername");
-    if (inviterUsername && !this.props.deeplinkInvitingMember) {
-      this.dropdown.alertWithType(
-        "error",
-        "Error: Invalid Deeplink",
-        "Invalid inviter in deeplink"
-      );
-      return;
-    }
-
     const videoToken = this.props.navigation.getParam("videoToken");
-    if (videoToken && !this.props.deeplinkVideoDownloadUrl) {
+    if ((videoToken || inviterUsername) && !this.props.deeplinkVideoToken) {
       this.dropdown.alertWithType(
         "error",
         "Error: Invalid Deeplink",
-        "Invalid video token in deeplink"
+        "Unable to process deeplink. Please try signing up directly from your phone."
       );
-      return;
-    }
-
-    if (videoToken && !inviterUsername) {
-      this.dropdown.alertWithType(
-        "error",
-        "Error: Invalid Deeplink",
-        "Missing inviter in deeplink"
-      );
-      return;
-    }
-
-    if (!inviterUsername && videoToken) {
-      this.dropdown.alertWithType(
-        "error",
-        "Error: Invalid Deeplink",
-        "Missing invite video token in deeplink"
-      );
-      return;
     }
   };
 
@@ -360,28 +333,47 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
-  state,
-  ownProps
-) => {
-  const firebaseUser = getLoggedInFirebaseUser(state);
+function extractDeeplinkingParams(
+  state: RahaState,
+  ownProps: OwnProps
+): {
+  deeplinkInvitingMember?: Member;
+  deeplinkVideoDownloadUrl?: string;
+  deeplinkVideoToken?: string;
+} {
   const inviterUsername = ownProps.navigation.getParam("inviterUsername");
   const invitingMember = inviterUsername
     ? getMemberByUsername(state, inviterUsername)
     : undefined;
   const videoToken = ownProps.navigation.getParam("videoToken");
-  const videoDownloadUrl = videoToken
-    ? getInviteVideoRef(videoToken).toString()
-    : undefined;
-  // TODO: Don't process deeplink until done
+  if (videoToken && invitingMember) {
+    // Return all of the params only if it is a valid deeplink.
+    return {
+      deeplinkInvitingMember: invitingMember,
+      deeplinkVideoDownloadUrl: getInviteVideoRef(videoToken),
+      deeplinkVideoToken: videoToken
+    };
+  } else {
+    return {
+      deeplinkInvitingMember: undefined,
+      deeplinkVideoDownloadUrl: undefined,
+      deeplinkVideoToken: undefined
+    };
+  }
+}
+
+const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
+  state,
+  ownProps
+) => {
+  const firebaseUser = getLoggedInFirebaseUser(state);
 
   return {
     displayName: firebaseUser ? firebaseUser.displayName : null,
     videoUploadRef: getPrivateVideoInviteRef(state),
-    deeplinkInvitingMember: invitingMember,
-    deeplinkVideoDownloadUrl: videoDownloadUrl,
-    deeplinkVideoToken: videoToken,
-    isLoggedIn: state.authentication.isLoaded && state.authentication.isLoggedIn
+    isLoggedIn:
+      state.authentication.isLoaded && state.authentication.isLoggedIn,
+    ...extractDeeplinkingParams(state, ownProps)
   };
 };
 export const Onboarding = connect(mapStateToProps)(OnboardingView);
