@@ -16,7 +16,7 @@ import { RahaState } from "../../../store";
 import { generateToken } from "../../../helpers/token";
 import { SendInvite } from "./SendInvite";
 
-const ENABLE_SEND_INVITE = true;
+const ENABLE_SEND_INVITE = false;
 
 enum InviteStep {
   WIP, // Temp step to signal that this flow is still WIP
