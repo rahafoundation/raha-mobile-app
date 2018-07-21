@@ -57,8 +57,7 @@ export class VideoPreview extends React.Component<
     const options = {
       width: 480,
       height: 640,
-      bitrateMultiplier: 3,
-      minimumBitrate: 300000
+      bitrateMultiplier: 5
     };
     try {
       const newSource = await this.videoPlayerRef.compress(options);
@@ -89,7 +88,7 @@ export class VideoPreview extends React.Component<
       //@ts-ignore Expo Blob does not have data type
       contentType: blob.data.type
     };
-    const uploadTask = videoUploadRef.put(this.props.videoUri, metadata);
+    const uploadTask = videoUploadRef.put(videoUri, metadata);
     uploadTask.on(
       "state_changed",
       (s: any) => {
@@ -108,21 +107,6 @@ export class VideoPreview extends React.Component<
         this.setState({
           uploadStatus: UploadStatus.NOT_STARTED
         });
-      },
-      async () => {
-        const videoDownloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
-        if (videoDownloadUrl) {
-          this.setState({ uploadStatus: UploadStatus.UPLOADED });
-          this.props.onVideoUploaded(videoDownloadUrl);
-        } else {
-          this.props.onError(
-            "Error: Video Upload Error",
-            "Could not retrieve download URL. Please try again."
-          );
-          this.setState({
-            uploadStatus: UploadStatus.NOT_STARTED
-          });
-        }
       }
     );
     const snapshot = await uploadTask;
@@ -131,7 +115,8 @@ export class VideoPreview extends React.Component<
       this.setState({ uploadStatus: UploadStatus.UPLOADED });
       this.props.onVideoUploaded(videoDownloadUrl);
     } else {
-      this.props.onVideoPlaybackError(
+      this.props.onError(
+        "Error: Video Upload",
         "Could not retrieve download URL. Please try again."
       );
       this.setState({
