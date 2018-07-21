@@ -3044,7 +3044,7 @@ discontinuous-range@1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/discontinuous-range/-/discontinuous-range-1.0.0.tgz#e38331f0844bba49b9a9cb71c771585aab1bc65a"
 
-"discourse-sso@github:rahafoundation/discourse_sso_node":
+discourse-sso@rahafoundation/discourse_sso_node:
   version "1.0.3"
   resolved "https://codeload.github.com/rahafoundation/discourse_sso_node/tar.gz/bc12549a86b73a40d1a506fd5a3e67e509abd6d7"
 
