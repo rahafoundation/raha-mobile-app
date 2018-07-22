@@ -41,16 +41,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
   const buttonText = `Mint${
     mintableAmount && mintableAmount.lte(0) ? "" : ` +ℝ${mintableAmountText}`
   }`;
-  return (
-    <Button
-      title={buttonText}
-      onPress={mint}
-      disabled={buttonDisabled}
-      buttonStyle={{ backgroundColor: "#2196F3" }}
-      //@ts-ignore Because Button does have a rounded property
-      rounded
-    />
-  );
+  return <Button title={buttonText} onPress={mint} />;
 };
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (

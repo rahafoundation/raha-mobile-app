@@ -1,5 +1,4 @@
 import * as React from "react";
-import { TextInput } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import validator from "validator";
 
@@ -12,7 +11,7 @@ import {
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { Text, Button } from "../../shared/elements";
+import { Text, Button, TextInput } from "../../shared/elements";
 
 type ReduxStateProps = {
   sendInviteStatus?: ApiCallStatus;

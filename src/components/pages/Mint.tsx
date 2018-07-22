@@ -12,6 +12,7 @@ import { NavigationScreenProps } from "react-navigation";
 import { getUnclaimedReferrals } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
 import { Button, Container, Text } from "../shared/elements";
+import { colors } from "../../helpers/colors";
 
 type OwnProps = NavigationScreenProps<{}>;
 
@@ -30,9 +31,9 @@ const MintView: React.StatelessComponent<Props> = ({
   let net = loggedInMember.balance.minus(loggedInMember.totalMinted).toString();
   let netColor;
   if (net.substr(0, 1) === "-") {
-    netColor = "red";
+    netColor = colors.danger;
   } else {
-    netColor = "green";
+    netColor = colors.darkAccent;
     net = `+${net}`;
   }
 
@@ -103,9 +104,6 @@ const MintView: React.StatelessComponent<Props> = ({
             onPress={() => {
               navigation.navigate(RouteName.Invite);
             }}
-            buttonStyle={{ backgroundColor: "#2196F3" }}
-            //@ts-ignore Because Button does have a rounded property
-            rounded
           />
           {hasUnclaimedReferrals ? (
             <Button
@@ -115,9 +113,6 @@ const MintView: React.StatelessComponent<Props> = ({
                   unclaimedReferralIds
                 });
               }}
-              buttonStyle={{ backgroundColor: "#4CAF50" }}
-              //@ts-ignore Because Button does have a rounded property
-              rounded
             />
           ) : (
             undefined
@@ -138,7 +133,7 @@ const styles = StyleSheet.create({
     fontSize: 22
   },
   numberLabel: {
-    color: "#666",
+    color: colors.text,
     fontSize: 14
   }
 });

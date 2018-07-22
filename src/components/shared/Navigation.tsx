@@ -34,6 +34,7 @@ import { Discover, DiscoverWebView } from "../pages/Discover";
 import { LeaderBoard } from "../pages/LeaderBoard";
 import { Invite } from "../pages/Invite/Invite";
 import { Account } from "../pages/Account";
+import { colors } from "../../helpers/colors";
 
 /**
  * Gets the current screen from navigation state.
@@ -134,7 +135,14 @@ export function createTabNavigator(
       MemberList,
       Give
     },
-    stackConfig
+    {
+      ...stackConfig,
+      navigationOptions: {
+        headerStyle: {
+          backgroundColor: colors.darkAccent
+        }
+      }
+    }
   );
 }
 
@@ -147,12 +155,10 @@ const HomeTab = createTabNavigator(
         headerRight: (
           <Button
             title="Give"
+            style={{ marginRight: 12 }}
             onPress={() => {
               navigation.navigate(RouteName.Give);
             }}
-            buttonStyle={{ backgroundColor: "#2196F3" }}
-            //@ts-ignore Because Button does have a rounded property
-            rounded
           />
         )
       })
@@ -167,7 +173,9 @@ const DiscoverTab = createTabNavigator(
   {
     Discover: {
       screen: Discover,
-      navigationOptions: { title: "Discover" }
+      navigationOptions: {
+        title: "Discover"
+      }
     },
     DiscoverWebView,
     LeaderBoard
@@ -272,6 +280,9 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
           />
         );
       },
+      headerStyle: {
+        backgroundColor: colors.primaryBackground
+      },
       labelStyle: {
         color: "black"
       },
@@ -291,7 +302,12 @@ const SignedOutNavigator = createStackNavigator(
   },
   {
     headerMode: "screen",
-    initialRouteName: RouteName.LogIn
+    initialRouteName: RouteName.LogIn,
+    navigationOptions: {
+      headerStyle: {
+        backgroundColor: colors.primaryBackground
+      }
+    }
   }
 );
 

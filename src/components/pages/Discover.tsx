@@ -18,8 +18,9 @@ import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { NavigationScreenProp, withNavigation } from "react-navigation";
 import { RouteName } from "../shared/Navigation";
 import { Button, Container, Text } from "../shared/elements";
+import { colors, palette } from "../../helpers/colors";
 
-const INTERNAL_ROUTE_PROTOCOL = "route:"
+const INTERNAL_ROUTE_PROTOCOL = "route:";
 
 export const DiscoverWebView: React.StatelessComponent = ({
   navigation
@@ -114,7 +115,7 @@ const DISCOVER_INFO = convertCardArr([
       "Invite more people to mint bonus Raha and get to the top of the leaderboard ranks!"
     ],
     action: "View the leaderboard",
-    uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard"  // Why does RouteName.LeaderBoard break?
+    uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard" // Why does RouteName.LeaderBoard break?
   },
   {
     header: "Meet the Raha Community",
@@ -138,7 +139,7 @@ type DiscoverProps = {
   navigation: NavigationScreenProp<{}>;
 };
 
-const COLORS = ["#4FC3F7", "#81C784"];
+const COLORS = [colors.secondaryBackground1, colors.secondaryBackground2];
 
 function getCardColor(index: number): string {
   return COLORS[index % COLORS.length];

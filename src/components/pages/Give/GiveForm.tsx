@@ -241,9 +241,6 @@ class GiveFormView extends React.Component<Props, State> {
               (this.props.apiCallStatus &&
                 this.props.apiCallStatus.status === ApiCallStatusType.STARTED)
             }
-            buttonStyle={{ backgroundColor: "#2196F3" }}
-            //@ts-ignore Because Button does have a rounded property
-            rounded
           />
         </View>
       </Container>

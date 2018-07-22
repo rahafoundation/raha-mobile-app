@@ -1,9 +1,8 @@
 import * as React from "react";
 import { Member } from "../../../store/reducers/members";
-import { View, StyleSheet, TextInput } from "react-native";
-import { MemberSearchBar } from "../../shared/MemberSearchBar";
+import { View, StyleSheet } from "react-native";
 
-import { Button, Text } from "../../shared/elements";
+import { Button, Text, TextInput } from "../../shared/elements";
 
 /**
  * Page that confirms user's full name
