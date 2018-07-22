@@ -143,7 +143,7 @@ export function createTabNavigator(
           backgroundColor: colors.darkAccent
         },
         headerTitleStyle: {
-          ...fonts.Vollkorn.SemiBold
+          fontFamily: "Vollkorn-SemiBold"
         }
       }
     }

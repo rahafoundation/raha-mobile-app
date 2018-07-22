@@ -18,7 +18,7 @@ import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { NavigationScreenProp, withNavigation } from "react-navigation";
 import { RouteName } from "../shared/Navigation";
 import { Button, Container, Text } from "../shared/elements";
-import { colors, palette } from "../../helpers/colors";
+import { colors } from "../../helpers/colors";
 import { fonts } from "../../helpers/fonts";
 
 const INTERNAL_ROUTE_PROTOCOL = "route:";
