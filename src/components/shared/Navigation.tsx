@@ -272,21 +272,15 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
         if (!focused && !isMint) {
           iconName += "-outline";
         }
-        return (
-          <IconType
-            name={iconName}
-            size={25}
-            color={focused && isMint ? "green" : "black"}
-          />
-        );
+        return <IconType name={iconName} size={25} />;
       },
       headerStyle: {
         backgroundColor: colors.primaryBackground
       },
       labelStyle: {
-        color: "black"
+        color: colors.bodyText
       },
-      tabBarColor: "#eeeeee"
+      tabBarColor: colors.lightAccent
     })
   }
 );

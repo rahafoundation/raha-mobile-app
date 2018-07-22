@@ -134,8 +134,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: colors.darkAccent,
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#bbb",
     display: "flex",
     flexDirection: "row",
     alignItems: "center"
@@ -151,7 +149,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 12,
     textAlign: "center",
-    color: "#666"
+    color: colors.lightAccent
   },
   interactions: {
     flexGrow: 1,

@@ -139,10 +139,15 @@ type DiscoverProps = {
   navigation: NavigationScreenProp<{}>;
 };
 
-const COLORS = [colors.secondaryBackground1, colors.secondaryBackground2];
+const BG_COLORS = [colors.secondaryBackground1, colors.secondaryBackground2];
+const BORDER_COLORS = [colors.border1, colors.border2];
 
 function getCardColor(index: number): string {
-  return COLORS[index % COLORS.length];
+  return BG_COLORS[index % BG_COLORS.length];
+}
+
+function getBorderColor(index: number): string {
+  return BORDER_COLORS[index % BORDER_COLORS.length];
 }
 
 function getCard(
@@ -152,7 +157,15 @@ function getCard(
 ) {
   return (
     <TouchableHighlight
-      style={[styles.card, { backgroundColor: getCardColor(index) }]}
+      style={[
+        styles.card,
+        {
+          backgroundColor: getCardColor(index),
+          borderColor: getBorderColor(index),
+          borderRadius: 4,
+          borderWidth: 4
+        }
+      ]}
       key={index}
     >
       <View style={{ flex: 1, justifyContent: "space-between" }}>

@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     fontSize: 22
   },
   numberLabel: {
-    color: colors.text,
+    color: colors.bodyText,
     fontSize: 14
   }
 });

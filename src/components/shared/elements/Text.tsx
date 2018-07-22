@@ -11,6 +11,7 @@ import {
 } from "react-native";
 
 import { fonts } from "../../../helpers/fonts";
+import { colors } from "../../../helpers/colors";
 
 export const Text: React.StatelessComponent<TextProps> = props => {
   return <NativeText {...props} style={[styles.text, props.style]} />;
@@ -18,6 +19,7 @@ export const Text: React.StatelessComponent<TextProps> = props => {
 
 const styles = StyleSheet.create({
   text: {
-    ...fonts.OpenSans.Normal
+    ...fonts.OpenSans.Normal,
+    color: colors.bodyText
   } as TextStyle
 });

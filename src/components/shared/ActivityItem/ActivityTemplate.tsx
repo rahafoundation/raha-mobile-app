@@ -12,6 +12,7 @@ import Video from "react-native-video";
 import { Member } from "../../../store/reducers/members";
 import { Text } from "../../shared/elements";
 import { RouteName } from "../Navigation";
+import { colors } from "../../../helpers/colors";
 
 interface ActivityTemplateOwnProps {
   from: Member;
@@ -172,7 +173,7 @@ export class ActivityTemplateView extends React.Component<
 
 const styles = StyleSheet.create({
   card: {
-    borderBottomColor: "#ccc",
+    borderBottomColor: colors.primaryBorder,
     borderBottomWidth: 1,
     paddingVertical: 10,
     marginVertical: 10
@@ -195,10 +196,10 @@ const styles = StyleSheet.create({
     alignItems: "baseline"
   },
   amount: {
-    color: "green"
+    color: colors.positive
   },
   donationAmount: {
-    color: "purple"
+    color: colors.donation
   },
   fromText: {
     marginTop: 10,
@@ -214,7 +215,7 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: 12,
-    color: "#666"
+    color: colors.darkAccent
   }
 });
 
