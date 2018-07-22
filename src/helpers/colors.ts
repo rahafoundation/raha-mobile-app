@@ -26,6 +26,7 @@ export const colors = {
 
   // Components
   button: palette.blue,
+  disabledButton: palette.paleBlue,
   lightAccent: palette.blueWhite,
   darkAccent: palette.mint,
 

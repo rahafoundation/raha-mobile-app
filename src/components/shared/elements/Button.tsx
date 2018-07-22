@@ -6,11 +6,12 @@ import { colors } from "../../../helpers/colors";
 
 export const Button: React.StatelessComponent<ButtonProps> = props => {
   return (
-    <TouchableOpacity {...props} style={[styles.buttonContainer, props.style]}>
+    <TouchableOpacity {...props} style={[props.style]}>
       <NativeButton
         style={fonts.OpenSans.Bold}
         {...props}
         buttonStyle={styles.button}
+        disabledStyle={styles.disabledColor}
       />
     </TouchableOpacity>
   );
@@ -21,7 +22,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.button,
     borderRadius: 3
   },
+  disabledColor: {
+    backgroundColor: colors.disabledButton
+  },
   button: {
-    backgroundColor: colors.button
+    backgroundColor: colors.button,
+    borderRadius: 3
   }
 });
