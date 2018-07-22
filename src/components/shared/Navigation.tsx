@@ -1,6 +1,6 @@
 import "es6-symbol/implement";
 import * as React from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
@@ -29,7 +29,7 @@ import { MemberList as MemberListScreen } from "../pages/MemberList";
 import { Onboarding } from "../pages/Onboarding/Onboarding";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
-import { Button } from "../shared/elements";
+import { Button, Text } from "../shared/elements";
 import { Discover, DiscoverWebView } from "../pages/Discover";
 import { LeaderBoard } from "../pages/LeaderBoard";
 import { Invite } from "../pages/Invite/Invite";
@@ -99,11 +99,25 @@ export enum RouteName {
 
 const DEEPLINK_BASE = "raha://";
 
+const styles = StyleSheet.create({
+  headerStyle: {
+    marginLeft: 12,
+    fontSize: 32,
+    ...fonts.Vollkorn.SemiBold
+  }
+});
+
+const HeaderTitle: React.StatelessComponent<HeaderProps> = props => {
+  return <Text style={styles.headerStyle}>{props.title}</Text>;
+};
+
 const MemberList = {
   screen: MemberListScreen,
   navigationOptions: ({ navigation }: any) => {
     return {
-      title: navigation.getParam("title", "Member List")
+      headerTitle: (
+        <HeaderTitle title={navigation.getParam("title", "Member List")} />
+      )
     };
   }
 };
@@ -113,7 +127,9 @@ const Profile: NavigationRouteConfig = {
   navigationOptions: ({ navigation }: any) => {
     const member = navigation.getParam("member");
     return {
-      title: member ? member.fullName : "Your Profile"
+      headerTitle: (
+        <HeaderTitle title={member ? member.fullName : "Your Profile"} />
+      )
     };
   }
 };
@@ -121,8 +137,12 @@ const Profile: NavigationRouteConfig = {
 const Give = {
   screen: GiveScreen,
   navigationOptions: {
-    title: "Give Raha"
+    headerTitle: <HeaderTitle title="Give Raha" />
   }
+};
+
+type HeaderProps = {
+  title: string;
 };
 
 export function createTabNavigator(
@@ -141,9 +161,6 @@ export function createTabNavigator(
       navigationOptions: {
         headerStyle: {
           backgroundColor: colors.darkAccent
-        },
-        headerTitleStyle: {
-          fontFamily: "Vollkorn-SemiBold"
         }
       }
     }
@@ -155,7 +172,7 @@ const HomeTab = createTabNavigator(
     Home: {
       screen: Home,
       navigationOptions: ({ navigation }: any) => ({
-        title: "Raha",
+        headerTitle: <HeaderTitle title="Raha" />,
         headerRight: (
           <Button
             title="Give"
@@ -178,7 +195,7 @@ const DiscoverTab = createTabNavigator(
     Discover: {
       screen: Discover,
       navigationOptions: {
-        title: "Discover"
+        headerTitle: <HeaderTitle title="Discover" />
       }
     },
     DiscoverWebView,
@@ -194,19 +211,19 @@ const MintTab = createTabNavigator(
     Invite: {
       screen: Invite,
       navigationOptions: {
-        title: "Invite"
+        headerTitle: <HeaderTitle title="Invite" />
       }
     },
     Mint: {
       screen: Mint,
       navigationOptions: {
-        title: "Mint Raha"
+        headerTitle: <HeaderTitle title="Mint Raha" />
       }
     },
     ReferralBonus: {
       screen: ReferralBonus,
       navigationOptions: {
-        title: "Bonus Mint!"
+        headerTitle: <HeaderTitle title="Bonus Mint" />
       }
     }
   },
@@ -220,7 +237,7 @@ const ProfileTab = createTabNavigator(
     Account: {
       screen: Account,
       navigationOptions: {
-        title: "Account"
+        headerTitle: <HeaderTitle title="Account" />
       }
     }
   },
