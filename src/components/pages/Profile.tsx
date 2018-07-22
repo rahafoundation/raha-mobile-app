@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   numberLabel: {
-    color: "#666",
+    color: colors.bodyText,
     fontSize: 12
   }
 });

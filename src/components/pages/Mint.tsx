@@ -31,9 +31,9 @@ const MintView: React.StatelessComponent<Props> = ({
   let net = loggedInMember.balance.minus(loggedInMember.totalMinted).toString();
   let netColor;
   if (net.substr(0, 1) === "-") {
-    netColor = colors.danger;
+    netColor = colors.negative;
   } else {
-    netColor = colors.darkAccent;
+    netColor = colors.positive;
     net = `+${net}`;
   }
 

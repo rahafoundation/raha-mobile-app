@@ -35,6 +35,7 @@ import { LeaderBoard } from "../pages/LeaderBoard";
 import { Invite } from "../pages/Invite/Invite";
 import { Account } from "../pages/Account";
 import { colors } from "../../helpers/colors";
+import { fonts } from "../../helpers/fonts";
 
 /**
  * Gets the current screen from navigation state.
@@ -140,6 +141,9 @@ export function createTabNavigator(
       navigationOptions: {
         headerStyle: {
           backgroundColor: colors.darkAccent
+        },
+        headerTitleStyle: {
+          ...fonts.Vollkorn.SemiBold
         }
       }
     }

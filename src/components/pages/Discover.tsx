@@ -19,6 +19,7 @@ import { NavigationScreenProp, withNavigation } from "react-navigation";
 import { RouteName } from "../shared/Navigation";
 import { Button, Container, Text } from "../shared/elements";
 import { colors, palette } from "../../helpers/colors";
+import { fonts } from "../../helpers/fonts";
 
 const INTERNAL_ROUTE_PROTOCOL = "route:";
 
@@ -124,11 +125,11 @@ const DISCOVER_INFO = convertCardArr([
     uri: "https://discuss.raha.app/"
   },
   {
-    header: "Raha supports",
+    header: "Raha supports...",
     bodyChoices: [
-      "Universal Basic Income to End Extreme Poverty.",
-      "Trusted Identities for Safe and Secure Payments.",
-      "Delegative Democracy and Values-Based Development."
+      "Universal Basic Income to end extreme poverty.",
+      "Trusted identities for safe and secure payments.",
+      "Delegative democracy and values-based development."
     ],
     action: "Read the Raha Manifesto",
     uri: "https://raha.app"
@@ -218,7 +219,8 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 24,
-    marginBottom: 6
+    marginBottom: 6,
+    ...fonts.Vollkorn.SemiBold
   },
   bodyText: {
     fontSize: 16,
