@@ -87,12 +87,6 @@ function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
 // TODO below JSON should be available from website.
 const DISCOVER_INFO = convertCardArr([
   {
-    header: "Feedback or questions?",
-    bodyChoices: ["Contact the Raha team at hi@raha.app!"],
-    action: "Send us an email",
-    uri: "mailto:hi@raha.app"
-  },
-  {
     header: "Check out the Raha Marketplace",
     bodyChoices: [
       "Buy everything from books and posters to instruments, get your resume reviewed, and more!"
@@ -101,22 +95,18 @@ const DISCOVER_INFO = convertCardArr([
     uri: "https://discuss.raha.app/c/marketplace"
   },
   {
-    header: "Did you know?",
-    bodyChoices: [
-      '"Cash transfers have positive impacts, including on children."',
-      '"Cash transfers have long-term impacts."',
-      '"The poor do not systematically abuse cash transfers (e.g. on alcohol)."'
-    ],
-    action: "Read more at GiveDirectly.org",
-    uri: "https://www.givedirectly.org/research-on-cash-transfers"
-  },
-  {
     header: "Climb the leaderboard",
     bodyChoices: [
       "Invite more people to mint bonus Raha and get to the top of the leaderboard ranks!"
     ],
     action: "View the leaderboard",
     uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard" // Why does RouteName.LeaderBoard break?
+  },
+  {
+    header: "Feedback or questions?",
+    bodyChoices: ["Contact the Raha team at hi@raha.app!"],
+    action: "Send us an email",
+    uri: "mailto:hi@raha.app"
   },
   {
     header: "Meet the Raha Community",
@@ -133,6 +123,16 @@ const DISCOVER_INFO = convertCardArr([
     ],
     action: "Read the Raha Manifesto",
     uri: "https://raha.app"
+  },
+  {
+    header: "Did you know?",
+    bodyChoices: [
+      '"Cash transfers have positive impacts, including on children."',
+      '"Cash transfers have long-term impacts."',
+      '"The poor do not systematically abuse cash transfers (e.g. on alcohol)."'
+    ],
+    action: "Read more at GiveDirectly.org",
+    uri: "https://www.givedirectly.org/research-on-cash-transfers"
   }
 ]);
 
