@@ -75,9 +75,6 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
       loading={isMinting}
       disabled={isMinting}
       title={`Mint +ℝ${REFERRAL_BONUS.toString()}`}
-      buttonStyle={styles.mintButton}
-      //@ts-ignore Because Button does have a rounded property
-      rounded
     />
   ) : (
     <Button
@@ -85,9 +82,6 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
       loading={isTrusting}
       disabled={isTrusting}
       title="Trust"
-      buttonStyle={styles.trustButton}
-      //@ts-ignore Because Button does have a rounded property
-      rounded
     />
   );
 

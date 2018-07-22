@@ -4,7 +4,7 @@ import * as React from "react";
 import { Member } from "../../../store/reducers/members";
 import { GiveForm } from "./GiveForm";
 import { Success } from "./Success";
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationScreenProp } from "react-navigation";
 
 type Props = {
   navigation: NavigationScreenProp<{}>;

@@ -3,10 +3,10 @@ import DropdownAlert from "react-native-dropdownalert";
 import {
   BackHandler,
   StyleSheet,
-  TextInput,
   TextInputProps,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  TextStyle
 } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
@@ -40,7 +40,8 @@ import {
   AsYouTypeFormatter
 } from "google-libphonenumber";
 import { Map } from "immutable";
-import { withDropdown } from "../shared/DropdownProvider";
+import { TextInput } from "../shared/elements/TextInput";
+import { fonts } from "../../helpers/fonts";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 const countries = getAllCountries().reduce<Map<string, Country>>(
@@ -152,6 +153,8 @@ class PhoneNumberForm extends React.Component<
   render() {
     return (
       <React.Fragment>
+        <Text style={fonts.OpenSans.Bold as TextStyle} />
+
         <FormLabel>Phone number</FormLabel>
         <View style={styles.phoneInput}>
           <CountryPicker

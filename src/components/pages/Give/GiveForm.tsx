@@ -23,6 +23,7 @@ import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { getMemberById } from "../../../store/selectors/members";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
 import { Button, Container, Text } from "../../shared/elements";
+import { colors } from "../../../helpers/colors";
 
 const MAX_MEMO_LENGTH = 140;
 // Donation rate is currently constant.
@@ -226,8 +227,9 @@ class GiveFormView extends React.Component<Props, State> {
             containerStyle={styles.section}
           >
             You will give {this.state.amount.toString()} Raha to{" "}
-            {this.state.toMember.fullName}
-            {this.state.memo ? ` ${this.state.memo}` : ""}.
+            {this.state.toMember.fullName} for "{this.state.memo
+              ? `${this.state.memo}`
+              : ""}".
           </FormValidationMessage>
         ) : (
           <React.Fragment />
@@ -241,9 +243,6 @@ class GiveFormView extends React.Component<Props, State> {
               (this.props.apiCallStatus &&
                 this.props.apiCallStatus.status === ApiCallStatusType.STARTED)
             }
-            buttonStyle={{ backgroundColor: "#2196F3" }}
-            //@ts-ignore Because Button does have a rounded property
-            rounded
           />
         </View>
       </Container>
@@ -310,7 +309,7 @@ const styles = StyleSheet.create({
   },
 
   selectedMember: {
-    backgroundColor: "#64B5F6",
+    backgroundColor: colors.lightAccent,
     padding: 4,
     borderRadius: 3
   },

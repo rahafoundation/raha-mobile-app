@@ -12,6 +12,8 @@ import Video from "react-native-video";
 import { Member } from "../../../store/reducers/members";
 import { Text } from "../../shared/elements";
 import { RouteName } from "../Navigation";
+import { colors } from "../../../helpers/colors";
+import { fonts } from "../../../helpers/fonts";
 
 interface ActivityTemplateOwnProps {
   from: Member;
@@ -113,7 +115,7 @@ export class ActivityTemplateView extends React.Component<
                   navigation.push(RouteName.Profile, { member: to })
                 }
               >
-                <Text>To {to.fullName}:</Text>
+                <Text style={styles.toText}>To {to.fullName}:</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -172,7 +174,7 @@ export class ActivityTemplateView extends React.Component<
 
 const styles = StyleSheet.create({
   card: {
-    borderBottomColor: "#ccc",
+    borderBottomColor: colors.primaryBorder,
     borderBottomWidth: 1,
     paddingVertical: 10,
     marginVertical: 10
@@ -195,14 +197,20 @@ const styles = StyleSheet.create({
     alignItems: "baseline"
   },
   amount: {
-    color: "green"
+    color: colors.positive
   },
   donationAmount: {
-    color: "purple"
+    color: colors.donation
+  },
+  toText: {
+    fontSize: 16,
+    ...fonts.Vollkorn.SemiBold
   },
   fromText: {
     marginTop: 10,
-    textAlign: "right"
+    textAlign: "right",
+    fontSize: 14,
+    ...fonts.Vollkorn.SemiBold
   },
   moneyRow: {
     marginHorizontal: 10,
@@ -214,7 +222,7 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: 12,
-    color: "#666"
+    color: colors.darkAccent
   }
 });
 

@@ -8,6 +8,7 @@ import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../store";
 import { Member } from "../../store/reducers/members";
 import { Text } from "../shared/elements";
+import { colors } from "../../helpers/colors";
 
 const NUM_AUTOCOMPLETION_SUGGESTIONS = 3;
 
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
     padding: 12,
     width: "100%",
     height: 50,
-    backgroundColor: "#eee",
+    backgroundColor: colors.lightAccent,
     alignItems: "center",
     borderRadius: 3
   },

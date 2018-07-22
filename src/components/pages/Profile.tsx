@@ -5,11 +5,7 @@
  */
 import * as React from "react";
 import { StyleSheet, TouchableHighlight, View } from "react-native";
-import {
-  connect,
-  MapDispatchToProps,
-  MapStateToProps
-} from "react-redux";
+import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
 import Video from "react-native-video";
 
@@ -23,6 +19,7 @@ import { getMemberById } from "../../store/selectors/members";
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button, Container, Text } from "../shared/elements";
+import { colors } from "../../helpers/colors";
 
 interface NavParams {
   member: Member;
@@ -100,23 +97,26 @@ const ProfileView: React.StatelessComponent<ProfileProps> = props => (
           <Thumbnail member={props.member} />
           <View style={styles.interactions}>
             <Stats navigation={props.navigation} member={props.member} />
-            {
-              !props.isOwnProfile &&
-            <View style={styles.actions}>
-              <Button
-                title="Trust"
-                onPress={() => props.trust(props.member.memberId)}
-                //@ts-ignore Because Button does have a rounded property
-                rounded
-              />
-              <Button
-                title="Give"
-                onPress={() => props.navigation.navigate(RouteName.Give, {toMember: props.member})}
-                //@ts-ignore Because Button does have a rounded property
-                rounded
-              />
-            </View>
-          }
+            {!props.isOwnProfile && (
+              <View style={styles.actions}>
+                <Button
+                  title="Trust"
+                  onPress={() => props.trust(props.member.memberId)}
+                  //@ts-ignore Because Button does have a rounded property
+                  rounded
+                />
+                <Button
+                  title="Give"
+                  onPress={() =>
+                    props.navigation.navigate(RouteName.Give, {
+                      toMember: props.member
+                    })
+                  }
+                  //@ts-ignore Because Button does have a rounded property
+                  rounded
+                />
+              </View>
+            )}
           </View>
         </View>
       }
@@ -132,10 +132,8 @@ const ProfileView: React.StatelessComponent<ProfileProps> = props => (
 const styles = StyleSheet.create({
   header: {
     marginBottom: 20,
-    backgroundColor: "#efefef",
+    backgroundColor: colors.darkAccent,
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#bbb",
     display: "flex",
     flexDirection: "row",
     alignItems: "center"
@@ -151,7 +149,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 12,
     textAlign: "center",
-    color: "#666"
+    color: colors.lightAccent
   },
   interactions: {
     flexGrow: 1,
@@ -190,7 +188,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   numberLabel: {
-    color: "#666",
+    color: colors.bodyText,
     fontSize: 12
   }
 });

@@ -18,8 +18,10 @@ import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { NavigationScreenProp, withNavigation } from "react-navigation";
 import { RouteName } from "../shared/Navigation";
 import { Button, Container, Text } from "../shared/elements";
+import { colors } from "../../helpers/colors";
+import { fonts } from "../../helpers/fonts";
 
-const INTERNAL_ROUTE_PROTOCOL = "route:"
+const INTERNAL_ROUTE_PROTOCOL = "route:";
 
 export const DiscoverWebView: React.StatelessComponent = ({
   navigation
@@ -85,18 +87,42 @@ function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
 // TODO below JSON should be available from website.
 const DISCOVER_INFO = convertCardArr([
   {
-    header: "Feedback or questions?",
-    bodyChoices: ["Contact the Raha team at hi@raha.app!"],
-    action: "Send us an email",
-    uri: "mailto:hi@raha.app"
-  },
-  {
     header: "Check out the Raha Marketplace",
     bodyChoices: [
       "Buy everything from books and posters to instruments, get your resume reviewed, and more!"
     ],
     action: "Visit the marketplace",
     uri: "https://discuss.raha.app/c/marketplace"
+  },
+  {
+    header: "Climb the leaderboard",
+    bodyChoices: [
+      "Invite more people to mint bonus Raha and get to the top of the leaderboard ranks!"
+    ],
+    action: "View the leaderboard",
+    uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard" // Why does RouteName.LeaderBoard break?
+  },
+  {
+    header: "Feedback or questions?",
+    bodyChoices: ["Contact the Raha team at hi@raha.app!"],
+    action: "Send us an email",
+    uri: "mailto:hi@raha.app"
+  },
+  {
+    header: "Meet the Raha Community",
+    bodyChoices: ["Discuss UBI in the Raha Forums!"],
+    action: "Check out the forums",
+    uri: "https://discuss.raha.app/"
+  },
+  {
+    header: "Raha supports...",
+    bodyChoices: [
+      "Universal Basic Income to end extreme poverty.",
+      "Trusted identities for safe and secure payments.",
+      "Delegative democracy and values-based development."
+    ],
+    action: "Read the Raha Manifesto",
+    uri: "https://raha.app"
   },
   {
     header: "Did you know?",
@@ -107,30 +133,6 @@ const DISCOVER_INFO = convertCardArr([
     ],
     action: "Read more at GiveDirectly.org",
     uri: "https://www.givedirectly.org/research-on-cash-transfers"
-  },
-  {
-    header: "Climb the leaderboard",
-    bodyChoices: [
-      "Invite more people to mint bonus Raha and get to the top of the leaderboard ranks!"
-    ],
-    action: "View the leaderboard",
-    uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard"  // Why does RouteName.LeaderBoard break?
-  },
-  {
-    header: "Meet the Raha Community",
-    bodyChoices: ["Discuss UBI in the Raha Forums!"],
-    action: "Check out the forums",
-    uri: "https://discuss.raha.app/"
-  },
-  {
-    header: "Raha supports",
-    bodyChoices: [
-      "Universal Basic Income to End Extreme Poverty.",
-      "Trusted Identities for Safe and Secure Payments.",
-      "Delegative Democracy and Values-Based Development."
-    ],
-    action: "Read the Raha Manifesto",
-    uri: "https://raha.app"
   }
 ]);
 
@@ -138,10 +140,15 @@ type DiscoverProps = {
   navigation: NavigationScreenProp<{}>;
 };
 
-const COLORS = ["#4FC3F7", "#81C784"];
+const BG_COLORS = [colors.secondaryBackground1, colors.secondaryBackground2];
+const BORDER_COLORS = [colors.border1, colors.border2];
 
 function getCardColor(index: number): string {
-  return COLORS[index % COLORS.length];
+  return BG_COLORS[index % BG_COLORS.length];
+}
+
+function getBorderColor(index: number): string {
+  return BORDER_COLORS[index % BORDER_COLORS.length];
 }
 
 function getCard(
@@ -151,7 +158,15 @@ function getCard(
 ) {
   return (
     <TouchableHighlight
-      style={[styles.card, { backgroundColor: getCardColor(index) }]}
+      style={[
+        styles.card,
+        {
+          backgroundColor: getCardColor(index),
+          borderColor: getBorderColor(index),
+          borderRadius: 4,
+          borderWidth: 4
+        }
+      ]}
       key={index}
     >
       <View style={{ flex: 1, justifyContent: "space-between" }}>
@@ -204,7 +219,8 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 24,
-    marginBottom: 6
+    marginBottom: 6,
+    ...fonts.Vollkorn.SemiBold
   },
   bodyText: {
     fontSize: 16,
