@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, TextInput } from "react-native";
+import { TextInput } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import validator from "validator";
 
@@ -12,7 +12,7 @@ import {
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { Text } from "../../shared/elements";
+import { Text, Button } from "../../shared/elements";
 
 type ReduxStateProps = {
   sendInviteStatus?: ApiCallStatus;
@@ -29,7 +29,7 @@ type SendInviteState = {
 
 type SendInviteProps = OwnProps &
   ReduxStateProps & {
-    sendInvite: (videoToken: string, email: string) => void;
+    sendInvite: (email: string, videoToken: string) => void;
   };
 
 class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
@@ -46,7 +46,7 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
       this.setState({ enteredInvalidEmail: true });
       return;
     }
-    this.props.sendInvite(this.props.videoToken, enteredEmail);
+    this.props.sendInvite(enteredEmail, this.props.videoToken);
   };
 
   private _renderSendingStatus = () => {
@@ -66,6 +66,13 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
   };
 
   render() {
+    const status = this.props.sendInviteStatus
+      ? this.props.sendInviteStatus.status
+      : undefined;
+    const isRequestSendingOrSent =
+      status &&
+      (status === ApiCallStatusType.STARTED ||
+        status === ApiCallStatusType.SUCCESS);
     return (
       <React.Fragment>
         <TextInput
@@ -81,7 +88,13 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
         {this.state.enteredInvalidEmail && (
           <Text>Please enter a valid email.</Text>
         )}
-        {<Button title="Invite" onPress={this.sendInvite} />}
+        {
+          <Button
+            title="Invite"
+            onPress={this.sendInvite}
+            disabled={isRequestSendingOrSent}
+          />
+        }
         {this._renderSendingStatus()}
       </React.Fragment>
     );

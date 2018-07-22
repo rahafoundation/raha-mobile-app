@@ -17,7 +17,6 @@ import { Text } from "../../shared/elements";
 
 type ReduxStateProps = {
   requestInviteStatus?: ApiCallStatus;
-  videoDownloadUrl?: string;
 };
 
 type DispatchProps = {
@@ -27,7 +26,7 @@ type DispatchProps = {
 type OwnProps = {
   invitingMember: Member;
   verifiedName: string;
-  videoDownloadUrl: string;
+  videoToken?: string;
 };
 
 type OnboardingRequestInviteState = {
@@ -41,7 +40,7 @@ type OnboardingRequestInviteState = {
 
 type OnboardingRequestInviteProps = OwnProps &
   ReduxStateProps & {
-    requestInvite: (videoDownloadUrl: string) => void;
+    requestInvite: (videoToken?: string) => void;
   };
 
 class OnboardingRequestInviteView extends React.Component<
@@ -61,7 +60,7 @@ class OnboardingRequestInviteView extends React.Component<
   }
 
   sendInviteRequest = () => {
-    this.props.requestInvite(this.props.videoDownloadUrl);
+    this.props.requestInvite(this.props.videoToken);
   };
 
   private _renderRequestingStatus = () => {
@@ -161,12 +160,12 @@ const mergeProps: MergeProps<
 > = (stateProps, dispatchProps, ownProps) => {
   return {
     ...stateProps,
-    requestInvite: (videoUrl: string) => {
+    requestInvite: (videoToken?: string) => {
       dispatchProps.requestInviteFromMember(
         ownProps.invitingMember.memberId,
         ownProps.verifiedName,
-        videoUrl,
-        getUsername(ownProps.verifiedName)
+        getUsername(ownProps.verifiedName),
+        videoToken
       );
     },
     ...ownProps
