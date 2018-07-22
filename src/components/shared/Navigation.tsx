@@ -137,7 +137,8 @@ const Profile: NavigationRouteConfig = {
 const Give = {
   screen: GiveScreen,
   navigationOptions: {
-    headerTitle: <HeaderTitle title="Give Raha" />
+    headerTitle: <HeaderTitle title="Give Raha" />,
+    headerRight: undefined
   }
 };
 
@@ -158,11 +159,19 @@ export function createTabNavigator(
     },
     {
       ...stackConfig,
-      navigationOptions: {
+      navigationOptions: ({ navigation }: any) => ({
         headerStyle: {
           backgroundColor: colors.darkAccent
-        }
-      }
+        },
+        headerRight: (
+          <Button
+            title="Give"
+            onPress={() => {
+              navigation.navigate(RouteName.Give);
+            }}
+          />
+        )
+      })
     }
   );
 }
@@ -172,16 +181,7 @@ const HomeTab = createTabNavigator(
     Home: {
       screen: Home,
       navigationOptions: ({ navigation }: any) => ({
-        headerTitle: <HeaderTitle title="Raha" />,
-        headerRight: (
-          <Button
-            title="Give"
-            style={{ marginRight: 12 }}
-            onPress={() => {
-              navigation.navigate(RouteName.Give);
-            }}
-          />
-        )
+        headerTitle: <HeaderTitle title="Raha" />
       })
     }
   },
