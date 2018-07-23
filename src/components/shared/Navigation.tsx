@@ -129,7 +129,11 @@ const Profile: NavigationRouteConfig = {
     return {
       headerTitle: (
         <HeaderTitle title={member ? member.fullName : "Your Profile"} />
-      )
+      ),
+      headerRight: settingsButton(navigation),
+      headerStyle: {
+        backgroundColor: colors.darkAccent
+      }
     };
   }
 };
@@ -137,14 +141,36 @@ const Profile: NavigationRouteConfig = {
 const Give = {
   screen: GiveScreen,
   navigationOptions: {
-    headerTitle: <HeaderTitle title="Give Raha" />,
-    headerRight: undefined
+    headerTitle: <HeaderTitle title="Give Raha" />
   }
 };
 
 type HeaderProps = {
   title: string;
 };
+
+function giveButton(navigation: any) {
+  return (
+    <Button
+      title="Give"
+      onPress={() => {
+        navigation.navigate(RouteName.Give);
+      }}
+    />
+  );
+}
+
+function settingsButton(navigation: any) {
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        navigation.navigate(RouteName.Account);
+      }}
+    >
+      <Icon name="dots-vertical" size={25} />
+    </TouchableOpacity>
+  );
+}
 
 export function createTabNavigator(
   routeConfigMap: NavigationRouteConfigMap,
@@ -158,20 +184,7 @@ export function createTabNavigator(
       Give
     },
     {
-      ...stackConfig,
-      navigationOptions: ({ navigation }: any) => ({
-        headerStyle: {
-          backgroundColor: colors.darkAccent
-        },
-        headerRight: (
-          <Button
-            title="Give"
-            onPress={() => {
-              navigation.navigate(RouteName.Give);
-            }}
-          />
-        )
-      })
+      ...stackConfig
     }
   );
 }
@@ -181,7 +194,11 @@ const HomeTab = createTabNavigator(
     Home: {
       screen: Home,
       navigationOptions: ({ navigation }: any) => ({
-        headerTitle: <HeaderTitle title="Raha" />
+        headerTitle: <HeaderTitle title="Raha" />,
+        headerRight: giveButton(navigation),
+        headerStyle: {
+          backgroundColor: colors.darkAccent
+        }
       })
     }
   },
@@ -194,9 +211,13 @@ const DiscoverTab = createTabNavigator(
   {
     Discover: {
       screen: Discover,
-      navigationOptions: {
-        headerTitle: <HeaderTitle title="Discover" />
-      }
+      navigationOptions: ({ navigation }: any) => ({
+        headerTitle: <HeaderTitle title="Discover" />,
+        headerRight: giveButton(navigation),
+        headerStyle: {
+          backgroundColor: colors.darkAccent
+        }
+      })
     },
     DiscoverWebView,
     LeaderBoard
@@ -210,50 +231,55 @@ const MintTab = createTabNavigator(
   {
     Invite: {
       screen: Invite,
-      navigationOptions: {
-        headerTitle: <HeaderTitle title="Invite" />
-      }
+      navigationOptions: ({ navigation }: any) => ({
+        headerTitle: <HeaderTitle title="Invite" />,
+        headerRight: giveButton(navigation),
+        headerStyle: {
+          backgroundColor: colors.darkAccent
+        }
+      })
     },
     Mint: {
       screen: Mint,
-      navigationOptions: {
-        headerTitle: <HeaderTitle title="Mint Raha" />
-      }
+      navigationOptions: ({ navigation }: any) => ({
+        headerTitle: <HeaderTitle title="Mint Raha" />,
+        headerRight: giveButton(navigation),
+        headerStyle: {
+          backgroundColor: colors.darkAccent
+        }
+      })
     },
     ReferralBonus: {
       screen: ReferralBonus,
-      navigationOptions: {
-        headerTitle: <HeaderTitle title="Bonus Mint" />
-      }
+      navigationOptions: ({ navigation }: any) => ({
+        headerTitle: <HeaderTitle title="Bonus Mint" />,
+        headerRight: giveButton(navigation),
+        headerStyle: {
+          backgroundColor: colors.darkAccent
+        }
+      })
     }
   },
   {
-    initialRouteName: RouteName.Mint
+    initialRouteName: RouteName.Mint,
+    navigationOptions: ({ navigation }: any) => ({
+      headerTitle: <HeaderTitle title="Discover" />,
+      headerRight: giveButton(navigation),
+      headerStyle: {
+        backgroundColor: colors.darkAccent
+      }
+    })
   }
 );
 
 const ProfileTab = createTabNavigator(
   {
     Account: {
-      screen: Account,
-      navigationOptions: {
-        headerTitle: <HeaderTitle title="Account" />
-      }
+      screen: Account
     }
   },
   {
-    initialRouteName: RouteName.Profile,
-    navigationOptions: ({ navigation }: any) => ({
-      headerRight: (
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate(RouteName.Account);
-          }}
-        >
-          <Icon name="dots-vertical" size={25} />
-        </TouchableOpacity>
-      )
-    })
+    initialRouteName: RouteName.Profile
   }
 );
 
