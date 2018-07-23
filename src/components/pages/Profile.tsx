@@ -9,7 +9,7 @@ import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
 import Video from "react-native-video";
 
-import { MemberId } from "@raha/api/dist/shared/models/identifiers";
+import { MemberId } from "@raha/api-shared/models/identifiers";
 
 import { RouteName } from "../shared/Navigation";
 import { Member } from "../../store/reducers/members";

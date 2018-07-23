@@ -4,7 +4,7 @@ import { Map as ImmutableMap } from "immutable";
 import {
   MemberId,
   MemberUsername
-} from "@raha/api/dist/shared/models/identifiers";
+} from "@raha/api-shared/models/identifiers";
 
 import { RahaState } from "../reducers";
 import { Member, GENESIS_MEMBER } from "../reducers/members";

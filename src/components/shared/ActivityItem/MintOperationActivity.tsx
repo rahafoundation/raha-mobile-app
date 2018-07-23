@@ -7,7 +7,7 @@ import { Big } from "big.js";
 import {
   MintOperation,
   MintType
-} from "@raha/api/dist/shared/models/Operation";
+} from "@raha/api-shared/models/Operation";
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";

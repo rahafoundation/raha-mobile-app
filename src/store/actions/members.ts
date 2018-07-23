@@ -1,9 +1,9 @@
-import { trust as callTrust } from "@raha/api/dist/client/members/trust";
-import { requestInvite as callRequestInvite } from "@raha/api/dist/client/members/requestInvite";
-import { sendInvite as callSendInvite } from "@raha/api/dist/client/me/sendInvite";
-import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
-import { MemberId } from "@raha/api/dist/shared/models/identifiers";
-import { UnauthenticatedError } from "@raha/api/dist/client/errors/UnauthenticatedError";
+import { trust as callTrust } from "@raha/api/members/trust";
+import { requestInvite as callRequestInvite } from "@raha/api/members/requestInvite";
+import { sendInvite as callSendInvite } from "@raha/api/me/sendInvite";
+import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
+import { MemberId } from "@raha/api-shared/models/identifiers";
+import { UnauthenticatedError } from "@raha/api/errors/UnauthenticatedError";
 
 import {
   SetOperationsAction,

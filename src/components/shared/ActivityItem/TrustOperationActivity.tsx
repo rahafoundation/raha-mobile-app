@@ -3,7 +3,7 @@
  */
 import * as React from "react";
 
-import { TrustOperation } from "@raha/api/dist/shared/models/Operation";
+import { TrustOperation } from "@raha/api-shared/models/Operation";
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";

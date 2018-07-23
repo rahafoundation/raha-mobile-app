@@ -8,8 +8,8 @@ import {
 } from "react-native-elements";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
-import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
-import { MemberId } from "@raha/api/dist/shared/models/identifiers";
+import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
+import { MemberId } from "@raha/api-shared/models/identifiers";
 
 import { RahaState } from "../../../store";
 import { give } from "../../../store/actions/wallet";
