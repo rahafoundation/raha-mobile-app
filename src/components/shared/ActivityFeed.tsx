@@ -32,18 +32,7 @@ export class ActivityFeedView extends React.Component<ActivityFeedProps> {
   private onViewableItemsChanged: FlatListProps<
     Operation
   >["onViewableItemsChanged"] = ({ viewableItems, changed }) => {
-    viewableItems.forEach(async item => {
-      const operation: Operation = item.item;
-      if (!item.isViewable) {
-        return;
-      }
-      const activityComponent = this.activities[operation.id];
-      if (!activityComponent) {
-        return;
-      }
-      await activityComponent.startVideo();
-    });
-    changed.forEach(async item => {
+    changed.forEach(item => {
       const operation: Operation = item.item;
       if (item.isViewable) {
         return;
@@ -52,7 +41,7 @@ export class ActivityFeedView extends React.Component<ActivityFeedProps> {
       if (!activityComponent) {
         return;
       }
-      await activityComponent.resetVideo();
+      activityComponent.resetVideo();
     });
   };
 

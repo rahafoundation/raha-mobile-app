@@ -7,13 +7,16 @@ import { format } from "date-fns";
 import { Big } from "big.js";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
-import Video from "react-native-video";
 
 import { Member } from "../../../store/reducers/members";
 import { Text } from "../../shared/elements";
 import { RouteName } from "../Navigation";
 import { colors } from "../../../helpers/colors";
 import { fonts } from "../../../helpers/fonts";
+import {
+  VideoWithPlaceholder,
+  VideoWithPlaceholderView
+} from "../../shared/VideoWithPlaceholder";
 
 interface ActivityTemplateOwnProps {
   from: Member;
@@ -26,66 +29,14 @@ interface ActivityTemplateOwnProps {
 }
 type ActivityTemplateProps = ActivityTemplateOwnProps & NavigationInjectedProps;
 
-interface ActivityTemplateState {
-  videoPlaying: boolean;
-  videoPressed: boolean; // true if video is unmuted and has user focus. no longer loops.
-  videoPlaybackFinished: boolean; // true if video has completed after pressed, not when it loops.
-}
-
-export class ActivityTemplateView extends React.Component<
-  ActivityTemplateProps,
-  ActivityTemplateState
-> {
-  state = {
-    videoPressed: false,
-    videoPlaybackFinished: false
-  } as ActivityTemplateState;
-  videoElem: Video | undefined;
-
-  /**
-   * Start video playback
-   */
-  public startVideo = async () => {
-    this.setState({
-      videoPlaying: true
-    });
-  };
+export class ActivityTemplateView extends React.Component<ActivityTemplateProps, {}> {
+  videoElem: VideoWithPlaceholderView | undefined;
 
   /**
    * Reset video playback state, stop it
    */
-  public resetVideo = async () => {
-    if (!this.videoElem) return;
-    this.videoElem.seek(0);
-    this.setState({
-      videoPlaying: false,
-      videoPressed: false,
-      videoPlaybackFinished: false
-    });
-  };
-
-  private handleVideoPress = async () => {
-    if (!this.videoElem) return;
-
-    if (this.state.videoPlaybackFinished) {
-      this.videoElem.seek(0);
-      this.setState({ videoPlaybackFinished: false, videoPlaying: true });
-    } else if (!this.state.videoPlaying) {
-      // unpause if paused
-      this.setState({ videoPlaying: true });
-    } else if (this.state.videoPressed) {
-      // just pause it if pressed while playing with sound
-      this.setState({ videoPlaying: false });
-    }
-
-    this.setState({ videoPressed: true });
-  };
-
-  private handleVideoEnded = async () => {
-    if (this.state.videoPressed) {
-      // don't bother if not pressed, since it'll be looping
-      this.setState({ videoPlaybackFinished: true, videoPlaying: false });
-    }
+  public resetVideo = () => {
+    if (this.videoElem) this.videoElem.reset();
   };
 
   render() {
@@ -131,27 +82,16 @@ export class ActivityTemplateView extends React.Component<
             <Text style={styles.fromText}>From: {from.fullName}</Text>
           </TouchableOpacity>
         </View>
-        <View>
-          {videoUri && (
-            <TouchableOpacity onPress={this.handleVideoPress} delayPressIn={20}>
-              {/* TODO: make own playback controls for smoother customization */}
-              <Video
-                ref={(elem: any) => {
-                  this.videoElem = elem;
-                }}
-                style={styles.video}
-                rate={1.0}
-                volume={1.0}
-                repeat={!this.state.videoPressed}
-                resizeMode="cover"
-                muted={!this.state.videoPressed}
-                paused={!this.state.videoPlaying}
-                source={{ uri: videoUri }}
-                onEnd={this.handleVideoEnded}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
+        {videoUri &&
+          <View style={{aspectRatio: 1}}>
+            <VideoWithPlaceholder
+              onRef={e => {
+                e !== null && (this.videoElem = e as any);
+              }}
+              uri={videoUri}
+            />
+          </View>
+        }
         <View style={styles.moneyRow}>
           <View style={styles.amountDetail}>
             {totalAmount && (
