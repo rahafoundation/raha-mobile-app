@@ -9,8 +9,6 @@ import * as React from "react";
 import {
   Image,
   TouchableHighlight,
-  ImageProperties,
-  TouchableHighlightProperties,
   View
 } from "react-native";
 import {
@@ -18,7 +16,7 @@ import {
   NavigationInjectedProps,
   NavigationEventSubscription
 } from "react-navigation";
-import Video, { VideoProperties } from "react-native-video";
+import Video from "react-native-video";
 
 interface OwnProps {
   uri: string;
@@ -29,7 +27,7 @@ type Props = OwnProps & NavigationInjectedProps;
 const initialState = {
   isPressed: false,
   videoLoaded: false,
-  videoPaused: true
+  videoPaused: true,
 };
 
 export class VideoWithPlaceholderView extends React.Component<
@@ -39,6 +37,7 @@ export class VideoWithPlaceholderView extends React.Component<
   state = initialState;
 
   navSub?: NavigationEventSubscription;
+  video: Video | null = null;
 
   componentDidMount() {
     this.navSub = this.props.navigation.addListener("willBlur", this.reset);
@@ -59,13 +58,18 @@ export class VideoWithPlaceholderView extends React.Component<
     this.setState(initialState);
   };
 
+  onEnd = () => {
+    if (this.video) this.video.seek(0);
+    this.setState({
+      videoPaused: true,
+    });
+  }
+
   render() {
     const { isPressed, videoLoaded, videoPaused } = this.state;
     const imageProps = { source: { uri: this.props.uri + ".thumb.jpg" } };
-    const videoProps = { source: { uri: this.props.uri } };
-    videoProps.paused = videoPaused || !videoLoaded;
+    const videoProps = { source: { uri: this.props.uri }, paused: videoPaused || !videoLoaded };
     const renderImage = !isPressed || !videoLoaded;
-    const displayVideo = "flex"; //videoLoaded ? "none" : "flex";
     const videoSize = videoLoaded ? "100%" : 0;
     // TODO would be nice to change blurRadius to an Animation
     const blurRadius = isPressed ? 10 : undefined;
@@ -85,9 +89,11 @@ export class VideoWithPlaceholderView extends React.Component<
           {isPressed && (
             <Video
               {...videoProps}
+              onEnd={this.onEnd}
               onLoad={() => {
                 this.setState({ videoLoaded: true });
               }}
+              ref={r => this.video = r}
               style={{
                 width: videoSize,
                 height: videoSize
