@@ -122,6 +122,16 @@ re-build the project; the React Native packager should be running in a Terminal
 window, and so long as it can communicate to your phone, the JavaScript will be
 up to date.
 
+#### Production Build
+
+##### Android
+
+1.  Download and copy the `release.keystore` somewhere locally and copy the signing
+    keys from `release-signing.txt` into your `~/.gradle/gradle.properties`.
+2.  Run `yarn bundle:android` to create a bundled and signed APK in
+    `./android/app/build/outputs/apk/devProd/release/app-devProd-release.apk`.
+3.  You can install this APK on your physical device through `adb install PATH.apk`.
+
 #### Troubleshooting
 
 ##### Android
