@@ -6,7 +6,9 @@ import {
   TextInputProps,
   View,
   TouchableOpacity,
-  TextStyle
+  TextStyle,
+  Image,
+  Dimensions
 } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
@@ -42,6 +44,7 @@ import {
 import { Map } from "immutable";
 import { TextInput } from "../shared/elements/TextInput";
 import { fonts } from "../../helpers/fonts";
+import { colors } from "../../helpers/colors";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 const countries = getAllCountries().reduce<Map<string, Country>>(
@@ -454,8 +457,18 @@ class LogInView extends React.Component<LogInProps, LogInState> {
 
   render() {
     return (
-      <Container>
-        {this._renderContents()}
+      <Container style={styles.container}>
+        <Image
+          resizeMode="contain"
+          style={styles.image}
+          source={require("../../assets/img/Welcome.png")}
+        />
+        <View style={styles.body}>
+          <Text style={styles.message}>
+            {"Help create an economy where\nevery life has value!"}
+          </Text>
+          {this._renderContents()}
+        </View>
         <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
       </Container>
     );
@@ -463,6 +476,25 @@ class LogInView extends React.Component<LogInProps, LogInState> {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    backgroundColor: colors.darkBackground
+  },
+  body: {
+    flex: 3,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    width: Dimensions.get("window").width - 24,
+    backgroundColor: colors.lightBackground
+  },
+  image: {
+    flex: 1
+  },
+  message: {
+    margin: 18,
+    fontSize: 16,
+    textAlign: "center"
+  },
   phoneInput: {
     display: "flex",
     flexDirection: "row",
