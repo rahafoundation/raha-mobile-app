@@ -18,8 +18,9 @@ export const palette = {
 
 export const colors = {
   // Main
-  primaryBackground: palette.mintWhite,
+  lightBackground: palette.mintWhite,
   primaryBorder: palette.mint,
+  darkBackground: palette.mint,
 
   // Text
   bodyText: palette.darkGray,

@@ -1,6 +1,6 @@
 import "es6-symbol/implement";
 import * as React from "react";
-import { TouchableOpacity, StyleSheet, Linking } from "react-native";
+import { TouchableOpacity, StyleSheet, Linking, TextStyle } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
@@ -106,11 +106,21 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontSize: 32,
     ...fonts.Vollkorn.SemiBold
+  },
+  subHeaderStyle: {
+    fontSize: 18
   }
 });
 
 const HeaderTitle: React.StatelessComponent<HeaderProps> = props => {
-  return <Text style={styles.headerStyle}>{props.title}</Text>;
+  return (
+    <Text style={[styles.headerStyle, props.style]}>
+      {props.title}
+      {props.subtitle && (
+        <Text style={styles.subHeaderStyle}> - {props.subtitle}</Text>
+      )}
+    </Text>
+  );
 };
 
 const MemberList = {
@@ -149,6 +159,8 @@ const Give = {
 
 type HeaderProps = {
   title: string;
+  subtitle?: string;
+  style?: TextStyle;
 };
 
 function giveButton(navigation: any) {
@@ -324,7 +336,7 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
         return <IconType name={iconName} size={25} />;
       },
       headerStyle: {
-        backgroundColor: colors.primaryBackground
+        backgroundColor: colors.lightBackground
       },
       labelStyle: {
         color: colors.bodyText
@@ -346,8 +358,9 @@ const SignedOutNavigator = createStackNavigator(
     headerMode: "screen",
     initialRouteName: RouteName.LogIn,
     navigationOptions: {
+      headerTitle: <HeaderTitle title="Raha" subtitle="Basic Income Network" />,
       headerStyle: {
-        backgroundColor: colors.primaryBackground
+        backgroundColor: colors.darkBackground
       }
     }
   }
