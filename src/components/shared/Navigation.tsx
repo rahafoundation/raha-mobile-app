@@ -349,7 +349,10 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
 const SignedOutNavigator = createStackNavigator(
   {
     Onboarding: {
-      screen: Onboarding
+      screen: Onboarding,
+      navigationOptions: {
+        header: null
+      }
     },
     LogIn,
     Profile
