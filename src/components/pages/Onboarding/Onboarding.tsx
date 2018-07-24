@@ -36,8 +36,8 @@ enum OnboardingStep {
 }
 
 interface OnboardingParams {
-  videoToken?: string;
-  inviterUsername?: string;
+  t?: string; // video token
+  r?: string; // referrer username
 }
 
 type ReduxStateProps = {
@@ -375,13 +375,11 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
   ownProps
 ) => {
   const firebaseUser = getLoggedInFirebaseUser(state);
-  const deeplinkInviterUsername = ownProps.navigation.getParam(
-    "inviterUsername"
-  );
+  const deeplinkInviterUsername = ownProps.navigation.getParam("r");
   const deeplinkInvitingMember = deeplinkInviterUsername
     ? getMemberByUsername(state, deeplinkInviterUsername)
     : undefined;
-  const deeplinkVideoToken = ownProps.navigation.getParam("videoToken");
+  const deeplinkVideoToken = ownProps.navigation.getParam("t");
 
   return {
     displayName: firebaseUser ? firebaseUser.displayName : null,
