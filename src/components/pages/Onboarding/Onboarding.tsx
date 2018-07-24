@@ -76,19 +76,47 @@ export class OnboardingView extends React.Component<
     };
   }
 
+  /**
+   * If deeplinking params are present, makes sure they are valid, and fills in
+   * the associated video download url into state.
+   */
   initializeDeeplinkingParams = async () => {
+    const deeplinkProps = [
+      this.props.deeplinkVideoToken,
+      this.props.deeplinkInvitingMember
+    ];
+    const presentDeeplinkProps = deeplinkProps.filter(p => !!p);
+    if (presentDeeplinkProps.length === 0) {
+      return;
+    }
+
+    // must provide all deeplink props or none of them
+    if (presentDeeplinkProps.length !== deeplinkProps.length) {
+      this.dropdown.alertWithType(
+        "error",
+        "Error: Invalid Deeplink",
+        "Unable to process deeplink. Please try signing up directly from your phone."
+      );
+      return;
+    }
+
     const videoDownloadUrl = await extractDeeplinkVideoUrl(
       this.props.deeplinkInvitingMember,
       this.props.deeplinkVideoToken
     );
+    // videoDownloadUrl must be present if using deeplinking
     if (!videoDownloadUrl) {
+      this.dropdown.alertWithType(
+        "error",
+        "Error: Invalid Deeplink",
+        "Unable to process deeplink. Please try signing up directly from your phone."
+      );
       return;
     }
     this.setState({ videoDownloadUrl });
   };
 
   componentDidMount() {
-    this._checkValidDeeplink();
     BackHandler.addEventListener("hardwareBackPress", this._handleBackPress);
     this.initializeDeeplinkingParams();
   }
@@ -114,18 +142,6 @@ export class OnboardingView extends React.Component<
         step: previousStep
       });
       return true;
-    }
-  };
-
-  _checkValidDeeplink = () => {
-    const inviterUsername = this.props.navigation.getParam("inviterUsername");
-    const videoToken = this.props.navigation.getParam("videoToken");
-    if ((videoToken || inviterUsername) && !this.props.deeplinkVideoToken) {
-      this.dropdown.alertWithType(
-        "error",
-        "Error: Invalid Deeplink",
-        "Unable to process deeplink. Please try signing up directly from your phone."
-      );
     }
   };
 
