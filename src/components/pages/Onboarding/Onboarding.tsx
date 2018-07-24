@@ -17,10 +17,12 @@ import {
 } from "../../../store/selectors/authentication";
 import { OnboardingCamera } from "./OnboardingCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
-import { OnboardingRequestInvite } from "./OnboardingRequestInvite";
+import { OnboardingCreateAccount } from "./OnboardingCreateAccount";
 import { getMemberByUsername } from "../../../store/selectors/members";
 import { LogIn } from "../LogIn";
 import { Text } from "../../shared/elements";
+import { WasMemberInvited } from "./WasMemberInvited";
+import { SpecifyJointVideo } from "./SpecifyJointVideo";
 
 /**
  * Parent component for Onboarding flow.
@@ -28,11 +30,18 @@ import { Text } from "../../shared/elements";
 
 enum OnboardingStep {
   SPLASH,
-  SELECT_INVITER,
   VERIFY_NAME,
-  CAMERA,
-  VIDEO_PREVIEW,
-  REQUEST_INVITE
+  SPECIFY_WAS_MEMBER_INVITED,
+
+  INVITED_SELECT_INVITER,
+  INVITED_SPECIFY_JOINT_VIDEO,
+  INVITED_CAMERA,
+  INVITED_VIDEO_PREVIEW,
+
+  NOT_INVITED_CAMERA,
+  NOT_INVITED_VIDEO_PREVIEW,
+
+  CREATE_ACCOUNT
 }
 
 interface OnboardingParams {
@@ -56,6 +65,7 @@ type OnboardingState = {
   step: OnboardingStep;
   invitingMember?: Member;
   verifiedName?: string;
+  isJointVideo?: boolean;
   videoUri?: string;
   videoDownloadUrl?: string;
 };
@@ -116,7 +126,11 @@ export class OnboardingView extends React.Component<
     }
     this.setState({
       videoDownloadUrl,
-      invitingMember: this.props.deeplinkInvitingMember
+      invitingMember: this.props.deeplinkInvitingMember,
+      // TODO: For now this assumes that the deeplinked video is a joint video. Once we modify
+      // the invite flow on the inviter side to allow for async videos, we need to pass this
+      // as a deeplinked param as well.
+      isJointVideo: true
     });
   };
 
@@ -179,10 +193,25 @@ export class OnboardingView extends React.Component<
         "Need person to request invite from before this step."
       );
       this.setState({
-        step: OnboardingStep.SELECT_INVITER
+        step: OnboardingStep.INVITED_SELECT_INVITER
       });
     }
     return invitingMember;
+  };
+
+  _verifyIsJointVideo = () => {
+    const { isJointVideo } = this.state;
+    if (isJointVideo === undefined) {
+      this.dropdown.alertWithType(
+        "error",
+        "Error: Joint video status unknown.",
+        "You must specify whether you are taking a joint verification video."
+      );
+      this.setState({
+        step: OnboardingStep.INVITED_SPECIFY_JOINT_VIDEO
+      });
+    }
+    return isJointVideo;
   };
 
   _verifyVideoUri = () => {
@@ -194,7 +223,7 @@ export class OnboardingView extends React.Component<
         "Invalid video. Please retake your video."
       );
       this.setState({
-        step: OnboardingStep.CAMERA
+        step: OnboardingStep.INVITED_CAMERA
       });
     }
     return videoUri;
@@ -209,7 +238,7 @@ export class OnboardingView extends React.Component<
         "Invalid video. Please retry."
       );
       this.setState({
-        step: OnboardingStep.VIDEO_PREVIEW
+        step: OnboardingStep.INVITED_VIDEO_PREVIEW
       });
     }
     return videoDownloadUrl;
@@ -246,20 +275,6 @@ export class OnboardingView extends React.Component<
           <OnboardingSplash
             onSplashCompleted={() => {
               this.setState({
-                step: this.props.deeplinkInvitingMember
-                  ? OnboardingStep.VERIFY_NAME
-                  : OnboardingStep.SELECT_INVITER
-              });
-            }}
-          />
-        );
-      }
-      case OnboardingStep.SELECT_INVITER: {
-        return (
-          <SelectInviter
-            onSelectedInviter={(inviter: Member) => {
-              this.setState({
-                invitingMember: inviter,
                 step: OnboardingStep.VERIFY_NAME
               });
             }}
@@ -276,35 +291,95 @@ export class OnboardingView extends React.Component<
               this.setState({
                 verifiedName: verifiedName,
                 step: this.state.videoDownloadUrl
-                  ? OnboardingStep.REQUEST_INVITE
-                  : OnboardingStep.CAMERA
+                  ? OnboardingStep.CREATE_ACCOUNT
+                  : OnboardingStep.SPECIFY_WAS_MEMBER_INVITED
               });
             }}
           />
         );
       }
-      case OnboardingStep.CAMERA: {
-        // Shouldn't happen, but if any required field is cleared or the onboarding
-        // flow is screwed up, redirect to the correct step.
+      case OnboardingStep.SPECIFY_WAS_MEMBER_INVITED: {
+        const verifiedFullName = this._verifyFullName();
+        if (!verifiedFullName) {
+          return <React.Fragment />;
+        }
+        return (
+          <WasMemberInvited
+            verifiedFullName={verifiedFullName}
+            onYes={() =>
+              this.setState({ step: OnboardingStep.INVITED_SELECT_INVITER })
+            }
+            onNo={() =>
+              this.setState({
+                isJointVideo: false,
+                step: OnboardingStep.NOT_INVITED_CAMERA
+              })
+            }
+          />
+        );
+      }
+
+      case OnboardingStep.INVITED_SELECT_INVITER: {
+        return (
+          <SelectInviter
+            onSelectedInviter={(inviter: Member) => {
+              this.setState({
+                invitingMember: inviter,
+                step: OnboardingStep.INVITED_SPECIFY_JOINT_VIDEO
+              });
+            }}
+          />
+        );
+      }
+      case OnboardingStep.INVITED_SPECIFY_JOINT_VIDEO: {
         const verifiedFullName = this._verifyFullName();
         const inviter = this._verifyInviter();
         if (!inviter || !verifiedFullName) {
           return <React.Fragment />;
         }
         return (
-          <OnboardingCamera
-            inviterFullName={inviter.get("fullName")}
+          <SpecifyJointVideo
             verifiedFullName={verifiedFullName}
-            onVideoRecorded={(videoUri: string) => {
+            inviterFullName={inviter.get("fullName")}
+            onYes={() => {
               this.setState({
-                videoUri: videoUri,
-                step: OnboardingStep.VIDEO_PREVIEW
+                isJointVideo: true,
+                step: OnboardingStep.INVITED_CAMERA
+              });
+            }}
+            onNo={() => {
+              this.setState({
+                isJointVideo: false,
+                step: OnboardingStep.INVITED_CAMERA
               });
             }}
           />
         );
       }
-      case OnboardingStep.VIDEO_PREVIEW: {
+      case OnboardingStep.INVITED_CAMERA: {
+        // Shouldn't happen, but if any required field is cleared or the onboarding
+        // flow is screwed up, redirect to the correct step.
+        const verifiedFullName = this._verifyFullName();
+        const inviter = this._verifyInviter();
+        const isJointVideo = this._verifyIsJointVideo();
+        if (!inviter || !verifiedFullName || isJointVideo === undefined) {
+          return <React.Fragment />;
+        }
+        return (
+          <OnboardingCamera
+            inviterFullName={inviter.get("fullName")}
+            verifiedFullName={verifiedFullName}
+            isJointVideo={isJointVideo}
+            onVideoRecorded={(videoUri: string) => {
+              this.setState({
+                videoUri: videoUri,
+                step: OnboardingStep.INVITED_VIDEO_PREVIEW
+              });
+            }}
+          />
+        );
+      }
+      case OnboardingStep.INVITED_VIDEO_PREVIEW: {
         const videoUri = this._verifyVideoUri();
         const videoUploadRef = this._verifyVideoUploadRef();
         if (!videoUri || !videoUploadRef) {
@@ -317,39 +392,97 @@ export class OnboardingView extends React.Component<
             onVideoUploaded={(videoDownloadUrl: string) =>
               this.setState({
                 videoDownloadUrl: videoDownloadUrl,
-                step: OnboardingStep.REQUEST_INVITE
+                step: OnboardingStep.CREATE_ACCOUNT
               })
             }
             onRetakeClicked={() => {
-              this.setState({ step: OnboardingStep.CAMERA });
+              this.setState({ step: OnboardingStep.INVITED_CAMERA });
             }}
             onError={(errorType: string, errorMessage: string) => {
               this.dropdown.alertWithType("error", errorType, errorMessage);
               this.setState({
-                step: OnboardingStep.CAMERA
+                step: OnboardingStep.INVITED_CAMERA
               });
             }}
           />
         );
       }
-      case OnboardingStep.REQUEST_INVITE: {
-        const fullName = this._verifyFullName();
-        const invitingMember = this._verifyInviter();
-        const videoDownloadUrl = this._verifyVideoDownloadUrl();
-        if (!invitingMember || !fullName || !videoDownloadUrl) {
+
+      case OnboardingStep.NOT_INVITED_CAMERA: {
+        // Shouldn't happen, but if any required field is cleared or the onboarding
+        // flow is screwed up, redirect to the correct step.
+        const verifiedFullName = this._verifyFullName();
+        if (!verifiedFullName) {
           return <React.Fragment />;
         }
         return (
-          <OnboardingRequestInvite
+          <OnboardingCamera
+            verifiedFullName={verifiedFullName}
+            onVideoRecorded={(videoUri: string) => {
+              this.setState({
+                videoUri: videoUri,
+                step: OnboardingStep.NOT_INVITED_VIDEO_PREVIEW
+              });
+            }}
+            isJointVideo={false}
+          />
+        );
+      }
+      case OnboardingStep.NOT_INVITED_VIDEO_PREVIEW: {
+        const videoUri = this._verifyVideoUri();
+        const videoUploadRef = this._verifyVideoUploadRef();
+        if (!videoUri || !videoUploadRef) {
+          return <React.Fragment />;
+        }
+        return (
+          <VideoPreview
+            videoUri={videoUri}
+            videoUploadRef={videoUploadRef}
+            onVideoUploaded={(videoDownloadUrl: string) =>
+              this.setState({
+                videoDownloadUrl: videoDownloadUrl,
+                step: OnboardingStep.CREATE_ACCOUNT
+              })
+            }
+            onRetakeClicked={() => {
+              this.setState({ step: OnboardingStep.INVITED_CAMERA });
+            }}
+            onError={(errorType: string, errorMessage: string) => {
+              this.dropdown.alertWithType("error", errorType, errorMessage);
+              this.setState({
+                step: OnboardingStep.NOT_INVITED_CAMERA
+              });
+            }}
+          />
+        );
+      }
+
+      case OnboardingStep.CREATE_ACCOUNT: {
+        const fullName = this._verifyFullName();
+        const invitingMember = this._verifyInviter();
+        const videoDownloadUrl = this._verifyVideoDownloadUrl();
+        const isJointVideo = this._verifyIsJointVideo();
+        if (
+          !invitingMember ||
+          !fullName ||
+          !videoDownloadUrl ||
+          isJointVideo === undefined
+        ) {
+          return <React.Fragment />;
+        }
+        return (
+          <OnboardingCreateAccount
             verifiedName={fullName}
             invitingMember={invitingMember}
+            isJointVideo={isJointVideo}
             videoToken={this.props.deeplinkVideoToken}
           />
         );
       }
+
       default:
+        return undefined;
     }
-    return undefined;
   }
 
   render() {

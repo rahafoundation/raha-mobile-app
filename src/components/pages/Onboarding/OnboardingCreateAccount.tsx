@@ -24,12 +24,13 @@ type DispatchProps = {
 };
 
 type OwnProps = {
-  invitingMember: Member;
+  invitingMember?: Member;
+  isJointVideo: boolean;
   verifiedName: string;
   videoToken?: string;
 };
 
-type OnboardingRequestInviteState = {
+type OnboardingCreateAccountState = {
   uniqueIdentity: boolean;
   accountInactivity: boolean;
   validAge: boolean;
@@ -38,16 +39,13 @@ type OnboardingRequestInviteState = {
   codeOfConduct: boolean;
 };
 
-type OnboardingRequestInviteProps = OwnProps &
-  ReduxStateProps & {
-    requestInvite: (videoToken?: string) => void;
-  };
+type OnboardingCreateAccountProps = OwnProps & ReduxStateProps & DispatchProps;
 
-class OnboardingRequestInviteView extends React.Component<
-  OnboardingRequestInviteProps,
-  OnboardingRequestInviteState
+class OnboardingCreateAccountView extends React.Component<
+  OnboardingCreateAccountProps,
+  OnboardingCreateAccountState
 > {
-  constructor(props: OnboardingRequestInviteProps) {
+  constructor(props: OnboardingCreateAccountProps) {
     super(props);
     this.state = {
       uniqueIdentity: false,
@@ -59,8 +57,21 @@ class OnboardingRequestInviteView extends React.Component<
     };
   }
 
-  sendInviteRequest = () => {
-    this.props.requestInvite(this.props.videoToken);
+  createAccount = () => {
+    if (this.props.invitingMember) {
+      if (this.props.isJointVideo) {
+        this.props.requestInviteFromMember(
+          this.props.invitingMember.get("memberId"),
+          this.props.verifiedName,
+          getUsername(this.props.verifiedName),
+          this.props.videoToken
+        );
+      } else {
+        // create account with identifying video and inviter
+      }
+    } else {
+      // TODO Create account with identifying video and no inviter
+    }
   };
 
   private _renderRequestingStatus = () => {
@@ -69,11 +80,11 @@ class OnboardingRequestInviteView extends React.Component<
       : undefined;
     switch (statusType) {
       case ApiCallStatusType.STARTED:
-        return <Text>Requesting invite...</Text>;
+        return <Text>Creating account...</Text>;
       case ApiCallStatusType.SUCCESS:
-        return <Text>Request successful!</Text>;
+        return <Text>Account creation successful!</Text>;
       case ApiCallStatusType.FAILURE:
-        return <Text>Invite request failed.</Text>;
+        return <Text>Account creation failed.</Text>;
       default:
         return undefined;
     }
@@ -122,7 +133,7 @@ class OnboardingRequestInviteView extends React.Component<
           </Text>.
         </Text>
 
-        <Button title="Join" onPress={this.sendInviteRequest} />
+        <Button title="Join" onPress={this.createAccount} />
         {this._renderRequestingStatus()}
       </React.Fragment>
     );
@@ -142,38 +153,17 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const requestInviteStatus = getStatusOfApiCall(
-    state,
-    ApiEndpointName.REQUEST_INVITE,
-    ownProps.invitingMember.get("memberId")
-  );
-  return {
-    requestInviteStatus: requestInviteStatus
-  };
+  const requestInviteStatus = ownProps.invitingMember
+    ? getStatusOfApiCall(
+        state,
+        ApiEndpointName.REQUEST_INVITE,
+        ownProps.invitingMember.get("memberId")
+      )
+    : undefined;
+  return { requestInviteStatus };
 };
 
-const mergeProps: MergeProps<
-  ReduxStateProps,
-  DispatchProps,
-  OwnProps,
-  OnboardingRequestInviteProps
-> = (stateProps, dispatchProps, ownProps) => {
-  return {
-    ...stateProps,
-    requestInvite: (videoToken?: string) => {
-      dispatchProps.requestInviteFromMember(
-        ownProps.invitingMember.get("memberId"),
-        ownProps.verifiedName,
-        getUsername(ownProps.verifiedName),
-        videoToken
-      );
-    },
-    ...ownProps
-  };
-};
-
-export const OnboardingRequestInvite = connect(
+export const OnboardingCreateAccount = connect(
   mapStateToProps,
-  { requestInviteFromMember },
-  mergeProps
-)(OnboardingRequestInviteView);
+  { requestInviteFromMember }
+)(OnboardingCreateAccountView);
