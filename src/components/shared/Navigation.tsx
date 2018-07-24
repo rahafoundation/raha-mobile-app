@@ -1,6 +1,6 @@
 import "es6-symbol/implement";
 import * as React from "react";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { TouchableOpacity, StyleSheet, Linking } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
@@ -8,7 +8,6 @@ import {
   createStackNavigator,
   NavigationContainer,
   NavigationRouteConfig,
-  NavigationScreenConfigProps,
   NavigationState,
   NavigationStateRoute,
   NavigationRoute,
@@ -98,7 +97,9 @@ export enum RouteName {
   ReferralBonus = "ReferralBonus"
 }
 
-const DEEPLINK_BASE = "raha://";
+const DEEPLINK_ROUTES = {
+  invite: RouteName.Onboarding
+};
 
 const styles = StyleSheet.create({
   headerStyle: {
@@ -336,8 +337,7 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
 const SignedOutNavigator = createStackNavigator(
   {
     Onboarding: {
-      screen: Onboarding,
-      path: "invite"
+      screen: Onboarding
     },
     LogIn,
     Profile
@@ -364,15 +364,47 @@ type StateProps = {
 type Props = OwnProps & StateProps;
 
 class NavigationView extends React.Component<Props> {
+  navigator: any;
+
+  componentDidMount() {
+    // Process deeplink -- we don't use react-navigation for this since it
+    // doesn't support HTTPS links.
+    Linking.getInitialURL()
+      .then(link => {
+        if (link) {
+          const deeplinkUrl = url.parse(link, true, true);
+          if (!deeplinkUrl.pathname) {
+            return;
+          }
+          const pathname = deeplinkUrl.pathname.replace(
+            "/",
+            ""
+          ) as keyof typeof DEEPLINK_ROUTES;
+          this.navigator._navigation.navigate(
+            DEEPLINK_ROUTES[pathname],
+            deeplinkUrl.query
+          );
+        }
+      })
+      .catch(err =>
+        console.error("An error occurred while deep linking:", err)
+      );
+  }
+
   render() {
     const { hasAccount } = this.props;
 
     if (hasAccount) {
-      return <SignedInNavigator onNavigationStateChange={trackPageChanges} />;
+      return (
+        <SignedInNavigator
+          ref={(navigator: any) => (this.navigator = navigator)}
+          onNavigationStateChange={trackPageChanges}
+        />
+      );
     } else {
       return (
         <SignedOutNavigator
-          uriPrefix={DEEPLINK_BASE}
+          ref={(navigator: any) => (this.navigator = navigator)}
           onNavigationStateChange={trackPageChanges}
         />
       );
