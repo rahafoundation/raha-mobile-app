@@ -13,7 +13,7 @@ import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 import { connect, MergeProps, MapStateToProps } from "react-redux";
 
-import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
 
 import {
   getInitialsForName,

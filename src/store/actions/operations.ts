@@ -1,8 +1,8 @@
 import { ActionCreator } from "redux";
 
-import { list as callListOperations } from "@raha/api/dist/client/operations/list";
-import { Operation } from "@raha/api/dist/shared/models/Operation";
-import { ApiEndpointName } from "@raha/api/dist/shared/types/ApiEndpoint";
+import { list as callListOperations } from "@raha/api/operations/list";
+import { Operation } from "@raha/api-shared/models/Operation";
+import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
 
 import { AsyncAction, AsyncActionCreator } from "./";
 import { wrapApiCallAction } from "./apiCalls";

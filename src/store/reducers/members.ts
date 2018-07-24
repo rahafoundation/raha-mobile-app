@@ -8,11 +8,11 @@ import {
   Operation,
   OperationType,
   MintType
-} from "@raha/api/dist/shared/models/Operation";
+} from "@raha/api-shared/models/Operation";
 import {
   MemberId,
   MemberUsername
-} from "@raha/api/dist/shared/models/identifiers";
+} from "@raha/api-shared/models/identifiers";
 
 import { Set, Map } from "immutable";
 import { OperationsActionType } from "../actions/operations";

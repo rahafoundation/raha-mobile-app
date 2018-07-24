@@ -1,6 +1,8 @@
 {
   "recommendations": [
     "esbenp.prettier-vscode",
-    "eg2.tslint"
+    "eg2.tslint",
+    "stkb.rewrap",
+    "spywhere.guides"
   ]
 }

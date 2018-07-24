@@ -8,8 +8,8 @@ import { FlatList, StyleSheet, FlatListProps } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import { List } from "immutable";
 
-import { Operation } from "@raha/api/dist/shared/models/Operation";
-import { OperationId } from "@raha/api/dist/shared/models/identifiers";
+import { Operation } from "@raha/api-shared/models/Operation";
+import { OperationId } from "@raha/api-shared/models/identifiers";
 
 import { RahaState } from "../../store";
 import { ActivityItem } from "./ActivityItem/index";
