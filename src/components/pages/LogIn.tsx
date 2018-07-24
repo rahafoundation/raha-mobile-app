@@ -224,7 +224,6 @@ interface ConfirmationCodeFormProps {
 interface ConfirmationCodeFormState {
   confirmationCode: string;
   timeLeft: number;
-  timerInterval: any;
 }
 
 const RESEND_DELAY_SECONDS = 30;
@@ -232,12 +231,15 @@ class ConfirmationCodeForm extends React.Component<
   ConfirmationCodeFormProps,
   ConfirmationCodeFormState
 > {
+  // interval used to count down time until resending confirmation.
+  // stored as a member to avoid triggering render when it is set.
+  timerInterval: any;
+
   constructor(props: ConfirmationCodeFormProps) {
     super(props);
     this.state = {
       confirmationCode: "",
-      timeLeft: this._calculateTimeLeft(),
-      timerInterval: setInterval(this._calculateTimeLeft, 1000)
+      timeLeft: this._calculateTimeLeft()
     };
   }
 
@@ -247,10 +249,15 @@ class ConfirmationCodeForm extends React.Component<
   };
 
   componentDidMount() {
+    this.timerInterval = setInterval(this._calculateTimeLeft, 1000);
     BackHandler.addEventListener("hardwareBackPress", this._handleBackPress);
   }
 
   componentWillUnmount() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = undefined;
+    }
     BackHandler.removeEventListener("hardwareBackPress", this._handleBackPress);
   }
 
@@ -258,9 +265,9 @@ class ConfirmationCodeForm extends React.Component<
     // reset the countdown if the verification code was resent
     if (this.props.sentTime !== prevProps.sentTime) {
       this.setState({
-        timeLeft: this._calculateTimeLeft(),
-        timerInterval: setInterval(this._calculateTimeLeft, 1000)
+        timeLeft: this._calculateTimeLeft()
       });
+      this.timerInterval = setInterval(this._calculateTimeLeft, 1000);
     }
   }
 
@@ -271,14 +278,13 @@ class ConfirmationCodeForm extends React.Component<
     );
     const timeLeft = Math.max(RESEND_DELAY_SECONDS - timeElapsed, 0);
     if (timeLeft === 0) {
-      clearInterval(this.state.timerInterval);
-      this.setState({ timerInterval: undefined });
+      clearInterval(this.timerInterval);
+      this.timerInterval = undefined;
     }
-    this.setState({
-      timeLeft
-    });
+    this.setState({ timeLeft });
     return timeLeft;
   };
+
   _handleSubmit = () => {
     if (!confirmationCodeIsValid(this.state.confirmationCode)) {
       return;
