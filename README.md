@@ -128,6 +128,7 @@ up to date.
 
 1.  Download and copy the `release.keystore` somewhere locally and copy the signing
     keys from `release-signing.txt` into your `~/.gradle/gradle.properties`.
+    Adjust the keystore path accordingly.
 2.  Run `yarn bundle:android` to create a bundled and signed APK in
     `./android/app/build/outputs/apk/devProd/release/app-devProd-release.apk`.
 3.  You can install this APK on your physical device through `adb install PATH.apk`.
