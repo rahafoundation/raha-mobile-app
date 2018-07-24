@@ -196,8 +196,6 @@ class PhoneNumberForm extends React.Component<
             !phoneNumberIsValid(this.state.phoneNumber, this.state.country)
           }
         />
-        {/* TODO: remove */}
-        <Button title="Clear" onPress={this.props.signOut} />
       </React.Fragment>
     );
   }
@@ -320,8 +318,6 @@ class ConfirmationCodeForm extends React.Component<
             !confirmationCodeIsValid(this.state.confirmationCode)
           }
         />
-        {/* TODO: remove */}
-        <Button title="Clear" onPress={this.props.signOut} />
       </React.Fragment>
     );
   }
