@@ -7,7 +7,6 @@ import * as React from "react";
 import { StyleSheet, TouchableHighlight, View } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
-import Video from "react-native-video";
 
 import { MemberId } from "@raha/api-shared/models/identifiers";
 
@@ -20,6 +19,7 @@ import { ActivityFeed } from "../shared/ActivityFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button, Container, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";
+import { VideoWithPlaceholder } from '../shared/VideoWithPlaceholder';
 
 interface NavParams {
   member: Member;
@@ -39,14 +39,9 @@ type ProfileProps = StateProps & OwnProps & DispatchProps;
 
 const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
   <View style={styles.thumbnail}>
-    <Video
-      source={{ uri: props.member.videoUri }}
-      volume={1.0}
-      muted
-      resizeMode={"cover"}
-      repeat
-      style={styles.video}
-    />
+    <View style={styles.video}>
+      <VideoWithPlaceholder uri={props.member.videoUri} />
+    </View>
     <Text style={styles.memberUsername}>@{props.member.username}</Text>
   </View>
 );
@@ -180,8 +175,8 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   video: {
-    width: "70%",
-    aspectRatio: 3 / 4
+    width: "100%",
+    aspectRatio: 1
   },
   number: {
     fontWeight: "bold",
