@@ -30,7 +30,7 @@ interface ActivityTemplateOwnProps {
 type ActivityTemplateProps = ActivityTemplateOwnProps & NavigationInjectedProps;
 
 export class ActivityTemplateView extends React.Component<ActivityTemplateProps, {}> {
-  videoElem: VideoWithPlaceholderView | undefined;
+  videoElem: VideoWithPlaceholderView | null = null;
 
   /**
    * Reset video playback state, stop it
@@ -83,11 +83,9 @@ export class ActivityTemplateView extends React.Component<ActivityTemplateProps,
           </TouchableOpacity>
         </View>
         {videoUri &&
-          <View style={{aspectRatio: 1}}>
+          <View style={styles.video}>
             <VideoWithPlaceholder
-              onRef={e => {
-                e !== null && (this.videoElem = e as any);
-              }}
+              onRef={e => {this.videoElem = e as any}}
               uri={videoUri}
             />
           </View>
@@ -157,8 +155,7 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   video: {
-    width: "100%",
-    aspectRatio: 4 / 3
+    aspectRatio: 1
   },
   timestamp: {
     fontSize: 12,

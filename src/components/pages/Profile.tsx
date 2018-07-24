@@ -63,10 +63,10 @@ const Stats: React.StatelessComponent<StatsProps> = props => (
         });
       }}
     >
-      <View style={styles.stat}>
-        <Text style={styles.number}>{props.member.trustedBy.size}</Text>
-        <Text style={styles.numberLabel}>trusted by</Text>
-      </View>
+    <View style={styles.stat}>
+      <Text style={styles.number}>{props.member.trustedBy.size}</Text>
+      <Text style={styles.numberLabel}>trusted by</Text>
+    </View>
     </TouchableHighlight>
     <TouchableHighlight
       onPress={() =>
@@ -76,10 +76,10 @@ const Stats: React.StatelessComponent<StatsProps> = props => (
         })
       }
     >
-      <View style={styles.stat}>
-        <Text style={styles.number}>{props.member.trusts.size}</Text>
-        <Text style={styles.numberLabel}>trusts</Text>
-      </View>
+    <View style={styles.stat}>
+      <Text style={styles.number}>{props.member.trusts.size}</Text>
+      <Text style={styles.numberLabel}>trusts</Text>
+    </View>
     </TouchableHighlight>
   </View>
 );
