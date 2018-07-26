@@ -222,7 +222,7 @@ export class Member {
 }
 
 export interface MembersState {
-  byUserId: Map<MemberId, Member>;
+  byMemberId: Map<MemberId, Member>;
   byMemberUsername: Map<MemberUsername, Member>;
 }
 
@@ -276,7 +276,7 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
 }
 
 function memberIdPresentInState(prevState: MembersState, memberId: MemberId) {
-  return prevState.byUserId.has(memberId);
+  return prevState.byMemberId.has(memberId);
 }
 
 function assertMemberIdPresentInState(
@@ -311,7 +311,7 @@ function addMemberToState(
 ): MembersState {
   return {
     byMemberUsername: prevState.byMemberUsername.set(member.username, member),
-    byUserId: prevState.byUserId.set(member.memberId, member)
+    byMemberId: prevState.byMemberId.set(member.memberId, member)
   };
 }
 function addMembersToState(
@@ -360,7 +360,7 @@ function applyOperation(
         assertMemberIdPresentInState(prevState, to_uid, operation);
         assertMemberIdNotPresentInState(prevState, creator_uid, operation);
 
-        const inviter = (prevState.byUserId.get(to_uid) as Member).inviteMember(
+        const inviter = (prevState.byMemberId.get(to_uid) as Member).inviteMember(
           creator_uid
         );
         const inviteRequester = new Member(
@@ -383,10 +383,10 @@ function applyOperation(
 
         assertMemberIdPresentInState(prevState, creator_uid, operation);
         assertMemberIdPresentInState(prevState, to_uid, operation);
-        const truster = (prevState.byUserId.get(
+        const truster = (prevState.byMemberId.get(
           creator_uid
         ) as Member).trustMember(to_uid);
-        const trusted = (prevState.byUserId.get(
+        const trusted = (prevState.byMemberId.get(
           to_uid
         ) as Member).beTrustedByMember(creator_uid);
         return addMembersToState(prevState, [truster, trusted]);
@@ -395,7 +395,7 @@ function applyOperation(
         const { amount, type } = operation.data;
 
         assertMemberIdPresentInState(prevState, creator_uid, operation);
-        const minter = (prevState.byUserId.get(creator_uid) as Member).mintRaha(
+        const minter = (prevState.byMemberId.get(creator_uid) as Member).mintRaha(
           new Big(amount),
           type === MintType.BASIC_INCOME
             ? new Date(operation.created_at)
@@ -412,10 +412,10 @@ function applyOperation(
         // Currently we don't do this as RAHA isn't a normal member created via a REQUEST_INVITE operation.
         // Thus RAHA doesn't get added to the members state in the current paradigm.
 
-        const giver = (prevState.byUserId.get(creator_uid) as Member).giveRaha(
+        const giver = (prevState.byMemberId.get(creator_uid) as Member).giveRaha(
           new Big(amount).plus(donation_amount)
         );
-        const recipient = (prevState.byUserId.get(
+        const recipient = (prevState.byMemberId.get(
           to_uid
         ) as Member).receiveRaha(new Big(amount), new Big(donation_amount));
 
@@ -435,7 +435,7 @@ function applyOperation(
   }
 }
 
-const initialState: MembersState = { byUserId: Map(), byMemberUsername: Map() };
+const initialState: MembersState = { byMemberId: Map(), byMemberUsername: Map() };
 export const reducer: Reducer<MembersState> = (
   state = initialState,
   untypedAction

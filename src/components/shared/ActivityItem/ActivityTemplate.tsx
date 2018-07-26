@@ -18,7 +18,7 @@ import {
   VideoWithPlaceholderView
 } from "../../shared/VideoWithPlaceholder";
 
-interface ActivityTemplateOwnProps {
+type Props = {
   from: Member;
   to?: Member;
   amount?: Big;
@@ -27,9 +27,8 @@ interface ActivityTemplateOwnProps {
   timestamp: Date;
   videoUri?: string;
 }
-type ActivityTemplateProps = ActivityTemplateOwnProps & NavigationInjectedProps;
 
-export class ActivityTemplateView extends React.Component<ActivityTemplateProps, {}> {
+export class ActivityTemplateView extends React.Component<Props & NavigationInjectedProps, {}> {
   videoElem: VideoWithPlaceholderView | null = null;
 
   /**
@@ -163,6 +162,6 @@ const styles = StyleSheet.create({
   }
 });
 
-export const ActivityTemplate = withNavigation<ActivityTemplateOwnProps>(
+export const ActivityTemplate = withNavigation<Props>(
   ActivityTemplateView
 );

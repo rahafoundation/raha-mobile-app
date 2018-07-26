@@ -15,7 +15,7 @@ import {
 } from "react-native";
 
 import { MemberSearchBar } from "../shared/MemberSearchBar";
-import { NavigationScreenProp, withNavigation } from "react-navigation";
+import { NavigationScreenProp } from "react-navigation";
 import { RouteName } from "../shared/Navigation";
 import { Button, Container, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";

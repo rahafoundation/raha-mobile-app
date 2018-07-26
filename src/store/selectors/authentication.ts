@@ -34,7 +34,7 @@ export function getLoggedInMember(state: RahaState) {
       ? auth.currentUser.uid
       : undefined;
   return loggedInUserId
-    ? state.members.byUserId.get(loggedInUserId)
+    ? state.members.byMemberId.get(loggedInUserId)
     : undefined;
 }
 
