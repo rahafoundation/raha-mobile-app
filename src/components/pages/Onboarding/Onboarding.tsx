@@ -285,7 +285,11 @@ export class OnboardingView extends React.Component<
         return (
           <VerifyName
             initialDisplayName={
-              this.props.displayName ? this.props.displayName : undefined
+              this.state.verifiedName
+                ? this.state.verifiedName
+                : this.props.displayName
+                  ? this.props.displayName
+                  : undefined
             }
             onVerifiedName={(verifiedName: string) => {
               this.setState({
@@ -295,6 +299,7 @@ export class OnboardingView extends React.Component<
                   : OnboardingStep.SPECIFY_WAS_MEMBER_INVITED
               });
             }}
+            onBack={this._handleBackPress}
           />
         );
       }
@@ -315,6 +320,7 @@ export class OnboardingView extends React.Component<
                 step: OnboardingStep.NOT_INVITED_CAMERA
               })
             }
+            onBack={this._handleBackPress}
           />
         );
       }
@@ -328,6 +334,7 @@ export class OnboardingView extends React.Component<
                 step: OnboardingStep.INVITED_SPECIFY_JOINT_VIDEO
               });
             }}
+            onBack={this._handleBackPress}
           />
         );
       }
@@ -353,6 +360,7 @@ export class OnboardingView extends React.Component<
                 step: OnboardingStep.INVITED_CAMERA
               });
             }}
+            onBack={this._handleBackPress}
           />
         );
       }
