@@ -78,19 +78,19 @@ const MintView: React.StatelessComponent<Props> = ({
           <Text style={styles.numberLabel}>donated</Text>
         </View>
       </View>
-      <View style={[styles.centerFlex, { marginBottom: 60 }]}>
+      <View style={[styles.centerFlex, { marginBottom: 12, flex: 2 }]}>
         <Image
           resizeMode="contain"
-          style={{ flex: 1 }}
-          source={require("../../assets/img/Mint.png")}
+          style={{ flex: 1, margin: 8 }}
+          source={require("../../assets/img/mint.png")}
         />
         <MintButton />
       </View>
-      <View style={[styles.centerFlex, { marginBottom: 60 }]}>
+      <View style={[styles.centerFlex, { marginBottom: 12, flex: 2 }]}>
         <Image
           resizeMode="contain"
-          style={{ flex: 1 }}
-          source={require("../../assets/img/Invite.png")}
+          style={{ flex: 1, margin: 8 }}
+          source={require("../../assets/img/invite.png")}
         />
         <View
           style={{
