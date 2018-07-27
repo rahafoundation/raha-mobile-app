@@ -141,6 +141,11 @@ android {
         }
         devProd {
             dimension "environment"
+            applicationId 'app.raha.mobileProd'
+            resValue "string", "app_name", "Raha Prod"
+        }
+        prod {
+            dimension "environment"
             applicationId 'app.raha.mobile'
             resValue "string", "app_name", "Raha"
         }

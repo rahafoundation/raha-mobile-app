@@ -47,6 +47,105 @@
           }
         },
         {
+          "client_id": "677137485282-a3cgr7hfafq5eeerlfrj1sb88stuiq2j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobile",
+            "certificate_hash": "a9d04c338c334df79c7c0c4a9adca483d2a72cf9"
+          }
+        },
+        {
+          "client_id": "677137485282-4rtu45nhvvg53t27sk6rbtlvfi69aep6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobile",
+            "certificate_hash": "ca68a4ae3eabc2402b7a58c7d30a626a63652fc5"
+          }
+        },
+        {
+          "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvR-LBe_hWy-HzyE1X4OkbEyALOr7COzo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "677137485282-hei8t5jm6c67kpqk4objefcrlk4bhuqd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "app.raha.mobile"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677137485282:android:a5c0768abca84fcb",
+        "android_client_info": {
+          "package_name": "app.raha.mobileProd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "677137485282-ulfeinddh76m28ioah1igoadiojrfbr1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobileProd",
+            "certificate_hash": "187a59e10a58b883e752a99a20822868d90e39a5"
+          }
+        },
+        {
+          "client_id": "677137485282-j0095c3too1rk5giro0a3d4tporfmdck.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobileProd",
+            "certificate_hash": "91e67e9359ddfa6b783e99fc8540ff4d85b3a096"
+          }
+        },
+        {
+          "client_id": "677137485282-uomarf4m8koftgrf5dmrd744gn62j0ue.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobileProd",
+            "certificate_hash": "c0ba7692d18d1986517c2f0a30a11956ca237c1b"
+          }
+        },
+        {
+          "client_id": "677137485282-v8djkn2bit3n7eoh7ssetvpdq4cm3ftr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobileProd",
+            "certificate_hash": "a9d04c338c334df79c7c0c4a9adca483d2a72cf9"
+          }
+        },
+        {
+          "client_id": "677137485282-1lho03i4elvu12h6d82b9226qn37vvkm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobileProd",
+            "certificate_hash": "ca68a4ae3eabc2402b7a58c7d30a626a63652fc5"
+          }
+        },
+        {
           "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
           "client_type": 3
         }
