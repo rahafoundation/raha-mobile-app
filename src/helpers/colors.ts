@@ -31,7 +31,7 @@ export const colors = {
   lightAccent: palette.blueWhite,
   darkAccent: palette.mint,
 
-  // Activity Feed
+  // Activity Feed, Account
   letterBackground: palette.blueWhite,
   border1: palette.mint,
   border2: palette.darkBlue,
@@ -41,5 +41,5 @@ export const colors = {
   // Currency
   positive: palette.darkMint,
   negative: palette.red,
-  donation: palette.lavender
+  donation: palette.lavender,
 };

@@ -37,7 +37,7 @@ export const MemberListView: React.StatelessComponent<Props> = ({
         data={members}
         keyExtractor={m => m.memberId}
         renderItem={m => (
-          <MemberThumbnail navigation={navigation} member={m.item} />
+          <MemberThumbnail member={m.item} />
         )}
       />
     </Container>

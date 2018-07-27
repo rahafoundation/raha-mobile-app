@@ -18,11 +18,9 @@ import {
 } from "react-navigation";
 import Video from "react-native-video";
 
-interface OwnProps {
+type Props = {
   uri: string;
 }
-
-type Props = OwnProps & NavigationInjectedProps;
 
 const initialState = {
   isPressed: false,
@@ -31,7 +29,7 @@ const initialState = {
 };
 
 export class VideoWithPlaceholderView extends React.Component<
-  Props,
+  Props & NavigationInjectedProps,
   typeof initialState
 > {
   state = initialState;
@@ -106,6 +104,6 @@ export class VideoWithPlaceholderView extends React.Component<
   }
 }
 
-export const VideoWithPlaceholder = withNavigation<OwnProps>(
+export const VideoWithPlaceholder = withNavigation<Props>(
   VideoWithPlaceholderView
 );

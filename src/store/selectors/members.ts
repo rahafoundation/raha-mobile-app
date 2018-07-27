@@ -13,7 +13,7 @@ export function getMemberById(
   state: RahaState,
   id: MemberId
 ): Member | undefined {
-  return state.members.byUserId.get(id, undefined);
+  return state.members.byMemberId.get(id, undefined);
 }
 
 export function getMembersByIds(
@@ -39,13 +39,21 @@ export function getMembersByUsernames(
   );
 }
 
+/**
+ * @param member Return all ancestors of this member.
+ * @param byMemberId Map from member id to member.
+ * @return A 2-element array of the set of all ancestors and ordered array of all ancestors.
+ * Everyone is their own ancestor, so given a valid member this is guaranteed to contain at least one.
+ */
 function getAncestors(
   member: Member,
   byMemberId: ImmutableMap<MemberId, Member>
-): Set<MemberId> {
+): [Set<MemberId>, Array<MemberId>] {
   // Everyone is their own ancestor in this function
   let votingForMember = member as Member | undefined;
-  const ancestors = new Set<MemberId>();
+  const ancestorsSet = new Set<MemberId>();
+  const ancestorsArray = [];
+  let last = votingForMember;
   for (
     let votingForId: MemberId | typeof GENESIS_MEMBER = member.memberId;
     votingForId !== GENESIS_MEMBER; // TODO needs to change to check if voting for self
@@ -55,14 +63,24 @@ function getAncestors(
     if (votingForMember === undefined) {
       throw Error(`Cannot vote for invalid uid ${votingForId}`);
     }
-    if (ancestors.has(votingForId)) {
+    last = votingForMember;
+    if (ancestorsSet.has(votingForId)) {
       throw Error(
         `Cycle in ancestors of ${member.memberId}: ${votingForId} found twice`
       );
     }
-    ancestors.add(votingForId);
+    ancestorsSet.add(votingForId);
+    ancestorsArray.push(votingForId);
   }
-  return ancestors;
+  if (last === undefined) throw Error('Found no last ancestor including self, this is a bug.');
+  return [ancestorsSet, ancestorsArray];
+}
+
+export function getAncestorsArray(
+  member: Member,
+  byMemberId: ImmutableMap<MemberId, Member>
+): Array<MemberId> {
+  return getAncestors(member, byMemberId)[1];
 }
 
 function incrementKey(counts: Map<any, number>, key: any) {
@@ -75,15 +93,14 @@ function incVotesForAncestors(
   membersByUid: ImmutableMap<MemberId, Member>,
   votesByUid: Map<MemberId, number>
 ) {
-  const ancestors = getAncestors(member, membersByUid);
-  ancestors.forEach(a => incrementKey(votesByUid, a));
+  getAncestorsArray(member, membersByUid).forEach(a => incrementKey(votesByUid, a));
 }
 
 function getSortedMembersAndScore(
   state: RahaState,
   rankFn: (member: Member) => number
 ): [Member, number][] {
-  let membersAndScore = state.members.byUserId
+  let membersAndScore = state.members.byMemberId
     .valueSeq()
     .map((m): [Member, number] => [m, rankFn(m)])
     .toArray();
@@ -91,8 +108,17 @@ function getSortedMembersAndScore(
   return membersAndScore;
 }
 
+// Use this when you know you have a valid id
+export function getValidMemberById(state: RahaState, memberId: MemberId): Member {
+  const member = state.members.byMemberId.get(memberId);
+  if (!member) {
+    throw new Error(`Assumed memberId ${memberId} to be valid but did not exist`);
+  }
+  return member;
+}
+
 function getMembersById(state: RahaState) {
-  return state.members.byUserId;
+  return state.members.byMemberId;
 }
 
 // Cache using createSelector because computation is fairly expensive
@@ -121,4 +147,9 @@ export function getMembersSortedByVotes(state: RahaState) {
     const voteCount = voteCountById.get(m.memberId);
     return voteCount === undefined ? 0 : voteCount;
   });
+}
+
+export function getDaysUntilInactive(member: Member) {
+  
+  member.lastMinted
 }

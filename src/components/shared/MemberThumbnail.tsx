@@ -4,7 +4,7 @@
  */
 import * as React from "react";
 import { TouchableOpacity, View } from "react-native";
-import { NavigationScreenProps } from "react-navigation";
+import { withNavigation, NavigationInjectedProps } from "react-navigation";
 
 import {
   getInitialsForName,
@@ -14,12 +14,12 @@ import { Member } from "../../store/reducers/members";
 import { Text } from "../shared/elements";
 import { RouteName } from "../shared/Navigation";
 
-type Props = NavigationScreenProps<any> & {
+type Props = {
   member: Member;
   score?: Number;
 };
 
-export const MemberThumbnail: React.StatelessComponent<Props> = ({
+export const MemberThumbnailView: React.StatelessComponent<Props & NavigationInjectedProps> = ({
   navigation,
   member,
   score
@@ -70,3 +70,7 @@ export const MemberThumbnail: React.StatelessComponent<Props> = ({
     </TouchableOpacity>
   );
 };
+
+export const MemberThumbnail = withNavigation<Props>(
+  MemberThumbnailView
+);
