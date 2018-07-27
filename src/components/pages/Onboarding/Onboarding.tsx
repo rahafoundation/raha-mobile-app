@@ -58,7 +58,6 @@ type OnboardingState = {
   verifiedName?: string;
   videoUri?: string;
   videoDownloadUrl?: string;
-  deeplinkInitialized?: boolean;
 };
 
 export class OnboardingView extends React.Component<
@@ -67,10 +66,12 @@ export class OnboardingView extends React.Component<
 > {
   dropdown: any;
   steps: OnboardingStep[];
+  deeplinkInitialized: boolean;
 
   constructor(props: OnboardingProps) {
     super(props);
     this.steps = [];
+    this.deeplinkInitialized = false;
     this.state = {
       step: OnboardingStep.SPLASH
     };
@@ -81,10 +82,6 @@ export class OnboardingView extends React.Component<
    * the associated video download url into state.
    */
   initializeDeeplinkingParams = async () => {
-    if (this.state.deeplinkInitialized) {
-      return;
-    }
-
     const deeplinkProps = [
       this.props.deeplinkVideoToken,
       this.props.deeplinkInvitingMember
@@ -118,7 +115,6 @@ export class OnboardingView extends React.Component<
       return;
     }
     this.setState({
-      deeplinkInitialized: true,
       videoDownloadUrl,
       invitingMember: this.props.deeplinkInvitingMember
     });
@@ -137,7 +133,11 @@ export class OnboardingView extends React.Component<
     if (prevState && this.state.step > prevState.step) {
       this.steps.push(prevState.step);
     }
-    this.initializeDeeplinkingParams();
+
+    if (!this.deeplinkInitialized) {
+      this.deeplinkInitialized = true;
+      this.initializeDeeplinkingParams();
+    }
   }
 
   _handleBackPress = () => {
