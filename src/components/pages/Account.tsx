@@ -13,6 +13,7 @@ import {
   getValidMemberById
 } from "../../store/selectors/members";
 import { MemberThumbnail } from "../shared/MemberThumbnail";
+import { fonts } from '../../helpers/fonts';
 
 const DAYS_TILL_INACTIVITY = 400;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -40,9 +41,9 @@ type State = {
 
 const Break: React.StatelessComponent<{}> = () => <View style={styles.break} />;
 
-// TODO show when account will go inactive, total Raha outstanding,
-// leaderboard, who you are voting for, etc.
+// TODO show total Raha outstanding and total donated.
 // Eventually it could be AccountTab instead of ProfileTab.
+// At that point might want to migrate leaderboards and contact us here.
 class AccountView extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -66,7 +67,7 @@ class AccountView extends React.Component<Props, State> {
     return (
       <ScrollView>
         <Text>
-          After {<Text style={styles.timeRemaining}>{timeRemaining}</Text>}{" "}
+          After {<Text style={fonts.OpenSans.Bold}>{timeRemaining}</Text>}{" "}
           without activity your account balance will be donated.
         </Text>
         <Break />
@@ -88,9 +89,6 @@ const styles = StyleSheet.create({
     height: 5,
     marginTop: 2,
     marginBottom: 2
-  },
-  timeRemaining: {
-    fontWeight: "800"
   }
 });
 

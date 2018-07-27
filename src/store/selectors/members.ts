@@ -43,7 +43,7 @@ export function getMembersByUsernames(
  * @param member Return all ancestors of this member.
  * @param byMemberId Map from member id to member.
  * @return A 2-element array of the set of all ancestors and ordered array of all ancestors.
- * Everyone is their own ancestor, so given a valid member this is garunteed to contain at least one.
+ * Everyone is their own ancestor, so given a valid member this is guaranteed to contain at least one.
  */
 function getAncestors(
   member: Member,
