@@ -85,10 +85,10 @@ keytool -exportcert -list -v \
 ```
 
 Copy the SHA1 certificate fingerprint. Then, go to the Android configurations
-for both [the test
+for both [the dev test
 app](https://console.firebase.google.com/u/0/project/raha-test/settings/general/android:app.raha.mobileTest)
-and [the prod
-app](https://console.firebase.google.com/u/0/project/raha-5395e/settings/general/android:app.raha.mobile).
+and [the dev prod
+app](https://console.firebase.google.com/u/0/project/raha-5395e/settings/general/android:app.raha.mobileProd).
 
 Click "Add Fingerprint" under the "SHA certificate fingerprints" section, and
 paste in the same SHA fingerprint in both apps. It looks like this:
@@ -130,7 +130,7 @@ up to date.
     keys from `release-signing.txt` into your `~/.gradle/gradle.properties`.
     Adjust the keystore path accordingly.
 2.  Run `yarn bundle:android` to create a bundled and signed APK in
-    `./android/app/build/outputs/apk/devProd/release/app-devProd-release.apk`.
+    `./android/app/build/outputs/apk/prod/release/app-prod-release.apk`.
 3.  You can install this APK on your physical device through `adb install PATH.apk`.
 
 #### Troubleshooting
