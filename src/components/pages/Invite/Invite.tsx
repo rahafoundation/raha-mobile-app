@@ -16,10 +16,7 @@ import { RahaState } from "../../../store";
 import { generateToken } from "../../../helpers/token";
 import { SendInvite } from "./SendInvite";
 
-const ENABLE_SEND_INVITE = false;
-
 enum InviteStep {
-  WIP, // Temp step to signal that this flow is still WIP
   CAMERA,
   VIDEO_PREVIEW,
   SEND_INVITE
@@ -49,7 +46,7 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
     this.inviteToken = generateToken();
     this.videoUploadRef = getInviteVideoRef(this.inviteToken);
     this.state = {
-      step: ENABLE_SEND_INVITE ? InviteStep.CAMERA : InviteStep.WIP
+      step: InviteStep.CAMERA
     };
   }
 
@@ -92,19 +89,6 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
 
   _renderStep() {
     switch (this.state.step) {
-      case InviteStep.WIP: {
-        return (
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: 18
-            }}
-          >
-            Sorry! We're working on an easier way to invite your friends. For
-            now, please send invites through the web app.
-          </Text>
-        );
-      }
       case InviteStep.CAMERA: {
         return (
           <InviteCamera

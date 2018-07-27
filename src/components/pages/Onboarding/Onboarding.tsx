@@ -66,13 +66,14 @@ export class OnboardingView extends React.Component<
 > {
   dropdown: any;
   steps: OnboardingStep[];
+  deeplinkInitialized: boolean;
 
   constructor(props: OnboardingProps) {
     super(props);
     this.steps = [];
+    this.deeplinkInitialized = false;
     this.state = {
-      step: OnboardingStep.SPLASH,
-      invitingMember: this.props.deeplinkInvitingMember
+      step: OnboardingStep.SPLASH
     };
   }
 
@@ -109,16 +110,18 @@ export class OnboardingView extends React.Component<
       this.dropdown.alertWithType(
         "error",
         "Error: Invalid Deeplink",
-        "Unable to process deeplink. Please try signing up directly from your phone."
+        "Invite video doesn't exist or has expired. Please try signing up directly from your phone."
       );
       return;
     }
-    this.setState({ videoDownloadUrl });
+    this.setState({
+      videoDownloadUrl,
+      invitingMember: this.props.deeplinkInvitingMember
+    });
   };
 
   componentDidMount() {
     BackHandler.addEventListener("hardwareBackPress", this._handleBackPress);
-    this.initializeDeeplinkingParams();
   }
 
   componentWillUnmount() {
@@ -129,6 +132,11 @@ export class OnboardingView extends React.Component<
     // Track forward changes in steps so we can handle backpresses.
     if (prevState && this.state.step > prevState.step) {
       this.steps.push(prevState.step);
+    }
+
+    if (!this.deeplinkInitialized) {
+      this.deeplinkInitialized = true;
+      this.initializeDeeplinkingParams();
     }
   }
 
