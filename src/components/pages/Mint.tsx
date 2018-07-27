@@ -82,7 +82,7 @@ const MintView: React.StatelessComponent<Props> = ({
         <Image
           resizeMode="contain"
           style={{ flex: 1, margin: 8 }}
-          source={require("../../assets/img/mint.png")}
+          source={require("../../assets/img/Mint.png")}
         />
         <MintButton />
       </View>
@@ -90,7 +90,7 @@ const MintView: React.StatelessComponent<Props> = ({
         <Image
           resizeMode="contain"
           style={{ flex: 1, margin: 8 }}
-          source={require("../../assets/img/invite.png")}
+          source={require("../../assets/img/Invite.png")}
         />
         <View
           style={{
