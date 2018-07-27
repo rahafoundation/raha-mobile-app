@@ -477,6 +477,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
 
 const styles = StyleSheet.create({
   container: {
+    width: "100%",
     alignItems: "center",
     backgroundColor: colors.darkBackground
   },
