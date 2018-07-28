@@ -32,6 +32,17 @@ const GENESIS_TRUST_OPS = [
 ];
 export const GENESIS_MEMBER = Symbol("GENESIS");
 
+function getDefaultMemberFields() {
+  return {
+    balance: new Big(0),
+    totalDonated: new Big(0),
+    totalMinted: new Big(0),
+    trustedBy: Set<MemberId>(),
+    invited: Set<MemberId>(),
+    trusts: Set<MemberId>()
+  };
+}
+
 interface RequiredMemberFields {
   memberId: MemberId;
   username: string;
@@ -43,17 +54,6 @@ interface RequiredMemberFields {
 }
 
 type OptionalMemberFields = ReturnType<typeof getDefaultMemberFields>;
-
-function getDefaultMemberFields() {
-  return {
-    balance: new Big(0),
-    totalDonated: new Big(0),
-    totalMinted: new Big(0),
-    trustedBy: Set<MemberId>(),
-    invited: Set<MemberId>(),
-    trusts: Set<MemberId>()
-  };
-}
 type MemberFields = RequiredMemberFields & OptionalMemberFields;
 
 export class Member {
