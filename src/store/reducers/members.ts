@@ -16,7 +16,6 @@ import { OperationsActionType } from "../actions/operations";
 import { MembersAction } from "../actions/members";
 import { OperationInvalidError } from "../../errors/OperationInvalidError";
 import { config } from "../../data/config";
-import { Omit } from "@raha/api-shared/helpers/Omit";
 
 const GENESIS_REQUEST_INVITE_OPS = [
   "InuYAjMISl6operovXIR",
