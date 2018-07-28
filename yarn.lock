@@ -6286,9 +6286,9 @@ react-native-vector-icons@^4.6.0:
     prop-types "^15.5.10"
     yargs "^8.0.2"
 
-react-native-video-processing@tinaroh/react-native-video-processing:
+react-native-video-processing@shahen94/react-native-video-processing:
   version "1.7.1"
-  resolved "https://codeload.github.com/tinaroh/react-native-video-processing/tar.gz/5315eece304b5f2da4602f8451470ee84bb6b151"
+  resolved "https://codeload.github.com/shahen94/react-native-video-processing/tar.gz/e7262a3fec73e26b3a77aac83eae278a130a0773"
   dependencies:
     babel-preset-es2015 "^6.24.1"
     babel-preset-react "^6.24.1"
