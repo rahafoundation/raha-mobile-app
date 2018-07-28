@@ -4,10 +4,7 @@
  */
 import * as React from "react";
 import { MapStateToProps, connect } from "react-redux";
-import { NavigationScreenProps } from "react-navigation";
 import { FlatList } from "react-native";
-
-import { MemberId } from "@raha/api-shared/models/identifiers";
 
 import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";
@@ -45,33 +42,22 @@ const LeaderBoardConfig = {
   }
 };
 
-interface NavParams {
-  memberIds: MemberId[];
-}
-
-type OwnProps = NavigationScreenProps<NavParams>;
-
 type StateProps = {
   membersAndScores: [Member, number][];
 };
 
-type Props = OwnProps & StateProps;
+type Props = StateProps;
 
 export const LeaderBoardView: React.StatelessComponent<Props> = ({
-  navigation,
   membersAndScores
 }) => {
   return (
     <Container>
       <FlatList
         data={membersAndScores}
-        keyExtractor={m => m[0].memberId}
+        keyExtractor={m => m[0].get("memberId")}
         renderItem={m => (
-          <MemberThumbnail
-            navigation={navigation}
-            member={m.item[0]}
-            score={m.item[1]}
-          />
+          <MemberThumbnail member={m.item[0]} score={m.item[1]} />
         )}
       />
     </Container>
@@ -79,10 +65,7 @@ export const LeaderBoardView: React.StatelessComponent<Props> = ({
 };
 
 // TODO highlight logged in users place on leaderboard, optionally scroll to it
-const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
-  state,
-  props
-) => {
+const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
   return {
     membersAndScores: getMembersSortedByInvites(state)
   };

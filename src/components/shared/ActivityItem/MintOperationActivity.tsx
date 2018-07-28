@@ -4,10 +4,7 @@
 import * as React from "react";
 import { Big } from "big.js";
 
-import {
-  MintOperation,
-  MintType
-} from "@raha/api-shared/models/Operation";
+import { MintOperation, MintType } from "@raha/api-shared/models/Operation";
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
@@ -83,7 +80,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
     if (referredMember) {
       return {
         fromMember,
-        referredMemberFullName: referredMember.fullName
+        referredMemberFullName: referredMember.get("fullName")
       };
     }
   }

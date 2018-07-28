@@ -20,7 +20,7 @@ export const Success: React.StatelessComponent<OwnProps> = props => {
       <Text style={styles.message}>
         You sent{" "}
         <Text style={styles.amount}>{props.amount.toString()} Raha</Text> to{" "}
-        <Text style={styles.name}>{props.toMember.fullName}</Text> for{" "}
+        <Text style={styles.name}>{props.toMember.get("fullName")}</Text> for{" "}
         <Text style={styles.memo}>"{props.memo ? `${props.memo}` : ""}".</Text>
       </Text>
       <Button title="Give again" onPress={() => props.onResetCallback()} />

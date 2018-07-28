@@ -2,7 +2,8 @@ import { Member } from "../store/reducers/members";
 
 export function getMemberColor(member: Member) {
   const hue =
-  member.memberId
+    member
+      .get("memberId")
       .split("")
       .map(x => x.charCodeAt(0))
       .reduce((a, b) => a + b, 0) % 360;

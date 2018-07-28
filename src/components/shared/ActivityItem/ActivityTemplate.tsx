@@ -26,9 +26,12 @@ type Props = {
   message: string;
   timestamp: Date;
   videoUri?: string;
-}
+};
 
-export class ActivityTemplateView extends React.Component<Props & NavigationInjectedProps, {}> {
+export class ActivityTemplateView extends React.Component<
+  Props & NavigationInjectedProps,
+  {}
+> {
   videoElem: VideoWithPlaceholderView | null = null;
 
   /**
@@ -53,7 +56,7 @@ export class ActivityTemplateView extends React.Component<Props & NavigationInje
     const totalAmount =
       amount && donationAmount ? amount.plus(donationAmount) : amount;
     const donationIntroText = amount
-      ? [",", ...[to ? [to.fullName] : []], "donated"].join(" ")
+      ? [",", ...[to ? [to.get("fullName")] : []], "donated"].join(" ")
       : "Donated ";
     return (
       <View style={styles.card}>
@@ -65,7 +68,7 @@ export class ActivityTemplateView extends React.Component<Props & NavigationInje
                   navigation.push(RouteName.Profile, { member: to })
                 }
               >
-                <Text style={styles.toText}>To {to.fullName}:</Text>
+                <Text style={styles.toText}>To {to.get("fullName")}:</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -78,17 +81,19 @@ export class ActivityTemplateView extends React.Component<Props & NavigationInje
           <TouchableOpacity
             onPress={() => navigation.push(RouteName.Profile, { member: from })}
           >
-            <Text style={styles.fromText}>From: {from.fullName}</Text>
+            <Text style={styles.fromText}>From: {from.get("fullName")}</Text>
           </TouchableOpacity>
         </View>
-        {videoUri &&
+        {videoUri && (
           <View style={styles.video}>
             <VideoWithPlaceholder
-              onRef={e => {this.videoElem = e as any}}
+              onRef={e => {
+                this.videoElem = e as any;
+              }}
               uri={videoUri}
             />
           </View>
-        }
+        )}
         <View style={styles.moneyRow}>
           <View style={styles.amountDetail}>
             {totalAmount && (
@@ -162,6 +167,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export const ActivityTemplate = withNavigation<Props>(
-  ActivityTemplateView
-);
+export const ActivityTemplate = withNavigation<Props>(ActivityTemplateView);

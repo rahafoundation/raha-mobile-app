@@ -9,10 +9,7 @@ import {
   OperationType,
   MintType
 } from "@raha/api-shared/models/Operation";
-import {
-  MemberId,
-  MemberUsername
-} from "@raha/api-shared/models/identifiers";
+import { MemberId, MemberUsername } from "@raha/api-shared/models/identifiers";
 
 import { Set, Map } from "immutable";
 import { OperationsActionType } from "../actions/operations";
@@ -34,55 +31,43 @@ const GENESIS_TRUST_OPS = [
 ];
 export const GENESIS_MEMBER = Symbol("GENESIS");
 
-/**
- * Members that we're in the process of building up from operations below.
- * TODO follow Redux recommendation and use plain objects or immutable.js Record instead of class,
- * see https://redux.js.org/faq/organizing-state#can-i-put-functions-promises-or-other-non-serializable-items-in-my-store-state
- */
+function getDefaultMemberFields() {
+  return {
+    balance: new Big(0),
+    totalDonated: new Big(0),
+    totalMinted: new Big(0),
+    trustedBy: Set<MemberId>(),
+    invited: Set<MemberId>(),
+    trusts: Set<MemberId>()
+  };
+}
+
+interface RequiredMemberFields {
+  memberId: MemberId;
+  username: string;
+  fullName: string;
+  createdAt: Date;
+  invitedBy: string | typeof GENESIS_MEMBER;
+  inviteConfirmed: boolean;
+  lastMinted: Date;
+}
+
+type OptionalMemberFields = ReturnType<typeof getDefaultMemberFields>;
+type MemberFields = RequiredMemberFields & OptionalMemberFields;
+
 export class Member {
-  public readonly memberId: MemberId;
-  public readonly username: MemberUsername;
-  public readonly fullName: string;
-  public readonly createdAt: Date;
-  public readonly invitedBy: MemberId | typeof GENESIS_MEMBER;
-  public readonly inviteConfirmed: boolean;
-  public readonly balance: Big;
-  public readonly totalDonated: Big;
-  public readonly totalMinted: Big;
-  public readonly lastMinted: Date;
+  protected readonly fields: MemberFields;
+  public get<Key extends keyof MemberFields>(field: Key): MemberFields[Key] {
+    return this.fields[field];
+  }
 
-  public readonly trustedBy: Set<MemberId>;
-  public readonly invited: Set<MemberId>;
-  public readonly trusts: Set<MemberId>;
+  constructor(values: RequiredMemberFields & Partial<OptionalMemberFields>) {
+    // if a field is missing from values, it gets filled in from defaults
+    this.fields = { ...getDefaultMemberFields(), ...values };
+  }
 
-  constructor(
-    memberId: MemberId,
-    username: MemberUsername,
-    fullName: string,
-    createdAt: Date,
-    invitedBy: MemberId | typeof GENESIS_MEMBER,
-    inviteConfirmed: boolean,
-    balance: Big,
-    totalDonated: Big,
-    totalMinted: Big,
-    lastMinted: Date,
-    trusts?: Set<MemberId>,
-    trustedBy?: Set<MemberId>,
-    invited?: Set<MemberId>
-  ) {
-    this.memberId = memberId;
-    this.username = username;
-    this.fullName = fullName;
-    this.createdAt = createdAt;
-    this.invitedBy = invitedBy;
-    this.inviteConfirmed = inviteConfirmed;
-    this.trusts = trusts || Set();
-    this.trustedBy = trustedBy || Set();
-    this.invited = invited || Set();
-    this.balance = balance;
-    this.totalDonated = totalDonated;
-    this.totalMinted = totalMinted;
-    this.lastMinted = lastMinted;
+  protected withFields(newFields: Partial<MemberFields>) {
+    return new Member({ ...this.fields, ...newFields });
   }
 
   /* =======================
@@ -90,63 +75,24 @@ export class Member {
    * =======================
    */
   public mintRaha(amount: Big, mintDate?: Date) {
-    return new Member(
-      this.memberId,
-      this.username,
-      this.fullName,
-      this.createdAt,
-      this.invitedBy,
-      this.inviteConfirmed,
-      this.balance.plus(amount),
-      this.totalDonated,
-      this.totalMinted.plus(amount),
-      mintDate ? mintDate : this.lastMinted,
-      this.trusts,
-      this.trustedBy,
-      this.invited
-    );
+    return this.withFields({
+      balance: this.fields.balance.plus(amount),
+      lastMinted: mintDate ? mintDate : this.fields.lastMinted,
+      totalMinted: this.fields.totalMinted.plus(amount)
+    });
   }
 
   public giveRaha(amount: Big) {
-    return new Member(
-      this.memberId,
-      this.username,
-      this.fullName,
-      this.createdAt,
-      this.invitedBy,
-      this.inviteConfirmed,
-      this.balance.minus(amount),
-      this.totalDonated,
-      this.totalMinted,
-      this.lastMinted,
-      this.trusts,
-      this.trustedBy,
-      this.invited
-    );
+    return this.withFields({
+      balance: this.fields.balance.minus(amount)
+    });
   }
 
   public receiveRaha(amount: Big, donation_amount: Big) {
-    return new Member(
-      this.memberId,
-      this.username,
-      this.fullName,
-      this.createdAt,
-      this.invitedBy,
-      this.inviteConfirmed,
-      this.balance.plus(amount),
-      this.totalDonated.plus(donation_amount),
-      this.totalMinted,
-      this.lastMinted,
-      this.trusts,
-      this.trustedBy,
-      this.invited
-    );
-  }
-
-  public get videoUri(): string {
-    return `https://storage.googleapis.com/${config.publicVideoBucket}/${
-      this.memberId
-    }/invite.mp4`;
+    return this.withFields({
+      balance: this.fields.balance.plus(amount),
+      totalDonated: this.fields.totalDonated.plus(donation_amount)
+    });
   }
 
   /* =====================
@@ -156,68 +102,35 @@ export class Member {
    * than having them directly on members, to avoid having to keep member
    * states all in sync.
    */
-
-  /**
-   * @returns A new Member with the given member id present in its invited set.
-   */
   public inviteMember(memberId: MemberId) {
-    return new Member(
-      this.memberId,
-      this.username,
-      this.fullName,
-      this.createdAt,
-      this.invitedBy,
-      this.inviteConfirmed,
-      this.balance,
-      this.totalDonated,
-      this.totalMinted,
-      this.lastMinted,
-      this.trusts,
-      this.trustedBy.add(memberId),
-      this.invited.add(memberId)
-    );
+    return this.withFields({
+      invited: this.fields.invited.add(memberId),
+      trustedBy: this.fields.trustedBy.add(memberId)
+    });
   }
 
-  /**
-   * @returns A new Member with the given member id present in its trusted set.
-   */
   public trustMember(memberId: MemberId) {
-    return new Member(
-      this.memberId,
-      this.username,
-      this.fullName,
-      this.createdAt,
-      this.invitedBy,
-      this.inviteConfirmed,
-      this.balance,
-      this.totalDonated,
-      this.totalMinted,
-      this.lastMinted,
-      this.trusts.add(memberId),
-      this.trustedBy,
-      this.invited
-    );
+    return this.withFields({
+      trusts: this.fields.trusts.add(memberId)
+    });
   }
 
-  /**
-   * @returns A new Member with the given member id present in its trustedBy set.
-   */
   public beTrustedByMember(memberId: MemberId) {
-    return new Member(
-      this.memberId,
-      this.username,
-      this.fullName,
-      this.createdAt,
-      this.invitedBy,
-      this.inviteConfirmed || this.invitedBy === memberId,
-      this.balance,
-      this.totalDonated,
-      this.totalMinted,
-      this.lastMinted,
-      this.trusts,
-      this.trustedBy.add(memberId),
-      this.invited
-    );
+    return this.withFields({
+      inviteConfirmed:
+        this.fields.inviteConfirmed || this.fields.invitedBy === memberId,
+      trustedBy: this.fields.trustedBy.add(memberId)
+    });
+  }
+
+  /* =====================
+   * GET HELPERS
+   * =====================
+   */
+  public get videoUri(): string {
+    return `https://storage.googleapis.com/${config.publicVideoBucket}/${
+      this.fields.memberId
+    }/invite.mp4`;
   }
 }
 
@@ -310,8 +223,11 @@ function addMemberToState(
   member: Member
 ): MembersState {
   return {
-    byMemberUsername: prevState.byMemberUsername.set(member.username, member),
-    byMemberId: prevState.byMemberId.set(member.memberId, member)
+    byMemberUsername: prevState.byMemberUsername.set(
+      member.get("username"),
+      member
+    ),
+    byMemberId: prevState.byMemberId.set(member.get("memberId"), member)
   };
 }
 function addMembersToState(
@@ -338,44 +254,33 @@ function applyOperation(
       case OperationType.REQUEST_INVITE: {
         const { full_name, to_uid, username } = operation.data;
 
+        const memberData = {
+          memberId: creator_uid,
+          username: username,
+          fullName: full_name,
+          createdAt: new Date(created_at),
+          inviteConfirmed: false,
+          lastMinted: new Date(created_at)
+        };
+
         // the initial users weren't invited by anyone; so no need to hook up any associations.
         if (GENESIS_REQUEST_INVITE_OPS.includes(operation.id)) {
           return addMemberToState(
             prevState,
-            new Member(
-              creator_uid,
-              username,
-              full_name,
-              new Date(created_at),
-              GENESIS_MEMBER,
-              true,
-              new Big(0),
-              new Big(0),
-              new Big(0),
-              new Date(created_at)
-            )
+            new Member({ ...memberData, invitedBy: GENESIS_MEMBER })
           );
         }
 
         assertMemberIdPresentInState(prevState, to_uid, operation);
         assertMemberIdNotPresentInState(prevState, creator_uid, operation);
 
-        const inviter = (prevState.byMemberId.get(to_uid) as Member).inviteMember(
-          creator_uid
-        );
-        const inviteRequester = new Member(
-          creator_uid,
-          username,
-          full_name,
-          new Date(created_at),
-          to_uid,
-          false,
-          new Big(0),
-          new Big(0),
-          new Big(0),
-          new Date(created_at),
-          Set([to_uid])
-        );
+        const inviter = (prevState.byMemberId.get(
+          to_uid
+        ) as Member).inviteMember(creator_uid);
+        const inviteRequester = new Member({
+          ...memberData,
+          invitedBy: to_uid
+        }).trustMember(to_uid);
         return addMembersToState(prevState, [inviter, inviteRequester]);
       }
       case OperationType.TRUST: {
@@ -395,7 +300,9 @@ function applyOperation(
         const { amount, type } = operation.data;
 
         assertMemberIdPresentInState(prevState, creator_uid, operation);
-        const minter = (prevState.byMemberId.get(creator_uid) as Member).mintRaha(
+        const minter = (prevState.byMemberId.get(
+          creator_uid
+        ) as Member).mintRaha(
           new Big(amount),
           type === MintType.BASIC_INCOME
             ? new Date(operation.created_at)
@@ -412,9 +319,9 @@ function applyOperation(
         // Currently we don't do this as RAHA isn't a normal member created via a REQUEST_INVITE operation.
         // Thus RAHA doesn't get added to the members state in the current paradigm.
 
-        const giver = (prevState.byMemberId.get(creator_uid) as Member).giveRaha(
-          new Big(amount).plus(donation_amount)
-        );
+        const giver = (prevState.byMemberId.get(
+          creator_uid
+        ) as Member).giveRaha(new Big(amount).plus(donation_amount));
         const recipient = (prevState.byMemberId.get(
           to_uid
         ) as Member).receiveRaha(new Big(amount), new Big(donation_amount));
@@ -435,7 +342,10 @@ function applyOperation(
   }
 }
 
-const initialState: MembersState = { byMemberId: Map(), byMemberUsername: Map() };
+const initialState: MembersState = {
+  byMemberId: Map(),
+  byMemberUsername: Map()
+};
 export const reducer: Reducer<MembersState> = (
   state = initialState,
   untypedAction

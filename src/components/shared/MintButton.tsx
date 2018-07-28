@@ -53,12 +53,12 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   const loggedInMember = getLoggedInMember(state);
   if (loggedInMember) {
     return {
-      loggedInMemberId: loggedInMember.memberId,
-      mintableAmount: getMintableAmount(state, loggedInMember.memberId),
+      loggedInMemberId: loggedInMember.get("memberId"),
+      mintableAmount: getMintableAmount(state, loggedInMember.get("memberId")),
       mintApiCallStatus: getStatusOfApiCall(
         state,
         ApiEndpointName.MINT,
-        loggedInMember.memberId
+        loggedInMember.get("memberId")
       )
     };
   }

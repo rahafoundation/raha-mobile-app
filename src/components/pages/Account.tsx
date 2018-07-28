@@ -13,7 +13,7 @@ import {
   getValidMemberById
 } from "../../store/selectors/members";
 import { MemberThumbnail } from "../shared/MemberThumbnail";
-import { fonts } from '../../helpers/fonts';
+import { fonts } from "../../helpers/fonts";
 
 const DAYS_TILL_INACTIVITY = 400;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -57,7 +57,7 @@ class AccountView extends React.Component<Props, State> {
     // if you're within a month of being marked inactive, call
     // updateTimeRemaining on setInterval.
     const sinceLastMintMilli =
-      Date.now() - this.props.loggedInMember.lastMinted.getTime();
+      Date.now() - this.props.loggedInMember.get("lastMinted").getTime();
     return `${400 - Math.round(sinceLastMintMilli / MS_PER_DAY)} days`;
   }
 

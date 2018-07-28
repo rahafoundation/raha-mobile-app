@@ -65,8 +65,11 @@ class MemberSearchBarView extends React.Component<
     for (let member of this.props.members) {
       let searchedTextLowercase = searchedText.toLowerCase();
       if (
-        member.fullName.toLowerCase().startsWith(searchedTextLowercase) ||
-        member.username.startsWith(searchedTextLowercase)
+        member
+          .get("fullName")
+          .toLowerCase()
+          .startsWith(searchedTextLowercase) ||
+        member.get("username").startsWith(searchedTextLowercase)
       ) {
         filteredMembers.push(member);
         if (filteredMembers.length === NUM_AUTOCOMPLETION_SUGGESTIONS) {
@@ -100,8 +103,8 @@ class MemberSearchBarView extends React.Component<
         <FlatList
           keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
           data={this.state.suggestedMembers}
-          keyExtractor={item => {
-            return item.memberId;
+          keyExtractor={member => {
+            return member.get("memberId");
           }}
           renderItem={({ item }) => (
             <MemberItem
@@ -126,8 +129,8 @@ const MemberItem: React.StatelessComponent<MemberProps> = props => {
   return (
     <TouchableOpacity onPress={props.onPressed}>
       <View style={styles.memberItemRow}>
-        <Text style={styles.memberText}>{props.member.fullName}</Text>
-        <Text style={styles.memberSubtext}>{props.member.username}</Text>
+        <Text style={styles.memberText}>{props.member.get("fullName")}</Text>
+        <Text style={styles.memberSubtext}>{props.member.get("username")}</Text>
       </View>
     </TouchableOpacity>
   );

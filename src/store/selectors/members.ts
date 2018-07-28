@@ -1,10 +1,7 @@
 import { createSelector } from "reselect";
 import { Map as ImmutableMap } from "immutable";
 
-import {
-  MemberId,
-  MemberUsername
-} from "@raha/api-shared/models/identifiers";
+import { MemberId, MemberUsername } from "@raha/api-shared/models/identifiers";
 
 import { RahaState } from "../reducers";
 import { Member, GENESIS_MEMBER } from "../reducers/members";
@@ -55,9 +52,9 @@ function getAncestors(
   const ancestorsArray = [];
   let last = votingForMember;
   for (
-    let votingForId: MemberId | typeof GENESIS_MEMBER = member.memberId;
+    let votingForId: MemberId | typeof GENESIS_MEMBER = member.get("memberId");
     votingForId !== GENESIS_MEMBER; // TODO needs to change to check if voting for self
-    votingForId = votingForMember.invitedBy // TODO needs to change to votingFor
+    votingForId = votingForMember.get("invitedBy") // TODO needs to change to votingFor
   ) {
     votingForMember = byMemberId.get(votingForId);
     if (votingForMember === undefined) {
@@ -66,13 +63,16 @@ function getAncestors(
     last = votingForMember;
     if (ancestorsSet.has(votingForId)) {
       throw Error(
-        `Cycle in ancestors of ${member.memberId}: ${votingForId} found twice`
+        `Cycle in ancestors of ${member.get(
+          "memberId"
+        )}: ${votingForId} found twice`
       );
     }
     ancestorsSet.add(votingForId);
     ancestorsArray.push(votingForId);
   }
-  if (last === undefined) throw Error('Found no last ancestor including self, this is a bug.');
+  if (last === undefined)
+    throw Error("Found no last ancestor including self, this is a bug.");
   return [ancestorsSet, ancestorsArray];
 }
 
@@ -93,7 +93,9 @@ function incVotesForAncestors(
   membersByUid: ImmutableMap<MemberId, Member>,
   votesByUid: Map<MemberId, number>
 ) {
-  getAncestorsArray(member, membersByUid).forEach(a => incrementKey(votesByUid, a));
+  getAncestorsArray(member, membersByUid).forEach(a =>
+    incrementKey(votesByUid, a)
+  );
 }
 
 function getSortedMembersAndScore(
@@ -109,10 +111,15 @@ function getSortedMembersAndScore(
 }
 
 // Use this when you know you have a valid id
-export function getValidMemberById(state: RahaState, memberId: MemberId): Member {
+export function getValidMemberById(
+  state: RahaState,
+  memberId: MemberId
+): Member {
   const member = state.members.byMemberId.get(memberId);
   if (!member) {
-    throw new Error(`Assumed memberId ${memberId} to be valid but did not exist`);
+    throw new Error(
+      `Assumed memberId ${memberId} to be valid but did not exist`
+    );
   }
   return member;
 }
@@ -134,22 +141,21 @@ export const getVoteCountById = createSelector(
 );
 
 export function getMembersSortedByTrust(state: RahaState) {
-  return getSortedMembersAndScore(state, m => m.trustedBy.size);
+  return getSortedMembersAndScore(state, m => m.get("trustedBy").size);
 }
 
 export function getMembersSortedByInvites(state: RahaState) {
-  return getSortedMembersAndScore(state, m => m.invited.size);
+  return getSortedMembersAndScore(state, m => m.get("invited").size);
 }
 
 export function getMembersSortedByVotes(state: RahaState) {
   const voteCountById = getVoteCountById(state);
   return getSortedMembersAndScore(state, m => {
-    const voteCount = voteCountById.get(m.memberId);
+    const voteCount = voteCountById.get(m.get("memberId"));
     return voteCount === undefined ? 0 : voteCount;
   });
 }
 
 export function getDaysUntilInactive(member: Member) {
-  
-  member.lastMinted
+  member.get("lastMinted");
 }

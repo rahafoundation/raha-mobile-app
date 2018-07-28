@@ -61,7 +61,7 @@ export class Give extends React.Component<Props, State> {
       />
     ) : (
       <GiveForm
-        toMemberId={toMember && toMember.memberId}
+        toMemberId={toMember && toMember.get("memberId")}
         identifier={operationIdentifer}
         onSuccessCallback={this.onSuccess}
       />

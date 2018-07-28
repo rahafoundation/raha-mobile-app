@@ -47,7 +47,7 @@ export class SelectInviter extends React.Component<
         {invitingMember && (
           <React.Fragment>
             <Button
-              title={`Request invite from ${invitingMember.fullName}`}
+              title={`Request invite from ${invitingMember.get("fullName")}`}
               onPress={() => {
                 this.props.onSelectedInviter(invitingMember);
               }}

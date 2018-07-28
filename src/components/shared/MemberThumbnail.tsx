@@ -19,11 +19,9 @@ type Props = {
   score?: Number;
 };
 
-export const MemberThumbnailView: React.StatelessComponent<Props & NavigationInjectedProps> = ({
-  navigation,
-  member,
-  score
-}) => {
+export const MemberThumbnailView: React.StatelessComponent<
+  Props & NavigationInjectedProps
+> = ({ navigation, member, score }) => {
   return (
     <TouchableOpacity
       style={{ height: 75, flex: 1, flexDirection: "row" }}
@@ -40,7 +38,7 @@ export const MemberThumbnailView: React.StatelessComponent<Props & NavigationInj
           width: 75
         }}
       >
-        {getInitialsForName(member.fullName)}
+        {getInitialsForName(member.get("fullName"))}
       </Text>
       <View
         style={{
@@ -54,7 +52,7 @@ export const MemberThumbnailView: React.StatelessComponent<Props & NavigationInj
             margin: 8
           }}
         >
-          {member.fullName}
+          {member.get("fullName")}
         </Text>
         {score !== undefined && (
           <Text
@@ -71,6 +69,4 @@ export const MemberThumbnailView: React.StatelessComponent<Props & NavigationInj
   );
 };
 
-export const MemberThumbnail = withNavigation<Props>(
-  MemberThumbnailView
-);
+export const MemberThumbnail = withNavigation<Props>(MemberThumbnailView);
