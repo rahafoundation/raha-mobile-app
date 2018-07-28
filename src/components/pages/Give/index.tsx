@@ -60,6 +60,8 @@ export class Give extends React.Component<Props, State> {
         onResetCallback={this.onReset}
       />
     ) : (
+      <GiveForm
+        toMemberId={toMember && toMember.get("memberId")}
         identifier={operationIdentifer}
         onSuccessCallback={this.onSuccess}
       />

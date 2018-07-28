@@ -22,7 +22,7 @@ export function getMintableAmount(
 ): Big | undefined {
   const member = getMemberById(state, memberId);
   if (member) {
-    return new Big(new Date().getTime() - member.lastMinted.getTime())
+    return new Big(new Date().getTime() - member.get("lastMinted").getTime())
       .div(MILLISECONDS_PER_WEEK)
       .times(RAHA_UBI_WEEKLY_RATE)
       .round(2, 0);
@@ -51,7 +51,12 @@ export function getUnclaimedReferrals(
       op => (op.data as MintReferralBonusPayload).invited_member_id
     );
 
-    return Array.from(member.invited.subtract(claimedIds).values());
+    return Array.from(
+      member
+        .get("invited")
+        .subtract(claimedIds)
+        .values()
+    );
   }
   return undefined;
 }
