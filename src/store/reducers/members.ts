@@ -32,7 +32,7 @@ const GENESIS_TRUST_OPS = [
 ];
 export const GENESIS_MEMBER = Symbol("GENESIS");
 
-interface MemberFields {
+interface RequiredMemberFields {
   memberId: MemberId;
   username: string;
   fullName: string;
@@ -40,32 +40,21 @@ interface MemberFields {
   invitedBy: string | typeof GENESIS_MEMBER;
   inviteConfirmed: boolean;
   lastMinted: Date;
-  balance: Big;
-  totalDonated: Big;
-  totalMinted: Big;
-  trustedBy: Set<MemberId>;
-  invited: Set<MemberId>;
-  trusts: Set<MemberId>;
 }
+
+type OptionalMemberFields = ReturnType<typeof getDefaultMemberFields>;
 
 function getDefaultMemberFields() {
   return {
     balance: new Big(0),
     totalDonated: new Big(0),
     totalMinted: new Big(0),
-    trustedBy: Set(),
-    invited: Set(),
-    trusts: Set()
+    trustedBy: Set<MemberId>(),
+    invited: Set<MemberId>(),
+    trusts: Set<MemberId>()
   };
 }
-type OptionalMemberFields = Pick<
-  MemberFields,
-  keyof ReturnType<typeof getDefaultMemberFields>
->;
-type RequiredMemberFields = Omit<
-  MemberFields,
-  keyof ReturnType<typeof getDefaultMemberFields>
->;
+type MemberFields = RequiredMemberFields & OptionalMemberFields;
 
 export class Member {
   protected readonly fields: MemberFields;
