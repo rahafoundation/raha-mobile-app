@@ -81,7 +81,7 @@ const mapStateToProps: MapStateToProps<
   }
   // Should never be undefined if you're never logged in, but if you are magically, you get to be Midoriya!
   return {
-    ownFullName: loggedInMember ? loggedInMember.fullName : "Izuku Midoriya"
+    ownFullName: loggedInMember ? loggedInMember.get("fullName") : "Izuku Midoriya"
   };
 };
 

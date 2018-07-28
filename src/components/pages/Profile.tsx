@@ -19,7 +19,7 @@ import { ActivityFeed } from "../shared/ActivityFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button, Container, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";
-import { VideoWithPlaceholder } from '../shared/VideoWithPlaceholder';
+import { VideoWithPlaceholder } from "../shared/VideoWithPlaceholder";
 
 interface NavParams {
   member: Member;
@@ -42,7 +42,7 @@ const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
     <View style={styles.video}>
       <VideoWithPlaceholder uri={props.member.videoUri} />
     </View>
-    <Text style={styles.memberUsername}>@{props.member.username}</Text>
+    <Text style={styles.memberUsername}>@{props.member.get("username")}</Text>
   </View>
 );
 
@@ -52,34 +52,36 @@ type StatsProps = NavigationScreenProps<NavParams> & {
 const Stats: React.StatelessComponent<StatsProps> = props => (
   <View style={styles.statsContainer}>
     <View style={styles.stat}>
-      <Text style={styles.number}>ℝ{props.member.balance.toFixed(2)}</Text>
+      <Text style={styles.number}>
+        ℝ{props.member.get("balance").toFixed(2)}
+      </Text>
       <Text style={styles.numberLabel}>balance</Text>
     </View>
     <TouchableHighlight
       onPress={() => {
         props.navigation.push(RouteName.MemberList, {
-          memberIds: Array.from(props.member.trustedBy),
+          memberIds: Array.from(props.member.get("trustedBy")),
           title: "Trusted By"
         });
       }}
     >
-    <View style={styles.stat}>
-      <Text style={styles.number}>{props.member.trustedBy.size}</Text>
-      <Text style={styles.numberLabel}>trusted by</Text>
-    </View>
+      <View style={styles.stat}>
+        <Text style={styles.number}>{props.member.get("trustedBy").size}</Text>
+        <Text style={styles.numberLabel}>trusted by</Text>
+      </View>
     </TouchableHighlight>
     <TouchableHighlight
       onPress={() =>
         props.navigation.push(RouteName.MemberList, {
-          memberIds: Array.from(props.member.trusts),
+          memberIds: Array.from(props.member.get("trusts")),
           title: "Trusted By"
         })
       }
     >
-    <View style={styles.stat}>
-      <Text style={styles.number}>{props.member.trusts.size}</Text>
-      <Text style={styles.numberLabel}>trusts</Text>
-    </View>
+      <View style={styles.stat}>
+        <Text style={styles.number}>{props.member.get("trusts").size}</Text>
+        <Text style={styles.numberLabel}>trusts</Text>
+      </View>
     </TouchableHighlight>
   </View>
 );
@@ -96,7 +98,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = props => (
               <View style={styles.actions}>
                 <Button
                   title="Trust"
-                  onPress={() => props.trust(props.member.memberId)}
+                  onPress={() => props.trust(props.member.get("memberId"))}
                   //@ts-ignore Because Button does have a rounded property
                   rounded
                 />
@@ -116,9 +118,9 @@ const ProfileView: React.StatelessComponent<ProfileProps> = props => (
         </View>
       }
       filter={operation =>
-        operation.creator_uid === props.member.memberId ||
+        operation.creator_uid === props.member.get("memberId") ||
         ("to_uid" in operation.data &&
-          operation.data.to_uid === props.member.memberId)
+          operation.data.to_uid === props.member.get("memberId"))
       }
     />
   </Container>
@@ -209,7 +211,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return {
     member,
     isOwnProfile:
-      !!loggedInMember && loggedInMember.memberId === member.memberId
+      !!loggedInMember &&
+      loggedInMember.get("memberId") === member.get("memberId")
   };
 };
 

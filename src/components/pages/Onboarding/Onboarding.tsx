@@ -293,7 +293,7 @@ export class OnboardingView extends React.Component<
         }
         return (
           <OnboardingCamera
-            inviterFullName={inviter.fullName}
+            inviterFullName={inviter.get("fullName")}
             verifiedFullName={verifiedFullName}
             onVideoRecorded={(videoUri: string) => {
               this.setState({

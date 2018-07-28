@@ -35,10 +35,8 @@ export const MemberListView: React.StatelessComponent<Props> = ({
     <Container>
       <FlatList
         data={members}
-        keyExtractor={m => m.memberId}
-        renderItem={m => (
-          <MemberThumbnail member={m.item} />
-        )}
+        keyExtractor={m => m.get("memberId")}
+        renderItem={m => <MemberThumbnail member={m.item} />}
       />
     </Container>
   );

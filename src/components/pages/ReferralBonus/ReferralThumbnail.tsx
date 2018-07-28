@@ -69,7 +69,7 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
     !!mintBonusApiCallStatus &&
     mintBonusApiCallStatus.status === ApiCallStatusType.STARTED;
 
-  const actionButton = invitedMember.inviteConfirmed ? (
+  const actionButton = invitedMember.get("inviteConfirmed") ? (
     <Button
       onPress={mintReferralBonus}
       loading={isMinting}
@@ -85,9 +85,11 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
     />
   );
 
-  const message = invitedMember.inviteConfirmed
-    ? `You invited ${invitedMember.fullName}!`
-    : `You must trust ${invitedMember.fullName} before minting your bonus!`;
+  const message = invitedMember.get("inviteConfirmed")
+    ? `You invited ${invitedMember.get("fullName")}!`
+    : `You must trust ${invitedMember.get(
+        "fullName"
+      )} before minting your bonus!`;
 
   return (
     <TouchableOpacity
@@ -105,7 +107,7 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
           }
         ]}
       >
-        {getInitialsForName(invitedMember.fullName)}
+        {getInitialsForName(invitedMember.get("fullName"))}
       </Text>
       <View style={styles.messageView}>
         <Text style={styles.messageText} numberOfLines={3} ellipsizeMode="tail">
@@ -134,12 +136,12 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
     trustApiCallStatus: getStatusOfApiCall(
       state,
       ApiEndpointName.TRUST_MEMBER,
-      ownProps.invitedMember.memberId
+      ownProps.invitedMember.get("memberId")
     ),
     mintBonusApiCallStatus: getStatusOfApiCall(
       state,
       ApiEndpointName.MINT,
-      ownProps.invitedMember.memberId
+      ownProps.invitedMember.get("memberId")
     )
   };
 };
@@ -155,10 +157,10 @@ const mergeProps: MergeProps<
     mintReferralBonus: () =>
       dispatchProps.mintReferralBonus(
         REFERRAL_BONUS,
-        ownProps.invitedMember.memberId
+        ownProps.invitedMember.get("memberId")
       ),
     trustMember: () =>
-      dispatchProps.trustMember(ownProps.invitedMember.memberId),
+      dispatchProps.trustMember(ownProps.invitedMember.get("memberId")),
     ...ownProps
   };
 };

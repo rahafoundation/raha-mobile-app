@@ -145,7 +145,7 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
   const requestInviteStatus = getStatusOfApiCall(
     state,
     ApiEndpointName.REQUEST_INVITE,
-    ownProps.invitingMember.memberId
+    ownProps.invitingMember.get("memberId")
   );
   return {
     requestInviteStatus: requestInviteStatus
@@ -162,7 +162,7 @@ const mergeProps: MergeProps<
     ...stateProps,
     requestInvite: (videoToken?: string) => {
       dispatchProps.requestInviteFromMember(
-        ownProps.invitingMember.memberId,
+        ownProps.invitingMember.get("memberId"),
         ownProps.verifiedName,
         getUsername(ownProps.verifiedName),
         videoToken

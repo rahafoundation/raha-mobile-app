@@ -76,7 +76,7 @@ class GiveFormView extends React.Component<Props, State> {
       !!amount &&
       amount.gt(0) &&
       !!this.props.loggedInMember &&
-      amount.lte(this.props.loggedInMember.balance)
+      amount.lte(this.props.loggedInMember.get("balance"))
     );
   };
   private onChangeAmount = (amount: string) => {
@@ -118,7 +118,8 @@ class GiveFormView extends React.Component<Props, State> {
     return (
       !!this.props.loggedInMember &&
       !!this.state.toMember &&
-      this.props.loggedInMember.memberId !== this.state.toMember.memberId
+      this.props.loggedInMember.get("memberId") !==
+        this.state.toMember.get("memberId")
     );
   };
 
@@ -133,7 +134,7 @@ class GiveFormView extends React.Component<Props, State> {
   private giveRaha = () => {
     const { amount, memo, toMember } = this.state;
     if (amount && toMember && this.validateForm()) {
-      this.props.give(amount, memo, toMember.memberId);
+      this.props.give(amount, memo, toMember.get("memberId"));
     }
   };
 
@@ -162,7 +163,9 @@ class GiveFormView extends React.Component<Props, State> {
               <FormLabel>To:</FormLabel>
               <View style={styles.selectedMember}>
                 <Text onPress={this.clearTo}>
-                  {this.state.toMember.fullName} ({this.state.toMember.username})
+                  {this.state.toMember.get("fullName")} ({this.state.toMember.get(
+                    "username"
+                  )})
                 </Text>
               </View>
             </React.Fragment>
@@ -184,10 +187,10 @@ class GiveFormView extends React.Component<Props, State> {
             labelStyle={styles.helper}
             containerStyle={styles.section}
           >
-            {this.state.toMember.fullName} is currently donating {DONATION_RATE}%
-            of all Raha they receive back to the Raha basic income pool. This
-            donation will be used to fund future basic income distributions for
-            everyone in the Raha network.
+            {this.state.toMember.get("fullName")} is currently donating{" "}
+            {DONATION_RATE}% of all Raha they receive back to the Raha basic
+            income pool. This donation will be used to fund future basic income
+            distributions for everyone in the Raha network.
           </FormValidationMessage>
         ) : (
           <React.Fragment />
@@ -203,7 +206,7 @@ class GiveFormView extends React.Component<Props, State> {
           <FormValidationMessage labelStyle={styles.helper}>
             Your balance:{" "}
             {this.props.loggedInMember
-              ? this.props.loggedInMember.balance.toString()
+              ? this.props.loggedInMember.get("balance").toString()
               : 0}{" "}
             Raha
           </FormValidationMessage>
@@ -227,7 +230,7 @@ class GiveFormView extends React.Component<Props, State> {
             containerStyle={styles.section}
           >
             You will give {this.state.amount.toString()} Raha to{" "}
-            {this.state.toMember.fullName} for "{this.state.memo
+            {this.state.toMember.get("fullName")} for "{this.state.memo
               ? `${this.state.memo}`
               : ""}".
           </FormValidationMessage>

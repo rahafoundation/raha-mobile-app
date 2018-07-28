@@ -43,7 +43,7 @@ const ReferralsComponent: React.StatelessComponent<Props> = ({
     <Container>
       <FlatList
         data={members}
-        keyExtractor={m => m.memberId}
+        keyExtractor={m => m.get("memberId")}
         renderItem={m => (
           <ReferralThumbnail invitedMember={m.item} navigation={navigation} />
         )}

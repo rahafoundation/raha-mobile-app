@@ -28,7 +28,10 @@ const MintView: React.StatelessComponent<Props> = ({
   unclaimedReferralIds,
   navigation
 }) => {
-  let net = loggedInMember.balance.minus(loggedInMember.totalMinted).toString();
+  let net = loggedInMember
+    .get("balance")
+    .minus(loggedInMember.get("totalMinted"))
+    .toString();
   let netColor;
   if (net.substr(0, 1) === "-") {
     netColor = colors.negative;
@@ -51,7 +54,7 @@ const MintView: React.StatelessComponent<Props> = ({
     <Container>
       <View style={styles.centerFlex}>
         <Text style={{ fontSize: 36 }}>
-          ℝ{loggedInMember.balance.toString()}
+          ℝ{loggedInMember.get("balance").toString()}
         </Text>
         <Text style={styles.numberLabel}>balance</Text>
       </View>
@@ -63,7 +66,7 @@ const MintView: React.StatelessComponent<Props> = ({
       >
         <View style={styles.centerFlex}>
           <Text style={styles.subStat}>
-            ℝ{loggedInMember.totalMinted.toString()}
+            ℝ{loggedInMember.get("totalMinted").toString()}
           </Text>
           <Text style={styles.numberLabel}>minted</Text>
         </View>
@@ -73,7 +76,7 @@ const MintView: React.StatelessComponent<Props> = ({
         </View>
         <View style={styles.centerFlex}>
           <Text style={styles.subStat}>
-            ℝ{loggedInMember.totalDonated.toString()}
+            ℝ{loggedInMember.get("totalDonated").toString()}
           </Text>
           <Text style={styles.numberLabel}>donated</Text>
         </View>
@@ -149,7 +152,10 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   }
   return {
     loggedInMember,
-    unclaimedReferralIds: getUnclaimedReferrals(state, loggedInMember.memberId)
+    unclaimedReferralIds: getUnclaimedReferrals(
+      state,
+      loggedInMember.get("memberId")
+    )
   };
 };
 
