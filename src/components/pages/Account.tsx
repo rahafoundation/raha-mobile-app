@@ -112,7 +112,8 @@ const mapStateToProps: MapStateToProps<
     state.members.byMemberId
   );
   // TODO this should be a set of people you have explicitly trusted to help recover your account
-  const trustedForRecovery = getValidMemberById(state, ancestorsArray[0]);
+  const trustedForRecoveryIndex = ancestorsArray.length > 1 ? 1 : 0;
+  const trustedForRecovery = getValidMemberById(state, ancestorsArray[trustedForRecoveryIndex]);
   // TODO need ability to change your vote.
   const votingFor = getValidMemberById(
     state,
