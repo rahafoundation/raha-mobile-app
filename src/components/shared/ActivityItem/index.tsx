@@ -8,7 +8,7 @@ import { View } from "react-native";
 import {
   Operation,
   OperationType
-} from "@raha/api-shared/models/Operation";
+} from "@raha/api-shared/dist/models/Operation";
 
 import { GiveOperationActivity } from "./GiveOperationActivity";
 import { MintOperationActivity } from "./MintOperationActivity";

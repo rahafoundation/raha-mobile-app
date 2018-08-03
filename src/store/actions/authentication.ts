@@ -1,9 +1,9 @@
 import { RNFirebase as FirebaseTypes } from "react-native-firebase";
 import { ActionCreator } from "redux";
 
-import { validateMobileNumber as callValidateMobileNumber } from "@raha/api/me/validateMobileNumber";
-import { ApiCallFailedError } from "@raha/api/errors/ApiCallFailedError";
-import { ERROR_CODE as DISALLOWED_TYPE_ERROR_CODE } from "@raha/api-shared/errors/RahaApiError/me/validateMobileNumber/DisallowedTypeError";
+import { validateMobileNumber as callValidateMobileNumber } from "@raha/api/dist/me/validateMobileNumber";
+import { ApiCallFailedError } from "@raha/api/dist/errors/ApiCallFailedError";
+import { ERROR_CODE as DISALLOWED_TYPE_ERROR_CODE } from "@raha/api-shared/dist/errors/RahaApiError/me/validateMobileNumber/DisallowedTypeError";
 
 import { AsyncActionCreator } from "./";
 import { auth } from "../../firebaseInit";

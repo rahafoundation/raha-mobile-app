@@ -7,7 +7,7 @@ import { MapStateToProps, connect } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
 import { FlatList } from "react-native";
 
-import { MemberId } from "@raha/api-shared/models/identifiers";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";

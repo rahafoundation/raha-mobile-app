@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { OperationType } from "@raha/api-shared/models/Operation";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 import { ActivityFeed } from "../shared/ActivityFeed";
 import { Container } from "../shared/elements";

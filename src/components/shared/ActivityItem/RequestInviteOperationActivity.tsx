@@ -3,7 +3,7 @@
  */
 import * as React from "react";
 
-import { RequestInviteOperation } from "@raha/api-shared/models/Operation";
+import { RequestInviteOperation } from "@raha/api-shared/dist/models/Operation";
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";

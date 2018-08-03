@@ -8,7 +8,7 @@ import { FlatList } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
-import { MemberId } from "@raha/api-shared/models/identifiers";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 import { RahaState } from "../../../store";
 import { mintReferralBonus } from "../../../store/actions/wallet";

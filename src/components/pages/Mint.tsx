@@ -2,7 +2,7 @@ import * as React from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
-import { MemberId } from "@raha/api-shared/models/identifiers";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";

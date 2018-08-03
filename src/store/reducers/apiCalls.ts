@@ -1,5 +1,5 @@
 import { Reducer } from "redux";
-import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 import { ApiCallsAction, ApiCallsActionType } from "../actions/apiCalls";
 import { Map } from "immutable";
