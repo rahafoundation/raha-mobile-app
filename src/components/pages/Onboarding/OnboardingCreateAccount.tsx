@@ -1,12 +1,15 @@
 import * as React from "react";
 import { StyleSheet, Button, Linking } from "react-native";
-import { connect, MapStateToProps, MergeProps } from "react-redux";
+import { connect, MapStateToProps } from "react-redux";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 import { getUsername } from "../../../helpers/username";
 import { RahaState } from "../../../store";
-import { requestInviteFromMember } from "../../../store/actions/members";
+import {
+  requestInviteFromMember,
+  createMember
+} from "../../../store/actions/members";
 import {
   ApiCallStatus,
   ApiCallStatusType
@@ -21,6 +24,7 @@ type ReduxStateProps = {
 
 type DispatchProps = {
   requestInviteFromMember: typeof requestInviteFromMember;
+  createMember: typeof createMember;
 };
 
 type OwnProps = {
@@ -58,19 +62,32 @@ class OnboardingCreateAccountView extends React.Component<
   }
 
   createAccount = () => {
+    const username = getUsername(this.props.verifiedName);
     if (this.props.invitingMember) {
       if (this.props.isJointVideo) {
         this.props.requestInviteFromMember(
           this.props.invitingMember.get("memberId"),
           this.props.verifiedName,
-          getUsername(this.props.verifiedName),
+          username,
           this.props.videoToken
         );
       } else {
-        // create account with identifying video and inviter
+        // Create member with identifying video and inviter
+        this.props.createMember(
+          this.props.verifiedName,
+          username,
+          this.props.videoToken,
+          this.props.invitingMember.get("memberId")
+        );
       }
     } else {
-      // TODO Create account with identifying video and no inviter
+      // Create member with identifying video and no inviter
+      this.props.createMember(
+        this.props.verifiedName,
+        username,
+        this.props.videoToken,
+        undefined
+      );
     }
   };
 
@@ -165,5 +182,5 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
 
 export const OnboardingCreateAccount = connect(
   mapStateToProps,
-  { requestInviteFromMember }
+  { requestInviteFromMember, createMember }
 )(OnboardingCreateAccountView);
