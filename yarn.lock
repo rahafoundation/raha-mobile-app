@@ -556,9 +556,16 @@
     enum-values "^1.2.1"
     http-status "^1.2.0"
 
-"@raha/api@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.npmjs.org/@raha/api/dist/-/api-0.2.0.tgz#ce1d2e7ba20bb8426fbd2e9bb0a58d06ab989005"
+"@raha/api-shared@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@raha/api-shared/-/api-shared-0.1.1.tgz#78e2465f4f88f3c540ad02c66fe7908a5dffc030"
+  dependencies:
+    enum-values "^1.2.1"
+    http-status "^1.2.0"
+
+"@raha/api@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.2.1.tgz#9060fa3bcfd9a81ef0fbee7c4a20d040dc42e70f"
   dependencies:
     "@raha/api-shared" "^0.1.0"
     big.js "^5.0.3"

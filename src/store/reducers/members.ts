@@ -42,7 +42,11 @@ function getDefaultMemberFields(): OptionalMemberFields {
     trustedBy: Set<MemberId>(),
     invited: Set<MemberId>(),
     invitedBy: undefined,
-    trusts: Set<MemberId>()
+    trusts: Set<MemberId>(),
+    verified: Set<MemberId>(),
+    requestedVerificationFrom: Set<MemberId>(),
+    requestedForVerificationBy: Set<MemberId>(),
+    verifiedBy: Set<MemberId>()
   };
 }
 
@@ -54,6 +58,10 @@ interface OptionalMemberFields {
   invited: Set<MemberId>;
   invitedBy: MemberId | typeof GENESIS_MEMBER | undefined;
   trusts: Set<MemberId>;
+  verified: Set<MemberId>;
+  requestedVerificationFrom: Set<MemberId>;
+  requestedForVerificationBy: Set<MemberId>;
+  verifiedBy: Set<MemberId>;
 }
 
 interface RequiredMemberFields {
@@ -127,11 +135,43 @@ export class Member {
     });
   }
 
+  // TODO inviteConfirmed should eventually be modified only by the verify
+  // operation, not the trust operation
   public beTrustedByMember(memberId: MemberId) {
     return this.withFields({
       inviteConfirmed:
         this.fields.inviteConfirmed || this.fields.invitedBy === memberId,
       trustedBy: this.fields.trustedBy.add(memberId)
+    });
+  }
+
+  public requestVerificationFromMember(memberId: MemberId) {
+    return this.withFields({
+      requestedVerificationFrom: this.fields.requestedVerificationFrom.add(
+        memberId
+      )
+    });
+  }
+
+  public beRequestedForVerificationBy(memberId: MemberId) {
+    return this.withFields({
+      requestedForVerificationBy: this.fields.requestedForVerificationBy.add(
+        memberId
+      )
+    });
+  }
+
+  public verifyMember(memberId: MemberId) {
+    return this.withFields({
+      inviteConfirmed:
+        this.fields.inviteConfirmed || this.fields.invitedBy === memberId,
+      verified: this.fields.verified.add(memberId)
+    });
+  }
+
+  public beVerifiedByMember(memberId: MemberId) {
+    return this.withFields({
+      verifiedBy: this.fields.verifiedBy.add(memberId)
     });
   }
 
@@ -164,6 +204,15 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
       "All operations must have a creator id",
       operation
     );
+  }
+  if (operation.op_code === OperationType.CREATE_MEMBER) {
+    return true;
+  }
+  if (operation.op_code === OperationType.REQUEST_VERIFICATION) {
+    return !!operation.data.to_uid;
+  }
+  if (operation.op_code === OperationType.VERIFY) {
+    return !!operation.data.to_uid;
   }
   if (operation.op_code === OperationType.REQUEST_INVITE) {
     // Force to boolean
@@ -288,6 +337,36 @@ function applyOperation(
         });
 
         return addMemberToState(prevState, newMember);
+      }
+      case OperationType.REQUEST_VERIFICATION: {
+        const { to_uid } = operation.data;
+
+        assertMemberIdPresentInState(prevState, creator_uid, operation);
+        assertMemberIdPresentInState(prevState, to_uid, operation);
+
+        const requester = (prevState.byMemberId.get(
+          creator_uid
+        ) as Member).requestVerificationFromMember(to_uid);
+        const requestee = (prevState.byMemberId.get(
+          to_uid
+        ) as Member).beRequestedForVerificationBy(creator_uid);
+
+        return addMembersToState(prevState, [requester, requestee]);
+      }
+      case OperationType.VERIFY: {
+        const { to_uid } = operation.data;
+
+        assertMemberIdPresentInState(prevState, creator_uid, operation);
+        assertMemberIdPresentInState(prevState, to_uid, operation);
+
+        const verifier = (prevState.byMemberId.get(
+          creator_uid
+        ) as Member).verifyMember(to_uid);
+        const verified = (prevState.byMemberId.get(
+          to_uid
+        ) as Member).beVerifiedByMember(creator_uid);
+
+        return addMembersToState(prevState, [verifier, verified]);
       }
       case OperationType.REQUEST_INVITE: {
         const { full_name, to_uid, username } = operation.data;
