@@ -9,7 +9,10 @@ import {
   OperationType,
   MintType
 } from "@raha/api-shared/dist/models/Operation";
-import { MemberId, MemberUsername } from "@raha/api-shared/dist/models/identifiers";
+import {
+  MemberId,
+  MemberUsername
+} from "@raha/api-shared/dist/models/identifiers";
 
 import { Set, Map } from "immutable";
 import { OperationsActionType } from "../actions/operations";
@@ -31,15 +34,26 @@ const GENESIS_TRUST_OPS = [
 ];
 export const GENESIS_MEMBER = Symbol("GENESIS");
 
-function getDefaultMemberFields() {
+function getDefaultMemberFields(): OptionalMemberFields {
   return {
     balance: new Big(0),
     totalDonated: new Big(0),
     totalMinted: new Big(0),
     trustedBy: Set<MemberId>(),
     invited: Set<MemberId>(),
+    invitedBy: undefined,
     trusts: Set<MemberId>()
   };
+}
+
+interface OptionalMemberFields {
+  balance: Big;
+  totalDonated: Big;
+  totalMinted: Big;
+  trustedBy: Set<MemberId>;
+  invited: Set<MemberId>;
+  invitedBy: MemberId | typeof GENESIS_MEMBER | undefined;
+  trusts: Set<MemberId>;
 }
 
 interface RequiredMemberFields {
@@ -47,12 +61,10 @@ interface RequiredMemberFields {
   username: string;
   fullName: string;
   createdAt: Date;
-  invitedBy: string | typeof GENESIS_MEMBER;
   inviteConfirmed: boolean;
   lastMinted: Date;
 }
 
-type OptionalMemberFields = ReturnType<typeof getDefaultMemberFields>;
 type MemberFields = RequiredMemberFields & OptionalMemberFields;
 
 export class Member {
@@ -251,6 +263,32 @@ function applyOperation(
       return prevState;
     }
     switch (operation.op_code) {
+      case OperationType.CREATE_MEMBER: {
+        const {
+          full_name,
+          username,
+          request_invite_from_member_id
+        } = operation.data;
+        const memberData = {
+          memberId: creator_uid,
+          username: username,
+          fullName: full_name,
+          createdAt: new Date(created_at),
+          inviteConfirmed: false,
+          lastMinted: new Date(created_at)
+        };
+
+        // TODO handle request_invite_from_member_id property
+        // assertMemberIdPresentInState(prevState, request_invite_from_member_id, operation);
+
+        assertMemberIdNotPresentInState(prevState, creator_uid, operation);
+
+        const newMember = new Member({
+          ...memberData
+        });
+
+        return addMemberToState(prevState, newMember);
+      }
       case OperationType.REQUEST_INVITE: {
         const { full_name, to_uid, username } = operation.data;
 
