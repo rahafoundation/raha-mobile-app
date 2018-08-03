@@ -1,4 +1,4 @@
-import { MemberId } from "@raha/api-shared/models/identifiers";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 import { RahaState } from "../reducers";
 import { auth, storage } from "../../firebaseInit";

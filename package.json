@@ -13,8 +13,8 @@
     "bundle:android": "yarn config:prod && cd android && ./gradlew assembleProdRelease && cd .."
   },
   "dependencies": {
-    "@raha/api": "^0.1.2",
-    "@raha/api-shared": "^0.0.6",
+    "@raha/api": "^0.2.0",
+    "@raha/api-shared": "^0.1.0",
     "big.js": "^5.1.2",
     "core-js": "^2.5.7",
     "date-fns": "^1.29.0",

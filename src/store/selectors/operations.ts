@@ -3,8 +3,8 @@ import { List } from "immutable";
 import {
   Operation,
   OperationType
-} from "@raha/api-shared/models/Operation";
-import { MemberId } from "@raha/api-shared/models/identifiers";
+} from "@raha/api-shared/dist/models/Operation";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 export function getOperationsForType(
   operations: List<Operation>,

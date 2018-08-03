@@ -8,7 +8,7 @@ import { StyleSheet, TouchableHighlight, View } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
 
-import { MemberId } from "@raha/api-shared/models/identifiers";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 import { RouteName } from "../shared/Navigation";
 import { Member } from "../../store/reducers/members";

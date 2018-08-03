@@ -2,7 +2,7 @@ import * as React from "react";
 import { StyleSheet, Button, Linking } from "react-native";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
-import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 import { getUsername } from "../../../helpers/username";
 import { RahaState } from "../../../store";

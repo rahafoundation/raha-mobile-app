@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 import validator from "validator";
 
-import { ApiEndpointName } from "@raha/api-shared/routes/ApiEndpoint";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 import { RahaState } from "../../../store";
 import { sendInvite } from "../../../store/actions/members";

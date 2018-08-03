@@ -1,13 +1,13 @@
 import Big from "big.js";
 import { List } from "immutable";
 
-import { MemberId } from "@raha/api-shared/models/identifiers";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import {
   MintOperation,
   OperationType,
   MintType,
   MintReferralBonusPayload
-} from "@raha/api-shared/models/Operation";
+} from "@raha/api-shared/dist/models/Operation";
 
 import { RahaState } from "../";
 import { getMemberById } from "./members";
