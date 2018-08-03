@@ -53,7 +53,6 @@
 		8102F483975D472B84F795E3 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 330C5804038C49B5985BAA85 /* Octicons.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		957F265697CB4D8689DDE319 /* Vollkorn-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5CF7D81A53944DDD9F3C0789 /* Vollkorn-SemiBold.ttf */; };
-		A60FEA28F57249DFAD06CE6A /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6A4A1AD6A60543E3BA459472 /* Roboto.ttf */; };
 		AB78660E75764A5FBA973354 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F1A4DCE8F93C4729AF3767C3 /* OpenSans-Regular.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		B34C63965ACE0D2258174958 /* libPods-mobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8E44C965D59A184D0888B03 /* libPods-mobileTests.a */; };
@@ -1595,7 +1594,6 @@
 				8102F483975D472B84F795E3 /* Octicons.ttf in Resources */,
 				DB7EBC31E107470C9363F89D /* SimpleLineIcons.ttf in Resources */,
 				B36C62EF67094A5D862FA574 /* Zocial.ttf in Resources */,
-				A60FEA28F57249DFAD06CE6A /* Roboto.ttf in Resources */,
 				36494EA73D1F4616813870A9 /* OpenSans-Bold.ttf in Resources */,
 				C8B949B3790D4F11A437F31A /* OpenSans-Italic.ttf in Resources */,
 				AB78660E75764A5FBA973354 /* OpenSans-Regular.ttf in Resources */,

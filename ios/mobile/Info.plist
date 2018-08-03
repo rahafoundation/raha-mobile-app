@@ -75,7 +75,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Raha needs access to your camera to record invite videos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Raha needs access to your microphone to record invite videos.</string>
 	<key>UIAppFonts</key>
@@ -91,7 +91,6 @@
 		<string>Octicons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
-		<string>Roboto.ttf</string>
 		<string>OpenSans-Bold.ttf</string>
 		<string>OpenSans-Italic.ttf</string>
 		<string>OpenSans-Regular.ttf</string>
