@@ -27,8 +27,6 @@ type VideoPreviewProps = {
 
 type VideoStateProps = {
   uploadStatus: UploadStatus;
-  uploadedBytes: number;
-  totalBytes: number;
   videoDownloadUrl?: string;
 };
 
@@ -47,9 +45,7 @@ export class VideoPreview extends React.Component<
   constructor(props: VideoPreviewProps) {
     super(props);
     this.state = {
-      uploadStatus: UploadStatus.NOT_STARTED,
-      uploadedBytes: 0,
-      totalBytes: 0
+      uploadStatus: UploadStatus.NOT_STARTED
     };
   }
 
@@ -60,10 +56,16 @@ export class VideoPreview extends React.Component<
       bitrateMultiplier: 5
     };
     try {
+      this.setState({
+        uploadStatus: UploadStatus.UPLOADING
+      });
       const newSource = await this.videoPlayerRef.compress(options);
       this.uploadVideo(this.props.videoUploadRef, newSource);
     } catch (error) {
       this.props.onError("Error: Video Upload", error);
+      this.setState({
+        uploadStatus: UploadStatus.NOT_STARTED
+      });
     }
   };
 
@@ -89,27 +91,7 @@ export class VideoPreview extends React.Component<
       contentType: blob.data.type
     };
     const uploadTask = videoUploadRef.put(videoUri, metadata);
-    uploadTask.on(
-      "state_changed",
-      (s: any) => {
-        const snapshot = s as RNFirebase.storage.UploadTaskSnapshot;
-        this.setState({
-          uploadStatus: UploadStatus.UPLOADING,
-          uploadedBytes: snapshot.bytesTransferred,
-          totalBytes: snapshot.totalBytes
-        });
-      },
-      err => {
-        this.props.onError(
-          "Error: Video Upload",
-          "Could not upload. Please try again.\n" + err.message
-        );
-        this.setState({
-          uploadStatus: UploadStatus.NOT_STARTED
-        });
-      }
-    );
-    const snapshot = await uploadTask;
+    await uploadTask;
     const videoDownloadUrl = await videoUploadRef.getDownloadURL();
     if (videoDownloadUrl) {
       this.setState({ uploadStatus: UploadStatus.UPLOADED });
@@ -149,12 +131,7 @@ export class VideoPreview extends React.Component<
       return (
         <React.Fragment>
           {this.state.uploadStatus === UploadStatus.UPLOADING && (
-            <Text>
-              Uploading...{" "}
-              {Math.round(
-                (100.0 * this.state.uploadedBytes) / this.state.totalBytes
-              )}%
-            </Text>
+            <Text>Uploading...</Text>
           )}
           {this.state.uploadStatus === UploadStatus.UPLOADED && (
             <Text>Upload success!</Text>
