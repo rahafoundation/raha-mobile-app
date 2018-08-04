@@ -18,7 +18,11 @@ const HomeView: React.StatelessComponent<StateProps> = props => {
   return (
     <Container>
       <ActivityFeed
-        filter={operation => operation.op_code !== OperationType.MINT && !isUnconfirmedRequestInvite(props.membersById, operation)}
+        filter={
+          operation => operation.op_code !== OperationType.MINT
+          && operation.op_code !== OperationType.TRUST
+          && !isUnconfirmedRequestInvite(props.membersById, operation)
+        }
       />
     </Container>
   );
