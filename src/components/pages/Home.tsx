@@ -1,3 +1,8 @@
+/**
+ * The Home Feed is a great place for members to catch up on what's happened recently!
+ * Shows all of the most recent raha gives and verified join videos.
+ * We should add ability to see only transactions of people you trust.
+ */
 import * as React from "react";
 import { Map } from "immutable";
 import { connect, MapStateToProps } from "react-redux";
@@ -13,7 +18,6 @@ type StateProps = {
   membersById: Map<MemberId, Member>
 }
 
-// Show all operartions that are not mint or unverified request invite videos.
 const HomeView: React.StatelessComponent<StateProps> = props => {
   return (
     <Container>
