@@ -205,17 +205,21 @@ export function createTabNavigator(
   );
 }
 
+function darkNavWithGive(title: string) {
+  return ({ navigation }: any) => ({
+    headerTitle: <HeaderTitle title={title} />,
+    headerRight: giveButton(navigation),
+    headerStyle: {
+      backgroundColor: colors.darkAccent
+    }
+  })
+}
+
 const HomeTab = createTabNavigator(
   {
     Home: {
       screen: Home,
-      navigationOptions: ({ navigation }: any) => ({
-        headerTitle: <HeaderTitle title="Raha" />,
-        headerRight: giveButton(navigation),
-        headerStyle: {
-          backgroundColor: colors.darkAccent
-        }
-      })
+      navigationOptions: darkNavWithGive("Raha")
     }
   },
   {
@@ -227,13 +231,7 @@ const DiscoverTab = createTabNavigator(
   {
     Discover: {
       screen: Discover,
-      navigationOptions: ({ navigation }: any) => ({
-        headerTitle: <HeaderTitle title="Discover" />,
-        headerRight: giveButton(navigation),
-        headerStyle: {
-          backgroundColor: colors.darkAccent
-        }
-      })
+      navigationOptions: darkNavWithGive("Discover")
     },
     DiscoverWebView,
     LeaderBoard
@@ -247,44 +245,20 @@ const MintTab = createTabNavigator(
   {
     Invite: {
       screen: Invite,
-      navigationOptions: ({ navigation }: any) => ({
-        headerTitle: <HeaderTitle title="Invite" />,
-        headerRight: giveButton(navigation),
-        headerStyle: {
-          backgroundColor: colors.darkAccent
-        }
-      })
+      navigationOptions: darkNavWithGive("Invite")
     },
     Mint: {
       screen: Mint,
-      navigationOptions: ({ navigation }: any) => ({
-        headerTitle: <HeaderTitle title="Mint Raha" />,
-        headerRight: giveButton(navigation),
-        headerStyle: {
-          backgroundColor: colors.darkAccent
-        }
-      })
+      navigationOptions: darkNavWithGive("Mint Raha")
     },
     ReferralBonus: {
       screen: ReferralBonus,
-      navigationOptions: ({ navigation }: any) => ({
-        headerTitle: <HeaderTitle title="Bonus Mint" />,
-        headerRight: giveButton(navigation),
-        headerStyle: {
-          backgroundColor: colors.darkAccent
-        }
-      })
+      navigationOptions: darkNavWithGive("Bonus Mint")
     }
   },
   {
     initialRouteName: RouteName.Mint,
-    navigationOptions: ({ navigation }: any) => ({
-      headerTitle: <HeaderTitle title="Discover" />,
-      headerRight: giveButton(navigation),
-      headerStyle: {
-        backgroundColor: colors.darkAccent
-      }
-    })
+    navigationOptions: darkNavWithGive("Discover")
   }
 );
 
