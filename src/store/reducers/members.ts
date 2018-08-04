@@ -168,7 +168,7 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
 
   if (operation.op_code === OperationType.MINT) {
     try {
-      const validBig = new Big(operation.data.amount);
+      new Big(operation.data.amount);
       return true;
     } catch (error) {
       return false;
@@ -177,9 +177,8 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
 
   if (operation.op_code === OperationType.GIVE) {
     try {
-      const validBig =
-        new Big(operation.data.amount) &&
-        new Big(operation.data.donation_amount);
+      new Big(operation.data.amount);
+      new Big(operation.data.donation_amount);
       return true;
     } catch (error) {
       return false;
@@ -259,7 +258,6 @@ function applyOperation(
           username: username,
           fullName: full_name,
           createdAt: new Date(created_at),
-          inviteConfirmed: false,
           lastMinted: new Date(created_at)
         };
 
@@ -267,7 +265,7 @@ function applyOperation(
         if (GENESIS_REQUEST_INVITE_OPS.includes(operation.id)) {
           return addMemberToState(
             prevState,
-            new Member({ ...memberData, invitedBy: GENESIS_MEMBER })
+            new Member({ ...memberData, invitedBy: GENESIS_MEMBER, inviteConfirmed: true })
           );
         }
 
@@ -279,7 +277,8 @@ function applyOperation(
         ) as Member).inviteMember(creator_uid);
         const inviteRequester = new Member({
           ...memberData,
-          invitedBy: to_uid
+          invitedBy: to_uid,
+          inviteConfirmed: false,
         }).trustMember(to_uid);
         return addMembersToState(prevState, [inviter, inviteRequester]);
       }

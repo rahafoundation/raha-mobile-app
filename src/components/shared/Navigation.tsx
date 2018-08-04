@@ -21,6 +21,7 @@ import { Give as GiveScreen } from "../pages/Give";
 import { Home } from "../pages/Home";
 import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
+import { PendingInvites } from "../pages/PendingInvites";
 import { Profile as ProfileScreen } from "../pages/Profile";
 import { getMemberById } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
@@ -94,7 +95,8 @@ export enum RouteName {
   LeaderBoard = "LeaderBoard",
   Mint = "Mint",
   MintTab = "MintTab",
-  ReferralBonus = "ReferralBonus"
+  ReferralBonus = "ReferralBonus",
+  PendingInvites = "PendingInvites"
 }
 
 const DEEPLINK_ROUTES = {
@@ -288,9 +290,8 @@ const MintTab = createTabNavigator(
 
 const ProfileTab = createTabNavigator(
   {
-    Account: {
-      screen: Account
-    }
+    Account,
+    PendingInvites
   },
   {
     initialRouteName: RouteName.Profile

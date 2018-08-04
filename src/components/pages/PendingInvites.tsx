@@ -2,7 +2,6 @@ import * as React from "react";
 import { Map } from "immutable";
 import { connect, MapStateToProps } from "react-redux";
 
-import { OperationType } from "@raha/api-shared/dist/models/Operation";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import { ActivityFeed, isUnconfirmedRequestInvite } from "../shared/ActivityFeed";
 import { Container } from "../shared/elements";
@@ -13,12 +12,11 @@ type StateProps = {
   membersById: Map<MemberId, Member>
 }
 
-// Show all operartions that are not mint or unverified request invite videos.
-const HomeView: React.StatelessComponent<StateProps> = props => {
+const PendingInvitesView: React.StatelessComponent<StateProps> = props => {
   return (
     <Container>
       <ActivityFeed
-        filter={operation => operation.op_code !== OperationType.MINT && !isUnconfirmedRequestInvite(props.membersById, operation)}
+        filter={operation => isUnconfirmedRequestInvite(props.membersById, operation)}
       />
     </Container>
   );
@@ -32,6 +30,8 @@ const mapStateToProps: MapStateToProps<
   return { membersById: state.members.byMemberId };
 };
 
-export const Home = connect(
+// TODO show a notification with all Unconfirmed request invite relevant to your account
+// TODO show this Unconfirmed page buried somewhere (Account?) where people can view (and perhaps flag) all unconfirmed REQUEST_INVITE if they wish
+export const PendingInvites = connect(
   mapStateToProps
-)(HomeView);
+)(PendingInvitesView);

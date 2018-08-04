@@ -17,7 +17,7 @@ type OwnProps = {
 };
 type StateProps = {
   fromMember: Member;
-  toMember: Member;
+  toMember?: Member;
 };
 type RequestInviteOperationActivityProps = OwnProps & StateProps;
 
@@ -44,7 +44,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
     getMemberById(state, ownProps.operation.creator_uid),
     getMemberById(state, ownProps.operation.data.to_uid)
   ];
-  if (!fromMember || !toMember) {
+  if (!fromMember) {
     // TODO: log the following properly, properly handle cases when members are
     // missing instead of throwing uncaught error
     throw new Error(
