@@ -301,6 +301,9 @@ function addMembersToState(
   );
 }
 
+/**
+ * TODO (code cleanup): Avoid having to assert on id present for almost every operation type.
+ */
 function applyOperation(
   prevState: MembersState,
   operation: Operation
