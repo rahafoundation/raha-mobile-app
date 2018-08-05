@@ -318,17 +318,26 @@ function applyOperation(
           username,
           request_invite_from_member_id
         } = operation.data;
+
+        if (request_invite_from_member_id) {
+          assertMemberIdPresentInState(
+            prevState,
+            request_invite_from_member_id,
+            operation
+          );
+        }
+
         const memberData = {
           memberId: creator_uid,
           username: username,
           fullName: full_name,
           createdAt: new Date(created_at),
           inviteConfirmed: false,
-          lastMinted: new Date(created_at)
+          lastMinted: new Date(created_at),
+          ...(request_invite_from_member_id
+            ? { invitedBy: request_invite_from_member_id }
+            : {})
         };
-
-        // TODO handle request_invite_from_member_id property
-        // assertMemberIdPresentInState(prevState, request_invite_from_member_id, operation);
 
         assertMemberIdNotPresentInState(prevState, creator_uid, operation);
 
