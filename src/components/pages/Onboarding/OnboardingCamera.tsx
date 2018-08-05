@@ -38,7 +38,7 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
               } and I'm inviting ${this.props.verifiedFullName} to Raha."`}
             </Text>
             <Text style={styles.text}>
-              "My name is {this.props.verifiedFullName} and I'm joining Raha
+              "My name is {this.props.verifiedFullName}, and I'm joining Raha
               because I believe every life has value."
             </Text>
           </View>

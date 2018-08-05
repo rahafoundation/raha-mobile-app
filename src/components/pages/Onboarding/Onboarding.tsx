@@ -467,21 +467,15 @@ export class OnboardingView extends React.Component<
 
       case OnboardingStep.CREATE_ACCOUNT: {
         const fullName = this._verifyFullName();
-        const invitingMember = this._verifyInviter();
         const videoDownloadUrl = this._verifyVideoDownloadUrl();
         const isJointVideo = this._verifyIsJointVideo();
-        if (
-          !invitingMember ||
-          !fullName ||
-          !videoDownloadUrl ||
-          isJointVideo === undefined
-        ) {
+        if (!fullName || !videoDownloadUrl || isJointVideo === undefined) {
           return <React.Fragment />;
         }
         return (
           <OnboardingCreateAccount
             verifiedName={fullName}
-            invitingMember={invitingMember}
+            invitingMember={this.state.invitingMember}
             isJointVideo={isJointVideo}
             videoToken={this.props.deeplinkVideoToken}
           />
