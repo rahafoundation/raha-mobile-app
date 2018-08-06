@@ -160,7 +160,3 @@ export function getMembersSortedByVotes(state: RahaState) {
     return voteCount === undefined ? 0 : voteCount;
   });
 }
-
-export function getDaysUntilInactive(member: Member) {
-  member.get("lastMinted");
-}

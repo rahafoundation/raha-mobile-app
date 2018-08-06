@@ -56,9 +56,9 @@ class AccountView extends React.Component<Props, State> {
     // TODO make a RED countdown with finer granularity than 1 day
     // if you're within a month of being marked inactive, call
     // updateTimeRemaining on setInterval.
-    const sinceLastMintMilli =
-      Date.now() - this.props.loggedInMember.get("lastMinted").getTime();
-    return `${400 - Math.round(sinceLastMintMilli / MS_PER_DAY)} days`;
+    const sinceLastOperationMilli =
+      Date.now() - this.props.loggedInMember.get("lastOpCreatedAt").getTime();
+    return `${DAYS_TILL_INACTIVITY - Math.round(sinceLastOperationMilli / MS_PER_DAY)} days`;
   }
 
   render() {
@@ -113,7 +113,10 @@ const mapStateToProps: MapStateToProps<
   );
   // TODO this should be a set of people you have explicitly trusted to help recover your account
   const trustedForRecoveryIndex = ancestorsArray.length > 1 ? 1 : 0;
-  const trustedForRecovery = getValidMemberById(state, ancestorsArray[trustedForRecoveryIndex]);
+  const trustedForRecovery = getValidMemberById(
+    state,
+    ancestorsArray[trustedForRecoveryIndex]
+  );
   // TODO need ability to change your vote.
   const votingFor = getValidMemberById(
     state,

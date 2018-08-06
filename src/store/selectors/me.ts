@@ -22,7 +22,9 @@ export function getMintableAmount(
 ): Big | undefined {
   const member = getMemberById(state, memberId);
   if (member) {
-    return new Big(new Date().getTime() - member.get("lastMinted").getTime())
+    return new Big(
+      new Date().getTime() - member.get("lastMintedBasicIncomeAt").getTime()
+    )
       .div(MILLISECONDS_PER_WEEK)
       .times(RAHA_UBI_WEEKLY_RATE)
       .round(2, 0);
