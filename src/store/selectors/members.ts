@@ -1,7 +1,10 @@
 import { createSelector } from "reselect";
 import { Map as ImmutableMap } from "immutable";
 
-import { MemberId, MemberUsername } from "@raha/api-shared/dist/models/identifiers";
+import {
+  MemberId,
+  MemberUsername
+} from "@raha/api-shared/dist/models/identifiers";
 
 import { RahaState } from "../reducers";
 import { Member, GENESIS_MEMBER } from "../reducers/members";
@@ -154,8 +157,4 @@ export function getMembersSortedByVotes(state: RahaState) {
     const voteCount = voteCountById.get(m.get("memberId"));
     return voteCount === undefined ? 0 : voteCount;
   });
-}
-
-export function getDaysUntilInactive(member: Member) {
-  member.get("lastMinted");
 }
