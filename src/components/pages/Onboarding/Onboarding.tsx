@@ -254,14 +254,9 @@ export class OnboardingView extends React.Component<
         if (!verifiedFullName) {
           return <React.Fragment />;
         }
-        const inviterFullName = this.props.deeplinkInvitingMember
-          ? this.props.deeplinkInvitingMember.get("fullName")
-          : undefined;
         return (
           <OnboardingCamera
-            inviterFullName={inviterFullName}
             verifiedFullName={verifiedFullName}
-            isJointVideo={this.props.isJointVideo}
             onVideoRecorded={(videoUri: string) => {
               this.setState({
                 videoUri: videoUri,
