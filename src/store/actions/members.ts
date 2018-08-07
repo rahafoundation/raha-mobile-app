@@ -13,7 +13,7 @@ import {
   OperationsAction,
   OperationsActionType
 } from "./operations";
-import { AsyncActionCreator, AsyncAction } from "./";
+import { AsyncActionCreator } from "./";
 import { wrapApiCallAction } from "./apiCalls";
 import { getAuthToken } from "../selectors/authentication";
 import { config } from "../../data/config";
@@ -117,7 +117,8 @@ export const requestInviteFromMember: AsyncActionCreator = (
 
 export const sendInvite: AsyncActionCreator = (
   inviteEmail: string,
-  videoToken: string
+  videoToken: string,
+  isJointVideo: boolean
 ) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
@@ -126,7 +127,13 @@ export const sendInvite: AsyncActionCreator = (
         throw new UnauthenticatedError();
       }
 
-      await callSendInvite(config.apiBase, authToken, inviteEmail, videoToken);
+      await callSendInvite(
+        config.apiBase,
+        authToken,
+        inviteEmail,
+        videoToken,
+        isJointVideo
+      );
     },
     ApiEndpointName.SEND_INVITE,
     inviteEmail
