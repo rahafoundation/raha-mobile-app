@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   TextStyle,
   Image,
-  Dimensions
+  Dimensions,
+  Platform
 } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
@@ -189,6 +190,13 @@ class PhoneNumberForm extends React.Component<
             onSubmitEditing={this._handleSubmit}
           />
         </View>
+
+        {Platform.OS === "android" && (
+          <Text style={styles.androidMessage}>
+            On some Android devices, you will be logged in automatically by
+            Google Play Services.
+          </Text>
+        )}
         <Button
           title={
             this.props.waitingForCode ? "Requesting..." : "Request SMS Code"
@@ -490,6 +498,11 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1
+  },
+  androidMessage: {
+    textAlign: "center",
+    marginBottom: 8,
+    fontSize: 12
   },
   message: {
     margin: 18,
