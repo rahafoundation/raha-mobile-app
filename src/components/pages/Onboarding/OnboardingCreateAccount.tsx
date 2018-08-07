@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     borderRadius: 12
   },
   text: {
-    margin: 12
+    marginBottom: 12
   }
 });
 
