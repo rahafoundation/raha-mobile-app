@@ -27,6 +27,9 @@ type SendInviteState = {
   enteredInvalidEmail: boolean;
 };
 
+// TODO style this page
+// TODO provide a button to return back to the mint page once this is complete.
+
 type SendInviteProps = OwnProps &
   ReduxStateProps & {
     sendInvite: (

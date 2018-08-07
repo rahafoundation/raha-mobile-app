@@ -136,6 +136,6 @@ export const sendInvite: AsyncActionCreator = (
       );
     },
     ApiEndpointName.SEND_INVITE,
-    inviteEmail
+    videoToken
   );
 };
