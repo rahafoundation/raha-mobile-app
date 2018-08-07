@@ -10,11 +10,9 @@ if (Platform.OS !== "android" && Platform.OS !== "ios") {
 function getApp() {
   if (Platform.OS !== "android") {
     return firebase.app();
-  } else {  // TODO check if above also works for ios
-    return firebase.initializeApp(
-      config.firebase[Platform.OS],
-      "raha"
-    );
+  } else {
+    // TODO check if above also works for ios
+    return firebase.initializeApp(config.firebase[Platform.OS], "raha");
   }
 }
 

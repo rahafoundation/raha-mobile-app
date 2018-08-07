@@ -8,7 +8,6 @@ import { RNFirebase } from "react-native-firebase";
 
 import { RahaState } from "../../../store";
 import { OnboardingSplash } from "./OnboardingSplash";
-import { SelectInviter } from "./SelectInviter";
 import { VerifyName } from "./VerifyName";
 import {
   getLoggedInFirebaseUser,
@@ -17,10 +16,9 @@ import {
 } from "../../../store/selectors/authentication";
 import { OnboardingCamera } from "./OnboardingCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
-import { OnboardingRequestInvite } from "./OnboardingRequestInvite";
+import { OnboardingCreateAccount } from "./OnboardingCreateAccount";
 import { getMemberByUsername } from "../../../store/selectors/members";
-import { LogIn } from "../LogIn";
-import { Text } from "../../shared/elements";
+import { Loading } from "../../shared/Loading";
 
 /**
  * Parent component for Onboarding flow.
@@ -28,11 +26,12 @@ import { Text } from "../../shared/elements";
 
 enum OnboardingStep {
   SPLASH,
-  SELECT_INVITER,
   VERIFY_NAME,
+
   CAMERA,
   VIDEO_PREVIEW,
-  REQUEST_INVITE
+
+  CREATE_ACCOUNT
 }
 
 interface OnboardingParams {
@@ -46,6 +45,7 @@ type ReduxStateProps = {
   isLoggedIn: boolean;
   deeplinkVideoToken?: string;
   deeplinkInvitingMember?: Member;
+  isJointVideo: boolean;
 };
 
 type OwnProps = NavigationScreenProps<OnboardingParams>;
@@ -54,7 +54,6 @@ type OnboardingProps = ReduxStateProps & OwnProps;
 
 type OnboardingState = {
   step: OnboardingStep;
-  invitingMember?: Member;
   verifiedName?: string;
   videoUri?: string;
   videoDownloadUrl?: string;
@@ -115,8 +114,7 @@ export class OnboardingView extends React.Component<
       return;
     }
     this.setState({
-      videoDownloadUrl,
-      invitingMember: this.props.deeplinkInvitingMember
+      videoDownloadUrl
     });
   };
 
@@ -168,23 +166,6 @@ export class OnboardingView extends React.Component<
     return verifiedFullName;
   };
 
-  _verifyInviter = () => {
-    const invitingMember = this.state.invitingMember
-      ? this.state.invitingMember
-      : undefined;
-    if (!invitingMember) {
-      this.dropdown.alertWithType(
-        "error",
-        "Error: Missing inviter",
-        "Need person to request invite from before this step."
-      );
-      this.setState({
-        step: OnboardingStep.SELECT_INVITER
-      });
-    }
-    return invitingMember;
-  };
-
   _verifyVideoUri = () => {
     const videoUri = this.state.videoUri;
     if (!videoUri) {
@@ -229,15 +210,12 @@ export class OnboardingView extends React.Component<
 
   _renderOnboardingStep() {
     if (!this.props.isLoggedIn) {
-      return (
-        <React.Fragment>
-          <Text style={{ textAlign: "center" }}>
-            Welcome to Raha! Please sign up with your mobile number to accept
-            your invite.
-          </Text>
-          <LogIn navigation={this.props.navigation} />
-        </React.Fragment>
+      // An unauthenticated user should be sent to the Login page
+      // by the SignedOutNavigator.
+      console.error(
+        "An unauthenticated user should not reach the onboarding flow."
       );
+      return <Loading />;
     }
 
     switch (this.state.step) {
@@ -246,20 +224,6 @@ export class OnboardingView extends React.Component<
           <OnboardingSplash
             onSplashCompleted={() => {
               this.setState({
-                step: this.props.deeplinkInvitingMember
-                  ? OnboardingStep.VERIFY_NAME
-                  : OnboardingStep.SELECT_INVITER
-              });
-            }}
-          />
-        );
-      }
-      case OnboardingStep.SELECT_INVITER: {
-        return (
-          <SelectInviter
-            onSelectedInviter={(inviter: Member) => {
-              this.setState({
-                invitingMember: inviter,
                 step: OnboardingStep.VERIFY_NAME
               });
             }}
@@ -270,30 +234,37 @@ export class OnboardingView extends React.Component<
         return (
           <VerifyName
             initialDisplayName={
-              this.props.displayName ? this.props.displayName : undefined
+              this.state.verifiedName
+                ? this.state.verifiedName
+                : this.props.displayName
+                  ? this.props.displayName
+                  : undefined
             }
             onVerifiedName={(verifiedName: string) => {
               this.setState({
                 verifiedName: verifiedName,
                 step: this.state.videoDownloadUrl
-                  ? OnboardingStep.REQUEST_INVITE
+                  ? OnboardingStep.CREATE_ACCOUNT
                   : OnboardingStep.CAMERA
               });
             }}
+            onBack={this._handleBackPress}
           />
         );
       }
+      // Note, as we have currently defined the onboarding flow, you will not have to take
+      // a video if you're being invited via a joint invitation video. In other words,
+      // the people who must take a video during onboarding are those who have been invited
+      // via the async process or who were not invited at all.
       case OnboardingStep.CAMERA: {
         // Shouldn't happen, but if any required field is cleared or the onboarding
         // flow is screwed up, redirect to the correct step.
         const verifiedFullName = this._verifyFullName();
-        const inviter = this._verifyInviter();
-        if (!inviter || !verifiedFullName) {
+        if (!verifiedFullName) {
           return <React.Fragment />;
         }
         return (
           <OnboardingCamera
-            inviterFullName={inviter.get("fullName")}
             verifiedFullName={verifiedFullName}
             onVideoRecorded={(videoUri: string) => {
               this.setState({
@@ -317,7 +288,7 @@ export class OnboardingView extends React.Component<
             onVideoUploaded={(videoDownloadUrl: string) =>
               this.setState({
                 videoDownloadUrl: videoDownloadUrl,
-                step: OnboardingStep.REQUEST_INVITE
+                step: OnboardingStep.CREATE_ACCOUNT
               })
             }
             onRetakeClicked={() => {
@@ -332,24 +303,28 @@ export class OnboardingView extends React.Component<
           />
         );
       }
-      case OnboardingStep.REQUEST_INVITE: {
+      case OnboardingStep.CREATE_ACCOUNT: {
         const fullName = this._verifyFullName();
-        const invitingMember = this._verifyInviter();
         const videoDownloadUrl = this._verifyVideoDownloadUrl();
-        if (!invitingMember || !fullName || !videoDownloadUrl) {
+        if (!fullName || !videoDownloadUrl) {
           return <React.Fragment />;
         }
         return (
-          <OnboardingRequestInvite
+          <OnboardingCreateAccount
             verifiedName={fullName}
-            invitingMember={invitingMember}
+            invitingMember={this.props.deeplinkInvitingMember}
+            isJointVideo={this.props.isJointVideo}
             videoToken={this.props.deeplinkVideoToken}
           />
         );
       }
+
       default:
+        console.error(
+          `We've reached an unknown OnboardingStep: ${this.state.step}.`
+        );
+        return undefined;
     }
-    return undefined;
   }
 
   render() {
@@ -395,7 +370,8 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
     isLoggedIn:
       state.authentication.isLoaded && state.authentication.isLoggedIn,
     deeplinkVideoToken,
-    deeplinkInvitingMember
+    deeplinkInvitingMember,
+    isJointVideo: deeplinkInvitingMember ? true : false // TODO isJointVideo should be specified as part of the deeplink params
   };
 };
 export const Onboarding = connect(mapStateToProps)(OnboardingView);

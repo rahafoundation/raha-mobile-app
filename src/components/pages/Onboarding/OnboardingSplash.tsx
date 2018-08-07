@@ -47,11 +47,17 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
           <View style={[styles.slide, { backgroundColor: "#FC515B" }]}>
             <Text style={styles.header}>TRUSTED IDENTITY</Text>
             <Text style={styles.text}>
-              To create a trusted network, we are currently invite-only.
+              To create a trusted network, Raha currently uses video-verified
+              identity.
             </Text>
             <Text style={styles.text}>
-              All new members must verify their identity by recording a video
-              with the inviter which will be visible publicly.
+              As a new member, you must verify your identity by recording a
+              short selfie-video of yourself stating your name and intent to
+              join Raha.
+            </Text>
+            <Text style={styles.text}>
+              Before you can mint your Raha basic income, an existing member
+              must also record a video vouching for your identity.
             </Text>
           </View>
 

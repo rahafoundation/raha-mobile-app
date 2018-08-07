@@ -9,7 +9,6 @@ import { Camera } from "../../shared/Camera";
 import { Text } from "../../shared/elements";
 
 type OwnProps = {
-  inviterFullName: string;
   verifiedFullName: string;
   onVideoRecorded: (videoUri: string) => void;
 };
@@ -20,8 +19,7 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
     return (
       <View style={{ flex: 1 }}>
         <Text style={styles.headerText}>
-          Please record a video with {this.props.inviterFullName} to verify your
-          identity.
+          Please record a video of yourself stating your identity.
         </Text>
         <Camera
           onVideoRecorded={uri => {
@@ -30,11 +28,6 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
         />
         <View style={styles.promptContainer}>
           <Text style={styles.promptHeader}>Example of what to say:</Text>
-          <Text style={styles.text}>
-            {`"Hi, my name is ${this.props.inviterFullName} and I'm inviting ${
-              this.props.verifiedFullName
-            } to Raha."`}
-          </Text>
           <Text style={styles.text}>
             "My name is {this.props.verifiedFullName} and I'm joining Raha
             because I believe every life has value."
