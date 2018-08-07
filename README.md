@@ -72,6 +72,22 @@ and accept all licenses (run `$ANDROID_HOME/tools/bin/sdkmanager --licenses`).
 Run `yarn start:android:test` or `yarn start:android:prod` depending on the
 environment you want to run.
 
+### Deep Linking
+
+We use deep links to accept invites. You can send an invite from an existing
+member, and from a logged out state, accept the invite by activating the deep
+link.
+
+#### ... on iOS:
+
+Not fully implemented yet
+
+#### ... on Android:
+
+- Clicking on a recognized HTTPS link (typing the URL manually
+  into Chrome doesn't work): [https://raha.app/invite?r=tina.roh.7659&t=0bzeq0zyfrbe](https://raha.app/invite?r=tina.roh.7659&t=0bzeq0zyfrbe)
+- via ADB: `adb shell am start -W -a android.intent.action.VIEW -d "raha://invite?videoToken=0qmkd6zfhx8c\&inviterUsername=tina.roh.7659" app.raha.mobileTest`
+
 ##### Adding your Android debug signature to Firebase
 
 It won't allow you authenticate with Google services until you register your
