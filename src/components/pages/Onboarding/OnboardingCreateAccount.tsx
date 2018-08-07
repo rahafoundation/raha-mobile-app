@@ -21,6 +21,7 @@ import { colors } from "../../../helpers/colors";
 
 type ReduxStateProps = {
   requestInviteStatus?: ApiCallStatus;
+  createMemberStatus?: ApiCallStatus;
 };
 
 type DispatchProps = {
@@ -35,31 +36,13 @@ type OwnProps = {
   videoToken?: string;
 };
 
-type OnboardingCreateAccountState = {
-  uniqueIdentity: boolean;
-  accountInactivity: boolean;
-  validAge: boolean;
-  privacyPolicy: boolean;
-  termsOfService: boolean;
-  codeOfConduct: boolean;
-};
-
 type OnboardingCreateAccountProps = OwnProps & ReduxStateProps & DispatchProps;
 
 class OnboardingCreateAccountView extends React.Component<
-  OnboardingCreateAccountProps,
-  OnboardingCreateAccountState
+  OnboardingCreateAccountProps
 > {
   constructor(props: OnboardingCreateAccountProps) {
     super(props);
-    this.state = {
-      uniqueIdentity: false,
-      accountInactivity: false,
-      validAge: false,
-      privacyPolicy: false,
-      termsOfService: false,
-      codeOfConduct: false
-    };
   }
 
   createAccount = () => {
@@ -93,9 +76,9 @@ class OnboardingCreateAccountView extends React.Component<
   };
 
   private _renderRequestingStatus = () => {
-    const statusType = this.props.requestInviteStatus
-      ? this.props.requestInviteStatus.status
-      : undefined;
+    const status =
+      this.props.requestInviteStatus || this.props.createMemberStatus;
+    const statusType = status ? status.status : undefined;
     switch (statusType) {
       case ApiCallStatusType.STARTED:
         return <Text>Creating account...</Text>;
@@ -193,7 +176,12 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
         ownProps.invitingMember.get("memberId")
       )
     : undefined;
-  return { requestInviteStatus };
+  const createMemberStatus = getStatusOfApiCall(
+    state,
+    ApiEndpointName.CREATE_MEMBER,
+    ownProps.verifiedName
+  );
+  return { requestInviteStatus, createMemberStatus };
 };
 
 export const OnboardingCreateAccount = connect(

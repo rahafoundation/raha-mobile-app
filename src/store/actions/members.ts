@@ -78,7 +78,7 @@ export const createMember: AsyncActionCreator = (
       dispatch(action);
     },
     ApiEndpointName.CREATE_MEMBER,
-    username
+    fullName
   );
 };
 
