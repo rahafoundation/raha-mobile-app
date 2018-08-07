@@ -300,6 +300,7 @@ export class OnboardingView extends React.Component<
                 step: OnboardingStep.CAMERA
               });
             }}
+            fullScreen
           />
         );
       }

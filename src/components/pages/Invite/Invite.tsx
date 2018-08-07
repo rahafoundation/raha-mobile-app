@@ -126,6 +126,7 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
                 step: InviteStep.CAMERA
               });
             }}
+            fullScreen={false}
           />
         );
       }
