@@ -29,7 +29,7 @@ import { Onboarding } from "../pages/Onboarding/Onboarding";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button, Text } from "../shared/elements";
-import { Discover, DiscoverWebView } from "../pages/Discover";
+import { Discover } from "../pages/Discover";
 import { LeaderBoard } from "../pages/LeaderBoard";
 import { Invite } from "../pages/Invite/Invite";
 import { Account } from "../pages/Account";
@@ -90,7 +90,6 @@ export enum RouteName {
   ProfileTab = "ProfileTab",
   Discover = "Discover",
   DiscoverTab = "DiscoverTab",
-  DiscoverWebView = "DiscoverWebView",
   LeaderBoard = "LeaderBoard",
   Mint = "Mint",
   MintTab = "MintTab",
@@ -233,7 +232,6 @@ const DiscoverTab = createTabNavigator(
         }
       })
     },
-    DiscoverWebView,
     LeaderBoard
   },
   {
