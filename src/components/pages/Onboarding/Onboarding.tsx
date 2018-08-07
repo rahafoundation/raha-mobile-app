@@ -210,6 +210,11 @@ export class OnboardingView extends React.Component<
 
   _renderOnboardingStep() {
     if (!this.props.isLoggedIn) {
+      // An unauthenticated user should be sent to the Login page
+      // by the SignedOutNavigator.
+      console.error(
+        "An unauthenticated user should not reach the onboarding flow."
+      );
       return <Loading />;
     }
 
@@ -247,6 +252,10 @@ export class OnboardingView extends React.Component<
           />
         );
       }
+      // Note, as we have currently defined the onboarding flow, you will not have to take
+      // a video if you're being invited via a joint invitation video. In other words,
+      // the people who must take a video during onboarding are those who have been invited
+      // via the async process or who were not invited at all.
       case OnboardingStep.CAMERA: {
         // Shouldn't happen, but if any required field is cleared or the onboarding
         // flow is screwed up, redirect to the correct step.
@@ -311,6 +320,9 @@ export class OnboardingView extends React.Component<
       }
 
       default:
+        console.error(
+          `We've reached an unknown OnboardingStep: ${this.state.step}.`
+        );
         return undefined;
     }
   }
