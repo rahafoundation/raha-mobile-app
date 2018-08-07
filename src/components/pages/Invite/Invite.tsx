@@ -15,8 +15,12 @@ import { Member } from "../../../store/reducers/members";
 import { RahaState } from "../../../store";
 import { generateToken } from "../../../helpers/token";
 import { SendInvite } from "./SendInvite";
+import { SpecifyJointVideo } from "./SpecifyJointVideo";
+import { InviteSplash } from "./InviteSplash";
 
 enum InviteStep {
+  SPLASH,
+  SPECIFY_VIDEO_TOGETHER,
   CAMERA,
   VIDEO_PREVIEW,
   SEND_INVITE
@@ -32,6 +36,7 @@ type InviteProps = ReduxStateProps & OwnProps;
 
 type InviteState = {
   step: InviteStep;
+  isJointVideo: boolean;
   videoUri?: string;
   videoDownloadUrl?: string;
 };
@@ -46,7 +51,8 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
     this.inviteToken = generateToken();
     this.videoUploadRef = getInviteVideoRef(this.inviteToken);
     this.state = {
-      step: InviteStep.CAMERA
+      step: InviteStep.SPLASH,
+      isJointVideo: false
     };
   }
 
@@ -89,9 +95,39 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
 
   _renderStep() {
     switch (this.state.step) {
+      case InviteStep.SPLASH: {
+        return (
+          <InviteSplash
+            onContinue={() => {
+              this.setState({
+                step: InviteStep.SPECIFY_VIDEO_TOGETHER
+              });
+            }}
+          />
+        );
+      }
+      case InviteStep.SPECIFY_VIDEO_TOGETHER: {
+        return (
+          <SpecifyJointVideo
+            onNo={() => {
+              this.setState({
+                isJointVideo: false,
+                step: InviteStep.CAMERA
+              });
+            }}
+            onYes={() => {
+              this.setState({
+                isJointVideo: true,
+                step: InviteStep.CAMERA
+              });
+            }}
+          />
+        );
+      }
       case InviteStep.CAMERA: {
         return (
           <InviteCamera
+            jointVideo={this.state.isJointVideo}
             onVideoRecorded={(videoUri: string) => {
               this.setState({
                 videoUri: videoUri,
@@ -131,7 +167,12 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
         );
       }
       case InviteStep.SEND_INVITE: {
-        return <SendInvite videoToken={this.inviteToken} />;
+        return (
+          <SendInvite
+            videoToken={this.inviteToken}
+            isJointVideo={this.state.isJointVideo}
+          />
+        );
       }
 
       default:

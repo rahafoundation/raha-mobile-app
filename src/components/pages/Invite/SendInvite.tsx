@@ -19,6 +19,7 @@ type ReduxStateProps = {
 
 type OwnProps = {
   videoToken: string;
+  isJointVideo: boolean;
 };
 
 type SendInviteState = {
@@ -28,7 +29,11 @@ type SendInviteState = {
 
 type SendInviteProps = OwnProps &
   ReduxStateProps & {
-    sendInvite: (email: string, videoToken: string) => void;
+    sendInvite: (
+      email: string,
+      videoToken: string,
+      isJointVideo: boolean
+    ) => void;
   };
 
 class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
@@ -45,7 +50,11 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
       this.setState({ enteredInvalidEmail: true });
       return;
     }
-    this.props.sendInvite(enteredEmail, this.props.videoToken);
+    this.props.sendInvite(
+      enteredEmail,
+      this.props.videoToken,
+      this.props.isJointVideo
+    );
   };
 
   private _renderSendingStatus = () => {

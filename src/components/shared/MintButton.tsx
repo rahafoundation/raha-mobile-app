@@ -16,8 +16,6 @@ import {
 import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
 
 import { Button } from "../shared/elements";
-import { StyleSheet } from "../../../node_modules/@types/react-native";
-import { colors } from "../../helpers/colors";
 
 interface OwnProps {}
 interface StateProps {

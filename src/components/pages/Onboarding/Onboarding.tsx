@@ -23,7 +23,6 @@ import { Loading } from "../../shared/Loading";
 /**
  * Parent component for Onboarding flow.
  */
-
 enum OnboardingStep {
   SPLASH,
   VERIFY_NAME,
@@ -37,6 +36,7 @@ enum OnboardingStep {
 interface OnboardingParams {
   t?: string; // video token
   r?: string; // referrer username
+  j?: string; // isJointVideo
 }
 
 type ReduxStateProps = {
@@ -364,6 +364,7 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
     ? getMemberByUsername(state, deeplinkInviterUsername)
     : undefined;
   const deeplinkVideoToken = ownProps.navigation.getParam("t");
+  const deeplinkIsJointVideo = ownProps.navigation.getParam("j");
 
   return {
     displayName: firebaseUser ? firebaseUser.displayName : null,
@@ -372,7 +373,7 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
       state.authentication.isLoaded && state.authentication.isLoggedIn,
     deeplinkVideoToken,
     deeplinkInvitingMember,
-    isJointVideo: deeplinkInvitingMember ? true : false // TODO isJointVideo should be specified as part of the deeplink params
+    isJointVideo: deeplinkIsJointVideo ? true : false
   };
 };
 export const Onboarding = connect(mapStateToProps)(OnboardingView);
