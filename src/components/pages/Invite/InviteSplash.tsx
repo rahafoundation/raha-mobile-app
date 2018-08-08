@@ -4,11 +4,15 @@ import { Text, Button } from "../../shared/elements";
 
 interface Props {
   onContinue: () => void;
+  onBack: () => void;
 }
 
 export const InviteSplash: React.StatelessComponent<Props> = props => {
   return (
     <View style={styles.container}>
+      <Text style={styles.back} onPress={props.onBack}>
+        Back
+      </Text>
       <Text style={styles.header}>Invite a friend</Text>
       <Text style={styles.text}>
         Currently, the network referral bonus is 60 Raha - meaning you can mint
@@ -46,6 +50,12 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   continue: {
+    margin: 12
+  },
+  back: {
+    position: "absolute",
+    top: 0,
+    left: 0,
     margin: 12
   }
 });

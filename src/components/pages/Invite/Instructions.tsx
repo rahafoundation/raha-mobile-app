@@ -3,23 +3,34 @@ import { View, StyleSheet } from "react-native";
 import { Text, Button } from "../../shared/elements";
 
 interface Props {
-  onNo: () => void;
-  onYes: () => void;
+  isJointVideo: boolean;
+  onContinue: () => void;
   onBack: () => void;
 }
 
-export const SpecifyJointVideo: React.StatelessComponent<Props> = props => {
+export const Instructions: React.StatelessComponent<Props> = props => {
   return (
     <View style={styles.container}>
       <Text style={styles.back} onPress={props.onBack}>
         Back
       </Text>
-      <Text style={styles.text}>
-        Is the person you're inviting with you right now?
-      </Text>
+      {props.isJointVideo ? (
+        <Text style={styles.text}>
+          Great! Record a video together to verify your friend's identity.
+        </Text>
+      ) : (
+        <Text style={styles.text}>
+          That's fine! Record a video of yourself inviting them to Raha. Once
+          they record their acceptance video, you'll be able to verify their
+          identity.
+        </Text>
+      )}
       <View style={styles.actionRow}>
-        <Button title="No" style={styles.button} onPress={props.onNo} />
-        <Button title="Yes" style={styles.button} onPress={props.onYes} />
+        <Button
+          title="Record video"
+          style={styles.button}
+          onPress={props.onContinue}
+        />
       </View>
     </View>
   );
