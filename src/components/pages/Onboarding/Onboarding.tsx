@@ -19,6 +19,8 @@ import { VideoPreview } from "../Camera/VideoPreview";
 import { OnboardingCreateAccount } from "./OnboardingCreateAccount";
 import { getMemberByUsername } from "../../../store/selectors/members";
 import { Loading } from "../../shared/Loading";
+import { Text } from "../../shared/elements";
+import { LogIn } from "../LogIn";
 
 /**
  * Parent component for Onboarding flow.
@@ -210,12 +212,15 @@ export class OnboardingView extends React.Component<
 
   _renderOnboardingStep() {
     if (!this.props.isLoggedIn) {
-      // An unauthenticated user should be sent to the Login page
-      // by the SignedOutNavigator.
-      console.error(
-        "An unauthenticated user should not reach the onboarding flow."
+      return (
+        <React.Fragment>
+          <Text style={{ textAlign: "center" }}>
+            Welcome to Raha! Please sign up with your mobile number to accept
+            your invite.
+          </Text>
+          <LogIn navigation={this.props.navigation} />
+        </React.Fragment>
       );
-      return <Loading />;
     }
 
     switch (this.state.step) {
