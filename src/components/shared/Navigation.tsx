@@ -205,21 +205,21 @@ export function createTabNavigator(
   );
 }
 
-function darkNavWithGive(title: string) {
+function createHeaderNavigationOptions(title: string) {
   return ({ navigation }: any) => ({
     headerTitle: <HeaderTitle title={title} />,
     headerRight: giveButton(navigation),
     headerStyle: {
       backgroundColor: colors.darkAccent
     }
-  })
+  });
 }
 
 const HomeTab = createTabNavigator(
   {
     Home: {
       screen: Home,
-      navigationOptions: darkNavWithGive("Raha")
+      navigationOptions: createHeaderNavigationOptions("Raha")
     }
   },
   {
@@ -231,7 +231,7 @@ const DiscoverTab = createTabNavigator(
   {
     Discover: {
       screen: Discover,
-      navigationOptions: darkNavWithGive("Discover")
+      navigationOptions: createHeaderNavigationOptions("Discover")
     },
     DiscoverWebView,
     LeaderBoard
@@ -245,20 +245,20 @@ const MintTab = createTabNavigator(
   {
     Invite: {
       screen: Invite,
-      navigationOptions: darkNavWithGive("Invite")
+      navigationOptions: createHeaderNavigationOptions("Invite")
     },
     Mint: {
       screen: Mint,
-      navigationOptions: darkNavWithGive("Mint Raha")
+      navigationOptions: createHeaderNavigationOptions("Mint Raha")
     },
     ReferralBonus: {
       screen: ReferralBonus,
-      navigationOptions: darkNavWithGive("Bonus Mint")
+      navigationOptions: createHeaderNavigationOptions("Bonus Mint")
     }
   },
   {
     initialRouteName: RouteName.Mint,
-    navigationOptions: darkNavWithGive("Discover")
+    navigationOptions: createHeaderNavigationOptions("Discover")
   }
 );
 
