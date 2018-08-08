@@ -9,7 +9,10 @@ import {
   OperationType,
   MintType
 } from "@raha/api-shared/dist/models/Operation";
-import { MemberId, MemberUsername } from "@raha/api-shared/dist/models/identifiers";
+import {
+  MemberId,
+  MemberUsername
+} from "@raha/api-shared/dist/models/identifiers";
 
 import { Set, Map } from "immutable";
 import { OperationsActionType } from "../actions/operations";
@@ -31,15 +34,34 @@ const GENESIS_TRUST_OPS = [
 ];
 export const GENESIS_MEMBER = Symbol("GENESIS");
 
-function getDefaultMemberFields() {
+function getDefaultMemberFields(): OptionalMemberFields {
   return {
     balance: new Big(0),
     totalDonated: new Big(0),
     totalMinted: new Big(0),
     trustedBy: Set<MemberId>(),
     invited: Set<MemberId>(),
-    trusts: Set<MemberId>()
+    invitedBy: undefined,
+    trusts: Set<MemberId>(),
+    verified: Set<MemberId>(),
+    requestedVerificationFrom: Set<MemberId>(),
+    requestedForVerificationBy: Set<MemberId>(),
+    verifiedBy: Set<MemberId>()
   };
+}
+
+interface OptionalMemberFields {
+  balance: Big;
+  totalDonated: Big;
+  totalMinted: Big;
+  trustedBy: Set<MemberId>;
+  invited: Set<MemberId>;
+  invitedBy: MemberId | typeof GENESIS_MEMBER | undefined;
+  trusts: Set<MemberId>;
+  verified: Set<MemberId>;
+  requestedVerificationFrom: Set<MemberId>;
+  requestedForVerificationBy: Set<MemberId>;
+  verifiedBy: Set<MemberId>;
 }
 
 interface RequiredMemberFields {
@@ -47,12 +69,11 @@ interface RequiredMemberFields {
   username: string;
   fullName: string;
   createdAt: Date;
-  invitedBy: string | typeof GENESIS_MEMBER;
   inviteConfirmed: boolean;
-  lastMinted: Date;
+  lastMintedBasicIncomeAt: Date;
+  lastOpCreatedAt: Date;
 }
 
-type OptionalMemberFields = ReturnType<typeof getDefaultMemberFields>;
 type MemberFields = RequiredMemberFields & OptionalMemberFields;
 
 export class Member {
@@ -70,6 +91,10 @@ export class Member {
     return new Member({ ...this.fields, ...newFields });
   }
 
+  public updateLastOpCreatedAt(lastOpCreatedAt: Date) {
+    return this.withFields({ lastOpCreatedAt });
+  }
+
   /* =======================
    * ACCOUNT BALANCE METHODS
    * =======================
@@ -77,7 +102,9 @@ export class Member {
   public mintRaha(amount: Big, mintDate?: Date) {
     return this.withFields({
       balance: this.fields.balance.plus(amount),
-      lastMinted: mintDate ? mintDate : this.fields.lastMinted,
+      lastMintedBasicIncomeAt: mintDate
+        ? mintDate
+        : this.fields.lastMintedBasicIncomeAt,
       totalMinted: this.fields.totalMinted.plus(amount)
     });
   }
@@ -115,11 +142,43 @@ export class Member {
     });
   }
 
+  // TODO inviteConfirmed should eventually be modified only by the verify
+  // operation, not the trust operation
   public beTrustedByMember(memberId: MemberId) {
     return this.withFields({
       inviteConfirmed:
         this.fields.inviteConfirmed || this.fields.invitedBy === memberId,
       trustedBy: this.fields.trustedBy.add(memberId)
+    });
+  }
+
+  public requestVerificationFromMember(memberId: MemberId) {
+    return this.withFields({
+      requestedVerificationFrom: this.fields.requestedVerificationFrom.add(
+        memberId
+      )
+    });
+  }
+
+  public beRequestedForVerificationBy(memberId: MemberId) {
+    return this.withFields({
+      requestedForVerificationBy: this.fields.requestedForVerificationBy.add(
+        memberId
+      )
+    });
+  }
+
+  public verifyMember(memberId: MemberId) {
+    return this.withFields({
+      inviteConfirmed:
+        this.fields.inviteConfirmed || this.fields.invitedBy === memberId,
+      verified: this.fields.verified.add(memberId)
+    });
+  }
+
+  public beVerifiedByMember(memberId: MemberId) {
+    return this.withFields({
+      verifiedBy: this.fields.verifiedBy.add(memberId)
     });
   }
 
@@ -152,6 +211,15 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
       "All operations must have a creator id",
       operation
     );
+  }
+  if (operation.op_code === OperationType.CREATE_MEMBER) {
+    return true;
+  }
+  if (operation.op_code === OperationType.REQUEST_VERIFICATION) {
+    return !!operation.data.to_uid;
+  }
+  if (operation.op_code === OperationType.VERIFY) {
+    return !!operation.data.to_uid;
   }
   if (operation.op_code === OperationType.REQUEST_INVITE) {
     // Force to boolean
@@ -239,6 +307,9 @@ function addMembersToState(
   );
 }
 
+/**
+ * TODO (code cleanup): Avoid having to assert on id present for almost every operation type.
+ */
 function applyOperation(
   prevState: MembersState,
   operation: Operation
@@ -249,7 +320,77 @@ function applyOperation(
     if (!operationIsRelevantAndValid(operation)) {
       return prevState;
     }
+    const createdAt = new Date(created_at);
+    const creator = prevState.byMemberId.get(creator_uid);
+    const newState = creator
+      ? addMemberToState(prevState, creator.updateLastOpCreatedAt(createdAt))
+      : prevState;
+
     switch (operation.op_code) {
+      case OperationType.CREATE_MEMBER: {
+        const {
+          full_name,
+          username,
+          request_invite_from_member_id
+        } = operation.data;
+
+        if (request_invite_from_member_id) {
+          assertMemberIdPresentInState(
+            newState,
+            request_invite_from_member_id,
+            operation
+          );
+        }
+
+        const memberData = {
+          memberId: creator_uid,
+          username: username,
+          fullName: full_name,
+          createdAt: createdAt,
+          inviteConfirmed: false,
+          lastMintedBasicIncomeAt: createdAt,
+          lastOpCreatedAt: createdAt,
+          ...(request_invite_from_member_id
+            ? { invitedBy: request_invite_from_member_id }
+            : {})
+        };
+
+        assertMemberIdNotPresentInState(newState, creator_uid, operation);
+
+        const newMember = new Member(memberData);
+
+        return addMemberToState(newState, newMember);
+      }
+      case OperationType.REQUEST_VERIFICATION: {
+        const { to_uid } = operation.data;
+
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        assertMemberIdPresentInState(newState, to_uid, operation);
+
+        const requester = (newState.byMemberId.get(
+          creator_uid
+        ) as Member).requestVerificationFromMember(to_uid);
+        const requestee = (newState.byMemberId.get(
+          to_uid
+        ) as Member).beRequestedForVerificationBy(creator_uid);
+
+        return addMembersToState(newState, [requester, requestee]);
+      }
+      case OperationType.VERIFY: {
+        const { to_uid } = operation.data;
+
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        assertMemberIdPresentInState(newState, to_uid, operation);
+
+        const verifier = (newState.byMemberId.get(
+          creator_uid
+        ) as Member).verifyMember(to_uid);
+        const verified = (newState.byMemberId.get(
+          to_uid
+        ) as Member).beVerifiedByMember(creator_uid);
+
+        return addMembersToState(newState, [verifier, verified]);
+      }
       case OperationType.REQUEST_INVITE: {
         const { full_name, to_uid, username } = operation.data;
 
@@ -257,49 +398,54 @@ function applyOperation(
           memberId: creator_uid,
           username: username,
           fullName: full_name,
-          createdAt: new Date(created_at),
-          lastMinted: new Date(created_at)
+          createdAt: createdAt,
+          lastMintedBasicIncomeAt: createdAt,
+          lastOpCreatedAt: createdAt
         };
 
         // the initial users weren't invited by anyone; so no need to hook up any associations.
         if (GENESIS_REQUEST_INVITE_OPS.includes(operation.id)) {
           return addMemberToState(
-            prevState,
-            new Member({ ...memberData, invitedBy: GENESIS_MEMBER, inviteConfirmed: true })
+            newState,
+            new Member({
+              ...memberData,
+              invitedBy: GENESIS_MEMBER,
+              inviteConfirmed: true
+            })
           );
         }
 
-        assertMemberIdPresentInState(prevState, to_uid, operation);
-        assertMemberIdNotPresentInState(prevState, creator_uid, operation);
+        assertMemberIdPresentInState(newState, to_uid, operation);
+        assertMemberIdNotPresentInState(newState, creator_uid, operation);
 
-        const inviter = (prevState.byMemberId.get(
+        const inviter = (newState.byMemberId.get(
           to_uid
         ) as Member).inviteMember(creator_uid);
         const inviteRequester = new Member({
           ...memberData,
           invitedBy: to_uid,
-          inviteConfirmed: false,
+          inviteConfirmed: false
         }).trustMember(to_uid);
-        return addMembersToState(prevState, [inviter, inviteRequester]);
+        return addMembersToState(newState, [inviter, inviteRequester]);
       }
       case OperationType.TRUST: {
         const { to_uid } = operation.data;
 
-        assertMemberIdPresentInState(prevState, creator_uid, operation);
-        assertMemberIdPresentInState(prevState, to_uid, operation);
-        const truster = (prevState.byMemberId.get(
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        assertMemberIdPresentInState(newState, to_uid, operation);
+        const truster = (newState.byMemberId.get(
           creator_uid
         ) as Member).trustMember(to_uid);
-        const trusted = (prevState.byMemberId.get(
+        const trusted = (newState.byMemberId.get(
           to_uid
         ) as Member).beTrustedByMember(creator_uid);
-        return addMembersToState(prevState, [truster, trusted]);
+        return addMembersToState(newState, [truster, trusted]);
       }
       case OperationType.MINT: {
         const { amount, type } = operation.data;
 
-        assertMemberIdPresentInState(prevState, creator_uid, operation);
-        const minter = (prevState.byMemberId.get(
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        const minter = (newState.byMemberId.get(
           creator_uid
         ) as Member).mintRaha(
           new Big(amount),
@@ -307,28 +453,28 @@ function applyOperation(
             ? new Date(operation.created_at)
             : undefined
         );
-        return addMembersToState(prevState, [minter]);
+        return addMembersToState(newState, [minter]);
       }
       case OperationType.GIVE: {
         const { to_uid, amount, donation_to, donation_amount } = operation.data;
 
-        assertMemberIdPresentInState(prevState, creator_uid, operation);
-        assertMemberIdPresentInState(prevState, to_uid, operation);
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        assertMemberIdPresentInState(newState, to_uid, operation);
         // TODO: Update donationRecipient state.
         // Currently we don't do this as RAHA isn't a normal member created via a REQUEST_INVITE operation.
         // Thus RAHA doesn't get added to the members state in the current paradigm.
 
-        const giver = (prevState.byMemberId.get(
-          creator_uid
-        ) as Member).giveRaha(new Big(amount).plus(donation_amount));
-        const recipient = (prevState.byMemberId.get(
+        const giver = (newState.byMemberId.get(creator_uid) as Member).giveRaha(
+          new Big(amount).plus(donation_amount)
+        );
+        const recipient = (newState.byMemberId.get(
           to_uid
         ) as Member).receiveRaha(new Big(amount), new Big(donation_amount));
 
-        return addMembersToState(prevState, [giver, recipient]);
+        return addMembersToState(newState, [giver, recipient]);
       }
       default:
-        return prevState;
+        return newState;
     }
   } catch (err) {
     if (err instanceof OperationInvalidError) {

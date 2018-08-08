@@ -1,7 +1,10 @@
 import { createSelector } from "reselect";
 import { Map as ImmutableMap } from "immutable";
 
-import { MemberId, MemberUsername } from "@raha/api-shared/dist/models/identifiers";
+import {
+  MemberId,
+  MemberUsername
+} from "@raha/api-shared/dist/models/identifiers";
 
 import { RahaState } from "../reducers";
 import { Member, GENESIS_MEMBER } from "../reducers/members";
@@ -52,8 +55,10 @@ function getAncestors(
   const ancestorsArray = [];
   let last = votingForMember;
   for (
-    let votingForId: MemberId | typeof GENESIS_MEMBER = member.get("memberId");
-    votingForId !== GENESIS_MEMBER; // TODO needs to change to check if voting for self
+    let votingForId: MemberId | typeof GENESIS_MEMBER | undefined = member.get(
+      "memberId"
+    );
+    votingForId !== GENESIS_MEMBER && votingForId !== undefined; // TODO needs to change to check if voting for self
     votingForId = votingForMember.get("invitedBy") // TODO needs to change to votingFor
   ) {
     votingForMember = byMemberId.get(votingForId);
@@ -154,8 +159,4 @@ export function getMembersSortedByVotes(state: RahaState) {
     const voteCount = voteCountById.get(m.get("memberId"));
     return voteCount === undefined ? 0 : voteCount;
   });
-}
-
-export function getDaysUntilInactive(member: Member) {
-  member.get("lastMinted");
 }

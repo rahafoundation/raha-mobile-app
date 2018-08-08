@@ -3,7 +3,7 @@ import { View, ActivityIndicator, StyleSheet } from "react-native";
 
 import { Text } from "../shared/elements/Text";
 
-const LoadingIndicator: React.StatelessComponent<{}> = () => (
+export const Loading: React.StatelessComponent<{}> = () => (
   <View style={styles.container}>
     <Text>Loading</Text>
     <ActivityIndicator size="large" />

@@ -28,6 +28,10 @@ export const ActivityItem: React.StatelessComponent<ActivityItemProps> = ({
   activityRef
 }) => {
   switch (operation.op_code) {
+    case OperationType.CREATE_MEMBER:
+    case OperationType.REQUEST_VERIFICATION:
+    case OperationType.VERIFY:
+      return null;
     case OperationType.GIVE:
       return (
         <GiveOperationActivity

@@ -1,5 +1,6 @@
 import { trust as callTrust } from "@raha/api/dist/members/trust";
 import { requestInvite as callRequestInvite } from "@raha/api/dist/members/requestInvite";
+import { createMember as callCreateMember } from "@raha/api/dist/members/createMember";
 import { sendInvite as callSendInvite } from "@raha/api/dist/me/sendInvite";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
@@ -12,7 +13,7 @@ import {
   OperationsAction,
   OperationsActionType
 } from "./operations";
-import { AsyncActionCreator } from "./";
+import { AsyncActionCreator, AsyncAction } from "./";
 import { wrapApiCallAction } from "./apiCalls";
 import { getAuthToken } from "../selectors/authentication";
 import { config } from "../../data/config";
@@ -43,6 +44,41 @@ export const trustMember: AsyncActionCreator = (memberId: MemberId) => {
     },
     ApiEndpointName.TRUST_MEMBER,
     memberId
+  );
+};
+
+export const createMember: AsyncActionCreator = (
+  fullName: string,
+  username: string,
+  videoToken: string,
+  requestInviteFromMemberId?: string
+) => {
+  return wrapApiCallAction(
+    async (dispatch, getState) => {
+      const authToken = await getAuthToken(getState());
+      if (!authToken) {
+        throw new UnauthenticatedError();
+      }
+
+      const { body } = await callCreateMember(
+        config.apiBase,
+        authToken,
+        fullName,
+        username,
+        videoToken,
+        requestInviteFromMemberId
+      );
+
+      // TODO, this should probably potentially return multiple operations, which implies a different return type for the endpoint
+
+      const action: OperationsAction = {
+        type: OperationsActionType.ADD_OPERATIONS,
+        operations: [body]
+      };
+      dispatch(action);
+    },
+    ApiEndpointName.CREATE_MEMBER,
+    fullName
   );
 };
 
