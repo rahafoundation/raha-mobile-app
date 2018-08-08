@@ -8,7 +8,7 @@ import { RequestInviteOperation } from "@raha/api-shared/dist/models/Operation";
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
-import { Member } from "../../../store/reducers/members";
+import { Member, GENESIS_MEMBER } from "../../../store/reducers/members";
 import { getMemberById } from "../../../store/selectors/members";
 
 type OwnProps = {
@@ -17,7 +17,7 @@ type OwnProps = {
 };
 type StateProps = {
   fromMember: Member;
-  toMember?: Member;
+  toMember: Member | typeof GENESIS_MEMBER;
 };
 type RequestInviteOperationActivityProps = OwnProps & StateProps;
 
@@ -28,7 +28,8 @@ export const RequestInviteOperationActivityView: React.StatelessComponent<
     <ActivityTemplate
       message={`Your friend just joined Raha!`}
       from={fromMember}
-      to={toMember}
+      // don't display genesis member, as it doesn't actually exist
+      to={toMember === GENESIS_MEMBER ? undefined : toMember}
       timestamp={new Date(operation.created_at)}
       videoUri={fromMember.videoUri}
       onRef={activityRef}
@@ -40,11 +41,14 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const [fromMember, toMember] = [
-    getMemberById(state, ownProps.operation.creator_uid),
-    getMemberById(state, ownProps.operation.data.to_uid)
-  ];
-  if (!fromMember) {
+  const requesterId = ownProps.operation.creator_uid;
+  const requestedId = ownProps.operation.data.to_uid;
+  const fromMember = getMemberById(state, requesterId);
+  const toMember = requestedId
+    ? getMemberById(state, requestedId)
+    : GENESIS_MEMBER;
+
+  if (!fromMember || !toMember) {
     // TODO: log the following properly, properly handle cases when members are
     // missing instead of throwing uncaught error
     throw new Error(
