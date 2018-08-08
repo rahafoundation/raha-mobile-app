@@ -9,37 +9,34 @@ import { connect, MapStateToProps } from "react-redux";
 
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
-import { ActivityFeed, isUnconfirmedRequestInvite } from "../shared/ActivityFeed";
+import {
+  ActivityFeed,
+  isUnconfirmedRequestInvite
+} from "../shared/ActivityFeed";
 import { Container } from "../shared/elements";
-import { RahaState } from '../../store';
-import { Member } from '../../store/reducers/members';
+import { RahaState } from "../../store";
+import { Member } from "../../store/reducers/members";
 
 type StateProps = {
-  membersById: Map<MemberId, Member>
-}
+  membersById: Map<MemberId, Member>;
+};
 
 const HomeView: React.StatelessComponent<StateProps> = props => {
   return (
     <Container>
       <ActivityFeed
-        filter={
-          operation => operation.op_code !== OperationType.MINT
-          && operation.op_code !== OperationType.TRUST
-          && !isUnconfirmedRequestInvite(props.membersById, operation)
+        filter={operation =>
+          operation.op_code !== OperationType.MINT &&
+          operation.op_code !== OperationType.TRUST &&
+          !isUnconfirmedRequestInvite(props.membersById, operation)
         }
       />
     </Container>
   );
 };
 
-const mapStateToProps: MapStateToProps<
-  StateProps,
-  {},
-  RahaState
-> = state => {
+const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
   return { membersById: state.members.byMemberId };
 };
 
-export const Home = connect(
-  mapStateToProps
-)(HomeView);
+export const Home = connect(mapStateToProps)(HomeView);
