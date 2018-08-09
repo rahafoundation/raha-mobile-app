@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- React Native adds this implicitly, but we don't need it, so remove. -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE"
@@ -22,7 +24,8 @@
         android:name=".MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-        android:windowSoftInputMode="adjustResize">
+        android:windowSoftInputMode="adjustResize"
+        android:launchMode="singleTop">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
@@ -43,6 +46,35 @@
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"
       />
 
+      <!-- RN Firebase notifications -->
+      <!-- TODO: Set custom default icon. This is used when no icon is set for incoming notification messages.
+          See README(https://goo.gl/l4GJaQ) for more. -->
+      <!-- <meta-data
+        android:name="com.google.firebase.messaging.default_notification_icon"
+        android:resource="@drawable/ic_stat_ic_notification" /> -->
+      <!-- TODO: Set color used with incoming notification messages. This is used when no color is set for the incoming
+          notification message. See README(https://goo.gl/6BKBk7) for more. -->
+      <!-- <meta-data
+        android:name="com.google.firebase.messaging.default_notification_color"
+        android:resource="@color/colorAccent" /> -->
+      <!-- TODO: set up our own notification channels -->
+      <!-- <meta-data
+        android:name="com.google.firebase.messaging.default_notification_channel_id"
+        android:value="@string/default_notification_channel_id"/> -->
+
+      <!-- For scheduling local notifications -->
+      <!-- <receiver android:name="io.invertase.firebase.notifications.RNFirebaseNotificationReceiver"/>
+      <receiver android:enabled="true" android:exported="true"  android:name="io.invertase.firebase.notifications.RNFirebaseNotificationsRebootReceiver">
+        <intent-filter>
+          <action android:name="android.intent.action.BOOT_COMPLETED"/>
+          <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+          <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+          <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+      </receiver> -->
+      <!-- End RN Firebase Notifications -->
+
+      <!-- RN Firebase Cloud Messaging -->
       <service android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService">
         <intent-filter>
           <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -53,7 +85,10 @@
           <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
         </intent-filter>
       </service>
-      <service android:name="io.invertase.firebase.messaging.RNFirebaseBackgroundMessagingService" />
+      <service
+      android:name="io.invertase.firebase.messaging.RNFirebaseBackgroundMessagingService"
+      />
+      <!-- End RN Firebase Cloud Messaging -->
     </application>
 
 </manifest>

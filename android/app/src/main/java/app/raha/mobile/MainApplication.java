@@ -10,6 +10,7 @@ import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 import io.invertase.firebase.storage.RNFirebaseStoragePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -45,6 +46,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebaseAuthPackage(),
             new RNFirebaseStoragePackage(),
             new RNFirebaseMessagingPackage(),
+            new RNFirebaseNotificationsPackage(),
             new RNCameraPackage(),
             new RNVideoProcessingPackage(),
             new ReactVideoPackage(),
