@@ -213,7 +213,7 @@ export class OnboardingView extends React.Component<
 
   _renderOnboardingStep() {
     if (!this.props.isLoggedIn) {
-      this.props.navigation.navigate(RouteName.LogIn, {
+      this.props.navigation.replace(RouteName.LogIn, {
         redirectTo: RouteName.Onboarding,
         loginMessage:
           "Welcome to Raha! Please sign up with your\nmobile number to accept your invite."

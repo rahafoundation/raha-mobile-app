@@ -1,6 +1,6 @@
 import "es6-symbol/implement";
 import * as React from "react";
-import { TouchableOpacity, StyleSheet, Linking, TextStyle } from "react-native";
+import { TouchableOpacity, StyleSheet, TextStyle } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
@@ -36,7 +36,7 @@ import { Invite } from "../pages/Invite/Invite";
 import { Account } from "../pages/Account";
 import { colors } from "../../helpers/colors";
 import { fonts } from "../../helpers/fonts";
-import url from "url";
+import { LoadingSplash } from "../pages/LoadingSplash";
 
 /**
  * Gets the current screen from navigation state.
@@ -78,6 +78,7 @@ function trackPageChanges(
 }
 
 export enum RouteName {
+  LoadingSplash = "LoadingSplash",
   Account = "Account",
   Give = "Give",
   Home = "Home",
@@ -98,7 +99,7 @@ export enum RouteName {
   PendingInvites = "PendingInvites"
 }
 
-const DEEPLINK_ROUTES = {
+export const DEEPLINK_ROUTES = {
   invite: RouteName.Onboarding
 };
 
@@ -323,6 +324,10 @@ const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
 
 const SignedOutNavigator = createStackNavigator(
   {
+    [RouteName.LoadingSplash]: {
+      screen: LoadingSplash,
+      navigationOptions: { header: null }
+    },
     Onboarding: {
       screen: Onboarding,
       navigationOptions: { header: null }
@@ -332,7 +337,8 @@ const SignedOutNavigator = createStackNavigator(
   },
   {
     headerMode: "screen",
-    initialRouteName: RouteName.LogIn,
+    initialRouteName: RouteName.LoadingSplash,
+    initialRouteParams: { defaultRoute: RouteName.LogIn },
     navigationOptions: {
       headerTitle: <HeaderTitle title="Raha" subtitle="Basic Income Network" />,
       headerStyle: {
@@ -354,31 +360,6 @@ type Props = OwnProps & StateProps;
 
 class NavigationView extends React.Component<Props> {
   navigator: any;
-
-  componentDidMount() {
-    // Process deeplink -- we don't use react-navigation for this since it
-    // doesn't support HTTPS links.
-    Linking.getInitialURL()
-      .then(link => {
-        if (link) {
-          const deeplinkUrl = url.parse(link, true, true);
-          if (!deeplinkUrl.pathname) {
-            return;
-          }
-          const pathname = deeplinkUrl.pathname.replace(
-            "/",
-            ""
-          ) as keyof typeof DEEPLINK_ROUTES;
-          this.navigator._navigation.navigate(
-            DEEPLINK_ROUTES[pathname],
-            deeplinkUrl.query
-          );
-        }
-      })
-      .catch(err =>
-        console.error("An error occurred while deep linking:", err)
-      );
-  }
 
   render() {
     const { hasAccount } = this.props;
