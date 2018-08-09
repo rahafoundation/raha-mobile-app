@@ -172,15 +172,23 @@ dependencies {
 
     compile project(':react-native-device-info')
     compile project(':react-native-google-signin')
+
+    implementation "com.google.android.gms:play-services-base:15.0.1"
+    implementation "com.google.android.gms:play-services-auth:15.0.1"
+
+    // firebase
     compile(project(':react-native-firebase')) {
         transitive = false
     }
 
-    implementation "com.google.android.gms:play-services-base:15.0.1"
-    implementation "com.google.android.gms:play-services-auth:15.0.1"
     implementation "com.google.firebase:firebase-core:16.0.1"
     implementation "com.google.firebase:firebase-auth:16.0.1"
     implementation "com.google.firebase:firebase-storage:16.0.1"
+    // Cloud messaging
+    implementation "com.google.firebase:firebase-messaging:17.1.0"
+    implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
+    // End cloud messaging
+    // End firebase
 
     compile project(':react-native-camera')
     compile project(':react-native-video')
