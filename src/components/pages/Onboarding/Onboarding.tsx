@@ -378,7 +378,7 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
       state.authentication.isLoaded && state.authentication.isLoggedIn,
     deeplinkVideoToken,
     deeplinkInvitingMember,
-    isJointVideo: deeplinkIsJointVideo ? true : false
+    isJointVideo: !!deeplinkIsJointVideo
   };
 };
 export const Onboarding = connect(mapStateToProps)(OnboardingView);
