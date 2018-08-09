@@ -248,9 +248,10 @@ export class OnboardingView extends React.Component<
             onVerifiedName={(verifiedName: string) => {
               this.setState({
                 verifiedName: verifiedName,
-                step: this.state.videoDownloadUrl
-                  ? OnboardingStep.CREATE_ACCOUNT
-                  : OnboardingStep.CAMERA
+                step:
+                  this.props.isJointVideo && this.state.videoDownloadUrl
+                    ? OnboardingStep.CREATE_ACCOUNT
+                    : OnboardingStep.CAMERA
               });
             }}
             onBack={this._handleBackPress}

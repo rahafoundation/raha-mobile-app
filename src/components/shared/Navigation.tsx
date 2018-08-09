@@ -325,9 +325,7 @@ const SignedOutNavigator = createStackNavigator(
   {
     Onboarding: {
       screen: Onboarding,
-      navigationOptions: {
-        header: null
-      }
+      navigationOptions: { header: null }
     },
     LogIn,
     Profile
