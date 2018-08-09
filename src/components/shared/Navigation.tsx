@@ -243,7 +243,9 @@ const MintTab = createTabNavigator(
   {
     Invite: {
       screen: Invite,
-      navigationOptions: createHeaderNavigationOptions("Invite")
+      navigationOptions: {
+        header: null
+      }
     },
     Mint: {
       screen: Mint,
@@ -323,9 +325,7 @@ const SignedOutNavigator = createStackNavigator(
   {
     Onboarding: {
       screen: Onboarding,
-      navigationOptions: {
-        header: null
-      }
+      navigationOptions: { header: null }
     },
     LogIn,
     Profile

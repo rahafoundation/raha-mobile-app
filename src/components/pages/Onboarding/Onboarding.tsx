@@ -19,11 +19,12 @@ import { VideoPreview } from "../Camera/VideoPreview";
 import { OnboardingCreateAccount } from "./OnboardingCreateAccount";
 import { getMemberByUsername } from "../../../store/selectors/members";
 import { Loading } from "../../shared/Loading";
+import { Text } from "../../shared/elements";
+import { LogIn } from "../LogIn";
 
 /**
  * Parent component for Onboarding flow.
  */
-
 enum OnboardingStep {
   SPLASH,
   VERIFY_NAME,
@@ -37,6 +38,7 @@ enum OnboardingStep {
 interface OnboardingParams {
   t?: string; // video token
   r?: string; // referrer username
+  j?: string; // isJointVideo
 }
 
 type ReduxStateProps = {
@@ -210,12 +212,15 @@ export class OnboardingView extends React.Component<
 
   _renderOnboardingStep() {
     if (!this.props.isLoggedIn) {
-      // An unauthenticated user should be sent to the Login page
-      // by the SignedOutNavigator.
-      console.error(
-        "An unauthenticated user should not reach the onboarding flow."
+      return (
+        <React.Fragment>
+          <Text style={{ textAlign: "center" }}>
+            Welcome to Raha! Please sign up with your mobile number to accept
+            your invite.
+          </Text>
+          <LogIn navigation={this.props.navigation} />
+        </React.Fragment>
       );
-      return <Loading />;
     }
 
     switch (this.state.step) {
@@ -243,9 +248,10 @@ export class OnboardingView extends React.Component<
             onVerifiedName={(verifiedName: string) => {
               this.setState({
                 verifiedName: verifiedName,
-                step: this.state.videoDownloadUrl
-                  ? OnboardingStep.CREATE_ACCOUNT
-                  : OnboardingStep.CAMERA
+                step:
+                  this.props.isJointVideo && this.state.videoDownloadUrl
+                    ? OnboardingStep.CREATE_ACCOUNT
+                    : OnboardingStep.CAMERA
               });
             }}
             onBack={this._handleBackPress}
@@ -300,6 +306,7 @@ export class OnboardingView extends React.Component<
                 step: OnboardingStep.CAMERA
               });
             }}
+            fullScreen
           />
         );
       }
@@ -363,6 +370,7 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
     ? getMemberByUsername(state, deeplinkInviterUsername)
     : undefined;
   const deeplinkVideoToken = ownProps.navigation.getParam("t");
+  const deeplinkIsJointVideo = ownProps.navigation.getParam("j");
 
   return {
     displayName: firebaseUser ? firebaseUser.displayName : null,
@@ -371,7 +379,7 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
       state.authentication.isLoaded && state.authentication.isLoggedIn,
     deeplinkVideoToken,
     deeplinkInvitingMember,
-    isJointVideo: deeplinkInvitingMember ? true : false // TODO isJointVideo should be specified as part of the deeplink params
+    isJointVideo: !!deeplinkIsJointVideo
   };
 };
 export const Onboarding = connect(mapStateToProps)(OnboardingView);

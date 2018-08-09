@@ -20,7 +20,7 @@ export const SafeAreaView: React.StatelessComponent<ViewProps> = props => {
   }
   const { children, ...remaining } = props;
   return (
-    <View {...remaining}>
+    <View style={{ paddingTop: 100, paddingBottom: 100 }} {...remaining}>
       <View {...props} />
     </View>
   );

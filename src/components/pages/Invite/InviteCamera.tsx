@@ -17,6 +17,7 @@ type ReduxStateProps = {
 
 type OwnProps = {
   onVideoRecorded: (videoUri: string) => void;
+  jointVideo: boolean;
 };
 
 type InviteCameraProps = ReduxStateProps & OwnProps;
@@ -26,7 +27,9 @@ export class InviteCameraView extends React.Component<InviteCameraProps> {
     return (
       <View style={{ flex: 1 }}>
         <Text style={styles.headerText}>
-          Please record a video with the person you're inviting.
+          {this.props.jointVideo
+            ? "Record a video with the person you're inviting."
+            : "Record a video of yourself inviting your friend to Raha."}
         </Text>
         <Camera
           onVideoRecorded={uri => {
@@ -36,14 +39,16 @@ export class InviteCameraView extends React.Component<InviteCameraProps> {
         <View style={styles.promptContainer}>
           <Text style={styles.promptHeader}>Example of what to say:</Text>
           <Text style={styles.text}>
-            {`"Hi, my name is ${
-              this.props.ownFullName
-            } and I'm inviting Jane Doe to Raha."`}
+            "Hi, my name is{" "}
+            <Text style={styles.name}>{this.props.ownFullName}</Text> and I'm
+            inviting <Text style={styles.name}>Jane Doe</Text> to Raha."
           </Text>
-          <Text style={styles.text}>
-            "My name is Jane Doe and I'm joining Raha because I believe every
-            life has value."
-          </Text>
+          {this.props.jointVideo && (
+            <Text style={styles.text}>
+              "My name is <Text style={styles.name}>Jane Doe</Text> and I'm
+              joining Raha because I believe every life has value."
+            </Text>
+          )}
         </View>
       </View>
     );
@@ -59,6 +64,9 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 12,
     textAlign: "center"
+  },
+  name: {
+    fontWeight: "bold"
   },
   promptHeader: {
     fontSize: 10,
@@ -81,7 +89,9 @@ const mapStateToProps: MapStateToProps<
   }
   // Should never be undefined if you're never logged in, but if you are magically, you get to be Midoriya!
   return {
-    ownFullName: loggedInMember ? loggedInMember.get("fullName") : "Izuku Midoriya"
+    ownFullName: loggedInMember
+      ? loggedInMember.get("fullName")
+      : "Izuku Midoriya"
   };
 };
 

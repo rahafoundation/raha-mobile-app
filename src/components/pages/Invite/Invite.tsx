@@ -1,12 +1,13 @@
 import { BackHandler } from "react-native";
 import * as React from "react";
-import { Container, Text } from "../../shared/elements";
-import { InviteCamera } from "./InviteCamera";
-import DropdownAlert from "react-native-dropdownalert";
-import { VideoPreview } from "../Camera/VideoPreview";
+import { NavigationScreenProps } from "react-navigation";
 import { MapStateToProps, connect } from "react-redux";
 import { RNFirebase } from "react-native-firebase";
+import DropdownAlert from "react-native-dropdownalert";
 
+import { Container } from "../../shared/elements";
+import { InviteCamera } from "./InviteCamera";
+import { VideoPreview } from "../Camera/VideoPreview";
 import {
   getLoggedInMember,
   getInviteVideoRef
@@ -15,8 +16,14 @@ import { Member } from "../../../store/reducers/members";
 import { RahaState } from "../../../store";
 import { generateToken } from "../../../helpers/token";
 import { SendInvite } from "./SendInvite";
+import { SpecifyJointVideo } from "./SpecifyJointVideo";
+import { InviteSplash } from "./InviteSplash";
+import { Instructions } from "./Instructions";
 
 enum InviteStep {
+  SPLASH,
+  SPECIFY_VIDEO_TOGETHER,
+  INSTRUCTIONS,
   CAMERA,
   VIDEO_PREVIEW,
   SEND_INVITE
@@ -28,10 +35,11 @@ type ReduxStateProps = {
 
 type OwnProps = {};
 
-type InviteProps = ReduxStateProps & OwnProps;
+type InviteProps = ReduxStateProps & OwnProps & NavigationScreenProps<{}>;
 
 type InviteState = {
   step: InviteStep;
+  isJointVideo: boolean;
   videoUri?: string;
   videoDownloadUrl?: string;
 };
@@ -46,7 +54,8 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
     this.inviteToken = generateToken();
     this.videoUploadRef = getInviteVideoRef(this.inviteToken);
     this.state = {
-      step: InviteStep.CAMERA
+      step: InviteStep.SPLASH,
+      isJointVideo: false
     };
   }
 
@@ -72,6 +81,19 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
     }
   };
 
+  _handleExit = () => {
+    this.props.navigation.goBack();
+  };
+
+  /**
+   * A handler for software back button press.
+   */
+  _handleSoftBackPress = () => {
+    if (!this._handleBackPress()) {
+      this._handleExit();
+    }
+  };
+
   _verifyVideoUri = () => {
     const videoUri = this.state.videoUri;
     if (!videoUri) {
@@ -89,9 +111,50 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
 
   _renderStep() {
     switch (this.state.step) {
+      case InviteStep.SPLASH: {
+        return (
+          <InviteSplash
+            onContinue={() => {
+              this.setState({
+                step: InviteStep.SPECIFY_VIDEO_TOGETHER
+              });
+            }}
+            onBack={this._handleSoftBackPress}
+          />
+        );
+      }
+      case InviteStep.SPECIFY_VIDEO_TOGETHER: {
+        return (
+          <SpecifyJointVideo
+            onNo={() => {
+              this.setState({
+                isJointVideo: false,
+                step: InviteStep.INSTRUCTIONS
+              });
+            }}
+            onYes={() => {
+              this.setState({
+                isJointVideo: true,
+                step: InviteStep.INSTRUCTIONS
+              });
+            }}
+            onBack={this._handleSoftBackPress}
+          />
+        );
+      }
+      case InviteStep.INSTRUCTIONS: {
+        return (
+          <Instructions
+            isJointVideo={this.state.isJointVideo}
+            onContinue={() => this.setState({ step: InviteStep.CAMERA })}
+            onBack={this._handleSoftBackPress}
+          />
+        );
+      }
       case InviteStep.CAMERA: {
         return (
           <InviteCamera
+            jointVideo={this.state.isJointVideo}
             onVideoRecorded={(videoUri: string) => {
               this.setState({
                 videoUri: videoUri,
@@ -126,11 +189,19 @@ export class InviteView extends React.Component<InviteProps, InviteState> {
                 step: InviteStep.CAMERA
               });
             }}
+            fullScreen={false}
           />
         );
       }
       case InviteStep.SEND_INVITE: {
-        return <SendInvite videoToken={this.inviteToken} />;
+        return (
+          <SendInvite
+            videoToken={this.inviteToken}
+            isJointVideo={this.state.isJointVideo}
+            onBack={this._handleSoftBackPress}
+            onExit={this._handleExit}
+          />
+        );
       }
 
       default:
