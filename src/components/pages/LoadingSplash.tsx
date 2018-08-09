@@ -1,12 +1,12 @@
 import * as React from "react";
-import { NavigationScreenProps } from "react-navigation";
+import { NavigationScreenProps, NavigationActions } from "react-navigation";
 import { Linking } from "react-native";
 import url from "url";
 
 import { Loading } from "../shared/Loading";
 import { RouteName, DEEPLINK_ROUTES } from "../shared/Navigation";
 
-type Props = NavigationScreenProps<{ defaultRoute: RouteName }>;
+type Props = { defaultRoute: RouteName } & NavigationScreenProps;
 
 export class LoadingSplash extends React.Component<Props> {
   constructor(props: Props) {
@@ -27,16 +27,24 @@ export class LoadingSplash extends React.Component<Props> {
             "/",
             ""
           ) as keyof typeof DEEPLINK_ROUTES;
-          this.props.navigation.replace(
-            DEEPLINK_ROUTES[pathname],
-            deeplinkUrl.query
+          this.props.navigation.navigate(
+            "App",
+            {},
+            NavigationActions.navigate({
+              routeName: DEEPLINK_ROUTES[pathname],
+              params: deeplinkUrl.query
+            })
           );
         } else {
-          const defaultRoute = this.props.navigation.getParam("defaultRoute");
+          const defaultRoute = this.props.defaultRoute;
           if (defaultRoute) {
-            this.props.navigation.replace(defaultRoute);
+            this.props.navigation.navigate(
+              "App",
+              {},
+              NavigationActions.navigate({ routeName: defaultRoute })
+            );
           } else {
-            console.error("No default route defined.");
+            console.error("No default route defined for LoadingSplash page.");
           }
         }
       })

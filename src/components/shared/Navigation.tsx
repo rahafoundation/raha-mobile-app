@@ -12,7 +12,9 @@ import {
   NavigationStateRoute,
   NavigationRoute,
   NavigationRouteConfigMap,
-  StackNavigatorConfig
+  StackNavigatorConfig,
+  createSwitchNavigator,
+  NavigationScreenProps
 } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
 
@@ -273,78 +275,100 @@ const ProfileTab = createTabNavigator(
   }
 );
 
-const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
+const SignedInNavigator = createSwitchNavigator(
   {
-    HomeTab,
-    DiscoverTab,
-    MintTab,
-    ProfileTab
+    [RouteName.LoadingSplash]: {
+      screen: (props: NavigationScreenProps) => (
+        <LoadingSplash {...props} defaultRoute={RouteName.DiscoverTab} />
+      ),
+      navigationOptions: { header: null }
+    },
+    App: createMaterialBottomTabNavigator(
+      {
+        HomeTab,
+        DiscoverTab,
+        MintTab,
+        ProfileTab
+      },
+      {
+        initialRouteName: RouteName.DiscoverTab,
+        labeled: false,
+        navigationOptions: ({ navigation }: any) => ({
+          tabBarIcon: ({ focused }: any) => {
+            const { routeName } = navigation.state;
+            let iconName;
+            let IconType = Icon;
+            switch (routeName) {
+              case RouteName.ProfileTab:
+                iconName = "account";
+                break;
+              case RouteName.HomeTab:
+                iconName = "home";
+                break;
+              case RouteName.MintTab:
+                iconName = "gift";
+                break;
+              case RouteName.DiscoverTab:
+                iconName = "ios-search";
+                IconType = Ionicons;
+                break;
+              default:
+                throw Error(`Unrecognized route ${routeName}`);
+            }
+            const isMint = routeName === RouteName.MintTab;
+            if (!focused && !isMint) {
+              iconName += "-outline";
+            }
+            return <IconType name={iconName} size={25} />;
+          },
+          headerStyle: {
+            backgroundColor: colors.lightBackground
+          },
+          labelStyle: {
+            color: colors.bodyText
+          },
+          tabBarColor: colors.lightAccent
+        })
+      }
+    )
   },
   {
-    initialRouteName: RouteName.DiscoverTab,
-    labeled: false,
-    navigationOptions: ({ navigation }: any) => ({
-      tabBarIcon: ({ focused }: any) => {
-        const { routeName } = navigation.state;
-        let iconName;
-        let IconType = Icon;
-        switch (routeName) {
-          case RouteName.ProfileTab:
-            iconName = "account";
-            break;
-          case RouteName.HomeTab:
-            iconName = "home";
-            break;
-          case RouteName.MintTab:
-            iconName = "gift";
-            break;
-          case RouteName.DiscoverTab:
-            iconName = "ios-search";
-            IconType = Ionicons;
-            break;
-          default:
-            throw Error(`Unrecognized route ${routeName}`);
-        }
-        const isMint = routeName === RouteName.MintTab;
-        if (!focused && !isMint) {
-          iconName += "-outline";
-        }
-        return <IconType name={iconName} size={25} />;
-      },
-      headerStyle: {
-        backgroundColor: colors.lightBackground
-      },
-      labelStyle: {
-        color: colors.bodyText
-      },
-      tabBarColor: colors.lightAccent
-    })
+    initialRouteName: RouteName.LoadingSplash
   }
 );
 
-const SignedOutNavigator = createStackNavigator(
+const SignedOutNavigator = createSwitchNavigator(
   {
     [RouteName.LoadingSplash]: {
-      screen: LoadingSplash,
+      screen: (props: NavigationScreenProps) => (
+        <LoadingSplash {...props} defaultRoute={RouteName.LogIn} />
+      ),
       navigationOptions: { header: null }
     },
-    Onboarding: {
-      screen: Onboarding,
-      navigationOptions: { header: null }
-    },
-    LogIn,
-    Profile
+    App: createStackNavigator(
+      {
+        Onboarding: {
+          screen: Onboarding,
+          navigationOptions: { header: null }
+        },
+        LogIn,
+        Profile
+      },
+      {
+        headerMode: "screen",
+        navigationOptions: {
+          headerTitle: (
+            <HeaderTitle title="Raha" subtitle="Basic Income Network" />
+          ),
+          headerStyle: {
+            backgroundColor: colors.darkBackground
+          }
+        }
+      }
+    )
   },
   {
-    headerMode: "screen",
-    initialRouteName: RouteName.LoadingSplash,
-    initialRouteParams: { defaultRoute: RouteName.LogIn },
-    navigationOptions: {
-      headerTitle: <HeaderTitle title="Raha" subtitle="Basic Income Network" />,
-      headerStyle: {
-        backgroundColor: colors.darkBackground
-      }
-    }
+    initialRouteName: RouteName.LoadingSplash
   }
 );
 
