@@ -236,7 +236,7 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
 
   if (operation.op_code === OperationType.MINT) {
     try {
-      const validBig = new Big(operation.data.amount);
+      new Big(operation.data.amount);
       return true;
     } catch (error) {
       return false;
@@ -245,9 +245,8 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
 
   if (operation.op_code === OperationType.GIVE) {
     try {
-      const validBig =
-        new Big(operation.data.amount) &&
-        new Big(operation.data.donation_amount);
+      new Big(operation.data.amount);
+      new Big(operation.data.donation_amount);
       return true;
     } catch (error) {
       return false;
@@ -312,23 +311,21 @@ function addMembersToState(
  * TODO (code cleanup): Avoid having to assert on id present for almost every operation type.
  */
 function applyOperation(
-  state: MembersState,
+  prevState: MembersState,
   operation: Operation
 ): MembersState {
   const { creator_uid, created_at } = operation;
 
   try {
     if (!operationIsRelevantAndValid(operation)) {
-      return state;
+      return prevState;
     }
     const createdAt = new Date(created_at);
-    const creator = state.byMemberId.get(
-      creator_uid
-    );
-    if (creator) { 
-      // For some operations types (CREATE_MEMBER, REQUEST_INVITE) the creator will not yet exist.
-      state = addMemberToState(state, creator.updateLastOpCreatedAt(createdAt));
-    }
+    const creator = prevState.byMemberId.get(creator_uid);
+    const newState = creator
+      ? addMemberToState(prevState, creator.updateLastOpCreatedAt(createdAt))
+      : prevState;
+
     switch (operation.op_code) {
       case OperationType.CREATE_MEMBER: {
         const {
@@ -339,7 +336,7 @@ function applyOperation(
 
         if (request_invite_from_member_id) {
           assertMemberIdPresentInState(
-            state,
+            newState,
             request_invite_from_member_id,
             operation
           );
@@ -358,41 +355,41 @@ function applyOperation(
             : {})
         };
 
-        assertMemberIdNotPresentInState(state, creator_uid, operation);
+        assertMemberIdNotPresentInState(newState, creator_uid, operation);
 
         const newMember = new Member(memberData);
 
-        return addMemberToState(state, newMember);
+        return addMemberToState(newState, newMember);
       }
       case OperationType.REQUEST_VERIFICATION: {
         const { to_uid } = operation.data;
 
-        assertMemberIdPresentInState(state, creator_uid, operation);
-        assertMemberIdPresentInState(state, to_uid, operation);
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        assertMemberIdPresentInState(newState, to_uid, operation);
 
-        const requester = (state.byMemberId.get(
+        const requester = (newState.byMemberId.get(
           creator_uid
         ) as Member).requestVerificationFromMember(to_uid);
-        const requestee = (state.byMemberId.get(
+        const requestee = (newState.byMemberId.get(
           to_uid
         ) as Member).beRequestedForVerificationBy(creator_uid);
 
-        return addMembersToState(state, [requester, requestee]);
+        return addMembersToState(newState, [requester, requestee]);
       }
       case OperationType.VERIFY: {
         const { to_uid } = operation.data;
 
-        assertMemberIdPresentInState(state, creator_uid, operation);
-        assertMemberIdPresentInState(state, to_uid, operation);
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        assertMemberIdPresentInState(newState, to_uid, operation);
 
-        const verifier = (state.byMemberId.get(
+        const verifier = (newState.byMemberId.get(
           creator_uid
         ) as Member).verifyMember(to_uid);
-        const verified = (state.byMemberId.get(
+        const verified = (newState.byMemberId.get(
           to_uid
         ) as Member).beVerifiedByMember(creator_uid);
 
-        return addMembersToState(state, [verifier, verified]);
+        return addMembersToState(newState, [verifier, verified]);
       }
       case OperationType.REQUEST_INVITE: {
         const { full_name, to_uid, username } = operation.data;
@@ -402,7 +399,6 @@ function applyOperation(
           username: username,
           fullName: full_name,
           createdAt: createdAt,
-          inviteConfirmed: false,
           lastMintedBasicIncomeAt: createdAt,
           lastOpCreatedAt: createdAt
         };
@@ -410,41 +406,46 @@ function applyOperation(
         // the initial users weren't invited by anyone; so no need to hook up any associations.
         if (GENESIS_REQUEST_INVITE_OPS.includes(operation.id)) {
           return addMemberToState(
-            state,
-            new Member({ ...memberData, invitedBy: GENESIS_MEMBER })
+            newState,
+            new Member({
+              ...memberData,
+              invitedBy: GENESIS_MEMBER,
+              inviteConfirmed: true
+            })
           );
         }
 
-        assertMemberIdPresentInState(state, to_uid, operation);
-        assertMemberIdNotPresentInState(state, creator_uid, operation);
+        assertMemberIdPresentInState(newState, to_uid, operation);
+        assertMemberIdNotPresentInState(newState, creator_uid, operation);
 
-        const inviter = (state.byMemberId.get(
+        const inviter = (newState.byMemberId.get(
           to_uid
         ) as Member).inviteMember(creator_uid);
         const inviteRequester = new Member({
           ...memberData,
-          invitedBy: to_uid
+          invitedBy: to_uid,
+          inviteConfirmed: false
         }).trustMember(to_uid);
-        return addMembersToState(state, [inviter, inviteRequester]);
+        return addMembersToState(newState, [inviter, inviteRequester]);
       }
       case OperationType.TRUST: {
         const { to_uid } = operation.data;
 
-        assertMemberIdPresentInState(state, creator_uid, operation);
-        assertMemberIdPresentInState(state, to_uid, operation);
-        const truster = (state.byMemberId.get(
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        assertMemberIdPresentInState(newState, to_uid, operation);
+        const truster = (newState.byMemberId.get(
           creator_uid
         ) as Member).trustMember(to_uid);
-        const trusted = (state.byMemberId.get(
+        const trusted = (newState.byMemberId.get(
           to_uid
         ) as Member).beTrustedByMember(creator_uid);
-        return addMembersToState(state, [truster, trusted]);
+        return addMembersToState(newState, [truster, trusted]);
       }
       case OperationType.MINT: {
         const { amount, type } = operation.data;
 
-        assertMemberIdPresentInState(state, creator_uid, operation);
-        const minter = (state.byMemberId.get(
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        const minter = (newState.byMemberId.get(
           creator_uid
         ) as Member).mintRaha(
           new Big(amount),
@@ -452,35 +453,35 @@ function applyOperation(
             ? new Date(operation.created_at)
             : undefined
         );
-        return addMembersToState(state, [minter]);
+        return addMembersToState(newState, [minter]);
       }
       case OperationType.GIVE: {
         const { to_uid, amount, donation_to, donation_amount } = operation.data;
 
-        assertMemberIdPresentInState(state, creator_uid, operation);
-        assertMemberIdPresentInState(state, to_uid, operation);
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        assertMemberIdPresentInState(newState, to_uid, operation);
         // TODO: Update donationRecipient state.
         // Currently we don't do this as RAHA isn't a normal member created via a REQUEST_INVITE operation.
         // Thus RAHA doesn't get added to the members state in the current paradigm.
 
-        const giver = (state.byMemberId.get(
-          creator_uid
-        ) as Member).giveRaha(new Big(amount).plus(donation_amount));
-        const recipient = (state.byMemberId.get(
+        const giver = (newState.byMemberId.get(creator_uid) as Member).giveRaha(
+          new Big(amount).plus(donation_amount)
+        );
+        const recipient = (newState.byMemberId.get(
           to_uid
         ) as Member).receiveRaha(new Big(amount), new Big(donation_amount));
 
-        return addMembersToState(state, [giver, recipient]);
+        return addMembersToState(newState, [giver, recipient]);
       }
       default:
-        return state;
+        return newState;
     }
   } catch (err) {
     if (err instanceof OperationInvalidError) {
       // TODO: [#log] do real logging
       // tslint:disable-next-line:no-console
       console.warn("Operation invalid", operation);
-      return state;
+      return prevState;
     }
     throw err;
   }

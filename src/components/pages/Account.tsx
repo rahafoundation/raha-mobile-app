@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { signOut } from "../../store/actions/authentication";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableHighlight } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 import { Member } from "../../store/reducers/members";
 import { RahaThunkDispatch, RahaState } from "../../store";
@@ -14,6 +14,7 @@ import {
 } from "../../store/selectors/members";
 import { MemberThumbnail } from "../shared/MemberThumbnail";
 import { fonts } from "../../helpers/fonts";
+import { RouteName } from '../shared/Navigation';
 
 const DAYS_TILL_INACTIVITY = 400;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -62,13 +63,13 @@ class AccountView extends React.Component<Props, State> {
   }
 
   render() {
-    const { signOut, trustedForRecovery, votingFor } = this.props;
+    const { navigation, signOut, trustedForRecovery, votingFor } = this.props;
     const { timeRemaining } = this.state;
     return (
       <ScrollView>
         <Text>
           After {<Text style={fonts.OpenSans.Bold}>{timeRemaining}</Text>}{" "}
-          without activity your account balance will be donated.
+          without minting or giving Raha your account balance will be donated.
         </Text>
         <Break />
         <Text>Your Raha Parliament vote goes to:</Text>
@@ -76,6 +77,10 @@ class AccountView extends React.Component<Props, State> {
         <Break />
         <Text>Trusted for account recovery:</Text>
         <MemberThumbnail member={trustedForRecovery} />
+        <Break />
+        <TouchableHighlight onPress={() => navigation.navigate(RouteName.PendingInvites)}>
+          <Text>View pending invites and flag fake accounts.</Text>
+        </TouchableHighlight>
         <Break />
         <Button title="Sign Out" onPress={signOut} />
       </ScrollView>
