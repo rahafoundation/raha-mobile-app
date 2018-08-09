@@ -7,6 +7,9 @@ PODS:
     - FirebaseAnalytics (= 5.0.1)
   - Firebase/CoreOnly (5.3.0):
     - FirebaseCore (= 5.0.4)
+  - Firebase/Messaging (5.3.0):
+    - Firebase/CoreOnly
+    - FirebaseMessaging (= 3.0.2)
   - Firebase/Storage (5.3.0):
     - Firebase/CoreOnly
     - FirebaseStorage (= 3.0.0)
@@ -22,6 +25,11 @@ PODS:
     - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
   - FirebaseInstanceID (3.1.1):
     - FirebaseCore (~> 5.0)
+  - FirebaseMessaging (3.0.2):
+    - FirebaseCore (~> 5.0)
+    - FirebaseInstanceID (~> 3.0)
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - Protobuf (~> 3.1)
   - FirebaseStorage (3.0.0):
     - FirebaseCore (~> 5.0)
     - GTMSessionFetcher/Core (~> 1.1)
@@ -49,6 +57,8 @@ PODS:
     - GoogleUtilities (~> 1.0)
   - GoogleSymbolUtilities (1.1.2)
   - GoogleToolboxForMac/Defines (2.1.4)
+  - GoogleToolboxForMac/Logger (2.1.4):
+    - GoogleToolboxForMac/Defines (= 2.1.4)
   - "GoogleToolboxForMac/NSData+zlib (2.1.4)":
     - GoogleToolboxForMac/Defines (= 2.1.4)
   - GoogleUtilities (1.3.2):
@@ -59,10 +69,12 @@ PODS:
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
+  - Protobuf (3.6.0)
 
 DEPENDENCIES:
   - Firebase/Auth (~> 5.3.0)
   - Firebase/Core (~> 5.3.0)
+  - Firebase/Messaging (~> 5.3.0)
   - Firebase/Storage (~> 5.3.0)
   - Google/SignIn
 
@@ -73,6 +85,7 @@ SPEC REPOS:
     - FirebaseAuth
     - FirebaseCore
     - FirebaseInstanceID
+    - FirebaseMessaging
     - FirebaseStorage
     - Google
     - GoogleAppUtilities
@@ -85,6 +98,7 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMSessionFetcher
     - nanopb
+    - Protobuf
 
 SPEC CHECKSUMS:
   Firebase: 68afeeb05461db02d7c9e3215cda28068670f4aa
@@ -92,6 +106,7 @@ SPEC CHECKSUMS:
   FirebaseAuth: 463b8ce33bd5d05f706dcd4615499e3212b4132b
   FirebaseCore: 62f1b792a49bb9e8b4073f24606d2c93ffc352f0
   FirebaseInstanceID: f3f0657372592ecdfdfe2cac604a5a75758376a6
+  FirebaseMessaging: 6894b8fe0a0cf26c3b13dad729f1131654ae0bdb
   FirebaseStorage: 7ca4bb7b58a25fa647b04f524033fc7cb7eb272b
   Google: d536877ec602555b755cc28ce6fed104825c693c
   GoogleAppUtilities: a8a552aa74f6597f805e45b5a3962766c3134973
@@ -104,7 +119,8 @@ SPEC CHECKSUMS:
   GoogleUtilities: 8bbc733218aad26306f9d4a253823986110e3358
   GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
+  Protobuf: 0fc0ad8bec688b2a3017a139953e01374fedbd5f
 
-PODFILE CHECKSUM: 6aa93285f8fd955a2d010d666f5ec37d9defa09a
+PODFILE CHECKSUM: 7575a7d4a4f1323b2ee82a81dfea34f690ddc24a
 
 COCOAPODS: 1.5.3
