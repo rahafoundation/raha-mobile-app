@@ -243,9 +243,9 @@ const MintTab = createTabNavigator(
   {
     Invite: {
       screen: Invite,
-      navigationOptions: ({ navigation }: any) => ({
+      navigationOptions: {
         header: null
-      })
+      }
     },
     Mint: {
       screen: Mint,
