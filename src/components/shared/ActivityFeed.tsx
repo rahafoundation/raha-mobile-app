@@ -6,14 +6,15 @@
 import * as React from "react";
 import { FlatList, StyleSheet, FlatListProps } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
-import { List } from "immutable";
+import { List, Map } from "immutable";
 
-import { Operation } from "@raha/api-shared/dist/models/Operation";
-import { OperationId } from "@raha/api-shared/dist/models/identifiers";
+import { Operation, OperationType } from "@raha/api-shared/dist/models/Operation";
+import { OperationId, MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 import { RahaState } from "../../store";
-import { ActivityItem } from "./ActivityItem/index";
+import { ActivityItem } from "./ActivityItem";
 import { ActivityTemplateView } from "./ActivityItem/ActivityTemplate";
+import { Member } from '../../store/reducers/members';
 
 interface StateProps {
   operations: List<Operation>;
@@ -25,6 +26,18 @@ interface OwnProps {
 }
 
 type ActivityFeedProps = OwnProps & StateProps;
+
+function isInviteConfirmed(membersById: Map<MemberId, Member>, memberId: MemberId): boolean {
+  const member = membersById.get(memberId);
+  return !!member && member.get("inviteConfirmed");
+}
+
+export function isUnconfirmedRequestInvite(membersById: Map<MemberId, Member>, operation: Operation): boolean {
+  if (operation.op_code !== OperationType.REQUEST_INVITE) {
+    return false;
+  }
+  return !isInviteConfirmed(membersById, operation.creator_uid);
+}
 
 export class ActivityFeedView extends React.Component<ActivityFeedProps> {
   activities: { [key in OperationId]?: ActivityTemplateView } = {};

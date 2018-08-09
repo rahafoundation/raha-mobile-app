@@ -23,12 +23,6 @@ import { fonts } from "../../helpers/fonts";
 
 const INTERNAL_ROUTE_PROTOCOL = "route:";
 
-export const DiscoverWebView: React.StatelessComponent = ({
-  navigation
-}: any) => {
-  return <WebView source={{ uri: navigation.getParam("uri") }} />;
-};
-
 type DiscoverCardRaw = {
   header?: string;
   bodyChoices: string[];
@@ -46,7 +40,7 @@ type DiscoverCard = {
 function convertUriToCallback(uri: string) {
   if (uri.startsWith("https:")) {
     return (navigation: NavigationScreenProp<{}>) => {
-      navigation.navigate(RouteName.DiscoverWebView, { uri });
+      Linking.openURL(uri);
     };
   }
   if (uri.startsWith("mailto:")) {

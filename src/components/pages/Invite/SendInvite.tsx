@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
+import { View, StyleSheet, Dimensions } from "react-native";
 import validator from "validator";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
@@ -12,6 +13,7 @@ import {
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { Text, Button, TextInput } from "../../shared/elements";
+import { colors } from "../../../helpers/colors";
 
 type ReduxStateProps = {
   sendInviteStatus?: ApiCallStatus;
@@ -19,6 +21,9 @@ type ReduxStateProps = {
 
 type OwnProps = {
   videoToken: string;
+  isJointVideo: boolean;
+  onBack: () => void;
+  onExit: () => void;
 };
 
 type SendInviteState = {
@@ -28,7 +33,11 @@ type SendInviteState = {
 
 type SendInviteProps = OwnProps &
   ReduxStateProps & {
-    sendInvite: (email: string, videoToken: string) => void;
+    sendInvite: (
+      email: string,
+      videoToken: string,
+      isJointVideo: boolean
+    ) => void;
   };
 
 class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
@@ -45,7 +54,11 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
       this.setState({ enteredInvalidEmail: true });
       return;
     }
-    this.props.sendInvite(enteredEmail, this.props.videoToken);
+    this.props.sendInvite(
+      enteredEmail,
+      this.props.videoToken,
+      this.props.isJointVideo
+    );
   };
 
   private _renderSendingStatus = () => {
@@ -54,11 +67,20 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
       : undefined;
     switch (statusType) {
       case ApiCallStatusType.STARTED:
-        return <Text>Sending invite...</Text>;
+        return <Text style={styles.text}>Sending invite...</Text>;
       case ApiCallStatusType.SUCCESS:
-        return <Text>Invite successful!</Text>;
+        return (
+          <React.Fragment>
+            <Text style={styles.text}>Invite successful!</Text>
+            <Button
+              style={styles.button}
+              title="Return"
+              onPress={this.props.onExit}
+            />
+          </React.Fragment>
+        );
       case ApiCallStatusType.FAILURE:
-        return <Text>Invite failed.</Text>;
+        return <Text style={styles.text}>Invite failed.</Text>;
       default:
         return undefined;
     }
@@ -73,29 +95,33 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
       (status === ApiCallStatusType.STARTED ||
         status === ApiCallStatusType.SUCCESS);
     return (
-      <React.Fragment>
-        <TextInput
-          style={{ fontSize: 18, marginTop: 24, textAlign: "center" }}
-          placeholder="What's your friend's email?"
-          onChangeText={text => {
-            this.setState({
-              email: text.trim(),
-              enteredInvalidEmail: false
-            });
-          }}
-        />
-        {this.state.enteredInvalidEmail && (
-          <Text>Please enter a valid email.</Text>
-        )}
-        {
+      <View style={styles.container}>
+        <Text style={styles.back} onPress={this.props.onBack}>
+          Back
+        </Text>
+        <View style={styles.card}>
+          <TextInput
+            style={{ fontSize: 18, marginTop: 24, textAlign: "center" }}
+            placeholder="What's your friend's email?"
+            onChangeText={text => {
+              this.setState({
+                email: text.trim(),
+                enteredInvalidEmail: false
+              });
+            }}
+          />
+          {this.state.enteredInvalidEmail && (
+            <Text style={styles.text}>Please enter a valid email.</Text>
+          )}
           <Button
             title="Invite"
             onPress={this.sendInvite}
             disabled={isRequestSendingOrSent}
+            style={styles.button}
           />
-        }
-        {this._renderSendingStatus()}
-      </React.Fragment>
+          {this._renderSendingStatus()}
+        </View>
+      </View>
     );
   }
 }
@@ -118,3 +144,34 @@ export const SendInvite = connect(
   mapStateToProps,
   { sendInvite }
 )(SendInviteView);
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.darkBackground,
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  card: {
+    backgroundColor: colors.lightBackground,
+    width: Dimensions.get("window").width - 24,
+    padding: 12,
+    borderRadius: 12
+  },
+  text: {
+    fontSize: 18,
+    marginVertical: 4,
+    marginHorizontal: 40,
+    textAlign: "center"
+  },
+  button: {
+    margin: 12
+  },
+  back: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    margin: 12
+  }
+});

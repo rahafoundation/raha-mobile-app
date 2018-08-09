@@ -21,6 +21,7 @@ import { Give as GiveScreen } from "../pages/Give";
 import { Home } from "../pages/Home";
 import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
+import { PendingInvites } from "../pages/PendingInvites";
 import { Profile as ProfileScreen } from "../pages/Profile";
 import { getMemberById } from "../../../src/store/selectors/members";
 import { RahaState } from "../../../src/store";
@@ -29,7 +30,7 @@ import { Onboarding } from "../pages/Onboarding/Onboarding";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button, Text } from "../shared/elements";
-import { Discover, DiscoverWebView } from "../pages/Discover";
+import { Discover } from "../pages/Discover";
 import { LeaderBoard } from "../pages/LeaderBoard";
 import { Invite } from "../pages/Invite/Invite";
 import { Account } from "../pages/Account";
@@ -90,11 +91,11 @@ export enum RouteName {
   ProfileTab = "ProfileTab",
   Discover = "Discover",
   DiscoverTab = "DiscoverTab",
-  DiscoverWebView = "DiscoverWebView",
   LeaderBoard = "LeaderBoard",
   Mint = "Mint",
   MintTab = "MintTab",
-  ReferralBonus = "ReferralBonus"
+  ReferralBonus = "ReferralBonus",
+  PendingInvites = "PendingInvites"
 }
 
 const DEEPLINK_ROUTES = {
@@ -203,17 +204,21 @@ export function createTabNavigator(
   );
 }
 
+function createHeaderNavigationOptions(title: string) {
+  return ({ navigation }: any) => ({
+    headerTitle: <HeaderTitle title={title} />,
+    headerRight: giveButton(navigation),
+    headerStyle: {
+      backgroundColor: colors.darkAccent
+    }
+  });
+}
+
 const HomeTab = createTabNavigator(
   {
     Home: {
       screen: Home,
-      navigationOptions: ({ navigation }: any) => ({
-        headerTitle: <HeaderTitle title="Raha" />,
-        headerRight: giveButton(navigation),
-        headerStyle: {
-          backgroundColor: colors.darkAccent
-        }
-      })
+      navigationOptions: createHeaderNavigationOptions("Raha")
     }
   },
   {
@@ -225,15 +230,8 @@ const DiscoverTab = createTabNavigator(
   {
     Discover: {
       screen: Discover,
-      navigationOptions: ({ navigation }: any) => ({
-        headerTitle: <HeaderTitle title="Discover" />,
-        headerRight: giveButton(navigation),
-        headerStyle: {
-          backgroundColor: colors.darkAccent
-        }
-      })
+      navigationOptions: createHeaderNavigationOptions("Discover")
     },
-    DiscoverWebView,
     LeaderBoard
   },
   {
@@ -245,52 +243,29 @@ const MintTab = createTabNavigator(
   {
     Invite: {
       screen: Invite,
-      navigationOptions: ({ navigation }: any) => ({
-        headerTitle: <HeaderTitle title="Invite" />,
-        headerRight: giveButton(navigation),
-        headerStyle: {
-          backgroundColor: colors.darkAccent
-        }
-      })
+      navigationOptions: {
+        header: null
+      }
     },
     Mint: {
       screen: Mint,
-      navigationOptions: ({ navigation }: any) => ({
-        headerTitle: <HeaderTitle title="Mint Raha" />,
-        headerRight: giveButton(navigation),
-        headerStyle: {
-          backgroundColor: colors.darkAccent
-        }
-      })
+      navigationOptions: createHeaderNavigationOptions("Mint Raha")
     },
     ReferralBonus: {
       screen: ReferralBonus,
-      navigationOptions: ({ navigation }: any) => ({
-        headerTitle: <HeaderTitle title="Bonus Mint" />,
-        headerRight: giveButton(navigation),
-        headerStyle: {
-          backgroundColor: colors.darkAccent
-        }
-      })
+      navigationOptions: createHeaderNavigationOptions("Bonus Mint")
     }
   },
   {
     initialRouteName: RouteName.Mint,
-    navigationOptions: ({ navigation }: any) => ({
-      headerTitle: <HeaderTitle title="Discover" />,
-      headerRight: giveButton(navigation),
-      headerStyle: {
-        backgroundColor: colors.darkAccent
-      }
-    })
+    navigationOptions: createHeaderNavigationOptions("Discover")
   }
 );
 
 const ProfileTab = createTabNavigator(
   {
-    Account: {
-      screen: Account
-    }
+    Account,
+    PendingInvites
   },
   {
     initialRouteName: RouteName.Profile
@@ -350,9 +325,7 @@ const SignedOutNavigator = createStackNavigator(
   {
     Onboarding: {
       screen: Onboarding,
-      navigationOptions: {
-        header: null
-      }
+      navigationOptions: { header: null }
     },
     LogIn,
     Profile

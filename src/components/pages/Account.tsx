@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { signOut } from "../../store/actions/authentication";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableHighlight } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 import { Member } from "../../store/reducers/members";
 import { RahaThunkDispatch, RahaState } from "../../store";
@@ -14,6 +14,7 @@ import {
 } from "../../store/selectors/members";
 import { MemberThumbnail } from "../shared/MemberThumbnail";
 import { fonts } from "../../helpers/fonts";
+import { RouteName } from '../shared/Navigation';
 
 const DAYS_TILL_INACTIVITY = 400;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -56,19 +57,19 @@ class AccountView extends React.Component<Props, State> {
     // TODO make a RED countdown with finer granularity than 1 day
     // if you're within a month of being marked inactive, call
     // updateTimeRemaining on setInterval.
-    const sinceLastMintMilli =
-      Date.now() - this.props.loggedInMember.get("lastMinted").getTime();
-    return `${400 - Math.round(sinceLastMintMilli / MS_PER_DAY)} days`;
+    const sinceLastOperationMilli =
+      Date.now() - this.props.loggedInMember.get("lastOpCreatedAt").getTime();
+    return `${DAYS_TILL_INACTIVITY - Math.round(sinceLastOperationMilli / MS_PER_DAY)} days`;
   }
 
   render() {
-    const { signOut, trustedForRecovery, votingFor } = this.props;
+    const { navigation, signOut, trustedForRecovery, votingFor } = this.props;
     const { timeRemaining } = this.state;
     return (
       <ScrollView>
         <Text>
           After {<Text style={fonts.OpenSans.Bold}>{timeRemaining}</Text>}{" "}
-          without activity your account balance will be donated.
+          without minting or giving Raha your account balance will be donated.
         </Text>
         <Break />
         <Text>Your Raha Parliament vote goes to:</Text>
@@ -76,6 +77,10 @@ class AccountView extends React.Component<Props, State> {
         <Break />
         <Text>Trusted for account recovery:</Text>
         <MemberThumbnail member={trustedForRecovery} />
+        <Break />
+        <TouchableHighlight onPress={() => navigation.navigate(RouteName.PendingInvites)}>
+          <Text>View pending invites and flag fake accounts.</Text>
+        </TouchableHighlight>
         <Break />
         <Button title="Sign Out" onPress={signOut} />
       </ScrollView>
@@ -113,7 +118,10 @@ const mapStateToProps: MapStateToProps<
   );
   // TODO this should be a set of people you have explicitly trusted to help recover your account
   const trustedForRecoveryIndex = ancestorsArray.length > 1 ? 1 : 0;
-  const trustedForRecovery = getValidMemberById(state, ancestorsArray[trustedForRecoveryIndex]);
+  const trustedForRecovery = getValidMemberById(
+    state,
+    ancestorsArray[trustedForRecoveryIndex]
+  );
   // TODO need ability to change your vote.
   const votingFor = getValidMemberById(
     state,

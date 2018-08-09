@@ -8,7 +8,7 @@ console.ignoredYellowBox = ["Setting a timer"];
 
 import * as React from "react";
 import { RNFirebase } from "react-native-firebase";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import { VideoPlayer } from "react-native-video-processing";
 
 import { Button, Text } from "../../shared/elements";
@@ -23,6 +23,7 @@ type VideoPreviewProps = {
   onVideoUploaded: (videoDownloadUrl: string) => any;
   onError: (errorType: string, errorMessage: string) => any;
   onRetakeClicked: () => any;
+  fullScreen: boolean;
 };
 
 type VideoStateProps = {
@@ -110,7 +111,13 @@ export class VideoPreview extends React.Component<
   renderButtonsOrStatus() {
     if (this.state.uploadStatus === UploadStatus.NOT_STARTED) {
       return (
-        <React.Fragment>
+        <View style={styles.actionRow}>
+          <Button
+            title="Retake"
+            onPress={() => {
+              this.props.onRetakeClicked();
+            }}
+          />
           {this.props.videoUri && (
             <Button
               title="Upload Video"
@@ -119,24 +126,18 @@ export class VideoPreview extends React.Component<
               }}
             />
           )}
-          <Button
-            title="Retake"
-            onPress={() => {
-              this.props.onRetakeClicked();
-            }}
-          />
-        </React.Fragment>
+        </View>
       );
     } else {
       return (
-        <React.Fragment>
+        <View style={styles.actionRow}>
           {this.state.uploadStatus === UploadStatus.UPLOADING && (
             <Text>Uploading...</Text>
           )}
           {this.state.uploadStatus === UploadStatus.UPLOADED && (
             <Text>Upload success!</Text>
           )}
-        </React.Fragment>
+        </View>
       );
     }
   }
@@ -146,7 +147,10 @@ export class VideoPreview extends React.Component<
     return (
       videoUri && (
         <VideoPlayer
-          style={styles.video}
+          style={[
+            styles.video,
+            this.props.fullScreen ? {} : styles.videoWithHeaderAndNavBar
+          ]}
           ref={(ref: any) => (this.videoPlayerRef = ref)}
           play={true}
           replay={true}
@@ -169,10 +173,22 @@ export class VideoPreview extends React.Component<
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-around"
   },
   video: {
     width: "100%",
     aspectRatio: 3 / 4
+  },
+  videoWithHeaderAndNavBar: {
+    maxHeight: Dimensions.get("window").height - 200
+  },
+  actionRow: {
+    height: 75,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center"
   }
 });
