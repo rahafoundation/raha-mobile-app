@@ -62,10 +62,7 @@ type OnboardingState = {
   videoDownloadUrl?: string;
 };
 
-export class OnboardingView extends React.Component<
-  OnboardingProps,
-  OnboardingState
-> {
+class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   dropdown: any;
   steps: OnboardingStep[];
   deeplinkInitialized: boolean;

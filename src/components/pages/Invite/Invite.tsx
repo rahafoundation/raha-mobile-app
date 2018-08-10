@@ -44,7 +44,7 @@ type InviteState = {
   videoDownloadUrl?: string;
 };
 
-export class InviteView extends React.Component<InviteProps, InviteState> {
+class InviteView extends React.Component<InviteProps, InviteState> {
   inviteToken: string;
   videoUploadRef: RNFirebase.storage.Reference;
   dropdown: any;
