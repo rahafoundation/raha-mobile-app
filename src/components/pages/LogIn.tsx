@@ -46,6 +46,7 @@ import { Map } from "immutable";
 import { TextInput } from "../shared/elements/TextInput";
 import { fonts } from "../../helpers/fonts";
 import { colors } from "../../helpers/colors";
+import { Loading } from "../shared/Loading";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 const countries = getAllCountries().reduce<Map<string, Country>>(
@@ -218,12 +219,15 @@ interface ConfirmationCodeFormProps {
   onTriggerResend: () => void;
   signOut: () => void;
   waitingForConfirmation: boolean;
-  sentTime: Date;
+  sentTime?: Date;
 }
 
 interface ConfirmationCodeFormState {
   confirmationCode: string;
-  timeLeft: number;
+  // timeLeft may not be present briefly between when the component first gets
+  // mounted, and the time to count down is calculated in the parent (see
+  // `LogInView::componentDidUpdate`).
+  timeLeft?: number;
 }
 
 const RESEND_DELAY_SECONDS = 30;
@@ -272,6 +276,11 @@ class ConfirmationCodeForm extends React.Component<
   }
 
   _calculateTimeLeft = () => {
+    if (!this.props.sentTime) {
+      this.setState({ timeLeft: undefined });
+      return undefined;
+    }
+
     // this is in seconds
     const timeElapsed = Math.floor(
       (Date.now() - this.props.sentTime.getTime()) / 1000
@@ -310,9 +319,11 @@ class ConfirmationCodeForm extends React.Component<
           <Button
             style={styles.resendButton}
             title={
-              this.state.timeLeft === 0
-                ? "Resend code"
-                : `Resend in ${this.state.timeLeft}s`
+              this.state.timeLeft
+                ? this.state.timeLeft === 0
+                  ? "Resend code"
+                  : `Resend in ${this.state.timeLeft}s`
+                : "Loading..."
             }
             onPress={this.props.onTriggerResend}
             disabled={this.state.timeLeft !== 0}
@@ -456,7 +467,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
             }}
             // defensively set sentTime to the current time if it wasn't set,
             // which may briefly happen between state updates
-            sentTime={this.state.phoneNumberSentTime || new Date()}
+            sentTime={this.state.phoneNumberSentTime}
             waitingForConfirmation={
               !!this.props.phoneLogInStatus &&
               this.props.phoneLogInStatus.status ===
