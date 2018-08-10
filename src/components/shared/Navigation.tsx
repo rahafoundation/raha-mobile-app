@@ -383,25 +383,13 @@ type StateProps = {
 type Props = OwnProps & StateProps;
 
 class NavigationView extends React.Component<Props> {
-  navigator: any;
-
   render() {
     const { hasAccount } = this.props;
 
     if (hasAccount) {
-      return (
-        <SignedInNavigator
-          ref={(navigator: any) => (this.navigator = navigator)}
-          onNavigationStateChange={trackPageChanges}
-        />
-      );
+      return <SignedInNavigator onNavigationStateChange={trackPageChanges} />;
     } else {
-      return (
-        <SignedOutNavigator
-          ref={(navigator: any) => (this.navigator = navigator)}
-          onNavigationStateChange={trackPageChanges}
-        />
-      );
+      return <SignedOutNavigator onNavigationStateChange={trackPageChanges} />;
     }
   }
 }
