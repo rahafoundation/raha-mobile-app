@@ -18,9 +18,10 @@ import { OnboardingCamera } from "./OnboardingCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
 import { OnboardingCreateAccount } from "./OnboardingCreateAccount";
 import { getMemberByUsername } from "../../../store/selectors/members";
-import { Loading } from "../../shared/Loading";
 import { Text } from "../../shared/elements";
 import { LogIn } from "../LogIn";
+import { RouteName } from "../../shared/Navigation";
+import { Loading } from "../../shared/Loading";
 
 /**
  * Parent component for Onboarding flow.
@@ -212,15 +213,12 @@ export class OnboardingView extends React.Component<
 
   _renderOnboardingStep() {
     if (!this.props.isLoggedIn) {
-      return (
-        <React.Fragment>
-          <Text style={{ textAlign: "center" }}>
-            Welcome to Raha! Please sign up with your mobile number to accept
-            your invite.
-          </Text>
-          <LogIn navigation={this.props.navigation} />
-        </React.Fragment>
-      );
+      this.props.navigation.replace(RouteName.LogIn, {
+        redirectTo: RouteName.Onboarding,
+        loginMessage:
+          "Welcome to Raha! Please sign up with your\nmobile number to accept your invite."
+      });
+      return <Loading />;
     }
 
     switch (this.state.step) {

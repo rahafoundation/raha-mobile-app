@@ -14,8 +14,8 @@ import {
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
 import {
-  NavigationScreenProp,
-  NavigationEventSubscription
+  NavigationEventSubscription,
+  NavigationScreenProps
 } from "react-navigation";
 import CountryPicker, {
   getAllCountries,
@@ -54,7 +54,7 @@ const countries = getAllCountries().reduce<Map<string, Country>>(
 );
 
 type OwnProps = {
-  navigation: NavigationScreenProp<{}>;
+  loginMessage?: string;
 };
 
 type StateProps = {
@@ -70,7 +70,10 @@ interface DispatchProps {
   signOut: () => void;
 }
 
-type LogInProps = OwnProps & StateProps & DispatchProps;
+type LogInProps = OwnProps &
+  StateProps &
+  DispatchProps &
+  NavigationScreenProps<{ redirectTo?: RouteName; loginMessage?: string }>;
 
 interface LogInState {
   phoneNumber?: string;
@@ -388,6 +391,15 @@ class LogInView extends React.Component<LogInProps, LogInState> {
     if (!this.props.isLoggedIn) {
       return;
     }
+
+    const redirectTo = this.props.navigation.getParam("redirectTo");
+    if (redirectTo) {
+      this.props.navigation.navigate(
+        redirectTo,
+        this.props.navigation.state.params
+      );
+      return;
+    }
     if (this.props.hasAccount) {
       this.props.navigation.navigate(RouteName.Home);
       return;
@@ -464,6 +476,8 @@ class LogInView extends React.Component<LogInProps, LogInState> {
   };
 
   render() {
+    const loginMessage =
+      this.props.loginMessage || this.props.navigation.getParam("loginMessage");
     return (
       <Container style={styles.container}>
         <Image
@@ -472,9 +486,13 @@ class LogInView extends React.Component<LogInProps, LogInState> {
           source={require("../../assets/img/Welcome.png")}
         />
         <View style={styles.body}>
-          <Text style={styles.message}>
-            {"Help create an economy where\nevery life has value!"}
-          </Text>
+          {loginMessage ? (
+            <Text style={styles.message}>{loginMessage}</Text>
+          ) : (
+            <Text style={styles.message}>
+              {"Help create an economy where\nevery life has value!"}
+            </Text>
+          )}
           {this._renderContents()}
         </View>
         <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />

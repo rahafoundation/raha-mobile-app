@@ -1,6 +1,6 @@
 import "es6-symbol/implement";
 import * as React from "react";
-import { TouchableOpacity, StyleSheet, Linking, TextStyle } from "react-native";
+import { TouchableOpacity, StyleSheet, TextStyle } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
@@ -12,7 +12,9 @@ import {
   NavigationStateRoute,
   NavigationRoute,
   NavigationRouteConfigMap,
-  StackNavigatorConfig
+  StackNavigatorConfig,
+  createSwitchNavigator,
+  NavigationScreenProps
 } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
 
@@ -36,7 +38,7 @@ import { Invite } from "../pages/Invite/Invite";
 import { Account } from "../pages/Account";
 import { colors } from "../../helpers/colors";
 import { fonts } from "../../helpers/fonts";
-import url from "url";
+import { InitializationRouter } from "../pages/InitializationRouter";
 
 /**
  * Gets the current screen from navigation state.
@@ -78,6 +80,7 @@ function trackPageChanges(
 }
 
 export enum RouteName {
+  InitializationRouter = "InitializationRouter",
   Account = "Account",
   Give = "Give",
   Home = "Home",
@@ -98,7 +101,7 @@ export enum RouteName {
   PendingInvites = "PendingInvites"
 }
 
-const DEEPLINK_ROUTES = {
+export const DEEPLINK_ROUTES = {
   invite: RouteName.Onboarding
 };
 
@@ -272,73 +275,100 @@ const ProfileTab = createTabNavigator(
   }
 );
 
-const SignedInNavigator: NavigationContainer = createMaterialBottomTabNavigator(
+const SignedInNavigator = createSwitchNavigator(
   {
-    HomeTab,
-    DiscoverTab,
-    MintTab,
-    ProfileTab
+    [RouteName.InitializationRouter]: {
+      screen: (props: NavigationScreenProps) => (
+        <InitializationRouter {...props} defaultRoute={RouteName.DiscoverTab} />
+      ),
+      navigationOptions: { header: null }
+    },
+    App: createMaterialBottomTabNavigator(
+      {
+        HomeTab,
+        DiscoverTab,
+        MintTab,
+        ProfileTab
+      },
+      {
+        initialRouteName: RouteName.DiscoverTab,
+        labeled: false,
+        navigationOptions: ({ navigation }: any) => ({
+          tabBarIcon: ({ focused }: any) => {
+            const { routeName } = navigation.state;
+            let iconName;
+            let IconType = Icon;
+            switch (routeName) {
+              case RouteName.ProfileTab:
+                iconName = "account";
+                break;
+              case RouteName.HomeTab:
+                iconName = "home";
+                break;
+              case RouteName.MintTab:
+                iconName = "gift";
+                break;
+              case RouteName.DiscoverTab:
+                iconName = "ios-search";
+                IconType = Ionicons;
+                break;
+              default:
+                throw Error(`Unrecognized route ${routeName}`);
+            }
+            const isMint = routeName === RouteName.MintTab;
+            if (!focused && !isMint) {
+              iconName += "-outline";
+            }
+            return <IconType name={iconName} size={25} />;
+          },
+          headerStyle: {
+            backgroundColor: colors.lightBackground
+          },
+          labelStyle: {
+            color: colors.bodyText
+          },
+          tabBarColor: colors.lightAccent
+        })
+      }
+    )
   },
   {
-    initialRouteName: RouteName.DiscoverTab,
-    labeled: false,
-    navigationOptions: ({ navigation }: any) => ({
-      tabBarIcon: ({ focused }: any) => {
-        const { routeName } = navigation.state;
-        let iconName;
-        let IconType = Icon;
-        switch (routeName) {
-          case RouteName.ProfileTab:
-            iconName = "account";
-            break;
-          case RouteName.HomeTab:
-            iconName = "home";
-            break;
-          case RouteName.MintTab:
-            iconName = "gift";
-            break;
-          case RouteName.DiscoverTab:
-            iconName = "ios-search";
-            IconType = Ionicons;
-            break;
-          default:
-            throw Error(`Unrecognized route ${routeName}`);
-        }
-        const isMint = routeName === RouteName.MintTab;
-        if (!focused && !isMint) {
-          iconName += "-outline";
-        }
-        return <IconType name={iconName} size={25} />;
-      },
-      headerStyle: {
-        backgroundColor: colors.lightBackground
-      },
-      labelStyle: {
-        color: colors.bodyText
-      },
-      tabBarColor: colors.lightAccent
-    })
+    initialRouteName: RouteName.InitializationRouter
   }
 );
 
-const SignedOutNavigator = createStackNavigator(
+const SignedOutNavigator = createSwitchNavigator(
   {
-    Onboarding: {
-      screen: Onboarding,
+    [RouteName.InitializationRouter]: {
+      screen: (props: NavigationScreenProps) => (
+        <InitializationRouter {...props} defaultRoute={RouteName.LogIn} />
+      ),
       navigationOptions: { header: null }
     },
-    LogIn,
-    Profile
+    App: createStackNavigator(
+      {
+        Onboarding: {
+          screen: Onboarding,
+          navigationOptions: { header: null }
+        },
+        LogIn,
+        Profile
+      },
+      {
+        headerMode: "screen",
+        navigationOptions: {
+          headerTitle: (
+            <HeaderTitle title="Raha" subtitle="Basic Income Network" />
+          ),
+          headerStyle: {
+            backgroundColor: colors.darkBackground
+          }
+        }
+      }
+    )
   },
   {
-    headerMode: "screen",
-    initialRouteName: RouteName.LogIn,
-    navigationOptions: {
-      headerTitle: <HeaderTitle title="Raha" subtitle="Basic Income Network" />,
-      headerStyle: {
-        backgroundColor: colors.darkBackground
-      }
-    }
+    initialRouteName: RouteName.InitializationRouter
   }
 );
 
@@ -353,50 +383,13 @@ type StateProps = {
 type Props = OwnProps & StateProps;
 
 class NavigationView extends React.Component<Props> {
-  navigator: any;
-
-  componentDidMount() {
-    // Process deeplink -- we don't use react-navigation for this since it
-    // doesn't support HTTPS links.
-    Linking.getInitialURL()
-      .then(link => {
-        if (link) {
-          const deeplinkUrl = url.parse(link, true, true);
-          if (!deeplinkUrl.pathname) {
-            return;
-          }
-          const pathname = deeplinkUrl.pathname.replace(
-            "/",
-            ""
-          ) as keyof typeof DEEPLINK_ROUTES;
-          this.navigator._navigation.navigate(
-            DEEPLINK_ROUTES[pathname],
-            deeplinkUrl.query
-          );
-        }
-      })
-      .catch(err =>
-        console.error("An error occurred while deep linking:", err)
-      );
-  }
-
   render() {
     const { hasAccount } = this.props;
 
     if (hasAccount) {
-      return (
-        <SignedInNavigator
-          ref={(navigator: any) => (this.navigator = navigator)}
-          onNavigationStateChange={trackPageChanges}
-        />
-      );
+      return <SignedInNavigator onNavigationStateChange={trackPageChanges} />;
     } else {
-      return (
-        <SignedOutNavigator
-          ref={(navigator: any) => (this.navigator = navigator)}
-          onNavigationStateChange={trackPageChanges}
-        />
-      );
+      return <SignedOutNavigator onNavigationStateChange={trackPageChanges} />;
     }
   }
 }
