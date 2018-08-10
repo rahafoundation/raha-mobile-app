@@ -8,7 +8,7 @@ import { RouteName, DEEPLINK_ROUTES } from "../shared/Navigation";
 
 type Props = { defaultRoute: RouteName } & NavigationScreenProps;
 
-export class LoadingSplash extends React.Component<Props> {
+export class InitializationRouter extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }

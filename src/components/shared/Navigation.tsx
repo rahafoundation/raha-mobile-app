@@ -38,7 +38,7 @@ import { Invite } from "../pages/Invite/Invite";
 import { Account } from "../pages/Account";
 import { colors } from "../../helpers/colors";
 import { fonts } from "../../helpers/fonts";
-import { LoadingSplash } from "../pages/LoadingSplash";
+import { InitializationRouter } from "../pages/InitializationRouter";
 
 /**
  * Gets the current screen from navigation state.
@@ -80,7 +80,7 @@ function trackPageChanges(
 }
 
 export enum RouteName {
-  LoadingSplash = "LoadingSplash",
+  InitializationRouter = "InitializationRouter",
   Account = "Account",
   Give = "Give",
   Home = "Home",
@@ -277,9 +277,9 @@ const ProfileTab = createTabNavigator(
 
 const SignedInNavigator = createSwitchNavigator(
   {
-    [RouteName.LoadingSplash]: {
+    [RouteName.InitializationRouter]: {
       screen: (props: NavigationScreenProps) => (
-        <LoadingSplash {...props} defaultRoute={RouteName.DiscoverTab} />
+        <InitializationRouter {...props} defaultRoute={RouteName.DiscoverTab} />
       ),
       navigationOptions: { header: null }
     },
@@ -333,15 +333,15 @@ const SignedInNavigator = createSwitchNavigator(
     )
   },
   {
-    initialRouteName: RouteName.LoadingSplash
+    initialRouteName: RouteName.InitializationRouter
   }
 );
 
 const SignedOutNavigator = createSwitchNavigator(
   {
-    [RouteName.LoadingSplash]: {
+    [RouteName.InitializationRouter]: {
       screen: (props: NavigationScreenProps) => (
-        <LoadingSplash {...props} defaultRoute={RouteName.LogIn} />
+        <InitializationRouter {...props} defaultRoute={RouteName.LogIn} />
       ),
       navigationOptions: { header: null }
     },
@@ -368,7 +368,7 @@ const SignedOutNavigator = createSwitchNavigator(
     )
   },
   {
-    initialRouteName: RouteName.LoadingSplash
+    initialRouteName: RouteName.InitializationRouter
   }
 );
 
