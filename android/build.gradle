@@ -3,7 +3,10 @@
 buildscript {
     repositories {
         jcenter()
-        google()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.0'
@@ -22,7 +25,10 @@ allprojects {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url "$rootDir/../node_modules/react-native/android"
         }
-        maven { url 'https://maven.google.com' }
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
     configurations.all {
         // forgot why I did this, some dependency version mismatches.
@@ -31,4 +37,12 @@ allprojects {
         // play services for vision, which doesn't matter to this project
         resolutionStrategy.force "com.google.android.gms:play-services-base:15.0.1"
     }
+}
+
+ext {
+    buildToolsVersion = "26.0.3"
+    minSdkVersion = 16
+    compileSdkVersion = 26
+    targetSdkVersion = 26
+    supportLibVersion = "26.1.0"
 }
