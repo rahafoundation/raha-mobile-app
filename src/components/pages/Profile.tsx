@@ -42,8 +42,8 @@ interface NavParams {
 type OwnProps = NavigationScreenProps<NavParams>;
 
 type StateProps = {
-  member: Member;
   loggedInMember?: Member;
+  member: Member;
   isOwnProfile: boolean;
   activities: Activity[];
 };
@@ -121,6 +121,9 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
   const alreadyTrusted =
     loggedInMember &&
     member.get("trustedBy").includes(loggedInMember.get("memberId"));
+  const alreadyVerified =
+    loggedInMember &&
+    member.get("verifiedBy").includes(loggedInMember.get("memberId"));
   return (
     <Container>
       <ActivityFeed
@@ -149,6 +152,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
                           toMemberId: member.get("memberId")
                         })
                       }
+                      disabled={alreadyVerified}
                     />
                     <Button
                       title={currencySymbol(CurrencyType.Raha)}
