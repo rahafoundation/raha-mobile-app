@@ -42,10 +42,10 @@ const styles = StyleSheet.create({
   },
   memo: {
     color: palette.mediumGray,
-    ...fonts.OpenSans.Italic
+    ...fonts.Lato.Italic
   },
   name: {
-    ...fonts.Vollkorn.SemiBold
+    ...fonts.Lato.SemiBold
   },
   amount: {
     color: colors.positive

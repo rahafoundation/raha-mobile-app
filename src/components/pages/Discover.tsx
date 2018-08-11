@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     marginBottom: 6,
-    ...fonts.Vollkorn.SemiBold
+    ...fonts.Lato.SemiBold
   },
   bodyText: {
     fontSize: 16,

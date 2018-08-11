@@ -14,7 +14,7 @@ import {
 } from "../../store/selectors/members";
 import { MemberThumbnail } from "../shared/MemberThumbnail";
 import { fonts } from "../../helpers/fonts";
-import { RouteName } from '../shared/Navigation';
+import { RouteName } from "../shared/Navigation";
 
 const DAYS_TILL_INACTIVITY = 400;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -59,7 +59,8 @@ class AccountView extends React.Component<Props, State> {
     // updateTimeRemaining on setInterval.
     const sinceLastOperationMilli =
       Date.now() - this.props.loggedInMember.get("lastOpCreatedAt").getTime();
-    return `${DAYS_TILL_INACTIVITY - Math.round(sinceLastOperationMilli / MS_PER_DAY)} days`;
+    return `${DAYS_TILL_INACTIVITY -
+      Math.round(sinceLastOperationMilli / MS_PER_DAY)} days`;
   }
 
   render() {
@@ -68,8 +69,8 @@ class AccountView extends React.Component<Props, State> {
     return (
       <ScrollView>
         <Text>
-          After {<Text style={fonts.OpenSans.Bold}>{timeRemaining}</Text>}{" "}
-          without minting or giving Raha your account balance will be donated.
+          After {<Text style={fonts.Lato.Bold}>{timeRemaining}</Text>} without
+          minting or giving Raha your account balance will be donated.
         </Text>
         <Break />
         <Text>Your Raha Parliament vote goes to:</Text>
@@ -78,7 +79,9 @@ class AccountView extends React.Component<Props, State> {
         <Text>Trusted for account recovery:</Text>
         <MemberThumbnail member={trustedForRecovery} />
         <Break />
-        <TouchableHighlight onPress={() => navigation.navigate(RouteName.PendingInvites)}>
+        <TouchableHighlight
+          onPress={() => navigation.navigate(RouteName.PendingInvites)}
+        >
           <Text>View pending invites and flag fake accounts.</Text>
         </TouchableHighlight>
         <Break />

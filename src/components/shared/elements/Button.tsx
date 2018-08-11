@@ -8,7 +8,7 @@ export const Button: React.StatelessComponent<ButtonProps> = props => {
   return (
     <TouchableOpacity {...props} style={[props.style]}>
       <NativeButton
-        style={fonts.OpenSans.Bold}
+        style={fonts.Lato.Bold}
         {...props}
         buttonStyle={styles.button}
         disabledStyle={styles.disabledColor}

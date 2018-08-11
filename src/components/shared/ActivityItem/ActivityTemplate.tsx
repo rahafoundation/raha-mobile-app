@@ -146,13 +146,13 @@ const styles = StyleSheet.create({
   },
   toText: {
     fontSize: 16,
-    ...fonts.Vollkorn.SemiBold
+    ...fonts.Lato.SemiBold
   },
   fromText: {
     marginTop: 10,
     textAlign: "right",
     fontSize: 14,
-    ...fonts.Vollkorn.SemiBold
+    ...fonts.Lato.SemiBold
   },
   moneyRow: {
     marginHorizontal: 10,

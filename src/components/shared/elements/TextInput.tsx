@@ -18,6 +18,6 @@ export const TextInput: React.StatelessComponent<TextInputProps> = props => {
 
 const styles = StyleSheet.create({
   text: {
-    ...fonts.OpenSans.Normal
+    ...fonts.Lato.Normal
   } as TextStyle
 });
