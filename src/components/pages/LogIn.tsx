@@ -161,7 +161,7 @@ class PhoneNumberForm extends React.Component<
   render() {
     return (
       <React.Fragment>
-        <Text style={fonts.OpenSans.Bold as TextStyle} />
+        <Text style={fonts.Lato.Bold as TextStyle} />
 
         <FormLabel>Phone number</FormLabel>
         <View style={styles.phoneInput}>

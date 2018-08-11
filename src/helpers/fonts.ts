@@ -1,24 +1,20 @@
 import { Platform, TextStyle } from "react-native";
 
 const androidFonts = {
-  OpenSans: {
-    Bold: { fontFamily: "OpenSans-Bold" } as TextStyle,
-    Normal: { fontFamily: "OpenSans-Regular" } as TextStyle,
-    Italic: { fontFamily: "OpenSans-Italic" } as TextStyle
-  },
-  Vollkorn: {
-    SemiBold: { fontFamily: "Vollkorn-SemiBold" } as TextStyle
+  Lato: {
+    Bold: { fontFamily: "Lato-Bold" } as TextStyle,
+    Semibold: { fontFamily: "Lato-Semibold" } as TextStyle,
+    Normal: { fontFamily: "Lato-Regular" } as TextStyle,
+    Italic: { fontFamily: "Lato-Italic" } as TextStyle
   }
 };
 const iosFonts: typeof androidFonts = {
   // iOS
-  OpenSans: {
-    Bold: { fontWeight: "700", fontStyle: "normal" },
-    Normal: { fontWeight: "400", fontStyle: "normal" },
-    Italic: { fontWeight: "400", fontStyle: "italic" }
-  },
-  Vollkorn: {
-    SemiBold: { fontWeight: "600", fontStyle: "normal" }
+  Lato: {
+    Bold: { fontFamily: "Lato", fontWeight: "700", fontStyle: "normal" },
+    Semibold: { fontFamily: "Lato", fontWeight: "600", fontStyle: "normal" },
+    Normal: { fontFamily: "Lato", fontWeight: "400", fontStyle: "normal" },
+    Italic: { fontFamily: "Lato", fontWeight: "400", fontStyle: "italic" }
   }
 };
 

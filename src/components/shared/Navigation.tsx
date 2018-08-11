@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   headerStyle: {
     marginLeft: 12,
     fontSize: 32,
-    ...fonts.Vollkorn.SemiBold
+    ...fonts.Lato.Semibold
   },
   subHeaderStyle: {
     fontSize: 18

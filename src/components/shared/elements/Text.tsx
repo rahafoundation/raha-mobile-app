@@ -19,7 +19,7 @@ export const Text: React.StatelessComponent<TextProps> = props => {
 
 const styles = StyleSheet.create({
   text: {
-    ...fonts.OpenSans.Normal,
+    ...fonts.Lato.Normal,
     color: colors.bodyText
   } as TextStyle
 });
