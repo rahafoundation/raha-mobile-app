@@ -20,19 +20,21 @@ import { generateToken } from "../../../helpers/token";
 import { SubmitVerification } from "./SubmitVerification";
 import { VerifySplash } from "./VerifySplash";
 import { getMemberById } from "../../../store/selectors/members";
+import { getRequestVerificationOperation } from "../../../store/selectors/operations";
+import { ConfirmExistingVerificationVideo } from "./ConfirmExistingVerificationVideo";
 
 enum VerifyStep {
   SPLASH,
+  CONFIRM_EXISTING_VIDEO,
   CAMERA,
   VIDEO_PREVIEW,
-  CONFIRM_VERIFICATION,
-  CONFIRM_EXISTING_VIDEO
+  CONFIRM_VERIFICATION
 }
 
 type ReduxStateProps = {
   loggedInMember?: Member;
   toMember?: Member;
-  existingVerificationVideo?: string;
+  requestVerificationOperationVideoUrl?: string;
 };
 
 type OwnProps = NavigationScreenProps<{ toMemberId: MemberId }>;
@@ -57,7 +59,7 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
     this.inviteToken = generateToken();
     this.videoUploadRef = getGenericPrivateVideoRef(this.inviteToken);
     this.state = {
-      step: props.existingVerificationVideo
+      step: props.requestVerificationOperationVideoUrl
         ? VerifyStep.CONFIRM_EXISTING_VIDEO
         : VerifyStep.SPLASH
     };
@@ -139,6 +141,26 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
           />
         );
       }
+      case VerifyStep.CONFIRM_EXISTING_VIDEO: {
+        if (this.props.requestVerificationOperationVideoUrl) {
+          return (
+            <ConfirmExistingVerificationVideo
+              videoUri={this.props.requestVerificationOperationVideoUrl}
+              onBack={this._handleSoftBackPress}
+              onConfirm={() =>
+                this.setState({ step: VerifyStep.CONFIRM_VERIFICATION })
+              }
+              onRetake={() => this.setState({ step: VerifyStep.CAMERA })}
+              toVerifyMemberFullName={this.props.toMember.get("fullName")}
+            />
+          );
+        } else {
+          console.error(
+            "Attempting to confirm verification video when none exists."
+          );
+          return <React.Fragment />;
+        }
+      }
       case VerifyStep.CAMERA: {
         return (
           <VerifyCamera
@@ -183,9 +205,12 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
         );
       }
       case VerifyStep.CONFIRM_VERIFICATION: {
+        const video = this.props.requestVerificationOperationVideoUrl
+          ? { videoUrl: this.props.requestVerificationOperationVideoUrl }
+          : { videoToken: this.inviteToken };
         return (
           <SubmitVerification
-            videoToken={this.inviteToken}
+            video={video}
             toMemberId={this.props.toMember.get("memberId")}
             toMemberFullName={this.props.toMember.get("fullName")}
             onBack={this._handleSoftBackPress}
@@ -193,11 +218,10 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
           />
         );
       }
-
       default:
+        console.error("Unexpected step " + this.state.step);
+        return undefined;
     }
-    console.error("Unexpected step " + this.state.step);
-    return undefined;
   }
 
   render() {
@@ -208,6 +232,30 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
       </Container>
     );
   }
+}
+
+function _getVerificationRequestIfPresent(
+  state: RahaState,
+  member: Member | undefined,
+  toMember: Member | undefined
+) {
+  if (member && toMember) {
+    if (
+      toMember.get("requestedVerificationFrom").contains(member.get("memberId"))
+    ) {
+      const operations = getRequestVerificationOperation(
+        state.operations,
+        member.get("memberId"),
+        toMember.get("memberId")
+      );
+      if (operations.count() === 0) {
+        return undefined;
+      } else {
+        return operations.get(0);
+      }
+    }
+  }
+  return undefined;
 }
 
 const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
@@ -226,9 +274,20 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
   if (!toMember) {
     console.error("Could not find Member to verify with id:", toMemberId);
   }
+
+  const requestVerificationOperation = _getVerificationRequestIfPresent(
+    state,
+    member,
+    toMember
+  );
+  const requestVerificationOperationVideoUrl = requestVerificationOperation
+    ? requestVerificationOperation.data.video_url
+    : undefined;
+
   return {
     loggedInMember: member,
-    toMember
+    toMember,
+    requestVerificationOperationVideoUrl
   };
 };
 export const Verify = connect(mapStateToProps)(VerifyView);

@@ -144,7 +144,7 @@ export const sendInvite: AsyncActionCreator = (
 
 export const verify: AsyncActionCreator = (
   memberId: MemberId,
-  videoToken: string
+  video: { videoToken: string } | { videoUrl: string }
 ) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
@@ -157,7 +157,7 @@ export const verify: AsyncActionCreator = (
         config.apiBase,
         authToken,
         memberId,
-        videoToken
+        video
       );
 
       const action: OperationsAction = {

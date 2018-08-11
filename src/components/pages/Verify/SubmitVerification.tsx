@@ -20,7 +20,7 @@ type ReduxStateProps = {
 };
 
 type OwnProps = {
-  videoToken: string;
+  video: { videoToken: string } | { videoUrl: string };
   toMemberId: MemberId;
   toMemberFullName: string;
   onBack: () => void;
@@ -29,19 +29,19 @@ type OwnProps = {
 
 type SubmitVerificationProps = OwnProps &
   ReduxStateProps & {
-    verify: (memberId: MemberId, videoToken: string) => void;
+    verify: (
+      memberId: MemberId,
+      video: { videoToken: string } | { videoUrl: string }
+    ) => void;
   };
 
 class SubmitVerificationView extends React.Component<SubmitVerificationProps> {
   constructor(props: SubmitVerificationProps) {
     super(props);
-    this.state = {
-      enteredInvalidEmail: false
-    };
   }
 
   submitVerification = () => {
-    this.props.verify(this.props.toMemberId, this.props.videoToken);
+    this.props.verify(this.props.toMemberId, this.props.video);
   };
 
   private _renderSubmittingStatus = () => {
@@ -63,7 +63,7 @@ class SubmitVerificationView extends React.Component<SubmitVerificationProps> {
           </React.Fragment>
         );
       case ApiCallStatusType.FAILURE:
-        return <Text style={styles.text}>Invite failed.</Text>;
+        return <Text style={styles.text}>Verification failed.</Text>;
       default:
         return undefined;
     }
