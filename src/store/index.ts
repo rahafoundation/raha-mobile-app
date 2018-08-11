@@ -1,6 +1,6 @@
 import { applyMiddleware, createStore } from "redux";
 import thunk, { ThunkDispatch } from "redux-thunk";
-import { composeWithDevTools } from "remote-redux-devtools";
+import { composeWithDevTools } from "redux-devtools-extension";
 import { persistStore, PersistPartial } from "redux-persist";
 
 import { rootReducer, RahaState } from "./persistedReducer";
