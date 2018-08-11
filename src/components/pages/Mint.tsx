@@ -43,14 +43,6 @@ const MintView: React.StatelessComponent<Props> = ({
     ? unclaimedReferralIds.length > 0
     : false;
 
-  const navigateToReferralBonuses = hasUnclaimedReferrals
-    ? () => {
-        navigation.navigate(RouteName.ReferralBonusPage, {
-          unclaimedReferralIds
-        });
-      }
-    : () => {};
-
   return (
     <Container>
       <View style={styles.centerFlex}>
