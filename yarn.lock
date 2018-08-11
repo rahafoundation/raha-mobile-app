@@ -605,18 +605,18 @@
   dependencies:
     cross-spawn "^5.1.0"
 
-"@raha/api-shared@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@raha/api-shared/-/api-shared-0.1.4.tgz#5ade2a2bde3867626447e32b41e4dfe6a1122aa7"
+"@raha/api-shared@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@raha/api-shared/-/api-shared-0.1.5.tgz#faf302cbdc41990ed6ae8a45300bfc404accca19"
   dependencies:
     enum-values "^1.2.1"
     http-status "^1.2.0"
 
-"@raha/api@^0.2.3":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.2.3.tgz#f1f5f64543146dacc2ff9286f08799e0b82de336"
+"@raha/api@^0.2.4":
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.2.4.tgz#83a565c7a6843b461498a852204e25b0df07fccb"
   dependencies:
-    "@raha/api-shared" "^0.1.4"
+    "@raha/api-shared" "^0.1.5"
     big.js "^5.0.3"
     url-join "^4.0.0"
 
