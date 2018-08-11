@@ -56,3 +56,15 @@ export function getInviteVideoRef(token: string) {
     .child(token)
     .child("invite.mp4");
 }
+
+/**
+ * TODO we should eventually just use this everywhere instead of type-specific video urls.
+ * @param token A unique string (UUID) by which to identify the uploaded video.
+ */
+export function getGenericPrivateVideoRef(token: string) {
+  return storage
+    .ref()
+    .child("private-video")
+    .child(token)
+    .child("video.mp4");
+}

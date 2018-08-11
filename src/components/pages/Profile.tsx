@@ -31,7 +31,8 @@ import { Activity } from "../../store/selectors/activities/types";
 import {
   CurrencyType,
   CurrencyRole,
-  Currency
+  Currency,
+  currencySymbol
 } from "../shared/elements/Currency";
 import { fontSizes, fonts } from "../../helpers/fonts";
 
@@ -142,7 +143,15 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
                       disabled={alreadyTrusted}
                     />
                     <Button
-                      title="Give"
+                      title="Verify"
+                      onPress={() =>
+                        navigation.navigate(RouteName.Verify, {
+                          toMemberId: member.get("memberId")
+                        })
+                      }
+                    />
+                    <Button
+                      title={currencySymbol(CurrencyType.Raha)}
                       onPress={() =>
                         navigation.navigate(RouteName.GivePage, {
                           toMember: member
