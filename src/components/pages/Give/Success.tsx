@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     ...fonts.Lato.Italic
   },
   name: {
-    ...fonts.Lato.SemiBold
+    ...fonts.Lato.Semibold
   },
   amount: {
     color: colors.positive
