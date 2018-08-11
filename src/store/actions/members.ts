@@ -1,6 +1,7 @@
 import { trust as callTrust } from "@raha/api/dist/members/trust";
 import { requestInvite as callRequestInvite } from "@raha/api/dist/members/requestInvite";
 import { createMember as callCreateMember } from "@raha/api/dist/members/createMember";
+import { verify as callVerify } from "@raha/api/dist/members/verify";
 import { sendInvite as callSendInvite } from "@raha/api/dist/me/sendInvite";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
@@ -17,6 +18,7 @@ import { AsyncActionCreator } from ".";
 import { wrapApiCallAction } from "./apiCalls";
 import { getAuthToken } from "../selectors/authentication";
 import { config } from "../../data/config";
+import { Member } from "../reducers/members";
 
 export type MembersAction = SetOperationsAction | AddOperationsAction;
 export const refreshMembers: AsyncActionCreator = () => {
@@ -121,7 +123,7 @@ export const sendInvite: AsyncActionCreator = (
   isJointVideo: boolean
 ) => {
   return wrapApiCallAction(
-    async (dispatch, getState) => {
+    async (_, getState) => {
       const authToken = await getAuthToken(getState());
       if (!authToken) {
         throw new UnauthenticatedError();
@@ -137,5 +139,34 @@ export const sendInvite: AsyncActionCreator = (
     },
     ApiEndpointName.SEND_INVITE,
     videoToken
+  );
+};
+
+export const verify: AsyncActionCreator = (
+  memberId: MemberId,
+  videoToken: string
+) => {
+  return wrapApiCallAction(
+    async (dispatch, getState) => {
+      const authToken = await getAuthToken(getState());
+      if (!authToken) {
+        throw new UnauthenticatedError();
+      }
+
+      const { body } = await callVerify(
+        config.apiBase,
+        authToken,
+        memberId,
+        videoToken
+      );
+
+      const action: OperationsAction = {
+        type: OperationsActionType.ADD_OPERATIONS,
+        operations: [body]
+      };
+      dispatch(action);
+    },
+    ApiEndpointName.VERIFY_MEMBER,
+    memberId
   );
 };
