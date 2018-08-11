@@ -21,7 +21,7 @@ type StateProps = {
 };
 type RequestInviteOperationActivityProps = OwnProps & StateProps;
 
-export const RequestInviteOperationActivityView: React.StatelessComponent<
+const RequestInviteOperationActivityView: React.StatelessComponent<
   RequestInviteOperationActivityProps
 > = ({ operation, fromMember, toMember, activityRef }) => {
   return (
