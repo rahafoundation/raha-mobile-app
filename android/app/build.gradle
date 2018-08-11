@@ -171,7 +171,6 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     compile project(':react-native-device-info')
-    compile project(':react-native-google-signin')
 
     implementation "com.google.android.gms:play-services-base:15.0.1"
     implementation "com.google.android.gms:play-services-auth:15.0.1"
@@ -197,17 +196,7 @@ dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules
-
-    // react-native-google-signin
-    compile(project(":react-native-google-signin")){
-        exclude group: "com.google.android.gms"
-    }
-    // end react-native-google-signin
 }
-
-// react-native-google-signin
-apply plugin: 'com.google.gms.google-services'
-// end react-native-google-signin
 
 // Run this once to be able to run the application with BUCK
 // puts all compile dependencies into folder libs for BUCK to use
