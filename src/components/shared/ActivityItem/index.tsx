@@ -15,6 +15,9 @@ import { MintOperationActivity } from "./MintOperationActivity";
 import { RequestInviteOperationActivity } from "./RequestInviteOperationActivity";
 import { TrustOperationActivity } from "./TrustOperationActivity";
 import { ActivityTemplateView } from "./ActivityTemplate";
+import { CreateMemberOperationActivity } from "./CreateMemberOperationActivity";
+import { VerifyOperationActivity } from "./VerifyOperationActivity";
+import { RequestVerificationOperationActivity } from "./RequestVerificationOperationActivity";
 
 type ActivityItemProps = {
   operation: Operation;
@@ -29,9 +32,26 @@ export const ActivityItem: React.StatelessComponent<ActivityItemProps> = ({
 }) => {
   switch (operation.op_code) {
     case OperationType.CREATE_MEMBER:
+      return (
+        <CreateMemberOperationActivity
+          operation={operation}
+          activityRef={activityRef}
+        />
+      );
     case OperationType.REQUEST_VERIFICATION:
+      return (
+        <RequestVerificationOperationActivity
+          operation={operation}
+          activityRef={activityRef}
+        />
+      );
     case OperationType.VERIFY:
-      return null;
+      return (
+        <VerifyOperationActivity
+          operation={operation}
+          activityRef={activityRef}
+        />
+      );
     case OperationType.GIVE:
       return (
         <GiveOperationActivity

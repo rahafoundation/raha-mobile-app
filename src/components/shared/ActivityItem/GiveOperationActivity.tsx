@@ -22,7 +22,7 @@ type StateProps = {
 };
 type GiveOperationActivityProps = OwnProps & StateProps;
 
-export const GiveOperationActivityView: React.StatelessComponent<
+const GiveOperationActivityView: React.StatelessComponent<
   GiveOperationActivityProps
 > = ({ operation, fromMember, toMember, activityRef }) => {
   return (

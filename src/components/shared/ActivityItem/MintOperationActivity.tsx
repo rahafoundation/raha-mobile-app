@@ -4,7 +4,10 @@
 import * as React from "react";
 import { Big } from "big.js";
 
-import { MintOperation, MintType } from "@raha/api-shared/dist/models/Operation";
+import {
+  MintOperation,
+  MintType
+} from "@raha/api-shared/dist/models/Operation";
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
@@ -25,7 +28,7 @@ type StateProps = {
 };
 type MintOperationActivityProps = OwnProps & StateProps;
 
-export const MintOperationActivityView: React.StatelessComponent<
+const MintOperationActivityView: React.StatelessComponent<
   MintOperationActivityProps
 > = ({ operation, fromMember, activityRef, referredMemberFullName }) => {
   let message;
