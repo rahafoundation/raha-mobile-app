@@ -153,7 +153,23 @@ Not fully implemented yet
 
 - Clicking on a recognized HTTPS link (typing the URL manually
   into Chrome doesn't work): [https://raha.app/invite?r=tina.roh.7659&t=0bzeq0zyfrbe](https://raha.app/invite?r=tina.roh.7659&t=0bzeq0zyfrbe)
-- via ADB: `adb shell am start -W -a android.intent.action.VIEW -d "raha://invite?videoToken=0qmkd6zfhx8c\&inviterUsername=tina.roh.7659" app.raha.mobileTest`
+- via ADB:
+
+```bash
+adb shell am start -W -a android.intent.action.VIEW -d "raha://invite?videoToken=0qmkd6zfhx8c\&inviterUsername=tina.roh.7659" app.raha.mobileTest
+```
+
+## Debugger
+
+Install [`react-native-debugger`](https://github.com/jhen0409/react-native-debugger):
+
+```bash
+brew update && brew cask install react-native-debugger
+```
+
+- Ensure no debugger windows are open (in Chrome), and run React Native
+  Debugger.
+- Shake your phone, and hit `Debug JS Remotely`.
 
 ## Other scripts
 
