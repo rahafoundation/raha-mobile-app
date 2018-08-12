@@ -39,7 +39,9 @@ export const colors = {
   secondaryBackground2: palette.paleBlue,
 
   // Currency
-  positive: palette.darkMint,
-  negative: palette.red,
-  donation: palette.lavender,
+  currency: {
+    positive: palette.darkMint,
+    negative: palette.red,
+    donation: palette.lavender
+  }
 };

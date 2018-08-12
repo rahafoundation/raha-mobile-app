@@ -17,6 +17,7 @@ import {
   VideoWithPlaceholder,
   VideoWithPlaceholderView
 } from "../../shared/VideoWithPlaceholder";
+import { Currency, CurrencyRole, CurrencyType } from "../Currency";
 
 type Props = {
   from: Member;
@@ -97,14 +98,24 @@ export class ActivityTemplateView extends React.Component<
         <View style={styles.moneyRow}>
           <View style={styles.amountDetail}>
             {totalAmount && (
-              <Text style={styles.amount}>ℝ{totalAmount.toFixed(2)}</Text>
+              <Currency
+                currencyValue={{
+                  role: CurrencyRole.Positive,
+                  value: totalAmount,
+                  currencyType: CurrencyType.Raha
+                }}
+              />
             )}
             {donationAmount && (
               <React.Fragment>
                 <Text>{donationIntroText} </Text>
-                <Text style={[styles.amount, styles.donationAmount]}>
-                  ℝ{donationAmount.toFixed(2)}
-                </Text>
+                <Currency
+                  currencyValue={{
+                    role: CurrencyRole.Donation,
+                    value: donationAmount,
+                    currencyType: CurrencyType.Raha
+                  }}
+                />
               </React.Fragment>
             )}
           </View>
@@ -137,12 +148,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "baseline"
-  },
-  amount: {
-    color: colors.positive
-  },
-  donationAmount: {
-    color: colors.donation
   },
   toText: {
     fontSize: 16,
