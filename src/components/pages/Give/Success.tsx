@@ -21,7 +21,10 @@ export const Success: React.StatelessComponent<OwnProps> = props => {
         You sent{" "}
         <Text style={styles.amount}>{props.amount.toString()} Raha</Text> to{" "}
         <Text style={styles.name}>{props.toMember.get("fullName")}</Text> for{" "}
-        <Text style={styles.memo}>"{props.memo ? `${props.memo}` : ""}".</Text>
+        <Text style={styles.memo}>
+          "{props.memo ? `${props.memo}` : ""}
+          ".
+        </Text>
       </Text>
       <Button title="Give again" onPress={() => props.onResetCallback()} />
     </Container>
@@ -48,6 +51,6 @@ const styles = StyleSheet.create({
     ...fonts.Lato.Semibold
   },
   amount: {
-    color: colors.positive
+    color: colors.currency.positive
   }
 });
