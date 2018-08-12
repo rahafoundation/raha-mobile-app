@@ -80,7 +80,7 @@ const roleStyles: { [key in CurrencyRole]: TextStyle } = {
     color: colors.positive
   },
   [CurrencyRole.Negative]: {
-    color: colors.positive
+    color: colors.negative
   },
   [CurrencyRole.None]: {}
 };
