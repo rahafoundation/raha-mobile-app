@@ -14,7 +14,7 @@ const androidFonts = {
 const iosFonts: typeof androidFonts = {
   // iOS
   Lato: {
-    Bold: { fontFamily: "Raha-Lato", fontWeight: "700", fontStyle: "normal" },
+    Bold: { fontFamily: "Raha Lato", fontWeight: "700", fontStyle: "normal" },
     Semibold: { fontFamily: "Lato", fontWeight: "600", fontStyle: "normal" },
     Normal: { fontFamily: "Lato", fontWeight: "400", fontStyle: "normal" },
     Italic: { fontFamily: "Lato", fontWeight: "400", fontStyle: "italic" }
