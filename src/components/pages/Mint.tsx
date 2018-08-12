@@ -34,9 +34,9 @@ const MintView: React.StatelessComponent<Props> = ({
     .toString();
   let netColor;
   if (net.substr(0, 1) === "-") {
-    netColor = colors.negative;
+    netColor = colors.currency.negative;
   } else {
-    netColor = colors.positive;
+    netColor = colors.currency.positive;
     net = `+${net}`;
   }
 
