@@ -8,7 +8,7 @@ import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { UnauthenticatedError } from "@raha/api/dist/errors/UnauthenticatedError";
 
 import { getAuthToken } from "../selectors/authentication";
-import { AsyncActionCreator } from "./";
+import { AsyncActionCreator } from ".";
 import { wrapApiCallAction } from "./apiCalls";
 import { OperationsAction, OperationsActionType } from "./operations";
 import { config } from "../../data/config";

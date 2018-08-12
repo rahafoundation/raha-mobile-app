@@ -15,7 +15,7 @@ import { Member } from "../../store/reducers/members";
 import { RahaThunkDispatch, RahaState } from "../../store";
 import { trustMember } from "../../store/actions/members";
 import { getMemberById } from "../../store/selectors/members";
-import { ActivityFeed } from "../shared/ActivityFeed";
+import { ActivityFeed } from "../shared/Activity/ActivityFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button, Container, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";

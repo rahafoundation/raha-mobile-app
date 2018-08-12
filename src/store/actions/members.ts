@@ -13,7 +13,7 @@ import {
   OperationsAction,
   OperationsActionType
 } from "./operations";
-import { AsyncActionCreator } from "./";
+import { AsyncActionCreator } from ".";
 import { wrapApiCallAction } from "./apiCalls";
 import { getAuthToken } from "../selectors/authentication";
 import { config } from "../../data/config";

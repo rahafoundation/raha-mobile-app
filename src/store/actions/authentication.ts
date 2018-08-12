@@ -5,7 +5,7 @@ import { validateMobileNumber as callValidateMobileNumber } from "@raha/api/dist
 import { ApiCallFailedError } from "@raha/api/dist/errors/ApiCallFailedError";
 import { ERROR_CODE as DISALLOWED_TYPE_ERROR_CODE } from "@raha/api-shared/dist/errors/RahaApiError/me/validateMobileNumber/DisallowedTypeError";
 
-import { AsyncActionCreator } from "./";
+import { AsyncActionCreator } from ".";
 import { auth } from "../../firebaseInit";
 import { config } from "../../data/config";
 

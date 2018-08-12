@@ -9,7 +9,7 @@ import {
   MintReferralBonusPayload
 } from "@raha/api-shared/dist/models/Operation";
 
-import { RahaState } from "../";
+import { RahaState } from "..";
 import { getMemberById } from "./members";
 import { getOperationsForCreator, getOperationsForType } from "./operations";
 

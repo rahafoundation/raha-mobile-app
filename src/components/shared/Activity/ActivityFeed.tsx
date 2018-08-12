@@ -11,10 +11,10 @@ import { List, Map } from "immutable";
 import { Operation, OperationType } from "@raha/api-shared/dist/models/Operation";
 import { OperationId, MemberId } from "@raha/api-shared/dist/models/identifiers";
 
-import { RahaState } from "../../store";
+import { RahaState } from "../../../store";
 import { ActivityItem } from "./ActivityItem";
 import { ActivityTemplateView } from "./ActivityItem/ActivityTemplate";
-import { Member } from '../../store/reducers/members';
+import { Member } from '../../../store/reducers/members';
 
 interface StateProps {
   operations: List<Operation>;

@@ -1,37 +1,37 @@
 /**
- * Visual display of a RequestInvite operation in the ActivityFeed.
+ * Visual display of a RequestVerification operation in the ActivityFeed.
  */
 import * as React from "react";
 
-import { RequestInviteOperation } from "@raha/api-shared/dist/models/Operation";
+import { RequestVerificationOperation } from "@raha/api-shared/dist/models/Operation";
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
-import { RahaState } from "../../../store";
-import { Member, GENESIS_MEMBER } from "../../../store/reducers/members";
-import { getMemberById } from "../../../store/selectors/members";
+import { RahaState } from "../../../../store";
+import { Member, GENESIS_MEMBER } from "../../../../store/reducers/members";
+import { getMemberById } from "../../../../store/selectors/members";
 
 type OwnProps = {
-  operation: RequestInviteOperation;
+  operation: RequestVerificationOperation;
   activityRef?: React.Ref<ActivityTemplateView>;
 };
 type StateProps = {
   fromMember: Member;
   toMember: Member | typeof GENESIS_MEMBER;
 };
-type RequestInviteOperationActivityProps = OwnProps & StateProps;
+type RequestVerificationOperationActivityProps = OwnProps & StateProps;
 
-const RequestInviteOperationActivityView: React.StatelessComponent<
-  RequestInviteOperationActivityProps
+const RequestVerificationOperationActivityView: React.StatelessComponent<
+  RequestVerificationOperationActivityProps
 > = ({ operation, fromMember, toMember, activityRef }) => {
   return (
     <ActivityTemplate
-      message={`Your friend just joined Raha!`}
+      message={`${fromMember.get(
+        "fullName"
+      )} requested that you verify their identity!`}
       from={fromMember}
-      // don't display genesis member, as it doesn't actually exist
       to={toMember === GENESIS_MEMBER ? undefined : toMember}
       timestamp={new Date(operation.created_at)}
-      videoUri={fromMember.videoUri}
       onRef={activityRef}
     />
   );
@@ -64,6 +64,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return { fromMember, toMember };
 };
 
-export const RequestInviteOperationActivity = connect(mapStateToProps)(
-  RequestInviteOperationActivityView
+export const RequestVerificationOperationActivity = connect(mapStateToProps)(
+  RequestVerificationOperationActivityView
 );
