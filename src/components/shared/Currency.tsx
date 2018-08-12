@@ -74,13 +74,13 @@ export const Currency: React.StatelessComponent<CurrencyProps> = ({
 
 const roleStyles: { [key in CurrencyRole]: TextStyle } = {
   [CurrencyRole.Donation]: {
-    color: colors.donation
+    color: colors.currency.donation
   },
   [CurrencyRole.Positive]: {
-    color: colors.positive
+    color: colors.currency.positive
   },
   [CurrencyRole.Negative]: {
-    color: colors.negative
+    color: colors.currency.negative
   },
   [CurrencyRole.None]: {}
 };
