@@ -53,6 +53,7 @@ export const createMember: AsyncActionCreator = (
   fullName: string,
   username: string,
   videoToken: string,
+  isJointVideo: boolean,
   requestInviteFromMemberId?: string
 ) => {
   return wrapApiCallAction(
@@ -68,6 +69,7 @@ export const createMember: AsyncActionCreator = (
         fullName,
         username,
         videoToken,
+        isJointVideo,
         requestInviteFromMemberId
       );
 

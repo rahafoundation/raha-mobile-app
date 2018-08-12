@@ -48,29 +48,14 @@ class OnboardingCreateAccountView extends React.Component<
   createAccount = () => {
     const username = getUsername(this.props.verifiedName);
     if (this.props.invitingMember) {
-      if (this.props.isJointVideo) {
-        this.props.requestInviteFromMember(
-          this.props.invitingMember.get("memberId"),
-          this.props.verifiedName,
-          username,
-          this.props.videoToken
-        );
-      } else {
-        // Create member with identifying video and inviter
-        this.props.createMember(
-          this.props.verifiedName,
-          username,
-          this.props.videoToken,
-          this.props.invitingMember.get("memberId")
-        );
-      }
-    } else {
-      // Create member with identifying video and no inviter
       this.props.createMember(
         this.props.verifiedName,
         username,
         this.props.videoToken,
-        undefined
+        this.props.isJointVideo,
+        this.props.invitingMember
+          ? this.props.invitingMember.get("memberId")
+          : undefined
       );
     }
   };
