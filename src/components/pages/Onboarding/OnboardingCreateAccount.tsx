@@ -6,10 +6,7 @@ import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 import { getUsername } from "../../../helpers/username";
 import { RahaState } from "../../../store";
-import {
-  requestInviteFromMember,
-  createMember
-} from "../../../store/actions/members";
+import { createMember } from "../../../store/actions/members";
 import {
   ApiCallStatus,
   ApiCallStatusType
@@ -25,7 +22,6 @@ type ReduxStateProps = {
 };
 
 type DispatchProps = {
-  requestInviteFromMember: typeof requestInviteFromMember;
   createMember: typeof createMember;
 };
 
@@ -47,17 +43,15 @@ class OnboardingCreateAccountView extends React.Component<
 
   createAccount = () => {
     const username = getUsername(this.props.verifiedName);
-    if (this.props.invitingMember) {
-      this.props.createMember(
-        this.props.verifiedName,
-        username,
-        this.props.videoToken,
-        this.props.isJointVideo,
-        this.props.invitingMember
-          ? this.props.invitingMember.get("memberId")
-          : undefined
-      );
-    }
+    this.props.createMember(
+      this.props.verifiedName,
+      username,
+      this.props.videoToken,
+      this.props.isJointVideo,
+      this.props.invitingMember
+        ? this.props.invitingMember.get("memberId")
+        : undefined
+    );
   };
 
   private _renderRequestingStatus = () => {
@@ -171,5 +165,5 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
 
 export const OnboardingCreateAccount = connect(
   mapStateToProps,
-  { requestInviteFromMember, createMember }
+  { createMember }
 )(OnboardingCreateAccountView);
