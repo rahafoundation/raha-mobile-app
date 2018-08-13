@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { Member } from "../../../store/reducers/members";
 import { CurrencyValue } from "../Currency";
 import { RouteName } from "../Navigation";
@@ -14,13 +13,50 @@ export enum ActivityDirection {
 }
 
 /**
+ * Reference to find and render a video.
+ */
+interface VideoReference {
+  thumbnailUrl: string;
+  videoUrl: string;
+}
+
+/**
+ * Reference to find and render an image.
+ */
+interface ImageReference {
+  imageUrl: string;
+}
+
+/**
+ * Reference to visual media to dipslay.
+ */
+export type MediaReference = VideoReference | ImageReference;
+
+/**
+ * Reference to an icon to display.
+ */
+interface IconReference {
+  iconName: string;
+}
+
+/**
+ * Body to display for a given activity.
+ */
+export type ActivityBody =
+  | {
+      text: string;
+    }
+  | MediaReference[]
+  | IconReference;
+
+/**
  * The content of an Activity. Missing some metadata that makes a complete,
  * renderable Activity.
  */
 export interface ActivityContent {
   actor: Member;
   description: (string | CurrencyValue)[];
-  body: ReactNode;
+  body: ActivityBody;
   chainedActivity?: {
     direction: ActivityDirection;
     content: ActivityContent;
@@ -28,14 +64,20 @@ export interface ActivityContent {
 }
 
 /**
+ * Reference to another part of the app to redirect to.
+ * TODO: make params more specific.
+ */
+interface RouteDescriptor {
+  routeName: RouteName;
+  params: any;
+}
+
+/**
  * A renderable link that directs a user to an action they can take.
  */
 export interface ActionLink {
   text: string;
-  // TODO: We probably need some way of also providing parameters to link to,
-  // for example in a "Say Hi" link it should go to a messaging page
-  // corresponding to the person you're saying hi to.
-  destination: RouteName;
+  destination: RouteDescriptor;
 }
 
 /**
