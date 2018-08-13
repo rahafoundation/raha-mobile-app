@@ -19,7 +19,7 @@ export const VerifySplash: React.StatelessComponent<Props> = props => {
       </Text>
       <Text style={styles.text}>
         Verification helps other members know who to trust, and people must be
-        verified before they can claim their basic income.
+        verified before they can mint their basic income.
       </Text>
       <Button
         style={styles.continue}
