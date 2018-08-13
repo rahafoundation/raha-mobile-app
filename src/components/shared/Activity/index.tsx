@@ -55,8 +55,11 @@ export interface ActivityCallToAction {
 
 /**
  * A full description of any conceptually whole activity that happens on Raha.
+ *
+ * id just needs to be unique and deterministically derived from the content.
  */
 export interface Activity extends ActivityContent {
+  id: string;
   timestamp: Date;
   content: ActivityContent;
   callToAction?: ActivityCallToAction;
