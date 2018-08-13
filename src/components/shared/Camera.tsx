@@ -7,10 +7,16 @@
  */
 
 import * as React from "react";
-import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Image,
+  PermissionsAndroid
+} from "react-native";
 import { RNCamera, CameraType } from "react-native-camera";
 
-import { Text } from "./elements";
+import { Text, Button } from "./elements";
 
 type CameraProps = {
   onVideoRecorded: (uri: string) => any;
@@ -27,20 +33,21 @@ export class Camera extends React.Component<CameraProps, CameraState> {
     isVideoRecording: false
   };
 
-  // async componentWillMount() {
-  //   await this.requestPermissions();
-  // }
+  async componentWillMount() {
+    await this.requestPermissions();
+  }
 
-  // async requestPermissions() {
-  //   const results = await Promise.all([
-  //     Permissions.askAsync(Permissions.CAMERA),
-  //     Permissions.askAsync(Permissions.AUDIO_RECORDING)
-  //   ]);
-  //   this.setState({
-  //     hasCameraPermission: results[0].status === "granted",
-  //     hasAudioRecordPermission: results[1].status === "granted"
-  //   });
-  // }
+  async requestPermissions() {
+    console.log("Requesting permissions");
+    try {
+      await Promise.all([
+        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA),
+        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO)
+      ]);
+    } catch (exception) {
+      console.error(exception);
+    }
+  }
 
   startRecordVideo = async (camera: RNCamera) => {
     await new Promise(resolve =>
@@ -72,12 +79,12 @@ export class Camera extends React.Component<CameraProps, CameraState> {
                     In order to verify your identity, you must record a video of
                     yourself. Please approve the permissions to continue.
                   </Text>
-                  {/* TODO: figure out how to request permissions */}
-                  {/* <Button
+                  <Button
                     title="Approve Permissions"
                     onPress={() => {
                       this.requestPermissions();
-                    }} */}
+                    }}
+                  />
                 </View>
               );
             }
