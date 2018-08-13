@@ -5,17 +5,13 @@
  */
 import * as React from "react";
 import { FlatList, FlatListProps } from "react-native";
-import { List, Map } from "immutable";
-
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 import { ActivityItem } from "./ActivityItem";
 import { ActivityTemplateView } from "./ActivityItem/ActivityTemplate";
-import { Member } from "../../../store/reducers/members";
 import { Activity } from ".";
 
 interface ActivityFeedProps {
-  activities: List<Activity>;
+  activities: Activity[]; // in the order they should be rendered
   header?: React.ReactNode;
 }
 
@@ -43,11 +39,10 @@ export class ActivityFeed extends React.Component<ActivityFeedProps> {
   };
 
   render() {
-    const activities = this.props.activities;
     return (
       <FlatList
         ListHeaderComponent={this.props.header ? this.renderHeader : undefined}
-        data={activities.reverse().toArray()}
+        data={this.props.activities}
         keyExtractor={activity => activity.id}
         renderItem={({ item }) => (
           <ActivityItem
