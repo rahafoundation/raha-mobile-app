@@ -160,3 +160,11 @@ export function getMembersSortedByVotes(state: RahaState) {
     return voteCount === undefined ? 0 : voteCount;
   });
 }
+
+export function isInviteConfirmed(
+  membersById: Map<MemberId, Member>,
+  memberId: MemberId
+): boolean {
+  const member = membersById.get(memberId);
+  return !!member && member.get("inviteConfirmed");
+}
