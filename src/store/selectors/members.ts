@@ -162,9 +162,9 @@ export function getMembersSortedByVotes(state: RahaState) {
 }
 
 export function isInviteConfirmed(
-  membersById: Map<MemberId, Member>,
+  state: RahaState,
   memberId: MemberId
 ): boolean {
-  const member = membersById.get(memberId);
+  const member = state.members.byMemberId.get(memberId);
   return !!member && member.get("inviteConfirmed");
 }
