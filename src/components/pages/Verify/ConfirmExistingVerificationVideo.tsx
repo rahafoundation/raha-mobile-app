@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import { Text, Button } from "../../shared/elements";
 import { VideoWithPlaceholder } from "../../shared/VideoWithPlaceholder";
 
@@ -33,10 +33,13 @@ export class ConfirmExistingVerificationVideo extends React.Component<
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.padding} />
         <Text style={styles.back} onPress={this.props.onBack}>
           Back
         </Text>
-        <VideoWithPlaceholder uri={this.props.videoUri} />
+        <View style={styles.video}>
+          <VideoWithPlaceholder uri={this.props.videoUri} />
+        </View>
         {this.state.step === ConfirmSteps.VerifyIsTogether && (
           <React.Fragment>
             <Text style={styles.text}>
@@ -63,7 +66,9 @@ export class ConfirmExistingVerificationVideo extends React.Component<
           <React.Fragment>
             <Text>
               Please take a new video containing yourself where you verify{" "}
-              {this.props.toVerifyMemberFullName}'s identity.
+              <Text style={styles.name}>
+                {this.props.toVerifyMemberFullName}
+              </Text>'s identity.
             </Text>
             <View style={styles.actionRow}>
               <Button
@@ -77,13 +82,14 @@ export class ConfirmExistingVerificationVideo extends React.Component<
         {this.state.step === ConfirmSteps.ConfirmVideo && (
           <React.Fragment>
             <Text style={styles.text}>
-              Would you like to use the above video to verify ${
-                this.props.toVerifyMemberFullName
-              }'s identity?
+              Verification helps other members know who to trust, and every
+              member must be verified before they can claim their basic income.
             </Text>
             <Text style={styles.text}>
-              Verification helps other members know who to trust, and people
-              must be verified before they can claim their basic income.
+              Would you like to use the above video to verify{" "}
+              <Text style={styles.name}>
+                {this.props.toVerifyMemberFullName}
+              </Text>'s identity?
             </Text>
             <View style={styles.actionRow}>
               <Button
@@ -99,6 +105,7 @@ export class ConfirmExistingVerificationVideo extends React.Component<
             </View>
           </React.Fragment>
         )}
+        <View style={styles.padding} />
       </View>
     );
   }
@@ -110,6 +117,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center"
+  },
+  padding: {
+    flexGrow: 1
+  },
+  video: {
+    aspectRatio: 1,
+    maxHeight: 250
   },
   text: {
     fontSize: 18,
@@ -130,5 +144,8 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     margin: 12
+  },
+  name: {
+    fontWeight: "bold"
   }
 });

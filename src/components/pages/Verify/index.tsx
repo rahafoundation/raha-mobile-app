@@ -245,8 +245,9 @@ function _getVerificationRequestIfPresent(
     ) {
       const operations = getRequestVerificationOperation(
         state.operations,
-        member.get("memberId"),
-        toMember.get("memberId")
+        // Remember, in this verify flow, the "toMember will be the creator of the VerificationRequest
+        toMember.get("memberId"),
+        member.get("memberId")
       );
       if (operations.count() === 0) {
         return undefined;
