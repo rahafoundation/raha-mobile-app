@@ -33,6 +33,7 @@ const GENESIS_TRUST_OPS = [
   "y5EKzzihWm8RlDCcfv6d"
 ];
 export const GENESIS_MEMBER = Symbol("GENESIS");
+export const RAHA_BASIC_INCOME_MEMBER = Symbol("RAHA_BASIC_INCOME_MEMBER_ID");
 
 function getDefaultMemberFields(): OptionalMemberFields {
   return {
