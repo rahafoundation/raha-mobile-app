@@ -1,4 +1,11 @@
-import { Member } from "../../../store/reducers/members";
+/**
+ * TODO: all this stuff should probably be at the data layer, not the
+ * presentation layer.
+ */
+import {
+  Member,
+  RAHA_BASIC_INCOME_MEMBER
+} from "../../../store/reducers/members";
 import { CurrencyValue } from "../Currency";
 import { RouteName } from "../Navigation";
 
@@ -15,7 +22,7 @@ export enum ActivityDirection {
 /**
  * Reference to find and render a video.
  */
-interface VideoReference {
+export interface VideoReference {
   thumbnailUrl: string;
   videoUrl: string;
 }
@@ -23,7 +30,7 @@ interface VideoReference {
 /**
  * Reference to find and render an image.
  */
-interface ImageReference {
+export interface ImageReference {
   imageUrl: string;
 }
 
@@ -34,8 +41,9 @@ export type MediaReference = VideoReference | ImageReference;
 
 /**
  * Reference to an icon to display.
+ * TODO: actually limit iconName to available icons
  */
-interface IconReference {
+export interface IconReference {
   iconName: string;
 }
 
@@ -56,18 +64,25 @@ export type ActivityBody =
 export interface ActivityContent {
   actor: Member;
   description: (string | CurrencyValue)[];
-  body: ActivityBody;
-  chainedActivity?: {
+  body?: ActivityBody;
+  nextInChain?: {
     direction: ActivityDirection;
-    content: ActivityContent;
-  };
+  } & (
+    | {
+        content: ActivityContent;
+      }
+    | {
+        // TODO: potentially support other causes than basic income, treat it as
+        // an actual model rather than a singleton
+        actor: Member | typeof RAHA_BASIC_INCOME_MEMBER;
+      });
 }
 
 /**
  * Reference to another part of the app to redirect to.
  * TODO: make params more specific.
  */
-interface RouteDescriptor {
+export interface RouteDescriptor {
   routeName: RouteName;
   params: any;
 }
@@ -100,7 +115,7 @@ export interface ActivityCallToAction {
  *
  * id just needs to be unique and deterministically derived from the content.
  */
-export interface Activity extends ActivityContent {
+export interface Activity {
   id: string;
   timestamp: Date;
   content: ActivityContent;
