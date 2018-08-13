@@ -3,7 +3,6 @@ import * as React from "react";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 import { RahaState } from "../../store";
 import { mintBasicIncome } from "../../store/actions/wallet";
@@ -14,13 +13,14 @@ import {
   ApiCallStatusType
 } from "../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
+import { Member } from "../../store/reducers/members";
 
 import { Button } from "./elements";
 import { CurrencyRole, CurrencyType, CurrencyValue } from "./elements/Currency";
 
 interface OwnProps {}
 interface StateProps {
-  loggedInMemberId?: MemberId;
+  loggedInMember?: Member;
   mintableAmount?: Big;
   mintApiCallStatus?: ApiCallStatus;
 }
@@ -33,8 +33,10 @@ interface MergedProps {
 type Props = OwnProps & StateProps & MergedProps;
 
 const MintButtonComponent: React.StatelessComponent<Props> = props => {
-  const { mintableAmount, mintApiCallStatus, mint } = props;
+  const { mintableAmount, mintApiCallStatus, mint, loggedInMember } = props;
   const buttonDisabled =
+    !loggedInMember ||
+    !loggedInMember.get("inviteConfirmed") ||
     (mintableAmount && mintableAmount.lte(0)) ||
     (mintApiCallStatus &&
       mintApiCallStatus.status === ApiCallStatusType.STARTED);
@@ -62,7 +64,7 @@ const mapStateToProps: MapStateToProps<
   const loggedInMember = getLoggedInMember(state);
   if (loggedInMember) {
     return {
-      loggedInMemberId: loggedInMember.get("memberId"),
+      loggedInMember: loggedInMember,
       mintableAmount: getMintableAmount(state, loggedInMember.get("memberId")),
       mintApiCallStatus: getStatusOfApiCall(
         state,
@@ -80,12 +82,15 @@ const mergeProps: MergeProps<
   OwnProps,
   MergedProps
 > = (stateProps, dispatchProps, ownProps) => {
-  const { loggedInMemberId, mintableAmount } = stateProps;
+  const { loggedInMember, mintableAmount } = stateProps;
   return {
     ...stateProps,
     mint: () =>
-      loggedInMemberId
-        ? dispatchProps.mintBasicIncome(loggedInMemberId, mintableAmount)
+      loggedInMember
+        ? dispatchProps.mintBasicIncome(
+            loggedInMember.get("memberId"),
+            mintableAmount
+          )
         : {},
     ...ownProps
   };
