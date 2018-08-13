@@ -1,123 +1,175 @@
 /**
- * TODO: all this stuff should probably be at the data layer, not the
- * presentation layer.
+ * General purpose component that displays all types of activities. Specific
+ * Activities like GiveOperationActivity ultimately output this component.
  */
-import {
-  Member,
-  RAHA_BASIC_INCOME_MEMBER
-} from "../../../store/reducers/members";
-import { CurrencyValue } from "../Currency";
+import * as React from "react";
+import { format } from "date-fns";
+import { Big } from "big.js";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { withNavigation, NavigationInjectedProps } from "react-navigation";
+
+import { Member } from "../../../store/reducers/members";
+import { Text } from "../elements";
 import { RouteName } from "../Navigation";
+import { colors } from "../../../helpers/colors";
+import { fonts } from "../../../helpers/fonts";
+import {
+  VideoWithPlaceholder,
+  VideoWithPlaceholderView
+} from "../VideoWithPlaceholder";
+import { Currency, CurrencyRole, CurrencyType } from "../Currency";
+import { Activity as ActivityData } from "../../../store/selectors/activities/types";
 
-/**
- * Represents the direction of the relationship between actors in an activity.
- * Currently only supports onward or bidirectional, since that makes the flow
- * of the application linear and therefore more comprehensible.
- */
-export enum ActivityDirection {
-  Forward = "Forward",
-  Bidirectional = "Bidirectional"
+type Props = {
+  activity: ActivityData;
+};
+
+export class ActivityView extends React.Component<
+  Props & NavigationInjectedProps,
+  {}
+> {
+  videoElem: VideoWithPlaceholderView | null = null;
+
+  /**
+   * Reset video playback state, stop it
+   */
+  public resetVideo = () => {
+    if (this.videoElem) this.videoElem.reset();
+  };
+
+  render() {
+    const {
+      to,
+      from,
+      navigation,
+      videoUri,
+      timestamp,
+      message,
+      amount,
+      donationAmount
+    } = this.props.activity;
+
+    const totalAmount =
+      amount && donationAmount ? amount.plus(donationAmount) : amount;
+    const donationIntroText = amount
+      ? [",", ...[to ? [to.get("fullName")] : []], "donated"].join(" ")
+      : "Donated ";
+    return (
+      <View style={styles.card}>
+        <View style={styles.metadataRow}>
+          <View>
+            {to && (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.push(RouteName.Profile, { member: to })
+                }
+              >
+                <Text style={styles.toText}>To {to.get("fullName")}:</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+          <Text style={styles.timestamp}>
+            {format(timestamp, "MMM D, YYYY h:mm a")}
+          </Text>
+        </View>
+        <View style={styles.bodyRow}>
+          <Text>{message}</Text>
+          <TouchableOpacity
+            onPress={() => navigation.push(RouteName.Profile, { member: from })}
+          >
+            <Text style={styles.fromText}>From: {from.get("fullName")}</Text>
+          </TouchableOpacity>
+        </View>
+        {videoUri && (
+          <View style={styles.video}>
+            <VideoWithPlaceholder
+              onRef={e => {
+                this.videoElem = e as any;
+              }}
+              uri={videoUri}
+            />
+          </View>
+        )}
+        <View style={styles.moneyRow}>
+          <View style={styles.amountDetail}>
+            {totalAmount && (
+              <Currency
+                currencyValue={{
+                  role: CurrencyRole.Positive,
+                  value: totalAmount,
+                  currencyType: CurrencyType.Raha
+                }}
+                style={styles.amount}
+              />
+            )}
+            {donationAmount && (
+              <React.Fragment>
+                <Text>{donationIntroText} </Text>
+                <Currency
+                  currencyValue={{
+                    role: CurrencyRole.Donation,
+                    value: donationAmount,
+                    currencyType: CurrencyType.Raha
+                  }}
+                  style={styles.amount}
+                />
+              </React.Fragment>
+            )}
+          </View>
+        </View>
+      </View>
+    );
+  }
 }
 
-/**
- * Reference to find and render a video.
- */
-export interface VideoReference {
-  thumbnailUrl: string;
-  videoUrl: string;
-}
+const styles = StyleSheet.create({
+  card: {
+    borderBottomColor: colors.primaryBorder,
+    borderBottomWidth: 1,
+    paddingVertical: 10,
+    marginVertical: 10
+  },
+  metadataRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginHorizontal: 10,
+    marginBottom: 10
+  },
+  bodyRow: {
+    marginHorizontal: 20,
+    marginVertical: 10
+  },
+  amountDetail: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "baseline"
+  },
+  amount: {
+    fontSize: 16
+  },
+  toText: {
+    fontSize: 16,
+    ...fonts.Lato.Semibold
+  },
+  fromText: {
+    marginTop: 10,
+    textAlign: "right",
+    fontSize: 14,
+    ...fonts.Lato.Semibold
+  },
+  moneyRow: {
+    marginHorizontal: 10,
+    marginTop: 10
+  },
+  video: {
+    aspectRatio: 1
+  },
+  timestamp: {
+    fontSize: 12,
+    color: colors.darkAccent
+  }
+});
 
-/**
- * Reference to find and render an image.
- */
-export interface ImageReference {
-  imageUrl: string;
-}
-
-/**
- * Reference to visual media to dipslay.
- */
-export type MediaReference = VideoReference | ImageReference;
-
-/**
- * Reference to an icon to display.
- * TODO: actually limit iconName to available icons
- */
-export interface IconReference {
-  iconName: string;
-}
-
-/**
- * Body to display for a given activity.
- */
-export type ActivityBody =
-  | {
-      text: string;
-    }
-  | MediaReference[]
-  | IconReference;
-
-/**
- * The content of an Activity. Missing some metadata that makes a complete,
- * renderable Activity.
- */
-export interface ActivityContent {
-  actor: Member;
-  description: (string | CurrencyValue)[];
-  body?: ActivityBody;
-  nextInChain?: {
-    direction: ActivityDirection;
-  } & (
-    | {
-        content: ActivityContent;
-      }
-    | {
-        // TODO: potentially support other causes than basic income, treat it as
-        // an actual model rather than a singleton
-        actor: Member | typeof RAHA_BASIC_INCOME_MEMBER;
-      });
-}
-
-/**
- * Reference to another part of the app to redirect to.
- * TODO: make params more specific.
- */
-export interface RouteDescriptor {
-  routeName: RouteName;
-  params: any;
-}
-
-/**
- * A renderable link that directs a user to an action they can take.
- */
-export interface ActionLink {
-  text: string;
-  destination: RouteDescriptor;
-}
-
-/**
- * An invitation for a member to take action.
- */
-export interface CallToAction {
-  text: (string | CurrencyValue | ActionLink)[];
-}
-
-/**
- * Addendum to any Activity that invites a member to take an action.
- */
-export interface ActivityCallToAction {
-  actor: Member;
-  actions: CallToAction[];
-}
-
-/**
- * A full description of any conceptually whole activity that happens on Raha.
- *
- * id just needs to be unique and deterministically derived from the content.
- */
-export interface Activity {
-  id: string;
-  timestamp: Date;
-  content: ActivityContent;
-  callToAction?: ActivityCallToAction;
-}
+export const Activity = withNavigation<Props>(ActivityView);

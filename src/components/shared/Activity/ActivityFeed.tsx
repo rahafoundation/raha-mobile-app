@@ -6,11 +6,11 @@
 import * as React from "react";
 import { FlatList, FlatListProps } from "react-native";
 
-import { ActivityItem, ActivityItemView } from "./ActivityItem";
-import { Activity } from ".";
+import { ActivityItem, ActivityItemView } from "./";
+import { Activity as ActivityData } from "../../../store/selectors/activities/types";
 
 interface ActivityFeedProps {
-  activities: Activity[]; // in the order they should be rendered
+  activities: ActivityData[]; // in the order they should be rendered
   header?: React.ReactNode;
 }
 
@@ -18,10 +18,10 @@ export class ActivityFeed extends React.Component<ActivityFeedProps> {
   activities: { [key: string]: ActivityItemView } = {};
 
   private onViewableItemsChanged: FlatListProps<
-    Activity
-  >["onViewableItemsChanged"] = ({ viewableItems, changed }) => {
+    ActivityData
+  >["onViewableItemsChanged"] = ({ changed }) => {
     changed.forEach(item => {
-      const activity: Activity = item.item;
+      const activity: ActivityData = item.item;
       if (item.isViewable) {
         return;
       }

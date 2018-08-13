@@ -5,23 +5,19 @@ import {
   MintOperation
 } from "@raha/api-shared/dist/models/Operation";
 
-import {
-  Activity,
-  VideoReference,
-  ActivityDirection
-} from "../../components/shared/Activity";
-import { getMemberById } from "./members";
-import { RahaState } from "../reducers";
+import { Activity, VideoReference, ActivityDirection } from "./types";
+import { getMemberById } from "../members";
+import { RahaState } from "../../reducers";
 import {
   Member,
   RAHA_BASIC_INCOME_MEMBER,
   GENESIS_MEMBER
-} from "../reducers/members";
+} from "../../reducers/members";
 import {
   CurrencyValue,
   CurrencyRole,
   CurrencyType
-} from "../../components/shared/Currency";
+} from "../../../components/shared/Currency";
 
 function videoReferenceForMember(member: Member): VideoReference {
   return {
