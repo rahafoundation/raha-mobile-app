@@ -18,10 +18,10 @@ type OwnProps = {
 type StateProps = {
   createdMember: Member;
 };
-type CreateMemberOperationActivityProps = OwnProps & StateProps;
+type CreateMemberActivityProps = OwnProps & StateProps;
 
-const CreateMemberOperationActivityView: React.StatelessComponent<
-  CreateMemberOperationActivityProps
+const CreateMemberActivityView: React.StatelessComponent<
+  CreateMemberActivityProps
 > = ({ operation, createdMember, activityRef }) => {
   return (
     <ActivityTemplate
@@ -56,6 +56,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return { createdMember };
 };
 
-export const CreateMemberOperationActivity = connect(mapStateToProps)(
-  CreateMemberOperationActivityView
+export const CreateMemberActivity = connect(mapStateToProps)(
+  CreateMemberActivityView
 );

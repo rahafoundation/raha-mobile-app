@@ -1,9 +1,9 @@
 /**
- * Visual display of a RequestVerification operation in the ActivityFeed.
+ * Visual display of a RequestInvite operation in the ActivityFeed.
  */
 import * as React from "react";
 
-import { RequestVerificationOperation } from "@raha/api-shared/dist/models/Operation";
+import { RequestInviteOperation } from "@raha/api-shared/dist/models/Operation";
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
@@ -12,26 +12,26 @@ import { Member, GENESIS_MEMBER } from "../../../../store/reducers/members";
 import { getMemberById } from "../../../../store/selectors/members";
 
 type OwnProps = {
-  operation: RequestVerificationOperation;
+  operation: RequestInviteOperation;
   activityRef?: React.Ref<ActivityTemplateView>;
 };
 type StateProps = {
   fromMember: Member;
   toMember: Member | typeof GENESIS_MEMBER;
 };
-type RequestVerificationOperationActivityProps = OwnProps & StateProps;
+type RequestInviteActivityProps = OwnProps & StateProps;
 
-const RequestVerificationOperationActivityView: React.StatelessComponent<
-  RequestVerificationOperationActivityProps
+const RequestInviteActivityView: React.StatelessComponent<
+  RequestInviteActivityProps
 > = ({ operation, fromMember, toMember, activityRef }) => {
   return (
     <ActivityTemplate
-      message={`${fromMember.get(
-        "fullName"
-      )} requested that you verify their identity!`}
+      message={`Your friend just joined Raha!`}
       from={fromMember}
+      // don't display genesis member, as it doesn't actually exist
       to={toMember === GENESIS_MEMBER ? undefined : toMember}
       timestamp={new Date(operation.created_at)}
+      videoUri={fromMember.videoUri}
       onRef={activityRef}
     />
   );
@@ -64,6 +64,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return { fromMember, toMember };
 };
 
-export const RequestVerificationOperationActivity = connect(mapStateToProps)(
-  RequestVerificationOperationActivityView
+export const RequestInviteActivity = connect(mapStateToProps)(
+  RequestInviteActivityView
 );

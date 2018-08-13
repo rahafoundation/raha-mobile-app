@@ -1,38 +1,37 @@
 /**
- * Visual display of a Give operation in the ActivityFeed.
+ * Visual display of a RequestVerification operation in the ActivityFeed.
  */
 import * as React from "react";
-import { Big } from "big.js";
 
-import { GiveOperation } from "@raha/api-shared/dist/models/Operation";
+import { RequestVerificationOperation } from "@raha/api-shared/dist/models/Operation";
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../../store";
-import { Member } from "../../../../store/reducers/members";
+import { Member, GENESIS_MEMBER } from "../../../../store/reducers/members";
 import { getMemberById } from "../../../../store/selectors/members";
 
 type OwnProps = {
-  operation: GiveOperation;
+  operation: RequestVerificationOperation;
   activityRef?: React.Ref<ActivityTemplateView>;
 };
 type StateProps = {
-  toMember: Member;
   fromMember: Member;
+  toMember: Member | typeof GENESIS_MEMBER;
 };
-type GiveOperationActivityProps = OwnProps & StateProps;
+type RequestVerificationActivityProps = OwnProps & StateProps;
 
-const GiveOperationActivityView: React.StatelessComponent<
-  GiveOperationActivityProps
+const RequestVerificationActivityView: React.StatelessComponent<
+  RequestVerificationActivityProps
 > = ({ operation, fromMember, toMember, activityRef }) => {
   return (
     <ActivityTemplate
-      message={`I just gave you Raha for: ${operation.data.memo} `}
+      message={`${fromMember.get(
+        "fullName"
+      )} requested that you verify their identity!`}
       from={fromMember}
-      to={toMember}
+      to={toMember === GENESIS_MEMBER ? undefined : toMember}
       timestamp={new Date(operation.created_at)}
-      amount={new Big(operation.data.amount)}
-      donationAmount={new Big(operation.data.donation_amount)}
       onRef={activityRef}
     />
   );
@@ -42,10 +41,13 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const [fromMember, toMember] = [
-    getMemberById(state, ownProps.operation.creator_uid),
-    getMemberById(state, ownProps.operation.data.to_uid)
-  ];
+  const requesterId = ownProps.operation.creator_uid;
+  const requestedId = ownProps.operation.data.to_uid;
+  const fromMember = getMemberById(state, requesterId);
+  const toMember = requestedId
+    ? getMemberById(state, requestedId)
+    : GENESIS_MEMBER;
+
   if (!fromMember || !toMember) {
     // TODO: log the following properly, properly handle cases when members are
     // missing instead of throwing uncaught error
@@ -62,6 +64,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return { fromMember, toMember };
 };
 
-export const GiveOperationActivity = connect(mapStateToProps)(
-  GiveOperationActivityView
+export const RequestVerificationActivity = connect(mapStateToProps)(
+  RequestVerificationActivityView
 );

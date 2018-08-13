@@ -26,11 +26,14 @@ type StateProps = {
   fromMember: Member;
   referredMemberFullName?: string;
 };
-type MintOperationActivityProps = OwnProps & StateProps;
+type MintActivityProps = OwnProps & StateProps;
 
-const MintOperationActivityView: React.StatelessComponent<
-  MintOperationActivityProps
-> = ({ operation, fromMember, activityRef, referredMemberFullName }) => {
+const MintActivityView: React.StatelessComponent<MintActivityProps> = ({
+  operation,
+  fromMember,
+  activityRef,
+  referredMemberFullName
+}) => {
   let message;
   switch (operation.data.type) {
     case MintType.BASIC_INCOME:
@@ -90,6 +93,4 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return { fromMember };
 };
 
-export const MintOperationActivity = connect(mapStateToProps)(
-  MintOperationActivityView
-);
+export const MintActivity = connect(mapStateToProps)(MintActivityView);

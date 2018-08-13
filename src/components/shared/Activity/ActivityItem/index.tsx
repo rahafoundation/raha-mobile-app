@@ -18,65 +18,60 @@ import { ActivityTemplateView } from "./ActivityTemplate";
 import { CreateMemberOperationActivity } from "./CreateMemberOperationActivity";
 import { VerifyOperationActivity } from "./VerifyOperationActivity";
 import { RequestVerificationOperationActivity } from "./RequestVerificationOperationActivity";
+import { Activity } from "..";
 
 type ActivityItemProps = {
-  operation: Operation;
+  activity: Activity;
   // Used to get a handle to the underlying ActivityTemplate component this
   // outputs
   activityRef?: React.Ref<ActivityTemplateView>;
 };
 
 export const ActivityItem: React.StatelessComponent<ActivityItemProps> = ({
-  operation,
+  activity,
   activityRef
 }) => {
-  switch (operation.op_code) {
+  switch (activity.op_code) {
     case OperationType.CREATE_MEMBER:
       return (
         <CreateMemberOperationActivity
-          operation={operation}
+          operation={activity}
           activityRef={activityRef}
         />
       );
     case OperationType.REQUEST_VERIFICATION:
       return (
         <RequestVerificationOperationActivity
-          operation={operation}
+          operation={activity}
           activityRef={activityRef}
         />
       );
     case OperationType.VERIFY:
       return (
         <VerifyOperationActivity
-          operation={operation}
+          operation={activity}
           activityRef={activityRef}
         />
       );
     case OperationType.GIVE:
       return (
-        <GiveOperationActivity
-          operation={operation}
-          activityRef={activityRef}
-        />
+        <GiveOperationActivity operation={activity} activityRef={activityRef} />
       );
     case OperationType.MINT:
       return (
-        <MintOperationActivity
-          operation={operation}
-          activityRef={activityRef}
-        />
+        <MintOperationActivity operation={activity} activityRef={activityRef} />
       );
     case OperationType.REQUEST_INVITE:
       return (
         <RequestInviteOperationActivity
-          operation={operation}
+          operation={activity}
           activityRef={activityRef}
         />
       );
     case OperationType.TRUST:
       return (
         <TrustOperationActivity
-          operation={operation}
+          operation={activity}
           activityRef={activityRef}
         />
       );
@@ -87,8 +82,8 @@ export const ActivityItem: React.StatelessComponent<ActivityItemProps> = ({
       console.error(
         new Error(
           `Invalid operation: Unrecognized opcode "${
-            (operation as Operation).op_code
-          }". Operation: ${JSON.stringify(operation)}`
+            (activity as Operation).op_code
+          }". Operation: ${JSON.stringify(activity)}`
         )
       );
       return <View />;

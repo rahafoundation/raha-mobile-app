@@ -1,37 +1,38 @@
 /**
- * Visual display of a RequestInvite operation in the ActivityFeed.
+ * Visual display of a Trust operation in the ActivityFeed.
  */
 import * as React from "react";
 
-import { RequestInviteOperation } from "@raha/api-shared/dist/models/Operation";
+import { TrustOperation } from "@raha/api-shared/dist/models/Operation";
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../../store";
-import { Member, GENESIS_MEMBER } from "../../../../store/reducers/members";
+import { Member } from "../../../../store/reducers/members";
 import { getMemberById } from "../../../../store/selectors/members";
 
 type OwnProps = {
-  operation: RequestInviteOperation;
+  operation: TrustOperation;
   activityRef?: React.Ref<ActivityTemplateView>;
 };
 type StateProps = {
   fromMember: Member;
-  toMember: Member | typeof GENESIS_MEMBER;
+  toMember: Member;
 };
-type RequestInviteOperationActivityProps = OwnProps & StateProps;
+type TrustActivityProps = OwnProps & StateProps;
 
-const RequestInviteOperationActivityView: React.StatelessComponent<
-  RequestInviteOperationActivityProps
-> = ({ operation, fromMember, toMember, activityRef }) => {
+const TrustActivityView: React.StatelessComponent<TrustActivityProps> = ({
+  operation,
+  fromMember,
+  toMember,
+  activityRef
+}) => {
   return (
     <ActivityTemplate
-      message={`Your friend just joined Raha!`}
+      message={"I have trusted you."}
       from={fromMember}
-      // don't display genesis member, as it doesn't actually exist
-      to={toMember === GENESIS_MEMBER ? undefined : toMember}
+      to={toMember}
       timestamp={new Date(operation.created_at)}
-      videoUri={fromMember.videoUri}
       onRef={activityRef}
     />
   );
@@ -41,13 +42,10 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const requesterId = ownProps.operation.creator_uid;
-  const requestedId = ownProps.operation.data.to_uid;
-  const fromMember = getMemberById(state, requesterId);
-  const toMember = requestedId
-    ? getMemberById(state, requestedId)
-    : GENESIS_MEMBER;
-
+  const [fromMember, toMember] = [
+    getMemberById(state, ownProps.operation.creator_uid),
+    getMemberById(state, ownProps.operation.data.to_uid)
+  ];
   if (!fromMember || !toMember) {
     // TODO: log the following properly, properly handle cases when members are
     // missing instead of throwing uncaught error
@@ -64,6 +62,4 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return { fromMember, toMember };
 };
 
-export const RequestInviteOperationActivity = connect(mapStateToProps)(
-  RequestInviteOperationActivityView
-);
+export const TrustActivity = connect(mapStateToProps)(TrustActivityView);

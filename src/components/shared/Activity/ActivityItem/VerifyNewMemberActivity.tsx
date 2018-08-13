@@ -1,9 +1,9 @@
 /**
- * Visual display of a Trust operation in the ActivityFeed.
+ * Visual display of a Verify operation in the ActivityFeed.
  */
 import * as React from "react";
 
-import { TrustOperation } from "@raha/api-shared/dist/models/Operation";
+import { VerifyOperation } from "@raha/api-shared/dist/models/Operation";
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
@@ -12,23 +12,24 @@ import { Member } from "../../../../store/reducers/members";
 import { getMemberById } from "../../../../store/selectors/members";
 
 type OwnProps = {
-  operation: TrustOperation;
+  operation: VerifyOperation;
   activityRef?: React.Ref<ActivityTemplateView>;
 };
 type StateProps = {
   fromMember: Member;
   toMember: Member;
 };
-type TrustOperationActivityProps = OwnProps & StateProps;
+type VerifyNewMemberActivityProps = OwnProps & StateProps;
 
-const TrustOperationActivityView: React.StatelessComponent<
-  TrustOperationActivityProps
+const VerifyNewMemberActivityView: React.StatelessComponent<
+  VerifyNewMemberActivityProps
 > = ({ operation, fromMember, toMember, activityRef }) => {
   return (
     <ActivityTemplate
-      message={"I have trusted you."}
+      message={"I have verified your identity."}
       from={fromMember}
       to={toMember}
+      videoUri={operation.data.video_url}
       timestamp={new Date(operation.created_at)}
       onRef={activityRef}
     />
@@ -59,6 +60,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return { fromMember, toMember };
 };
 
-export const TrustOperationActivity = connect(mapStateToProps)(
-  TrustOperationActivityView
+export const VerifyNewMemberActivity = connect(mapStateToProps)(
+  VerifyNewMemberActivityView
 );

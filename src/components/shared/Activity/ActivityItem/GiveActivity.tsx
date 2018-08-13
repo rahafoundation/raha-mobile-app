@@ -1,9 +1,10 @@
 /**
- * Visual display of a Verify operation in the ActivityFeed.
+ * Visual display of a Give operation in the ActivityFeed.
  */
 import * as React from "react";
+import { Big } from "big.js";
 
-import { VerifyOperation } from "@raha/api-shared/dist/models/Operation";
+import { GiveOperation } from "@raha/api-shared/dist/models/Operation";
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
@@ -12,25 +13,29 @@ import { Member } from "../../../../store/reducers/members";
 import { getMemberById } from "../../../../store/selectors/members";
 
 type OwnProps = {
-  operation: VerifyOperation;
+  operation: GiveOperation;
   activityRef?: React.Ref<ActivityTemplateView>;
 };
 type StateProps = {
-  fromMember: Member;
   toMember: Member;
+  fromMember: Member;
 };
-type VerifyOperationActivityProps = OwnProps & StateProps;
+type GiveActivityProps = OwnProps & StateProps;
 
-const VerifyOperationActivityView: React.StatelessComponent<
-  VerifyOperationActivityProps
-> = ({ operation, fromMember, toMember, activityRef }) => {
+const GiveActivityView: React.StatelessComponent<GiveActivityProps> = ({
+  operation,
+  fromMember,
+  toMember,
+  activityRef
+}) => {
   return (
     <ActivityTemplate
-      message={"I have verified your identity."}
+      message={`I just gave you Raha for: ${operation.data.memo} `}
       from={fromMember}
       to={toMember}
-      videoUri={operation.data.video_url}
       timestamp={new Date(operation.created_at)}
+      amount={new Big(operation.data.amount)}
+      donationAmount={new Big(operation.data.donation_amount)}
       onRef={activityRef}
     />
   );
@@ -60,6 +65,4 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return { fromMember, toMember };
 };
 
-export const VerifyOperationActivity = connect(mapStateToProps)(
-  VerifyOperationActivityView
-);
+export const GiveActivity = connect(mapStateToProps)(GiveActivityView);
