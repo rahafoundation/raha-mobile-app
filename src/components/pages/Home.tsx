@@ -12,7 +12,7 @@ import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import {
   ActivityFeed,
   isUnconfirmedRequestInvite
-} from "../shared/ActivityFeed";
+} from "../shared/Activity/ActivityFeed";
 import { Container } from "../shared/elements";
 import { RahaState } from "../../store";
 import { Member } from "../../store/reducers/members";

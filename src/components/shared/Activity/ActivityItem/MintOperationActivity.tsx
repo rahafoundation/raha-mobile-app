@@ -11,12 +11,12 @@ import {
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
-import { RahaState } from "../../../store";
-import { Member } from "../../../store/reducers/members";
+import { RahaState } from "../../../../store";
+import { Member } from "../../../../store/reducers/members";
 import {
   getMemberById,
   getMembersByIds
-} from "../../../store/selectors/members";
+} from "../../../../store/selectors/members";
 
 type OwnProps = {
   operation: MintOperation;

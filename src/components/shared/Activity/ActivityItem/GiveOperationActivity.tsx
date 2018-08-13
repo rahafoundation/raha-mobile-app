@@ -8,9 +8,9 @@ import { GiveOperation } from "@raha/api-shared/dist/models/Operation";
 
 import { ActivityTemplate, ActivityTemplateView } from "./ActivityTemplate";
 import { MapStateToProps, connect } from "react-redux";
-import { RahaState } from "../../../store";
-import { Member } from "../../../store/reducers/members";
-import { getMemberById } from "../../../store/selectors/members";
+import { RahaState } from "../../../../store";
+import { Member } from "../../../../store/reducers/members";
+import { getMemberById } from "../../../../store/selectors/members";
 
 type OwnProps = {
   operation: GiveOperation;

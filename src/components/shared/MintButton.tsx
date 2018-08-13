@@ -15,7 +15,7 @@ import {
 } from "../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
 
-import { Button } from "../shared/elements";
+import { Button } from "./elements";
 
 interface OwnProps {}
 interface StateProps {

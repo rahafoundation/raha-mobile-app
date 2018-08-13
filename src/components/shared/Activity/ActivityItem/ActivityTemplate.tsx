@@ -8,16 +8,16 @@ import { Big } from "big.js";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 
-import { Member } from "../../../store/reducers/members";
-import { Text } from "../../shared/elements";
-import { RouteName } from "../Navigation";
-import { colors } from "../../../helpers/colors";
-import { fonts } from "../../../helpers/fonts";
+import { Member } from "../../../../store/reducers/members";
+import { Text } from "../../../shared/elements";
+import { RouteName } from "../../Navigation";
+import { colors } from "../../../../helpers/colors";
+import { fonts } from "../../../../helpers/fonts";
 import {
   VideoWithPlaceholder,
   VideoWithPlaceholderView
-} from "../../shared/VideoWithPlaceholder";
-import { Currency, CurrencyRole, CurrencyType } from "../Currency";
+} from "../../../shared/VideoWithPlaceholder";
+import { Currency, CurrencyRole, CurrencyType } from "../../Currency";
 
 type Props = {
   from: Member;
@@ -104,6 +104,7 @@ export class ActivityTemplateView extends React.Component<
                   value: totalAmount,
                   currencyType: CurrencyType.Raha
                 }}
+                style={styles.amount}
               />
             )}
             {donationAmount && (
@@ -115,6 +116,7 @@ export class ActivityTemplateView extends React.Component<
                     value: donationAmount,
                     currencyType: CurrencyType.Raha
                   }}
+                  style={styles.amount}
                 />
               </React.Fragment>
             )}
@@ -148,6 +150,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "baseline"
+  },
+  amount: {
+    fontSize: 16
   },
   toText: {
     fontSize: 16,

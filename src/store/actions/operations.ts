@@ -4,7 +4,7 @@ import { list as callListOperations } from "@raha/api/dist/operations/list";
 import { Operation } from "@raha/api-shared/dist/models/Operation";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
-import { AsyncAction, AsyncActionCreator } from "./";
+import { AsyncAction, AsyncActionCreator } from ".";
 import { wrapApiCallAction } from "./apiCalls";
 import { config } from "../../data/config";
 

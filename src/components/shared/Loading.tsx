@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 
-import { Text } from "../shared/elements/Text";
+import { Text } from "./elements/Text";
 
 export const Loading: React.StatelessComponent<{}> = () => (
   <View style={styles.container}>

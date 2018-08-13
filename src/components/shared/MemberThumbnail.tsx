@@ -11,8 +11,8 @@ import {
   getMemberColor
 } from "../../helpers/memberDisplay";
 import { Member } from "../../store/reducers/members";
-import { Text } from "../shared/elements";
-import { RouteName } from "../shared/Navigation";
+import { Text } from "./elements";
+import { RouteName } from "./Navigation";
 
 type Props = {
   member: Member;
