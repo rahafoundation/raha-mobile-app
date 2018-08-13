@@ -6,8 +6,7 @@
 import * as React from "react";
 import { FlatList, FlatListProps } from "react-native";
 
-import { ActivityItem } from "./ActivityItem";
-import { ActivityTemplateView } from "./ActivityItem/ActivityTemplate";
+import { ActivityItem, ActivityItemView } from "./ActivityItem";
 import { Activity } from ".";
 
 interface ActivityFeedProps {
@@ -16,7 +15,7 @@ interface ActivityFeedProps {
 }
 
 export class ActivityFeed extends React.Component<ActivityFeedProps> {
-  activities: { [key: string]: ActivityTemplateView } = {};
+  activities: { [key: string]: ActivityItemView } = {};
 
   private onViewableItemsChanged: FlatListProps<
     Activity
@@ -47,13 +46,13 @@ export class ActivityFeed extends React.Component<ActivityFeedProps> {
         renderItem={({ item }) => (
           <ActivityItem
             activity={item}
-            activityRef={elem => {
+            onRef={elem => {
               if (!elem) {
                 // TODO: ensure this degrades well if this is observed to occur
                 // console.error("Unexpected: ActivityItem ref has no value");
                 return;
               }
-              this.activities[item.id] = elem;
+              this.activities[item.id] = elem as any;
             }}
           />
         )}

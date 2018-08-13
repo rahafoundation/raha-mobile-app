@@ -8,16 +8,16 @@ import { Big } from "big.js";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 
-import { Member } from "../../../../store/reducers/members";
-import { Text } from "../../../shared/elements";
-import { RouteName } from "../../Navigation";
-import { colors } from "../../../../helpers/colors";
-import { fonts } from "../../../../helpers/fonts";
+import { Member } from "../../../store/reducers/members";
+import { Text } from "../elements";
+import { RouteName } from "../Navigation";
+import { colors } from "../../../helpers/colors";
+import { fonts } from "../../../helpers/fonts";
 import {
   VideoWithPlaceholder,
   VideoWithPlaceholderView
-} from "../../../shared/VideoWithPlaceholder";
-import { Currency, CurrencyRole, CurrencyType } from "../../Currency";
+} from "../VideoWithPlaceholder";
+import { Currency, CurrencyRole, CurrencyType } from "../Currency";
 
 type Props = {
   from: Member;
@@ -29,7 +29,7 @@ type Props = {
   videoUri?: string;
 };
 
-export class ActivityTemplateView extends React.Component<
+export class ActivityItemView extends React.Component<
   Props & NavigationInjectedProps,
   {}
 > {
@@ -177,4 +177,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export const ActivityTemplate = withNavigation<Props>(ActivityTemplateView);
+export const ActivityItem = withNavigation<Props>(ActivityItemView);
