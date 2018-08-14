@@ -4,39 +4,28 @@
  * We should add ability to see only transactions of people you trust.
  */
 import * as React from "react";
-import { Map } from "immutable";
 import { connect, MapStateToProps } from "react-redux";
 
-import { OperationType } from "@raha/api-shared/dist/models/Operation";
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
-import {
-  ActivityFeed,
-  isUnconfirmedRequestInvite
-} from "../shared/Activity/ActivityFeed";
+import { ActivityFeed } from "../shared/Activity/ActivityFeed";
 import { Container } from "../shared/elements";
 import { RahaState } from "../../store";
-import { Member } from "../../store/reducers/members";
+import { allActivities } from "../../store/selectors/activities";
+import { Activity } from "../../store/selectors/activities/types";
 
 type StateProps = {
-  membersById: Map<MemberId, Member>;
+  activities: Activity[];
 };
 
-const HomeView: React.StatelessComponent<StateProps> = props => {
+const HomeView: React.StatelessComponent<StateProps> = ({ activities }) => {
   return (
     <Container>
-      <ActivityFeed
-        filter={operation =>
-          operation.op_code !== OperationType.MINT &&
-          operation.op_code !== OperationType.TRUST &&
-          !isUnconfirmedRequestInvite(props.membersById, operation)
-        }
-      />
+      <ActivityFeed activities={activities} />
     </Container>
   );
 };
 
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
-  return { membersById: state.members.byMemberId };
+  return { activities: allActivities(state) };
 };
 
 export const Home = connect(mapStateToProps)(HomeView);
