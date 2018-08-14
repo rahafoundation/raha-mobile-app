@@ -143,10 +143,11 @@ export class Member {
     });
   }
 
-  // TODO inviteConfirmed should eventually be modified only by the verify
-  // operation, not the trust operation
   public beTrustedByMember(memberId: MemberId) {
     return this.withFields({
+      // TODO inviteConfirmed should eventually be modified only by the verify
+      // operation, not the trust operation. Thus, remove this once all RequestInvite operations have been
+      // migrated to "CreateMember".
       inviteConfirmed:
         this.fields.inviteConfirmed || this.fields.invitedBy === memberId,
       trustedBy: this.fields.trustedBy.add(memberId)
@@ -179,7 +180,9 @@ export class Member {
 
   public beVerifiedByMember(memberId: MemberId) {
     return this.withFields({
-      verifiedBy: this.fields.verifiedBy.add(memberId)
+      verifiedBy: this.fields.verifiedBy.add(memberId),
+      inviteConfirmed:
+        this.fields.inviteConfirmed || this.fields.invitedBy === memberId
     });
   }
 

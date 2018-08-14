@@ -36,7 +36,8 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
   const { mintableAmount, mintApiCallStatus, mint, loggedInMember } = props;
   const buttonDisabled =
     !loggedInMember ||
-    !loggedInMember.get("inviteConfirmed") ||
+    (!loggedInMember.get("inviteConfirmed") ||
+      loggedInMember.get("verifiedBy").size <= 0) ||
     (mintableAmount && mintableAmount.lte(0)) ||
     (mintApiCallStatus &&
       mintApiCallStatus.status === ApiCallStatusType.STARTED);
