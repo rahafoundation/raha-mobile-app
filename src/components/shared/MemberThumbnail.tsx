@@ -1,5 +1,5 @@
 /**
- * Show a small thumbail of the member's profile along with their name.
+ * Thumbnail of the member's profile. Always rendered as a circle.
  * TODO: show image instead of random colored background with initials
  */
 import * as React from "react";
@@ -10,61 +10,59 @@ import {
   getInitialsForName,
   getMemberColor
 } from "../../helpers/memberDisplay";
-import { Member } from "../../store/reducers/members";
+import { Member, RAHA_BASIC_INCOME_MEMBER } from "../../store/reducers/members";
 import { Text } from "./elements";
 import { RouteName } from "./Navigation";
+import { colors } from "../../helpers/colors";
 
 type Props = {
-  member: Member;
-  score?: Number;
+  member: Member | typeof RAHA_BASIC_INCOME_MEMBER;
+  diameter?: number;
+  score?: number;
 };
 
 export const MemberThumbnailView: React.StatelessComponent<
   Props & NavigationInjectedProps
-> = ({ navigation, member, score }) => {
+> = ({ navigation, member, diameter }) => {
+  const thumbDiameter = diameter ? diameter : 50;
   return (
     <TouchableOpacity
-      style={{ height: 75, flex: 1, flexDirection: "row" }}
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+
+        width: thumbDiameter,
+        height: thumbDiameter,
+
+        backgroundColor:
+          member === RAHA_BASIC_INCOME_MEMBER
+            ? colors.brandColor
+            : getMemberColor(member),
+        borderRadius: thumbDiameter / 2,
+        overflow: "hidden"
+      }}
       delayPressIn={20}
-      onPress={() => navigation.push(RouteName.Profile, { member })}
+      onPress={() => {
+        // TODO: navigate somewhere for raha basic income
+        if (member === RAHA_BASIC_INCOME_MEMBER) {
+          return;
+        }
+        navigation.push(RouteName.Profile, { member });
+      }}
     >
       <Text
         style={{
-          backgroundColor: getMemberColor(member),
-          fontSize: 30,
+          fontSize: thumbDiameter / 3,
           textAlign: "center",
-          textAlignVertical: "center",
-          height: 75,
-          width: 75
+          textAlignVertical: "center"
         }}
       >
-        {getInitialsForName(member.get("fullName"))}
+        {member === RAHA_BASIC_INCOME_MEMBER
+          ? "R"
+          : getInitialsForName(member.get("fullName"))}
       </Text>
-      <View
-        style={{
-          flex: 1,
-          alignSelf: "center"
-        }}
-      >
-        <Text
-          style={{
-            flex: 0,
-            margin: 8
-          }}
-        >
-          {member.get("fullName")}
-        </Text>
-        {score !== undefined && (
-          <Text
-            style={{
-              flex: 0,
-              margin: 8
-            }}
-          >
-            {score}
-          </Text>
-        )}
-      </View>
     </TouchableOpacity>
   );
 };
