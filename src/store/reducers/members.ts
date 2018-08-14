@@ -488,6 +488,33 @@ function applyOperation(
   }
 }
 
+/**
+ * Strict ordering of different op codes in case two operations have the same time stamp.
+ * TODO: Lift this into Operation/model in @raha/api-shared.
+ */
+const OP_CODE_ORDERING = [
+  OperationType.CREATE_MEMBER,
+  OperationType.REQUEST_INVITE,
+  OperationType.REQUEST_VERIFICATION,
+  OperationType.VERIFY,
+  OperationType.TRUST,
+  OperationType.MINT,
+  OperationType.GIVE
+];
+
+function compareOperations(op1: Operation, op2: Operation) {
+  const op1Time = new Date(op1.created_at).getTime();
+  const op2Time = new Date(op2.created_at).getTime();
+  if (op1Time === op2Time) {
+    const op1Ordering = OP_CODE_ORDERING.indexOf(op1.op_code);
+    const op2Ordering = OP_CODE_ORDERING.indexOf(op2.op_code);
+    // This has undefined behavior when one or both of the op_codes is invalid,
+    // but that's okay since we don't apply those to state anyway.
+    return op1Ordering - op2Ordering;
+  }
+  return op1Time - op2Time;
+}
+
 const initialState: MembersState = {
   byMemberId: Map(),
   byMemberUsername: Map()
@@ -499,14 +526,17 @@ export const reducer: Reducer<MembersState> = (
   const action = untypedAction as MembersAction;
   switch (action.type) {
     case OperationsActionType.ADD_OPERATIONS: {
-      return action.operations.reduce(
+      const sortedOperations = action.operations.sort(compareOperations);
+      return sortedOperations.reduce(
         (curState, operation) => applyOperation(curState, operation),
         state
       );
     }
     case OperationsActionType.SET_OPERATIONS: {
-      return action.operations.reduce(
-        (curState, op) => applyOperation(curState, op),
+      const sortedOperations = action.operations.sort(compareOperations);
+      return sortedOperations.reduce(
+        (curState, operation) => applyOperation(curState, operation),
+        // The SET_OPERATIONS action rebuilds member state from scratch.
         initialState
       );
     }
