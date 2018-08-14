@@ -20,6 +20,8 @@ import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication"
 import { Button, Container, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";
 import { VideoWithPlaceholder } from "../shared/VideoWithPlaceholder";
+import { activitiesForMember } from "../../store/selectors/activities";
+import { Activity } from "../../store/selectors/activities/types";
 
 interface NavParams {
   member: Member;
@@ -29,6 +31,7 @@ type OwnProps = NavigationScreenProps<NavParams>;
 type StateProps = {
   member: Member;
   isOwnProfile: boolean;
+  activities: Activity[];
 };
 
 type DispatchProps = {
@@ -86,27 +89,34 @@ const Stats: React.StatelessComponent<StatsProps> = props => (
   </View>
 );
 
-const ProfileView: React.StatelessComponent<ProfileProps> = props => (
+const ProfileView: React.StatelessComponent<ProfileProps> = ({
+  activities,
+  navigation,
+  member,
+  isOwnProfile,
+  trust
+}) => (
   <Container>
     <ActivityFeed
+      activities={activities}
       header={
         <View style={styles.header}>
-          <Thumbnail member={props.member} />
+          <Thumbnail member={member} />
           <View style={styles.interactions}>
-            <Stats navigation={props.navigation} member={props.member} />
-            {!props.isOwnProfile && (
+            <Stats navigation={navigation} member={member} />
+            {!isOwnProfile && (
               <View style={styles.actions}>
                 <Button
                   title="Trust"
-                  onPress={() => props.trust(props.member.get("memberId"))}
+                  onPress={() => trust(member.get("memberId"))}
                   //@ts-ignore Because Button does have a rounded property
                   rounded
                 />
                 <Button
                   title="Give"
                   onPress={() =>
-                    props.navigation.navigate(RouteName.Give, {
-                      toMember: props.member
+                    navigation.navigate(RouteName.Give, {
+                      toMember: member
                     })
                   }
                   //@ts-ignore Because Button does have a rounded property
@@ -116,11 +126,6 @@ const ProfileView: React.StatelessComponent<ProfileProps> = props => (
             )}
           </View>
         </View>
-      }
-      filter={operation =>
-        operation.creator_uid === props.member.get("memberId") ||
-        ("to_uid" in operation.data &&
-          operation.data.to_uid === props.member.get("memberId"))
       }
     />
   </Container>
@@ -202,13 +207,15 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   props
 ) => {
-  const loggedInMemberId = getLoggedInFirebaseUserId(state);
-  const loggedInMember =
-    state.authentication.isLoggedIn && loggedInMemberId
-      ? getMemberById(state, loggedInMemberId)
-      : undefined;
+  // NOTE: always should be present since this page is only showed when logged
+  // in.
+  const loggedInMemberId = getLoggedInFirebaseUserId(state) as MemberId;
+  // TODO: provide loading state if logged in member isn't present
+  const loggedInMember = getMemberById(state, loggedInMemberId);
   const member: Member = props.navigation.getParam("member", loggedInMember);
+  const activities = activitiesForMember(state, member.get("memberId"));
   return {
+    activities,
     member,
     isOwnProfile:
       !!loggedInMember &&
