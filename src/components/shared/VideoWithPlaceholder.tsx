@@ -1,16 +1,12 @@
 /*
  * This component assumes the uri given is a video, and there is a thumbnail
  * for this video that can be found by appending .thumb.jpg.
- * 
+ *
  * Very helpful for performance if showing many videos.
  */
 
 import * as React from "react";
-import {
-  Image,
-  TouchableHighlight,
-  View
-} from "react-native";
+import { Image, TouchableHighlight, View } from "react-native";
 import {
   withNavigation,
   NavigationInjectedProps,
@@ -20,12 +16,12 @@ import Video from "react-native-video";
 
 type Props = {
   uri: string;
-}
+};
 
 const initialState = {
   isPressed: false,
   videoLoaded: false,
-  videoPaused: true,
+  videoPaused: true
 };
 
 export class VideoWithPlaceholderView extends React.Component<
@@ -59,14 +55,17 @@ export class VideoWithPlaceholderView extends React.Component<
   onEnd = () => {
     if (this.video) this.video.seek(0);
     this.setState({
-      videoPaused: true,
+      videoPaused: true
     });
-  }
+  };
 
   render() {
     const { isPressed, videoLoaded, videoPaused } = this.state;
     const imageProps = { source: { uri: this.props.uri + ".thumb.jpg" } };
-    const videoProps = { source: { uri: this.props.uri }, paused: videoPaused || !videoLoaded };
+    const videoProps = {
+      source: { uri: this.props.uri },
+      paused: videoPaused || !videoLoaded
+    };
     const renderImage = !isPressed || !videoLoaded;
     const videoSize = videoLoaded ? "100%" : 0;
     // TODO would be nice to change blurRadius to an Animation
@@ -91,7 +90,7 @@ export class VideoWithPlaceholderView extends React.Component<
               onLoad={() => {
                 this.setState({ videoLoaded: true });
               }}
-              ref={r => this.video = r}
+              ref={r => (this.video = r)}
               style={{
                 width: videoSize,
                 height: videoSize
