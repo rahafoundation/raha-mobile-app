@@ -17,6 +17,8 @@ export const palette = {
 };
 
 export const colors = {
+  brandColor: palette.mint,
+
   // Main
   lightBackground: palette.mintWhite,
   primaryBorder: palette.mint,
