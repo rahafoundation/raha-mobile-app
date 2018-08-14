@@ -20,13 +20,13 @@ import { MembersAction } from "../actions/members";
 import { OperationInvalidError } from "../../errors/OperationInvalidError";
 import { config } from "../../data/config";
 
-const GENESIS_REQUEST_INVITE_OPS = [
+export const GENESIS_REQUEST_INVITE_OPS = [
   "InuYAjMISl6operovXIR",
   "SKI5CxMXWd4qjJm1zm1y",
   "SUswrxogVQ6S0rH8O2h7",
   "Y8FiyjOLs9O8AZNGzhwQ"
 ];
-const GENESIS_TRUST_OPS = [
+export const GENESIS_TRUST_OPS = [
   "va9A8nQ4C4ZiAsJG2nLt",
   "CmVDdktn3c3Uo5pP4rV6",
   "uAFLhBjYtrpTXOZkJ6BD",
