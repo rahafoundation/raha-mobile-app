@@ -6,7 +6,7 @@
 import * as React from "react";
 import { FlatList, FlatListProps } from "react-native";
 
-import { ActivityItem, ActivityItemView } from "./";
+import { Activity, ActivityView } from "./";
 import { Activity as ActivityData } from "../../../store/selectors/activities/types";
 
 interface ActivityFeedProps {
@@ -15,7 +15,7 @@ interface ActivityFeedProps {
 }
 
 export class ActivityFeed extends React.Component<ActivityFeedProps> {
-  activities: { [key: string]: ActivityItemView } = {};
+  activities: { [key: string]: ActivityView } = {};
 
   private onViewableItemsChanged: FlatListProps<
     ActivityData
@@ -44,7 +44,7 @@ export class ActivityFeed extends React.Component<ActivityFeedProps> {
         data={this.props.activities}
         keyExtractor={activity => activity.id}
         renderItem={({ item }) => (
-          <ActivityItem
+          <Activity
             activity={item}
             onRef={elem => {
               if (!elem) {
