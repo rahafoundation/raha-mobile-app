@@ -19,15 +19,15 @@ export enum ActivityDirection {
  * Reference to find and render a video.
  */
 export interface VideoReference {
-  thumbnailUrl: string;
-  videoUrl: string;
+  thumbnailUri: string;
+  videoUri: string;
 }
 
 /**
  * Reference to find and render an image.
  */
 export interface ImageReference {
-  imageUrl: string;
+  imageUri: string;
 }
 
 /**
@@ -58,20 +58,15 @@ export type ActivityBody =
  * renderable Activity.
  */
 export interface ActivityContent {
-  actor: Member;
-  description: (string | CurrencyValue)[];
+  // TODO: potentially support other special members than basic income, treat it
+  // as an actual member/variation of it rather than a singleton
+  actor: Member | typeof RAHA_BASIC_INCOME_MEMBER;
+  description?: (string | CurrencyValue)[];
   body?: ActivityBody;
   nextInChain?: {
     direction: ActivityDirection;
-  } & (
-    | {
-        content: ActivityContent;
-      }
-    | {
-        // TODO: potentially support other causes than basic income, treat it as
-        // an actual model rather than a singleton
-        actor: Member | typeof RAHA_BASIC_INCOME_MEMBER;
-      });
+    content: ActivityContent;
+  };
 }
 
 /**
