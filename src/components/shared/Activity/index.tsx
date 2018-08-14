@@ -4,172 +4,195 @@
  */
 import * as React from "react";
 import { format } from "date-fns";
-import { Big } from "big.js";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TextStyle, ViewStyle, Image } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 
-import { Member } from "../../../store/reducers/members";
 import { Text } from "../elements";
-import { RouteName } from "../Navigation";
 import { colors } from "../../../helpers/colors";
-import { fonts } from "../../../helpers/fonts";
 import {
-  VideoWithPlaceholder,
-  VideoWithPlaceholderView
+  VideoWithPlaceholderView,
+  VideoWithPlaceholder
 } from "../VideoWithPlaceholder";
-import { Currency, CurrencyRole, CurrencyType } from "../Currency";
-import { Activity as ActivityData } from "../../../store/selectors/activities/types";
+import {
+  Activity as ActivityData,
+  ActivityContent as ActivityContentData,
+  ActivityCallToAction as CallToActionData
+} from "../../../store/selectors/activities/types";
+import { MemberName } from "../MemberName";
+import { MemberThumbnail } from "../MemberThumbnail";
+import { Currency } from "../Currency";
+import { TextLink } from "../elements/TextLink";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 type Props = {
   activity: ActivityData;
 };
 
-export class ActivityView extends React.Component<
-  Props & NavigationInjectedProps,
-  {}
-> {
-  videoElem: VideoWithPlaceholderView | null = null;
+const CallToAction: React.StatelessComponent<{
+  callToAction: CallToActionData;
+}> = ({ callToAction: { actor, actions } }) => {
+  return (
+    <View>
+      <MemberThumbnail member={actor} />
+      {actions.map(action => (
+        <View>
+          {action.text.map(piece => {
+            if (typeof piece === "string") {
+              return <Text>piece</Text>;
+            }
+            if ("currencyType" in piece) {
+              return <Currency currencyValue={piece} />;
+            }
+            if ("destination" in piece) {
+              return (
+                <TextLink destination={piece.destination}>
+                  {piece.text}
+                </TextLink>
+              );
+            }
+            console.error(
+              `Unexpected value in ActivityContent's callToAction field: ${piece}. Aborting`
+            );
+            return <React.Fragment />;
+          })}
+        </View>
+      ))}
+    </View>
+  );
+};
 
-  /**
-   * Reset video playback state, stop it
-   */
-  public resetVideo = () => {
-    if (this.videoElem) this.videoElem.reset();
-  };
-
+class ActivityContentBody extends React.Component<{
+  body: ActivityContentData["body"];
+}> {
   render() {
-    const {
-      to,
-      from,
-      navigation,
-      videoUri,
-      timestamp,
-      message,
-      amount,
-      donationAmount
-    } = this.props.activity;
+    const { body } = this.props;
+    if (!body) {
+      return <React.Fragment />;
+    }
+    if ("text" in body) {
+      return <Text>{body.text}</Text>;
+    }
 
-    const totalAmount =
-      amount && donationAmount ? amount.plus(donationAmount) : amount;
-    const donationIntroText = amount
-      ? [",", ...[to ? [to.get("fullName")] : []], "donated"].join(" ")
-      : "Donated ";
+    if ("iconName" in body) {
+      return <Icon name={body.iconName} />;
+    }
+
     return (
-      <View style={styles.card}>
-        <View style={styles.metadataRow}>
-          <View>
-            {to && (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.push(RouteName.Profile, { member: to })
-                }
-              >
-                <Text style={styles.toText}>To {to.get("fullName")}:</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-          <Text style={styles.timestamp}>
-            {format(timestamp, "MMM D, YYYY h:mm a")}
-          </Text>
-        </View>
-        <View style={styles.bodyRow}>
-          <Text>{message}</Text>
-          <TouchableOpacity
-            onPress={() => navigation.push(RouteName.Profile, { member: from })}
-          >
-            <Text style={styles.fromText}>From: {from.get("fullName")}</Text>
-          </TouchableOpacity>
-        </View>
-        {videoUri && (
-          <View style={styles.video}>
-            <VideoWithPlaceholder
-              onRef={e => {
-                this.videoElem = e as any;
-              }}
-              uri={videoUri}
-            />
-          </View>
-        )}
-        <View style={styles.moneyRow}>
-          <View style={styles.amountDetail}>
-            {totalAmount && (
-              <Currency
-                currencyValue={{
-                  role: CurrencyRole.Positive,
-                  value: totalAmount,
-                  currencyType: CurrencyType.Raha
-                }}
-                style={styles.amount}
-              />
-            )}
-            {donationAmount && (
-              <React.Fragment>
-                <Text>{donationIntroText} </Text>
-                <Currency
-                  currencyValue={{
-                    role: CurrencyRole.Donation,
-                    value: donationAmount,
-                    currencyType: CurrencyType.Raha
-                  }}
-                  style={styles.amount}
-                />
-              </React.Fragment>
-            )}
-          </View>
-        </View>
+      <View>
+        {body.map((media, idx) => {
+          if ("videoUri" in media) {
+            return <VideoWithPlaceholder key={idx} uri={media.videoUri} />;
+          }
+          return <Image source={{ uri: media.imageUri }} />;
+        })}
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  card: {
-    borderBottomColor: colors.primaryBorder,
-    borderBottomWidth: 1,
-    paddingVertical: 10,
-    marginVertical: 10
-  },
-  metadataRow: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
-    marginBottom: 10
-  },
-  bodyRow: {
-    marginHorizontal: 20,
-    marginVertical: 10
-  },
-  amountDetail: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "baseline"
-  },
-  amount: {
-    fontSize: 16
-  },
-  toText: {
-    fontSize: 16,
-    ...fonts.Lato.Semibold
-  },
-  fromText: {
-    marginTop: 10,
-    textAlign: "right",
-    fontSize: 14,
-    ...fonts.Lato.Semibold
-  },
-  moneyRow: {
-    marginHorizontal: 10,
-    marginTop: 10
-  },
-  video: {
-    aspectRatio: 1
-  },
-  timestamp: {
-    fontSize: 12,
-    color: colors.darkAccent
+class ActivityContent extends React.Component<{
+  content: ActivityContentData;
+}> {
+  public render() {
+    const { actor, description, body, nextInChain } = this.props.content;
+    return (
+      <View>
+        <View style={styles.actorRow}>
+          <MemberThumbnail diameter={leftColumnWidth} member={actor} />
+          <View>
+            <MemberName member={actor} />
+            {description &&
+              description.map((piece, idx) => {
+                if (typeof piece === "string") {
+                  return <Text key={idx}>{piece}</Text>;
+                }
+                if ("currencyType" in piece) {
+                  return <Currency key={idx} currencyValue={piece} />;
+                }
+                console.error(
+                  `Unexpected value in ActivityContent description: ${piece}, aborting.`
+                );
+                return <View key={idx} />;
+              })}
+          </View>
+        </View>
+        <View style={styles.contentBodyRow}>
+          {/* TODO: render chain direction */}
+          <View
+            style={[
+              styles.leftColumn,
+              styles.chainIndicator,
+              ...(nextInChain ? [] : [styles.invisible])
+            ]}
+          />
+          <ActivityContentBody body={body} />
+        </View>
+        {nextInChain && <ActivityContent content={nextInChain.content} />}
+      </View>
+    );
   }
+}
+
+export class ActivityView extends React.Component<
+  Props & NavigationInjectedProps,
+  {}
+> {
+  videoElem?: VideoWithPlaceholderView;
+
+  /**
+   * Reset video playback state, stop it
+   */
+  public resetVideo = () => {
+    if (this.videoElem) {
+      this.videoElem.reset();
+    }
+  };
+
+  render() {
+    const { content, callToAction, timestamp } = this.props.activity;
+    return (
+      <View>
+        <ActivityContent content={content} />
+        {callToAction && <CallToAction callToAction={callToAction} />}
+        <Text style={styles.timestamp}>
+          {format(timestamp, "MMM D, YYYY h:mm a")}
+        </Text>
+      </View>
+    );
+  }
+}
+
+const leftColumnWidth = 50;
+
+const timestampStyle: TextStyle = {
+  fontSize: 12,
+  color: colors.darkAccent
+};
+
+const leftColumnStyle: ViewStyle = {
+  width: leftColumnWidth
+};
+
+const actorRowStyle: ViewStyle = {};
+
+const contentBodyRowStyle: ViewStyle = {};
+
+const invisibleStyle: ViewStyle = {
+  opacity: 0
+};
+
+const chainIndicatorStyle: ViewStyle = {
+  backgroundColor: colors.darkAccent,
+  width: 5
+};
+
+const styles = StyleSheet.create({
+  timestamp: timestampStyle,
+  actorRow: actorRowStyle,
+  contentBodyRow: contentBodyRowStyle,
+  leftColumn: leftColumnStyle,
+  invisible: invisibleStyle,
+  chainIndicator: chainIndicatorStyle
 });
 
 export const Activity = withNavigation<Props>(ActivityView);
