@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     width: Dimensions.get("window").width - 24,
-    backgroundColor: colors.lightBackground
+    backgroundColor: colors.pageBackground
   },
   image: {
     flex: 1

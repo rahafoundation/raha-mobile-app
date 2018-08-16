@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   card: {
-    backgroundColor: colors.lightBackground,
+    backgroundColor: colors.pageBackground,
     width: Dimensions.get("window").width - 24,
     padding: 12,
     borderRadius: 12
