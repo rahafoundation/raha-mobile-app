@@ -6,9 +6,10 @@ import * as React from "react";
 import { format } from "date-fns";
 import { View, StyleSheet, TextStyle, ViewStyle, Image } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 import { Text } from "../elements";
-import { colors } from "../../../helpers/colors";
+import { colors, palette } from "../../../helpers/colors";
 import {
   VideoWithPlaceholderView,
   VideoWithPlaceholder
@@ -22,7 +23,6 @@ import { MemberName } from "../MemberName";
 import { MemberThumbnail } from "../MemberThumbnail";
 import { Currency } from "../Currency";
 import { TextLink } from "../elements/TextLink";
-import Icon from "react-native-vector-icons/FontAwesome";
 
 type Props = {
   activity: ActivityData;
@@ -33,7 +33,7 @@ const CallToAction: React.StatelessComponent<{
 }> = ({ callToAction: { actor, actions } }) => {
   return (
     <View>
-      <MemberThumbnail member={actor} />
+      <MemberThumbnail style={styles.actorThumbnail} member={actor} />
       {actions.map(action => (
         <View>
           {action.text.map(piece => {
@@ -69,19 +69,34 @@ class ActivityContentBody extends React.Component<{
     if (!body) {
       return <React.Fragment />;
     }
+
     if ("text" in body) {
-      return <Text>{body.text}</Text>;
+      return (
+        <View style={styles.contentBody}>
+          <Text>{body.text}</Text>
+        </View>
+      );
     }
 
     if ("iconName" in body) {
-      return <Icon name={body.iconName} />;
+      return (
+        <View style={styles.contentBody}>
+          <Icon name={body.iconName} style={styles.iconBody} />
+        </View>
+      );
     }
 
     return (
-      <View>
+      <View style={styles.contentBody}>
         {body.map((media, idx) => {
           if ("videoUri" in media) {
-            return <VideoWithPlaceholder key={idx} uri={media.videoUri} />;
+            return (
+              <VideoWithPlaceholder
+                style={styles.mediaBody}
+                key={idx}
+                uri={media.videoUri}
+              />
+            );
           }
           return <Image source={{ uri: media.imageUri }} />;
         })}
@@ -98,35 +113,54 @@ class ActivityContent extends React.Component<{
     return (
       <View>
         <View style={styles.actorRow}>
-          <MemberThumbnail diameter={leftColumnWidth} member={actor} />
-          <View>
+          <MemberThumbnail
+            style={styles.actorThumbnail}
+            diameter={leftColumnWidth}
+            member={actor}
+          />
+          {/*
+            * Everything in the description must ultimately be Text elements, or
+            * else React Native doesn't support it. This is done to ensure text
+            * flows correctly in descriptions.
+            */}
+          <Text style={styles.description}>
             <MemberName member={actor} />
             {description &&
-              description.map((piece, idx) => {
-                if (typeof piece === "string") {
-                  return <Text key={idx}>{piece}</Text>;
-                }
-                if ("currencyType" in piece) {
-                  return <Currency key={idx} currencyValue={piece} />;
-                }
-                console.error(
-                  `Unexpected value in ActivityContent description: ${piece}, aborting.`
-                );
-                return <View key={idx} />;
-              })}
+              description
+                .map((piece, idx) => {
+                  if (typeof piece === "string") {
+                    return <Text key={idx}>{piece}</Text>;
+                  }
+                  if ("currencyType" in piece) {
+                    return <Currency key={idx} currencyValue={piece} />;
+                  }
+                  console.error(
+                    `Unexpected value in ActivityContent description: ${piece}, aborting.`
+                  );
+                  return <React.Fragment key={idx} />;
+                })
+                .reduce(
+                  (memo, nextComponent) => [
+                    ...memo,
+                    <Text> </Text>,
+                    nextComponent
+                  ],
+                  [] as React.ReactNode[]
+                )}
+          </Text>
+        </View>
+        {body && (
+          <View style={styles.contentBodyRow}>
+            {/* TODO: render chain direction */}
+            <View
+              style={[
+                styles.chainIndicator,
+                ...(nextInChain ? [] : [styles.invisible])
+              ]}
+            />
+            <ActivityContentBody body={body} />
           </View>
-        </View>
-        <View style={styles.contentBodyRow}>
-          {/* TODO: render chain direction */}
-          <View
-            style={[
-              styles.leftColumn,
-              styles.chainIndicator,
-              ...(nextInChain ? [] : [styles.invisible])
-            ]}
-          />
-          <ActivityContentBody body={body} />
-        </View>
+        )}
         {nextInChain && <ActivityContent content={nextInChain.content} />}
       </View>
     );
@@ -151,7 +185,7 @@ export class ActivityView extends React.Component<
   render() {
     const { content, callToAction, timestamp } = this.props.activity;
     return (
-      <View>
+      <View style={styles.activity}>
         <ActivityContent content={content} />
         {callToAction && <CallToAction callToAction={callToAction} />}
         <Text style={styles.timestamp}>
@@ -164,33 +198,91 @@ export class ActivityView extends React.Component<
 
 const leftColumnWidth = 50;
 
+const activityStyle: ViewStyle = {
+  paddingHorizontal: 20,
+  paddingBottom: 20,
+  borderBottomColor: colors.divider,
+  borderBottomWidth: 1,
+  marginBottom: 20
+};
+
 const timestampStyle: TextStyle = {
-  fontSize: 12,
-  color: colors.darkAccent
+  width: "100%",
+  textAlign: "right",
+  color: colors.secondaryText
 };
 
-const leftColumnStyle: ViewStyle = {
-  width: leftColumnWidth
+const contentSectionStyle: ViewStyle = {
+  marginTop: 10
 };
 
-const actorRowStyle: ViewStyle = {};
+const actorRowStyle: ViewStyle = {
+  ...contentSectionStyle,
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "baseline"
+};
 
-const contentBodyRowStyle: ViewStyle = {};
+const actorThumbnailStyle: ViewStyle = {
+  flexGrow: 0,
+  flexShrink: 0,
+  flexBasis: leftColumnWidth,
+  marginRight: 10
+};
+
+const contentBodyRowStyle: ViewStyle = {
+  ...contentSectionStyle,
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center"
+};
 
 const invisibleStyle: ViewStyle = {
   opacity: 0
 };
 
+const chainIndicatorWidth = 3;
 const chainIndicatorStyle: ViewStyle = {
-  backgroundColor: colors.darkAccent,
-  width: 5
+  backgroundColor: palette.veryLightGray,
+  width: chainIndicatorWidth,
+  marginHorizontal: (leftColumnWidth - chainIndicatorWidth) / 2,
+  minHeight: 50,
+  height: "100%",
+  flexGrow: 0
+};
+
+const descriptionStyle: TextStyle = {
+  flexShrink: 1
+};
+
+const contentBodyStyle: ViewStyle = {
+  flexShrink: 1,
+  flexGrow: 1
+};
+
+const iconBodyStyle: TextStyle = {
+  fontSize: 80,
+  color: palette.mediumGray,
+  textAlign: "center"
+};
+
+// TODO: calculate proper dimensions dynamically, so that different screen sizes
+// render properly
+const mediaBodyStyle: ViewStyle = {
+  height: 300,
+  width: 300
 };
 
 const styles = StyleSheet.create({
+  activity: activityStyle,
   timestamp: timestampStyle,
+  description: descriptionStyle,
   actorRow: actorRowStyle,
+  actorThumbnail: actorThumbnailStyle,
   contentBodyRow: contentBodyRowStyle,
-  leftColumn: leftColumnStyle,
+  contentBody: contentBodyStyle,
+  mediaBody: mediaBodyStyle,
+  iconBody: iconBodyStyle,
   invisible: invisibleStyle,
   chainIndicator: chainIndicatorStyle
 });
