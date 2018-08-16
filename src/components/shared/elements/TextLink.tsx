@@ -13,8 +13,7 @@ import { fonts } from "../../../helpers/fonts";
 
 type OwnProps = {
   destination: RouteDescriptor;
-  style?: StyleProp<ViewStyle>;
-  textStyle?: StyleProp<TextStyle>;
+  style?: StyleProp<TextStyle>;
 };
 
 type TextLinkProps = OwnProps & NavigationInjectedProps;
@@ -23,19 +22,17 @@ const TextLinkView: React.StatelessComponent<TextLinkProps> = ({
   children,
   destination,
   navigation,
-  style,
-  textStyle
+  style
 }) => {
   return (
-    <TouchableOpacity
-      delayPressIn={20}
+    <Text
       onPress={() =>
         navigation.navigate(destination.routeName, destination.params)
       }
-      style={style}
+      style={[styles.text, style]}
     >
-      <Text style={[styles.text, textStyle]}>{children}</Text>
-    </TouchableOpacity>
+      {children}
+    </Text>
   );
 };
 
