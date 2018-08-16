@@ -22,3 +22,13 @@ const iosFonts: typeof androidFonts = {
 };
 
 export const fonts = Platform.OS === "android" ? androidFonts : iosFonts;
+
+type TextStyleWithSize = TextStyle & { fontSize: number };
+export const fontSizes = {
+  xsmall: { fontSize: 8 } as TextStyleWithSize,
+  small: { fontSize: 12 } as TextStyleWithSize,
+  medium: { fontSize: 16 } as TextStyleWithSize,
+  large: { fontSize: 20 } as TextStyleWithSize,
+  xlarge: { fontSize: 28 } as TextStyleWithSize,
+  xxlarge: { fontSize: 36 } as TextStyleWithSize
+};
