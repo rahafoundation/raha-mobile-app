@@ -194,7 +194,7 @@ export const Discover: React.StatelessComponent<DiscoverProps> = ({
           placeholderText="Search Members"
           keyboardShouldPersistTaps="always"
           onMemberSelected={member => {
-            navigation.push(RouteName.Profile, { member: member });
+            navigation.push(RouteName.ProfilePage, { member: member });
           }}
         />
       </View>

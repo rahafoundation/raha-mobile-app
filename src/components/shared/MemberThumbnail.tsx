@@ -49,7 +49,7 @@ export const MemberThumbnailView: React.StatelessComponent<
         if (member === RAHA_BASIC_INCOME_MEMBER) {
           return;
         }
-        navigation.push(RouteName.Profile, { member });
+        navigation.push(RouteName.ProfilePage, { member });
       }}
     >
       <Text

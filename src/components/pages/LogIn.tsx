@@ -418,10 +418,10 @@ class LogInView extends React.Component<LogInProps, LogInState> {
       return;
     }
     if (this.props.hasAccount) {
-      this.props.navigation.navigate(RouteName.Home);
+      this.props.navigation.navigate(RouteName.HomePage);
       return;
     }
-    this.props.navigation.navigate(RouteName.Onboarding);
+    this.props.navigation.navigate(RouteName.OnboardingPage);
   }
 
   _handleInitiatePhoneLogIn = (number: string) => {

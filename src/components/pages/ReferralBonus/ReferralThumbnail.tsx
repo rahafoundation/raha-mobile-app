@@ -96,7 +96,7 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
       style={styles.row}
       delayPressIn={20}
       onPress={() =>
-        navigation.push(RouteName.Profile, { member: invitedMember })
+        navigation.push(RouteName.ProfilePage, { member: invitedMember })
       }
     >
       <Text

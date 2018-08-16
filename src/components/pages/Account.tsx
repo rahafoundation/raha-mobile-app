@@ -80,7 +80,7 @@ class AccountView extends React.Component<Props, State> {
         <MemberThumbnail member={trustedForRecovery} />
         <Break />
         <TouchableHighlight
-          onPress={() => navigation.navigate(RouteName.PendingInvites)}
+          onPress={() => navigation.navigate(RouteName.PendingInvitesPage)}
         >
           <Text>View pending invites and flag fake accounts.</Text>
         </TouchableHighlight>

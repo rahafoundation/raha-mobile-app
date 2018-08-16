@@ -46,7 +46,7 @@ const MintView: React.StatelessComponent<Props> = ({
 
   const navigateToReferralBonuses = hasUnclaimedReferrals
     ? () => {
-        navigation.navigate(RouteName.ReferralBonus, { unclaimedReferralIds });
+        navigation.navigate(RouteName.ReferralBonusPage, { unclaimedReferralIds });
       }
     : () => {};
 
@@ -105,14 +105,14 @@ const MintView: React.StatelessComponent<Props> = ({
           <Button
             title="Invite +ℝ60"
             onPress={() => {
-              navigation.navigate(RouteName.Invite);
+              navigation.navigate(RouteName.InvitePage);
             }}
           />
           {hasUnclaimedReferrals ? (
             <Button
               title="Claim bonuses!"
               onPress={() => {
-                navigation.navigate(RouteName.ReferralBonus, {
+                navigation.navigate(RouteName.ReferralBonusPage, {
                   unclaimedReferralIds
                 });
               }}

@@ -40,7 +40,7 @@ export const MemberNameView: React.StatelessComponent<MemberNameProps> = ({
     <TextLink
       textStyle={[styles.memberName, textStyle]}
       destination={{
-        routeName: RouteName.Profile,
+        routeName: RouteName.ProfilePage,
         params: { member }
       }}
     >

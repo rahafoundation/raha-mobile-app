@@ -62,7 +62,7 @@ const Stats: React.StatelessComponent<StatsProps> = props => (
     </View>
     <TouchableHighlight
       onPress={() => {
-        props.navigation.push(RouteName.MemberList, {
+        props.navigation.push(RouteName.MemberListPage, {
           memberIds: Array.from(props.member.get("trustedBy")),
           title: "Trusted By"
         });
@@ -75,7 +75,7 @@ const Stats: React.StatelessComponent<StatsProps> = props => (
     </TouchableHighlight>
     <TouchableHighlight
       onPress={() =>
-        props.navigation.push(RouteName.MemberList, {
+        props.navigation.push(RouteName.MemberListPage, {
           memberIds: Array.from(props.member.get("trusts")),
           title: "Trusted By"
         })
@@ -115,7 +115,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
                 <Button
                   title="Give"
                   onPress={() =>
-                    navigation.navigate(RouteName.Give, {
+                    navigation.navigate(RouteName.GivePage, {
                       toMember: member
                     })
                   }
