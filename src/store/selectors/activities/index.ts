@@ -165,7 +165,7 @@ function convertOperationsToActivities(
 
           const amountDonated: CurrencyValue = {
             value: new Big(operation.data.donation_amount),
-            role: CurrencyRole.Positive,
+            role: CurrencyRole.Donation,
             currencyType: CurrencyType.Raha
           };
           const amountGiven: CurrencyValue = {
@@ -218,6 +218,9 @@ function convertOperationsToActivities(
                   // TRUST operations
                   actor: creatorMember as Member,
                   description: ["minted", amountMinted, "of basic income."],
+                  body: {
+                    iconName: "parachute-box"
+                  },
                   nextInChain: {
                     direction: ActivityDirection.Forward,
                     content: {
@@ -347,7 +350,7 @@ function convertOperationsToActivities(
             content: {
               actor: creatorMember,
               description: ["trusts a new friend"],
-              body: { iconName: "handshake-o" },
+              body: { iconName: "handshake" },
               nextInChain: {
                 direction: ActivityDirection.Forward,
                 content: {
