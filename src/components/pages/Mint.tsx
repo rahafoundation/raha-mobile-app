@@ -103,7 +103,7 @@ const MintView: React.StatelessComponent<Props> = ({
           }}
         >
           <Button
-            title="Invite +ℝ60"
+            title="Invite"
             onPress={() => {
               navigation.navigate(RouteName.Invite);
             }}
