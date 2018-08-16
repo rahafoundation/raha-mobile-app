@@ -42,9 +42,7 @@ type ProfileProps = StateProps & OwnProps & DispatchProps;
 
 const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
   <View style={styles.thumbnail}>
-    <View style={styles.video}>
-      <VideoWithPlaceholder uri={props.member.videoUri} />
-    </View>
+    <VideoWithPlaceholder style={styles.video} uri={props.member.videoUri} />
     <Text style={styles.memberUsername}>@{props.member.get("username")}</Text>
   </View>
 );
@@ -143,6 +141,7 @@ const styles = StyleSheet.create({
   thumbnail: {
     flexGrow: 0,
     flexBasis: 100,
+    height: 100,
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
@@ -183,6 +182,7 @@ const styles = StyleSheet.create({
   },
   video: {
     width: "100%",
+    height: "100%",
     aspectRatio: 1
   },
   number: {
