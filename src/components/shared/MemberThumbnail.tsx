@@ -3,7 +3,13 @@
  * TODO: show image instead of random colored background with initials
  */
 import * as React from "react";
-import { TouchableOpacity, View } from "react-native";
+import {
+  TouchableOpacity,
+  StyleProp,
+  ViewStyle,
+  StyleSheet,
+  TextStyle
+} from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 
 import {
@@ -15,34 +21,20 @@ import { Text } from "./elements";
 import { RouteName } from "./Navigation";
 import { colors } from "../../helpers/colors";
 
-type Props = {
+type MemberThumbnailProps = {
   member: Member | typeof RAHA_BASIC_INCOME_MEMBER;
   diameter?: number;
-  score?: number;
+  style?: StyleProp<ViewStyle>;
+  score?: number; // Currently not used
 };
 
 export const MemberThumbnailView: React.StatelessComponent<
-  Props & NavigationInjectedProps
-> = ({ navigation, member, diameter }) => {
-  const thumbDiameter = diameter ? diameter : 50;
+  MemberThumbnailProps & NavigationInjectedProps
+> = ({ navigation, member, diameter, style }) => {
+  const styles = getStyles(diameter ? diameter : 50, member);
   return (
     <TouchableOpacity
-      style={{
-        flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-
-        width: thumbDiameter,
-        height: thumbDiameter,
-
-        backgroundColor:
-          member === RAHA_BASIC_INCOME_MEMBER
-            ? colors.brandColor
-            : getMemberColor(member),
-        borderRadius: thumbDiameter / 2,
-        overflow: "hidden"
-      }}
+      style={[styles.touchableWrapper, style]}
       delayPressIn={20}
       onPress={() => {
         // TODO: navigate somewhere for raha basic income
@@ -52,13 +44,7 @@ export const MemberThumbnailView: React.StatelessComponent<
         navigation.push(RouteName.ProfilePage, { member });
       }}
     >
-      <Text
-        style={{
-          fontSize: thumbDiameter / 3,
-          textAlign: "center",
-          textAlignVertical: "center"
-        }}
-      >
+      <Text style={styles.thumbnailText}>
         {member === RAHA_BASIC_INCOME_MEMBER
           ? "R"
           : getInitialsForName(member.get("fullName"))}
@@ -67,4 +53,39 @@ export const MemberThumbnailView: React.StatelessComponent<
   );
 };
 
-export const MemberThumbnail = withNavigation<Props>(MemberThumbnailView);
+export const MemberThumbnail = withNavigation<MemberThumbnailProps>(
+  MemberThumbnailView
+);
+
+const getStyles = (
+  diameter: number,
+  member: Member | typeof RAHA_BASIC_INCOME_MEMBER
+) => {
+  const touchableWrapperStyle: ViewStyle = {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+
+    width: diameter,
+    height: diameter,
+    borderRadius: diameter / 2,
+
+    backgroundColor:
+      member === RAHA_BASIC_INCOME_MEMBER
+        ? colors.brandColor
+        : getMemberColor(member),
+    overflow: "hidden"
+  };
+
+  const thumbnailTextStyle: TextStyle = {
+    fontSize: diameter / 3,
+    textAlign: "center",
+    textAlignVertical: "center"
+  };
+
+  return StyleSheet.create({
+    touchableWrapper: touchableWrapperStyle,
+    thumbnailText: thumbnailTextStyle
+  });
+};

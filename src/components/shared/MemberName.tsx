@@ -1,11 +1,5 @@
 import * as React from "react";
-import {
-  StyleSheet,
-  TextStyle,
-  TextProps,
-  TouchableOpacity
-} from "react-native";
-import { withNavigation, NavigationInjectedProps } from "react-navigation";
+import { StyleSheet, TextStyle, TextProps } from "react-native";
 
 import {
   Member as MemberData,
@@ -17,28 +11,25 @@ import { TextLink } from "./elements/TextLink";
 
 interface OwnProps {
   member: MemberData | typeof RAHA_BASIC_INCOME_MEMBER;
-  textStyle?: TextProps["style"];
+  style?: TextProps["style"];
 }
-type MemberNameProps = OwnProps & NavigationInjectedProps;
+type MemberNameProps = OwnProps;
 
-export const MemberNameView: React.StatelessComponent<MemberNameProps> = ({
+export const MemberName: React.StatelessComponent<MemberNameProps> = ({
   member,
-  textStyle,
-  navigation
+  style
 }) => {
   // TODO: probably make this a real member
   // TODO: make it navigate somewhere meaningful, maybe info about the basic
   // income
   if (member === RAHA_BASIC_INCOME_MEMBER) {
-    return (
-      <Text style={[styles.memberName, textStyle]}>Raha Basic Income</Text>
-    );
+    return <Text style={[styles.memberName, style]}>Raha Basic Income</Text>;
   }
 
   // TODO: make this touchable to navigate to member
   return (
     <TextLink
-      textStyle={[styles.memberName, textStyle]}
+      style={[styles.memberName, style]}
       destination={{
         routeName: RouteName.ProfilePage,
         params: { member }
@@ -48,8 +39,6 @@ export const MemberNameView: React.StatelessComponent<MemberNameProps> = ({
     </TextLink>
   );
 };
-
-export const MemberName = withNavigation(MemberNameView);
 
 const memberName: TextStyle = {
   fontWeight: "700"
