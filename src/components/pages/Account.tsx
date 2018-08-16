@@ -31,7 +31,7 @@ type DispatchProps = {
 type StateProps = {
   loggedInMember: Member;
   trustedForRecovery: Member;
-  votingFor: Member;
+  votingDirectlyFor: Member;
 };
 
 type Props = DispatchProps & OwnProps & StateProps;
@@ -64,7 +64,7 @@ class AccountView extends React.Component<Props, State> {
   }
 
   render() {
-    const { navigation, signOut, trustedForRecovery, votingFor } = this.props;
+    const { navigation, signOut, trustedForRecovery, votingDirectlyFor } = this.props;
     const { timeRemaining } = this.state;
     return (
       <ScrollView>
@@ -74,7 +74,7 @@ class AccountView extends React.Component<Props, State> {
         </Text>
         <Break />
         <Text>Your Raha Parliament vote goes to:</Text>
-        <MemberThumbnail member={votingFor} />
+        <MemberThumbnail member={votingDirectlyFor} />
         <Break />
         <Text>Trusted for account recovery:</Text>
         <MemberThumbnail member={trustedForRecovery} />
@@ -125,12 +125,15 @@ const mapStateToProps: MapStateToProps<
     state,
     ancestorsArray[trustedForRecoveryIndex]
   );
-  // TODO need ability to change your vote.
-  const votingFor = getValidMemberById(
-    state,
-    ancestorsArray[ancestorsArray.length - 1]
-  );
-  return { loggedInMember, trustedForRecovery, votingFor };
+  // TODO need ability to change your vote, and to view who 
+  // your vote finally ends up with assuming the member 
+  // you are directly voting keeps their current preference (and ideally the full chain)
+  const votingDirectlyFor = trustedForRecovery;
+  // const finalVoteIsfor = getValidMemberById(
+  //   state,
+  //   ancestorsArray[ancestorsArray.length - 1]
+  // );
+  return { loggedInMember, trustedForRecovery, votingDirectlyFor };
 };
 
 export const Account = connect(
