@@ -1,9 +1,8 @@
 import "es6-symbol/implement";
 import * as React from "react";
 import { TouchableOpacity, StyleSheet, TextStyle } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import { createBottomTabNavigator } from "react-navigation-tabs";
 import {
   createStackNavigator,
   NavigationContainer,
@@ -36,7 +35,7 @@ import { Discover } from "../pages/Discover";
 import { LeaderBoard } from "../pages/LeaderBoard";
 import { Invite } from "../pages/Invite/Invite";
 import { Account } from "../pages/Account";
-import { colors } from "../../helpers/colors";
+import { colors, palette } from "../../helpers/colors";
 import { fonts } from "../../helpers/fonts";
 import { InitializationRouter } from "../pages/InitializationRouter";
 
@@ -81,47 +80,60 @@ function trackPageChanges(
 
 export enum RouteName {
   InitializationRouter = "InitializationRouter",
-  Account = "Account",
-  Give = "Give",
-  Home = "Home",
-  HomeTab = "HomeTab",
-  Invite = "Invite",
-  LogIn = "LogIn",
-  MemberList = "MemberList",
-  Onboarding = "Onboarding",
-  OtherProfile = "OtherProfile",
-  Profile = "Profile",
-  ProfileTab = "ProfileTab",
-  Discover = "Discover",
-  DiscoverTab = "DiscoverTab",
-  LeaderBoard = "LeaderBoard",
-  Mint = "Mint",
-  MintTab = "MintTab",
-  ReferralBonus = "ReferralBonus",
-  PendingInvites = "PendingInvites"
+  AccountPage = "Account",
+  GivePage = "Give",
+  HomePage = "Home Page",
+  HomeTab = "Home",
+  InvitePage = "Invite",
+  LogInPage = "LogIn",
+  MemberListPage = "Member List",
+  OnboardingPage = "Onboarding",
+  ProfilePage = "Profile Page",
+  ProfileTab = "Profile",
+  DiscoverPage = "DiscoverPage",
+  DiscoverTab = "Discover",
+  LeaderboardPage = "Leaderboard",
+  MintPage = "MintPage",
+  MintTab = "Mint",
+  ReferralBonusPage = "Referral Bonus",
+  PendingInvitesPage = "Pending Invites"
 }
 
 export const DEEPLINK_ROUTES = {
-  invite: RouteName.Onboarding
+  invite: RouteName.OnboardingPage
+};
+
+const subHeaderStyle: TextStyle = {
+  fontSize: 18
+};
+
+const headerStyle: TextStyle = {
+  marginLeft: 12,
+  fontSize: 32,
+  ...fonts.Lato.Semibold
+};
+
+const navIconStyle: TextStyle = {
+  fontSize: 25
+};
+
+const navIconFocusedStyle: TextStyle = {
+  color: palette.mint
 };
 
 const styles = StyleSheet.create({
-  headerStyle: {
-    marginLeft: 12,
-    fontSize: 32,
-    ...fonts.Lato.Semibold
-  },
-  subHeaderStyle: {
-    fontSize: 18
-  }
+  header: headerStyle,
+  subHeader: subHeaderStyle,
+  navIcon: navIconStyle,
+  navIconFocused: navIconFocusedStyle
 });
 
 const HeaderTitle: React.StatelessComponent<HeaderProps> = props => {
   return (
-    <Text style={[styles.headerStyle, props.style]}>
+    <Text style={[styles.header, props.style]}>
       {props.title}
       {props.subtitle && (
-        <Text style={styles.subHeaderStyle}> - {props.subtitle}</Text>
+        <Text style={styles.subHeader}> - {props.subtitle}</Text>
       )}
     </Text>
   );
@@ -172,7 +184,7 @@ function giveButton(navigation: any) {
     <Button
       title="Give"
       onPress={() => {
-        navigation.navigate(RouteName.Give);
+        navigation.navigate(RouteName.GivePage);
       }}
     />
   );
@@ -182,7 +194,7 @@ function settingsButton(navigation: any) {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate(RouteName.Account);
+        navigation.navigate(RouteName.AccountPage);
       }}
     >
       <Icon name="dots-vertical" size={25} />
@@ -190,16 +202,16 @@ function settingsButton(navigation: any) {
   );
 }
 
-export function createTabNavigator(
+export function createNavigatorForTab(
   routeConfigMap: NavigationRouteConfigMap,
   stackConfig?: StackNavigatorConfig
 ): NavigationContainer {
   return createStackNavigator(
     {
       ...routeConfigMap,
-      Profile,
-      MemberList,
-      Give
+      [RouteName.ProfilePage]: Profile,
+      [RouteName.MemberListPage]: MemberList,
+      [RouteName.GivePage]: Give
     },
     {
       ...stackConfig
@@ -217,117 +229,119 @@ function createHeaderNavigationOptions(title: string) {
   });
 }
 
-const HomeTab = createTabNavigator(
+const HomeTab = createNavigatorForTab(
   {
-    Home: {
+    [RouteName.HomePage]: {
       screen: Home,
       navigationOptions: createHeaderNavigationOptions("Raha")
     }
   },
   {
-    initialRouteName: RouteName.Home
+    initialRouteName: RouteName.HomePage
   }
 );
 
-const DiscoverTab = createTabNavigator(
+const DiscoverTab = createNavigatorForTab(
   {
-    Discover: {
+    [RouteName.DiscoverPage]: {
       screen: Discover,
       navigationOptions: createHeaderNavigationOptions("Discover")
     },
     LeaderBoard
   },
   {
-    initialRouteName: RouteName.Discover
+    initialRouteName: RouteName.DiscoverPage
   }
 );
 
-const MintTab = createTabNavigator(
+const MintTab = createNavigatorForTab(
   {
-    Invite: {
+    [RouteName.InvitePage]: {
       screen: Invite,
       navigationOptions: {
         header: null
       }
     },
-    Mint: {
+    [RouteName.MintPage]: {
       screen: Mint,
       navigationOptions: createHeaderNavigationOptions("Mint Raha")
     },
-    ReferralBonus: {
+    [RouteName.ReferralBonusPage]: {
       screen: ReferralBonus,
       navigationOptions: createHeaderNavigationOptions("Bonus Mint")
     }
   },
   {
-    initialRouteName: RouteName.Mint,
+    initialRouteName: RouteName.MintPage,
     navigationOptions: createHeaderNavigationOptions("Discover")
   }
 );
 
-const ProfileTab = createTabNavigator(
+const ProfileTab = createNavigatorForTab(
   {
-    Account,
-    PendingInvites
+    [RouteName.AccountPage]: Account,
+    [RouteName.PendingInvitesPage]: PendingInvites
   },
   {
-    initialRouteName: RouteName.Profile
+    initialRouteName: RouteName.ProfilePage
   }
 );
+
+function getIconForRoute(routeName: RouteName): string {
+  switch (routeName) {
+    case RouteName.ProfileTab:
+      return "user";
+    case RouteName.HomeTab:
+      return "list-alt";
+    case RouteName.MintTab:
+      return "gem";
+    case RouteName.DiscoverTab:
+      return "newspaper";
+    default:
+      throw Error(`Unrecognized route ${routeName}`);
+  }
+}
 
 const SignedInNavigator = createSwitchNavigator(
   {
     [RouteName.InitializationRouter]: {
       screen: (props: NavigationScreenProps) => (
-        <InitializationRouter {...props} defaultRoute={RouteName.DiscoverTab} />
+        <InitializationRouter {...props} defaultRoute={RouteName.HomeTab} />
       ),
       navigationOptions: { header: null }
     },
-    App: createMaterialBottomTabNavigator(
+    App: createBottomTabNavigator(
       {
-        HomeTab,
-        DiscoverTab,
-        MintTab,
-        ProfileTab
+        [RouteName.HomeTab]: HomeTab,
+        [RouteName.DiscoverTab]: DiscoverTab,
+        [RouteName.MintTab]: MintTab,
+        [RouteName.ProfileTab]: ProfileTab
       },
       {
         initialRouteName: RouteName.DiscoverTab,
-        labeled: false,
+        labeled: true,
         navigationOptions: ({ navigation }: any) => ({
           tabBarIcon: ({ focused }: any) => {
             const { routeName } = navigation.state;
-            let iconName;
-            let IconType = Icon;
-            switch (routeName) {
-              case RouteName.ProfileTab:
-                iconName = "account";
-                break;
-              case RouteName.HomeTab:
-                iconName = "home";
-                break;
-              case RouteName.MintTab:
-                iconName = "gift";
-                break;
-              case RouteName.DiscoverTab:
-                iconName = "ios-search";
-                IconType = Ionicons;
-                break;
-              default:
-                throw Error(`Unrecognized route ${routeName}`);
-            }
-            const isMint = routeName === RouteName.MintTab;
-            if (!focused && !isMint) {
-              iconName += "-outline";
-            }
-            return <IconType name={iconName} size={25} />;
+            const iconName = getIconForRoute(routeName);
+            return (
+              <Icon
+                name={iconName}
+                solid
+                style={[
+                  styles.navIcon,
+                  ...(focused ? [styles.navIconFocused] : [])
+                ]}
+              />
+            );
           },
           headerStyle: {
-            backgroundColor: colors.lightBackground
+            backgroundColor: colors.pageBackground
           },
           labelStyle: {
             color: colors.bodyText
           },
-          tabBarColor: colors.lightAccent
+          tabBarColor: palette.lightGray
         })
       }
     )
@@ -341,18 +355,18 @@ const SignedOutNavigator = createSwitchNavigator(
   {
     [RouteName.InitializationRouter]: {
       screen: (props: NavigationScreenProps) => (
-        <InitializationRouter {...props} defaultRoute={RouteName.LogIn} />
+        <InitializationRouter {...props} defaultRoute={RouteName.LogInPage} />
       ),
       navigationOptions: { header: null }
     },
     App: createStackNavigator(
       {
-        Onboarding: {
+        [RouteName.OnboardingPage]: {
           screen: Onboarding,
           navigationOptions: { header: null }
         },
-        LogIn,
-        Profile
+        [RouteName.LogInPage]: LogIn,
+        [RouteName.ProfilePage]: Profile
       },
       {
         headerMode: "screen",
