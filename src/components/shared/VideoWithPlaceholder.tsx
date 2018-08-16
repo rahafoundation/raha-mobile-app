@@ -6,7 +6,13 @@
  */
 
 import * as React from "react";
-import { Image, TouchableHighlight, View } from "react-native";
+import {
+  Image,
+  TouchableHighlight,
+  View,
+  ViewStyle,
+  StyleProp
+} from "react-native";
 import {
   withNavigation,
   NavigationInjectedProps,
@@ -16,6 +22,7 @@ import Video from "react-native-video";
 
 type Props = {
   uri: string;
+  style?: StyleProp<ViewStyle>;
 };
 
 const initialState = {
@@ -67,19 +74,20 @@ export class VideoWithPlaceholderView extends React.Component<
       paused: videoPaused || !videoLoaded
     };
     const renderImage = !isPressed || !videoLoaded;
-    const videoSize = videoLoaded ? "100%" : 0;
     // TODO would be nice to change blurRadius to an Animation
     const blurRadius = isPressed ? 10 : undefined;
     return (
-      <TouchableHighlight onPress={this.onPress}>
+      <TouchableHighlight style={[this.props.style]} onPress={this.onPress}>
         <View>
           {renderImage && (
             <Image
               blurRadius={blurRadius}
               {...imageProps}
               style={{
+                width: "100%",
                 height: "100%",
-                width: "100%"
+                maxWidth: "100%",
+                maxHeight: "100%"
               }}
             />
           )}
@@ -92,8 +100,10 @@ export class VideoWithPlaceholderView extends React.Component<
               }}
               ref={r => (this.video = r)}
               style={{
-                width: videoSize,
-                height: videoSize
+                width: "100%",
+                height: "100%",
+                maxWidth: "100%",
+                maxHeight: "100%"
               }}
             />
           )}
