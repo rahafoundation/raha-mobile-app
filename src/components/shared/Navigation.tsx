@@ -197,7 +197,7 @@ function settingsButton(navigation: any) {
         navigation.navigate(RouteName.AccountPage);
       }}
     >
-      <Icon name="dots-vertical" size={25} />
+      <Icon name="ellipsis-h" size={25} />
     </TouchableOpacity>
   );
 }
