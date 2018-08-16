@@ -1,5 +1,8 @@
 export const palette = {
-  mediumGray: "#1b1b1b",
+  offWhite: "#ffffff",
+  veryLightGray: "#dadada",
+  lightGray: "#aeaeae",
+  mediumGray: "#7b7b7b",
   darkGray: "#222222",
 
   blue: "#5ec3e9",
@@ -20,20 +23,23 @@ export const colors = {
   brandColor: palette.mint,
 
   // Main
-  lightBackground: palette.mintWhite,
+  pageBackground: palette.offWhite,
   primaryBorder: palette.mint,
   darkBackground: palette.mint,
 
   // Text
   bodyText: palette.darkGray,
+  secondaryText: palette.lightGray,
 
   // Components
+  divider: palette.lightGray,
   button: palette.blue,
   disabledButton: palette.paleBlue,
   lightAccent: palette.blueWhite,
   darkAccent: palette.mint,
 
   // Activity Feed, Account
+  arrowColor: palette.lightGray,
   letterBackground: palette.blueWhite,
   border1: palette.mint,
   border2: palette.darkBlue,
