@@ -43,12 +43,18 @@ export class Camera extends React.Component<CameraProps, CameraState> {
     try {
       const results = await PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.CAMERA,
-        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
       ]);
       if (
         results[PermissionsAndroid.PERMISSIONS.CAMERA] ===
           PermissionsAndroid.RESULTS.GRANTED &&
         results[PermissionsAndroid.PERMISSIONS.RECORD_AUDIO] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+        results[PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+        results[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] ===
           PermissionsAndroid.RESULTS.GRANTED
       ) {
         this.setState({ permissionsDenied: false });
