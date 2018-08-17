@@ -49,14 +49,6 @@ export function getPrivateVideoInviteRef(state: RahaState) {
     : undefined;
 }
 
-export function getInviteVideoRef(token: string) {
-  return storage
-    .ref()
-    .child("invite-video")
-    .child(token)
-    .child("invite.mp4");
-}
-
 /**
  * TODO we should eventually just use this everywhere instead of type-specific video urls.
  * @param token A unique string (UUID) by which to identify the uploaded video.

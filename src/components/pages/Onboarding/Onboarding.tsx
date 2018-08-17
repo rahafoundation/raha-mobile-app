@@ -12,16 +12,15 @@ import { VerifyName } from "./VerifyName";
 import {
   getLoggedInFirebaseUser,
   getPrivateVideoInviteRef,
-  getInviteVideoRef
+  getGenericPrivateVideoRef
 } from "../../../store/selectors/authentication";
 import { OnboardingCamera } from "./OnboardingCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
 import { OnboardingCreateAccount } from "./OnboardingCreateAccount";
 import { getMemberByUsername } from "../../../store/selectors/members";
-import { Text } from "../../shared/elements";
-import { LogIn } from "../LogIn";
 import { RouteName } from "../../shared/Navigation";
 import { Loading } from "../../shared/Loading";
+import { generateToken } from "../../../helpers/token";
 
 /**
  * Parent component for Onboarding flow.
@@ -44,7 +43,6 @@ interface OnboardingParams {
 
 type ReduxStateProps = {
   displayName: string | null;
-  videoUploadRef?: RNFirebase.storage.Reference;
   isLoggedIn: boolean;
   deeplinkVideoToken?: string;
   deeplinkInvitingMember?: Member;
@@ -66,11 +64,13 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   dropdown: any;
   steps: OnboardingStep[];
   deeplinkInitialized: boolean;
+  videoToken: string;
 
   constructor(props: OnboardingProps) {
     super(props);
     this.steps = [];
     this.deeplinkInitialized = false;
+    this.videoToken = generateToken();
     this.state = {
       step: OnboardingStep.SPLASH
     };
@@ -196,18 +196,6 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
     return videoDownloadUrl;
   };
 
-  _verifyVideoUploadRef = () => {
-    const videoUploadRef = this.props.videoUploadRef;
-    if (!videoUploadRef) {
-      this.dropdown.alertWithType(
-        "error",
-        "Error: Upload",
-        "Invalid video storage. Please retry."
-      );
-    }
-    return videoUploadRef;
-  };
-
   _renderOnboardingStep() {
     if (!this.props.isLoggedIn) {
       this.props.navigation.replace(RouteName.LogInPage, {
@@ -278,7 +266,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       }
       case OnboardingStep.VIDEO_PREVIEW: {
         const videoUri = this._verifyVideoUri();
-        const videoUploadRef = this._verifyVideoUploadRef();
+        const videoUploadRef = getGenericPrivateVideoRef(this.videoToken);
         if (!videoUri || !videoUploadRef) {
           return <React.Fragment />;
         }
@@ -352,7 +340,7 @@ async function extractDeeplinkVideoUrl(
   if (!videoToken || !invitingMember) {
     return undefined;
   }
-  return await getInviteVideoRef(videoToken).getDownloadURL();
+  return await getGenericPrivateVideoRef(videoToken).getDownloadURL();
 }
 
 const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
@@ -369,7 +357,6 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
 
   return {
     displayName: firebaseUser ? firebaseUser.displayName : null,
-    videoUploadRef: getPrivateVideoInviteRef(state),
     isLoggedIn:
       state.authentication.isLoaded && state.authentication.isLoggedIn,
     deeplinkVideoToken,
