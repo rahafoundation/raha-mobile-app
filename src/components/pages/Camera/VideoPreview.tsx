@@ -74,24 +74,27 @@ export class VideoPreview extends React.Component<
     videoUploadRef: RNFirebase.storage.Reference,
     videoUri: string
   ) => {
-    const response = await fetch(videoUri);
-    const blob = await response.blob();
+    // TODO figure out why local fetch is broken.
+    // const response = await fetch(videoUri);
+    // const blob = await response.blob();
     //@ts-ignore Blob does not have data type
-    if (blob.data.size > MAX_VIDEO_SIZE) {
-      this.props.onError(
-        "Error: Video Upload",
-        "The video size is larger than " +
-          MAX_MB +
-          "MB. Please retake your video."
-      );
-      return;
-    }
+    // if (blob.data.size > MAX_VIDEO_SIZE) {
+    //   this.props.onError(
+    //     "Error: Video Upload",
+    //     "The video size is larger than " +
+    //       MAX_MB +
+    //       "MB. Please retake your video."
+    //   );
+    //   return;
+    // }
 
-    const metadata = {
-      //@ts-ignore Expo Blob does not have data type
-      contentType: blob.data.type
-    };
-    const uploadTask = videoUploadRef.put(videoUri, metadata);
+    // const metadata = {
+    //   //@ts-ignore Expo Blob does not have data type
+    //   contentType: blob.data.type
+    // };
+    const uploadTask = videoUploadRef.put(videoUri, {
+      contentType: "video/mp4"
+    });
     await uploadTask;
     const videoDownloadUrl = await videoUploadRef.getDownloadURL();
     if (videoDownloadUrl) {
