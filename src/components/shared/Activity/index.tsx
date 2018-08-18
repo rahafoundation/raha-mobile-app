@@ -19,7 +19,8 @@ import {
   ActivityContent as ActivityContentData,
   ActivityCallToAction as CallToActionData,
   ActivityDirection,
-  PredeterminedBodyType
+  BodyType,
+  MediaBody
 } from "../../../store/selectors/activities/types";
 import { MemberName } from "../MemberName";
 import { MemberThumbnail } from "../MemberThumbnail";
@@ -65,11 +66,11 @@ const CallToAction: React.StatelessComponent<{
   );
 };
 
-function iconNameForPredeterminedBody(bodyType: PredeterminedBodyType): string {
+function iconNameForPredeterminedBody(bodyType: BodyType): string {
   switch (bodyType) {
-    case PredeterminedBodyType.MINT_BASIC_INCOME:
+    case BodyType.MINT_BASIC_INCOME:
       return "parachute-box";
-    case PredeterminedBodyType.TRUST_MEMBER:
+    case BodyType.TRUST_MEMBER:
       return "handshake";
     default:
       console.error(`Invalid predetermined body type '${bodyType}'`);
@@ -81,61 +82,65 @@ function iconNameForPredeterminedBody(bodyType: PredeterminedBodyType): string {
 /**
  * Currently all predetermined bodies are displayed as a large icon.
  */
-const PredeterminedBody: React.StatelessComponent<{
-  bodyType: PredeterminedBodyType;
-}> = ({ bodyType }) => (
-  <Icon name={iconNameForPredeterminedBody(bodyType)} style={styles.iconBody} />
-);
+const IconBody: React.StatelessComponent<{
+  iconName: string;
+}> = ({ iconName }) => <Icon name={iconName} style={styles.iconBody} />;
+
+class MediaContentBody extends React.Component<{
+  media: MediaBody["media"];
+  onFindVideoElems: (videoElems: VideoWithPlaceholderView[]) => void;
+}> {
+  videoElems: { [k: number]: VideoWithPlaceholderView } = {};
+
+  render() {
+    const { media, onFindVideoElems } = this.props;
+    return media.map((item, idx) => {
+      if ("videoUri" in item) {
+        return (
+          <VideoWithPlaceholder
+            onRef={elem => {
+              if (!elem) return;
+              this.videoElems[idx] = elem as VideoWithPlaceholderView;
+              onFindVideoElems(Object.values(this.videoElems));
+            }}
+            style={styles.mediaBody}
+            key={idx}
+            uri={item.videoUri}
+          />
+        );
+      }
+      return <Image source={{ uri: item.imageUri }} />;
+    });
+  }
+}
 
 class ActivityContentBody extends React.Component<{
   body: ActivityContentData["body"];
   onFindVideoElems: (elems: VideoWithPlaceholderView[]) => void;
 }> {
-  videoElems: { [k: number]: VideoWithPlaceholderView } = {};
-
   render() {
     const { body } = this.props;
     if (!body) {
       return <React.Fragment />;
     }
-
-    if ("text" in body) {
-      return (
-        <View style={styles.contentBody}>
-          <Text>{body.text}</Text>
-        </View>
-      );
+    switch (body.type) {
+      case BodyType.MINT_BASIC_INCOME:
+        return <IconBody iconName="parachute-box" />;
+      case BodyType.TRUST_MEMBER:
+        return <IconBody iconName="handshake" />;
+      case BodyType.TEXT:
+        return <Text>{body.text}</Text>;
+      case BodyType.MEDIA:
+        return (
+          <MediaContentBody
+            media={body.media}
+            onFindVideoElems={this.props.onFindVideoElems}
+          />
+        );
+      default:
+        console.error("Unexpected body type:", JSON.stringify(body));
+        return <React.Fragment />;
     }
-
-    if ("predeterminedBodyType" in body) {
-      return (
-        <View style={styles.contentBody}>
-          <PredeterminedBody bodyType={body.predeterminedBodyType} />
-        </View>
-      );
-    }
-
-    return (
-      <View style={styles.contentBody}>
-        {body.map((media, idx) => {
-          if ("videoUri" in media) {
-            return (
-              <VideoWithPlaceholder
-                onRef={elem => {
-                  if (!elem) return;
-                  this.videoElems[idx] = elem as VideoWithPlaceholderView;
-                  this.props.onFindVideoElems(Object.values(this.videoElems));
-                }}
-                style={styles.mediaBody}
-                key={idx}
-                uri={media.videoUri}
-              />
-            );
-          }
-          return <Image source={{ uri: media.imageUri }} />;
-        })}
-      </View>
-    );
   }
 }
 
