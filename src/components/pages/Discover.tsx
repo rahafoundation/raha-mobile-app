@@ -11,7 +11,8 @@ import {
   WebView,
   ScrollView,
   Linking,
-  StyleSheet
+  StyleSheet,
+  TextStyle
 } from "react-native";
 
 import { MemberSearchBar } from "../shared/MemberSearchBar";
@@ -167,11 +168,7 @@ function getCard(
         {info.header && <Text style={styles.headerText}>{info.header}</Text>}
         <Text style={styles.bodyText}>{info.body}</Text>
         {info.action && (
-          <Button
-            title={info.action}
-            style={styles.actionButton}
-            onPress={() => info.uri(navigation)}
-          />
+          <Button title={info.action} onPress={() => info.uri(navigation)} />
         )}
       </View>
     </TouchableHighlight>
@@ -219,8 +216,5 @@ const styles = StyleSheet.create({
   bodyText: {
     fontSize: 16,
     marginBottom: 8
-  },
-  actionButton: {
-    backgroundColor: "transparent"
   }
 });
