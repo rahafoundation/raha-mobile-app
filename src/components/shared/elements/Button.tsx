@@ -4,15 +4,16 @@ import {
   ViewStyle,
   TouchableOpacity,
   StyleProp,
-  TextStyle,
-  Text
+  TextStyle
 } from "react-native";
 import { fonts } from "../../../helpers/fonts";
-import { colors } from "../../../helpers/colors";
+import { colors, palette } from "../../../helpers/colors";
+import { CurrencyValue } from "../Currency";
+import { Text } from "./Text";
 
 // TODO: add size, color options
 interface ButtonProps {
-  title: string;
+  title: string | (string | CurrencyValue)[];
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
@@ -53,9 +54,11 @@ export const Button: React.StatelessComponent<ButtonProps> = props => {
           textStyle,
           ...(disabled ? disabledTextStyles : [])
         ]}
-      >
-        {title.toUpperCase()}
-      </Text>
+        compoundContent={{
+          content: typeof title === "string" ? [title] : title,
+          textTransform: (s: string) => s.toUpperCase()
+        }}
+      />
     </TouchableOpacity>
   );
 };
@@ -72,7 +75,8 @@ const disabledStyle: ViewStyle = {
 };
 
 const textStyle: TextStyle = {
-  ...fonts.Lato.Bold
+  ...fonts.Lato.Bold,
+  color: palette.offWhite
 };
 const disabledTextStyle: TextStyle = {};
 
