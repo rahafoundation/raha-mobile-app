@@ -256,6 +256,10 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
       return false;
     }
   }
+
+  if (operation.op_code === OperationType.INVITE) {
+    return true;
+  }
   return false;
 }
 
@@ -502,7 +506,8 @@ const OP_CODE_ORDERING = [
   OperationType.VERIFY,
   OperationType.TRUST,
   OperationType.MINT,
-  OperationType.GIVE
+  OperationType.GIVE,
+  OperationType.INVITE
 ];
 
 function compareOperations(op1: Operation, op2: Operation) {
