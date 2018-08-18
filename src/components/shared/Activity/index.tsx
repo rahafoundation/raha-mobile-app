@@ -168,8 +168,8 @@ class ActivityContent extends React.Component<{
             >
               {nextInChain &&
                 [
-                  ActivityDirection.Bidirectional,
-                  ActivityDirection.Backward
+                  ActivityDirection.Bidirectional
+                  // ActivityDirection.Backward
                 ].includes(nextInChain.direction) && (
                   <ArrowHead
                     direction={ArrowHeadDirection.Up}
