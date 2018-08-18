@@ -2,7 +2,7 @@ import * as React from "react";
 import { Big } from "big.js";
 import { Text } from "./elements";
 import { fonts } from "../../helpers/fonts";
-import { StyleSheet, TextStyle } from "react-native";
+import { StyleSheet, TextStyle, StyleProp } from "react-native";
 import { colors } from "../../helpers/colors";
 
 /**
@@ -18,8 +18,7 @@ export enum CurrencyType {
  * money used for different purposes in-app.
  */
 export enum CurrencyRole {
-  Positive = "Positive",
-  Negative = "Negative",
+  Transaction = "Transaction",
   None = "None", // just a plain number
   Donation = "Donation"
 }
@@ -47,7 +46,7 @@ export function currencySymbol(currency: CurrencyType) {
 
 interface CurrencyProps {
   currencyValue: CurrencyValue;
-  style?: TextStyle;
+  style?: StyleProp<TextStyle>;
 }
 
 export const Currency: React.StatelessComponent<CurrencyProps> = ({
@@ -61,9 +60,9 @@ export const Currency: React.StatelessComponent<CurrencyProps> = ({
     // from API.
     <Text
       style={[
-        fonts.Lato.Bold,
-        roleStylesheet[currencyValue.role],
-        ...(style ? [style] : [])
+        ...(style ? [style] : []),
+        roleStyles(currencyValue.value)[currencyValue.role],
+        fonts.Lato.Bold
       ]}
     >
       {currencySymbol(currencyValue.currencyType)}
@@ -72,16 +71,14 @@ export const Currency: React.StatelessComponent<CurrencyProps> = ({
   );
 };
 
-const roleStyles: { [key in CurrencyRole]: TextStyle } = {
+const roleStyles: (
+  value: Big
+) => { [key in CurrencyRole]: TextStyle } = value => ({
   [CurrencyRole.Donation]: {
     color: colors.currency.donation
   },
-  [CurrencyRole.Positive]: {
-    color: colors.currency.positive
-  },
-  [CurrencyRole.Negative]: {
-    color: colors.currency.negative
+  [CurrencyRole.Transaction]: {
+    color: value.lte(0) ? colors.currency.negative : colors.currency.positive
   },
   [CurrencyRole.None]: {}
-};
-const roleStylesheet = StyleSheet.create(roleStyles);
+});
