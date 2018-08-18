@@ -310,20 +310,18 @@ const ProfileTab = createNavigatorForTab(
   }
 );
 
-function getIconForRoute(routeName: RouteName): string {
-  switch (routeName) {
-    case RouteName.ProfileTab:
-      return "user";
-    case RouteName.FeedTab:
-      return "list-alt";
-    case RouteName.MintTab:
-      return "parachute-box";
-    case RouteName.DiscoverTab:
-      return "newspaper";
-    default:
-      throw Error(`Unrecognized route ${routeName}`);
-  }
-}
+const tabRoutes = {
+  [RouteName.FeedTab]: FeedTab,
+  [RouteName.DiscoverTab]: DiscoverTab,
+  [RouteName.MintTab]: MintTab,
+  [RouteName.ProfileTab]: ProfileTab
+};
+const tabIcons: { [k in keyof typeof tabRoutes]: string } = {
+  [RouteName.ProfileTab]: "user",
+  [RouteName.FeedTab]: "list-alt",
+  [RouteName.DiscoverTab]: "newspaper",
+  [RouteName.MintTab]: "parachute-box"
+};
 
 const SignedInNavigator = createSwitchNavigator(
   {
@@ -333,45 +331,38 @@ const SignedInNavigator = createSwitchNavigator(
       ),
       navigationOptions: { header: null }
     },
-    App: createBottomTabNavigator(
-      {
-        [RouteName.FeedTab]: FeedTab,
-        [RouteName.DiscoverTab]: DiscoverTab,
-        [RouteName.MintTab]: MintTab,
-        [RouteName.ProfileTab]: ProfileTab
-      },
-      {
-        initialRouteName: RouteName.DiscoverTab,
-        labeled: true,
-        navigationOptions: ({ navigation }: any) => ({
-          tabBarIcon: ({ focused }: any) => {
-            const { routeName } = navigation.state;
-            const iconName = getIconForRoute(routeName);
-            return (
-              <Icon
-                name={iconName}
-                solid
-                style={[
-                  styles.navIcon,
-                  ...(focused ? [styles.navIconFocused] : [])
-                ]}
-              />
-            );
-          },
-          headerStyle: [
-            styles.header,
-            {
-              backgroundColor: colors.pageBackground
-            }
-          ],
-          tabBarOptions: {
-            activeTintColor: palette.mint,
-            labelStyle: styles.label
-          },
-          tabBarColor: palette.lightGray
-        })
-      }
-    )
+    App: createBottomTabNavigator(tabRoutes, {
+      initialRouteName: RouteName.DiscoverTab,
+      labeled: true,
+      navigationOptions: ({ navigation }: any) => ({
+        tabBarIcon: ({ focused }: any) => {
+          const routeName = navigation.state
+            .routeName as keyof typeof tabRoutes;
+          const iconName = tabIcons[routeName];
+          return (
+            <Icon
+              name={iconName}
+              solid
+              style={[
+                styles.navIcon,
+                ...(focused ? [styles.navIconFocused] : [])
+              ]}
+            />
+          );
+        },
+        headerStyle: [
+          styles.header,
+          {
+            backgroundColor: colors.pageBackground
+          }
+        ],
+        tabBarOptions: {
+          activeTintColor: palette.mint,
+          labelStyle: styles.label
+        },
+        tabBarColor: palette.lightGray
+      })
+    })
   },
   {
     initialRouteName: RouteName.InitializationRouter
