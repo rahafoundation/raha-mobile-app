@@ -119,7 +119,6 @@ const headerStyle: ViewStyle = {
 };
 
 const headerTextStyle: TextStyle = {
-  marginHorizontal: 12,
   ...fontSizes.xlarge,
   ...fonts.Lato.Semibold
 };
@@ -169,7 +168,8 @@ const MemberList = {
     return {
       headerTitle: (
         <HeaderTitle title={navigation.getParam("title", "Member List")} />
-      )
+      ),
+      headerStyle: styles.header
     };
   }
 };
@@ -191,7 +191,8 @@ const Profile: NavigationRouteConfig = {
 const Give = {
   screen: GiveScreen,
   navigationOptions: {
-    headerTitle: <HeaderTitle title="Give Raha" />
+    headerTitle: <HeaderTitle title="Give Raha" />,
+    headerStyle: styles.header
   }
 };
 
