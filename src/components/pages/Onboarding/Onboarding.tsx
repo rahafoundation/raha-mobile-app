@@ -88,6 +88,10 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
    * the associated video download url into state.
    */
   initializeDeeplinkingState = async () => {
+    if (!this.props.isLoggedIn) {
+      return;
+    }
+
     this.deeplinkInitialized = true;
 
     // must provide all deeplink props or none of them
@@ -117,6 +121,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       return;
     }
     this.setState({
+      videoDownloadUrl,
       inviteVideoIsValid: true
     });
   };
@@ -203,7 +208,8 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       this.props.navigation.replace(RouteName.LogInPage, {
         redirectTo: RouteName.OnboardingPage,
         loginMessage:
-          "Welcome to Raha! Please sign up with your\nmobile number to accept your invite."
+          "Welcome to Raha! Please sign up with your\nmobile number to accept your invite.",
+        redirectParams: this.props.navigation.state.params
       });
       return <Loading />;
     }
