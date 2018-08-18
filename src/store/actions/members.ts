@@ -18,7 +18,6 @@ import { AsyncActionCreator } from ".";
 import { wrapApiCallAction } from "./apiCalls";
 import { getAuthToken } from "../selectors/authentication";
 import { config } from "../../data/config";
-import { Member } from "../reducers/members";
 
 export type MembersAction = SetOperationsAction | AddOperationsAction;
 export const refreshMembers: AsyncActionCreator = () => {
@@ -53,8 +52,7 @@ export const createMember: AsyncActionCreator = (
   fullName: string,
   username: string,
   videoToken: string,
-  isJointVideo: boolean,
-  requestInviteFromMemberId?: string
+  inviteToken?: string
 ) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
@@ -69,15 +67,12 @@ export const createMember: AsyncActionCreator = (
         fullName,
         username,
         videoToken,
-        isJointVideo,
-        requestInviteFromMemberId
+        inviteToken
       );
-
-      // TODO, this should probably potentially return multiple operations, which implies a different return type for the endpoint
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [body]
+        operations: body
       };
       dispatch(action);
     },
@@ -146,7 +141,7 @@ export const sendInvite: AsyncActionCreator = (
 
 export const verify: AsyncActionCreator = (
   memberId: MemberId,
-  video: { videoToken: string } | { videoUrl: string }
+  videoToken: string
 ) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
@@ -159,7 +154,7 @@ export const verify: AsyncActionCreator = (
         config.apiBase,
         authToken,
         memberId,
-        video
+        videoToken
       );
 
       const action: OperationsAction = {

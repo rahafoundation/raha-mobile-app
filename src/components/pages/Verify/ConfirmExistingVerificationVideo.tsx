@@ -1,14 +1,17 @@
 import * as React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet } from "react-native";
+
 import { Text, Button } from "../../shared/elements";
 import { VideoWithPlaceholder } from "../../shared/VideoWithPlaceholder";
+import { getGenericPrivateVideoRef } from "../../../store/selectors/authentication";
+import { Loading } from "../../shared/Loading";
 
 interface Props {
   onConfirm: () => void;
   onRetake: () => void;
   onBack: () => void;
   toVerifyMemberFullName: string;
-  videoUri: string;
+  inviteVideoToken: string;
 }
 
 enum ConfirmSteps {
@@ -19,6 +22,7 @@ enum ConfirmSteps {
 
 interface State {
   step: ConfirmSteps;
+  videoUrl?: string;
 }
 
 export class ConfirmExistingVerificationVideo extends React.Component<
@@ -28,6 +32,16 @@ export class ConfirmExistingVerificationVideo extends React.Component<
   constructor(props: Props) {
     super(props);
     this.state = { step: ConfirmSteps.VerifyIsTogether };
+    this.getVideoUrl();
+  }
+
+  async getVideoUrl() {
+    const videoUrl = await getGenericPrivateVideoRef(
+      this.props.inviteVideoToken
+    ).getDownloadURL();
+    this.setState({
+      videoUrl
+    });
   }
 
   render() {
@@ -38,7 +52,11 @@ export class ConfirmExistingVerificationVideo extends React.Component<
           Back
         </Text>
         <View style={styles.video}>
-          <VideoWithPlaceholder uri={this.props.videoUri} />
+          {this.state.videoUrl ? (
+            <VideoWithPlaceholder uri={this.state.videoUrl} />
+          ) : (
+            <Loading />
+          )}
         </View>
         {this.state.step === ConfirmSteps.VerifyIsTogether && (
           <React.Fragment>
@@ -68,7 +86,8 @@ export class ConfirmExistingVerificationVideo extends React.Component<
               Please take a new video containing yourself where you verify{" "}
               <Text style={styles.name}>
                 {this.props.toVerifyMemberFullName}
-              </Text>'s identity.
+              </Text>
+              's identity.
             </Text>
             <View style={styles.actionRow}>
               <Button
@@ -89,7 +108,8 @@ export class ConfirmExistingVerificationVideo extends React.Component<
               Would you like to use the above video to verify{" "}
               <Text style={styles.name}>
                 {this.props.toVerifyMemberFullName}
-              </Text>'s identity?
+              </Text>
+              's identity?
             </Text>
             <View style={styles.actionRow}>
               <Button

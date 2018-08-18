@@ -34,7 +34,7 @@ enum VerifyStep {
 type ReduxStateProps = {
   loggedInMember?: Member;
   toMember?: Member;
-  requestVerificationOperationVideoUrl?: string;
+  inviteVideoToken?: string;
 };
 
 type OwnProps = NavigationScreenProps<{ toMemberId: MemberId }>;
@@ -49,17 +49,17 @@ type VerifyState = {
 
 class VerifyView extends React.Component<VerifyProps, VerifyState> {
   steps: VerifyStep[];
-  inviteToken: string;
+  videoToken: string;
   videoUploadRef: RNFirebase.storage.Reference;
   dropdown: any;
 
   constructor(props: VerifyProps) {
     super(props);
     this.steps = [];
-    this.inviteToken = generateToken();
-    this.videoUploadRef = getGenericPrivateVideoRef(this.inviteToken);
+    this.videoToken = generateToken();
+    this.videoUploadRef = getGenericPrivateVideoRef(this.videoToken);
     this.state = {
-      step: props.requestVerificationOperationVideoUrl
+      step: props.inviteVideoToken
         ? VerifyStep.CONFIRM_EXISTING_VIDEO
         : VerifyStep.SPLASH
     };
@@ -121,6 +121,23 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
     return videoUri;
   };
 
+  _verifyVideoToken = () => {
+    const videoToken = this.state.videoDownloadUrl
+      ? this.videoToken
+      : this.props.inviteVideoToken;
+    if (!videoToken) {
+      this.dropdown.alertWithType(
+        "error",
+        "Error: No verification video",
+        "No verification video found. Please take a verification video."
+      );
+      this.setState({
+        step: VerifyStep.CAMERA
+      });
+    }
+    return videoToken;
+  };
+
   _renderStep() {
     if (!this.props.toMember || !this.props.loggedInMember) {
       console.error(
@@ -142,10 +159,10 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
         );
       }
       case VerifyStep.CONFIRM_EXISTING_VIDEO: {
-        if (this.props.requestVerificationOperationVideoUrl) {
+        if (this.props.inviteVideoToken) {
           return (
             <ConfirmExistingVerificationVideo
-              videoUri={this.props.requestVerificationOperationVideoUrl}
+              inviteVideoToken={this.props.inviteVideoToken}
               onBack={this._handleSoftBackPress}
               onConfirm={() =>
                 this.setState({ step: VerifyStep.CONFIRM_VERIFICATION })
@@ -187,7 +204,7 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
             videoUploadRef={this.videoUploadRef}
             onVideoUploaded={(videoDownloadUrl: string) =>
               this.setState({
-                videoDownloadUrl: videoDownloadUrl,
+                videoDownloadUrl,
                 step: VerifyStep.CONFIRM_VERIFICATION
               })
             }
@@ -205,12 +222,13 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
         );
       }
       case VerifyStep.CONFIRM_VERIFICATION: {
-        const video = this.props.requestVerificationOperationVideoUrl
-          ? { videoUrl: this.props.requestVerificationOperationVideoUrl }
-          : { videoToken: this.inviteToken };
+        const videoToken = this._verifyVideoToken();
+        if (!videoToken) {
+          return <React.Fragment />;
+        }
         return (
           <SubmitVerification
-            video={video}
+            videoToken={videoToken}
             toMemberId={this.props.toMember.get("memberId")}
             toMemberFullName={this.props.toMember.get("fullName")}
             onBack={this._handleSoftBackPress}
@@ -281,14 +299,21 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
     member,
     toMember
   );
-  const requestVerificationOperationVideoUrl = requestVerificationOperation
-    ? requestVerificationOperation.data.video_url
+  const inviteOperation =
+    requestVerificationOperation &&
+    requestVerificationOperation.data.invite_token
+      ? state.invitations.byInviteToken.get(
+          requestVerificationOperation.data.invite_token
+        )
+      : undefined;
+  const inviteVideoToken = inviteOperation
+    ? inviteOperation.data.video_token
     : undefined;
 
   return {
     loggedInMember: member,
     toMember,
-    requestVerificationOperationVideoUrl
+    inviteVideoToken
   };
 };
 export const Verify = connect(mapStateToProps)(VerifyView);

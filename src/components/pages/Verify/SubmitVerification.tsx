@@ -20,7 +20,7 @@ type ReduxStateProps = {
 };
 
 type OwnProps = {
-  video: { videoToken: string } | { videoUrl: string };
+  videoToken: string;
   toMemberId: MemberId;
   toMemberFullName: string;
   onBack: () => void;
@@ -29,10 +29,7 @@ type OwnProps = {
 
 type SubmitVerificationProps = OwnProps &
   ReduxStateProps & {
-    verify: (
-      memberId: MemberId,
-      video: { videoToken: string } | { videoUrl: string }
-    ) => void;
+    verify: (memberId: MemberId, videoToken: string) => void;
   };
 
 class SubmitVerificationView extends React.Component<SubmitVerificationProps> {
@@ -41,7 +38,7 @@ class SubmitVerificationView extends React.Component<SubmitVerificationProps> {
   }
 
   submitVerification = () => {
-    this.props.verify(this.props.toMemberId, this.props.video);
+    this.props.verify(this.props.toMemberId, this.props.videoToken);
   };
 
   private _renderSubmittingStatus = () => {
