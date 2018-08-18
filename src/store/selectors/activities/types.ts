@@ -12,7 +12,9 @@ import { RouteName } from "../../../components/shared/Navigation";
  */
 export enum ActivityDirection {
   Forward = "Forward",
-  Bidirectional = "Bidirectional"
+  Backward = "Backward",
+  Bidirectional = "Bidirectional",
+  NonDirectional = "NonDirectional"
 }
 
 /**
