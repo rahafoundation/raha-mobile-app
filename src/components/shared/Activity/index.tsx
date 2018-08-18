@@ -3,7 +3,7 @@
  * Activities like GiveOperationActivity ultimately output this component.
  */
 import * as React from "react";
-import { format } from "date-fns";
+import { formatRelative } from "date-fns";
 import { View, StyleSheet, TextStyle, ViewStyle, Image } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
@@ -17,12 +17,15 @@ import {
 import {
   Activity as ActivityData,
   ActivityContent as ActivityContentData,
-  ActivityCallToAction as CallToActionData
+  ActivityCallToAction as CallToActionData,
+  ActivityDirection
 } from "../../../store/selectors/activities/types";
 import { MemberName } from "../MemberName";
 import { MemberThumbnail } from "../MemberThumbnail";
 import { Currency } from "../Currency";
 import { TextLink } from "../elements/TextLink";
+import { ArrowHeadDirection, ArrowHead } from "./ArrowHead";
+import { fontSizes } from "../../../helpers/fonts";
 
 type Props = {
   activity: ActivityData;
@@ -127,22 +130,27 @@ class ActivityContent extends React.Component<{
             <MemberName member={actor} />
             {description &&
               description
+                // Render each piece of the description
                 .map((piece, idx) => {
+                  const key = `content-${idx}`;
                   if (typeof piece === "string") {
-                    return <Text key={idx}>{piece}</Text>;
+                    return <Text key={key}>{piece}</Text>;
                   }
                   if ("currencyType" in piece) {
-                    return <Currency key={idx} currencyValue={piece} />;
+                    return <Currency key={key} currencyValue={piece} />;
                   }
                   console.error(
                     `Unexpected value in ActivityContent description: ${piece}, aborting.`
                   );
-                  return <React.Fragment key={idx} />;
+                  return undefined;
                 })
+                // remove undefined pieces (i.e. errors)
+                .filter(x => !!x)
+                // Put spaces between each component
                 .reduce(
-                  (memo, nextComponent) => [
+                  (memo, nextComponent, idx) => [
                     ...memo,
-                    <Text> </Text>,
+                    <Text key={`spacing-${idx}`}> </Text>,
                     nextComponent
                   ],
                   [] as React.ReactNode[]
@@ -157,7 +165,31 @@ class ActivityContent extends React.Component<{
                 styles.chainIndicator,
                 ...(nextInChain ? [] : [styles.invisible])
               ]}
-            />
+            >
+              {nextInChain &&
+                [
+                  ActivityDirection.Bidirectional,
+                  ActivityDirection.Backward
+                ].includes(nextInChain.direction) && (
+                  <ArrowHead
+                    direction={ArrowHeadDirection.Up}
+                    width={12}
+                    color={palette.veryLightGray}
+                  />
+                )}
+              <View style={styles.chainIndicatorLine} />
+              {nextInChain &&
+                [
+                  ActivityDirection.Bidirectional,
+                  ActivityDirection.Forward
+                ].includes(nextInChain.direction) && (
+                  <ArrowHead
+                    direction={ArrowHeadDirection.Down}
+                    width={12}
+                    color={palette.veryLightGray}
+                  />
+                )}
+            </View>
             <ActivityContentBody body={body} />
           </View>
         )}
@@ -188,39 +220,53 @@ export class ActivityView extends React.Component<
       <View style={styles.activity}>
         <ActivityContent content={content} />
         {callToAction && <CallToAction callToAction={callToAction} />}
-        <Text style={styles.timestamp}>
-          {format(timestamp, "MMM D, YYYY h:mm a")}
-        </Text>
+        <View style={metadataRowStyle}>
+          <Text style={styles.timestamp}>
+            {formatRelative(timestamp, new Date()).toUpperCase()}
+          </Text>
+        </View>
       </View>
     );
   }
 }
 
 const leftColumnWidth = 50;
+const activitySpacing = 30;
+const sectionSpacing = 10;
 
 const activityStyle: ViewStyle = {
+  marginTop: activitySpacing - sectionSpacing,
   paddingHorizontal: 20,
-  paddingBottom: 20,
-  borderBottomColor: colors.divider,
-  borderBottomWidth: 1,
-  marginBottom: 20
-};
-
-const timestampStyle: TextStyle = {
-  width: "100%",
-  textAlign: "right",
-  color: colors.secondaryText
+  display: "flex",
+  flexDirection: "column"
+  // borderBottomColor: palette.veryLightGray,
+  // borderBottomWidth: 1
 };
 
 const contentSectionStyle: ViewStyle = {
-  marginTop: 10
+  marginTop: sectionSpacing
+};
+
+const metadataRowStyle: ViewStyle = {
+  ...contentSectionStyle
+  // borderTopColor: palette.veryLightGray,
+  // borderTopWidth: 1,
+  // paddingBottom: 10,
+  // marginLeft: leftColumnWidth / 2
+};
+
+const timestampStyle: TextStyle = {
+  color: colors.secondaryText,
+  ...fontSizes.small
+  // textAlign: "right"
 };
 
 const actorRowStyle: ViewStyle = {
   ...contentSectionStyle,
   display: "flex",
   flexDirection: "row",
-  alignItems: "baseline"
+  alignItems: "center",
+  overflow: "hidden"
 };
 
 const actorThumbnailStyle: ViewStyle = {
@@ -243,12 +289,19 @@ const invisibleStyle: ViewStyle = {
 
 const chainIndicatorWidth = 3;
 const chainIndicatorStyle: ViewStyle = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  height: "100%",
+  flexGrow: 0
+};
+
+const chainIndicatorLineStyle: ViewStyle = {
   backgroundColor: palette.veryLightGray,
   width: chainIndicatorWidth,
   marginHorizontal: (leftColumnWidth - chainIndicatorWidth) / 2,
   minHeight: 50,
-  height: "100%",
-  flexGrow: 0
+  flexGrow: 1
 };
 
 const descriptionStyle: TextStyle = {
@@ -275,6 +328,7 @@ const mediaBodyStyle: ViewStyle = {
 
 const styles = StyleSheet.create({
   activity: activityStyle,
+  metadataRow: metadataRowStyle,
   timestamp: timestampStyle,
   description: descriptionStyle,
   actorRow: actorRowStyle,
@@ -284,7 +338,8 @@ const styles = StyleSheet.create({
   mediaBody: mediaBodyStyle,
   iconBody: iconBodyStyle,
   invisible: invisibleStyle,
-  chainIndicator: chainIndicatorStyle
+  chainIndicator: chainIndicatorStyle,
+  chainIndicatorLine: chainIndicatorLineStyle
 });
 
 export const Activity = withNavigation<Props>(ActivityView);
