@@ -66,7 +66,10 @@ const CallToAction: React.StatelessComponent<{
 
 class ActivityContentBody extends React.Component<{
   body: ActivityContentData["body"];
+  onFindVideoElems: (elems: VideoWithPlaceholderView[]) => void;
 }> {
+  videoElems: { [k: number]: VideoWithPlaceholderView } = {};
+
   render() {
     const { body } = this.props;
     if (!body) {
@@ -95,6 +98,11 @@ class ActivityContentBody extends React.Component<{
           if ("videoUri" in media) {
             return (
               <VideoWithPlaceholder
+                onRef={elem => {
+                  if (!elem) return;
+                  this.videoElems[idx] = elem as VideoWithPlaceholderView;
+                  this.props.onFindVideoElems(Object.values(this.videoElems));
+                }}
                 style={styles.mediaBody}
                 key={idx}
                 uri={media.videoUri}
@@ -110,7 +118,10 @@ class ActivityContentBody extends React.Component<{
 
 class ActivityContent extends React.Component<{
   content: ActivityContentData;
+  onFindVideoElems: (elems: VideoWithPlaceholderView[]) => void;
 }> {
+  ownVideoElems: VideoWithPlaceholderView[] = [];
+
   public render() {
     const { actor, description, body, nextInChain } = this.props.content;
     return (
@@ -190,10 +201,22 @@ class ActivityContent extends React.Component<{
                   />
                 )}
             </View>
-            <ActivityContentBody body={body} />
+            <ActivityContentBody
+              body={body}
+              onFindVideoElems={elems =>
+                this.props.onFindVideoElems([...this.ownVideoElems, ...elems])
+              }
+            />
           </View>
         )}
-        {nextInChain && <ActivityContent content={nextInChain.content} />}
+        {nextInChain && (
+          <ActivityContent
+            content={nextInChain.content}
+            onFindVideoElems={elems =>
+              this.props.onFindVideoElems([...this.ownVideoElems, ...elems])
+            }
+          />
+        )}
       </View>
     );
   }
@@ -203,14 +226,16 @@ export class ActivityView extends React.Component<
   Props & NavigationInjectedProps,
   {}
 > {
-  videoElem?: VideoWithPlaceholderView;
+  videoElems?: VideoWithPlaceholderView[];
 
   /**
    * Reset video playback state, stop it
    */
   public resetVideo = () => {
-    if (this.videoElem) {
-      this.videoElem.reset();
+    if (this.videoElems) {
+      for (const elem of this.videoElems) {
+        elem.reset();
+      }
     }
   };
 
@@ -218,7 +243,12 @@ export class ActivityView extends React.Component<
     const { content, callToAction, timestamp } = this.props.activity;
     return (
       <View style={styles.activity}>
-        <ActivityContent content={content} />
+        <ActivityContent
+          content={content}
+          onFindVideoElems={elems => {
+            this.videoElems = elems;
+          }}
+        />
         {callToAction && <CallToAction callToAction={callToAction} />}
         <View style={metadataRowStyle}>
           <Text style={styles.timestamp}>
