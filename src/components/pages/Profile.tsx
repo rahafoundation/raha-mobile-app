@@ -4,7 +4,13 @@
  * as ability to Mint.
  */
 import * as React from "react";
-import { StyleSheet, TouchableHighlight, View } from "react-native";
+import {
+  StyleSheet,
+  TouchableHighlight,
+  View,
+  TextStyle,
+  ViewStyle
+} from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
 
@@ -22,6 +28,8 @@ import { colors } from "../../helpers/colors";
 import { VideoWithPlaceholder } from "../shared/VideoWithPlaceholder";
 import { activitiesForMember } from "../../store/selectors/activities";
 import { Activity } from "../../store/selectors/activities/types";
+import { CurrencyType, CurrencyRole, Currency } from "../shared/Currency";
+import { fontSizes, fonts } from "../../helpers/fonts";
 
 interface NavParams {
   member: Member;
@@ -43,7 +51,6 @@ type ProfileProps = StateProps & OwnProps & DispatchProps;
 const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
   <View style={styles.thumbnail}>
     <VideoWithPlaceholder style={styles.video} uri={props.member.videoUri} />
-    <Text style={styles.memberUsername}>@{props.member.get("username")}</Text>
   </View>
 );
 
@@ -52,11 +59,16 @@ type StatsProps = NavigationScreenProps<NavParams> & {
 };
 const Stats: React.StatelessComponent<StatsProps> = props => (
   <View style={styles.statsContainer}>
-    <View style={styles.stat}>
-      <Text style={styles.number}>
-        ℝ{props.member.get("balance").toFixed(2)}
-      </Text>
-      <Text style={styles.numberLabel}>balance</Text>
+    <View>
+      <Currency
+        style={styles.statNumber}
+        currencyValue={{
+          value: props.member.get("balance"),
+          currencyType: CurrencyType.Raha,
+          role: CurrencyRole.None
+        }}
+      />
+      <Text style={styles.statLabel}>balance</Text>
     </View>
     <TouchableHighlight
       onPress={() => {
@@ -66,9 +78,11 @@ const Stats: React.StatelessComponent<StatsProps> = props => (
         });
       }}
     >
-      <View style={styles.stat}>
-        <Text style={styles.number}>{props.member.get("trustedBy").size}</Text>
-        <Text style={styles.numberLabel}>trusted by</Text>
+      <View>
+        <Text style={styles.statNumber}>
+          {props.member.get("trustedBy").size}
+        </Text>
+        <Text style={styles.statLabel}>trusted by</Text>
       </View>
     </TouchableHighlight>
     <TouchableHighlight
@@ -79,9 +93,9 @@ const Stats: React.StatelessComponent<StatsProps> = props => (
         })
       }
     >
-      <View style={styles.stat}>
-        <Text style={styles.number}>{props.member.get("trusts").size}</Text>
-        <Text style={styles.numberLabel}>trusts</Text>
+      <View>
+        <Text style={styles.statNumber}>{props.member.get("trusts").size}</Text>
+        <Text style={styles.statLabel}>trusts</Text>
       </View>
     </TouchableHighlight>
   </View>
@@ -100,7 +114,8 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
       header={
         <View style={styles.header}>
           <Thumbnail member={member} />
-          <View style={styles.interactions}>
+          <View style={styles.headerDetails}>
+            <Text style={styles.memberUsername}>@{member.get("username")}</Text>
             <Stats navigation={navigation} member={member} />
             {!isOwnProfile && (
               <View style={styles.actions}>
@@ -129,70 +144,66 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
   </Container>
 );
 
+const headerStyle: ViewStyle = {
+  backgroundColor: colors.darkAccent,
+  padding: 20,
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "flex-start",
+  alignItems: "center"
+};
+
+const headerDetailsStyle: ViewStyle = {
+  flexGrow: 1
+};
+
+const statNumberStyle: TextStyle = {
+  ...fonts.Lato.Bold,
+  ...fontSizes.large
+};
+
+const statLabelStyle: TextStyle = {
+  color: colors.bodyText,
+  ...fontSizes.small
+};
+
+const memberUsernameStyle: TextStyle = {
+  ...fonts.Lato.Semibold,
+  ...fontSizes.medium
+};
+
 const styles = StyleSheet.create({
-  header: {
-    marginBottom: 20,
-    backgroundColor: colors.darkAccent,
-    padding: 10,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center"
-  },
+  header: headerStyle,
   thumbnail: {
     flexGrow: 0,
-    flexBasis: 100,
-    height: 100,
+    flexBasis: 130,
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
+    alignItems: "center",
+    marginRight: 25
   },
-  memberUsername: {
-    fontWeight: "600",
-    fontSize: 12,
-    textAlign: "center",
-    color: colors.lightAccent
-  },
-  interactions: {
-    flexGrow: 1,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-around",
-    alignItems: "stretch",
-    alignSelf: "stretch",
-    marginTop: 20
-  },
+  memberUsername: memberUsernameStyle,
+  headerDetails: headerDetailsStyle,
   actions: {
+    marginTop: 15,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
-    alignItems: "center",
-    marginHorizontal: 20
+    alignItems: "center"
   },
   statsContainer: {
+    marginTop: 15,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginLeft: 10,
-    marginRight: 25
-  },
-  stat: {
-    alignItems: "center",
-    justifyContent: "center"
+    alignItems: "center"
   },
   video: {
     width: "100%",
-    height: "100%",
     aspectRatio: 1
   },
-  number: {
-    fontWeight: "bold",
-    fontSize: 16
-  },
-  numberLabel: {
-    color: colors.bodyText,
-    fontSize: 12
-  }
+  statNumber: statNumberStyle,
+  statLabel: statLabelStyle
 });
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
