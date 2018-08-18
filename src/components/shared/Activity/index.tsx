@@ -167,33 +167,7 @@ class ActivityContent extends React.Component<{
             */}
           <Text style={styles.description}>
             <MemberName member={actor} />
-            {description &&
-              description
-                // Render each piece of the description
-                .map((piece, idx) => {
-                  const key = `content-${idx}`;
-                  if (typeof piece === "string") {
-                    return <Text key={key}>{piece}</Text>;
-                  }
-                  if ("currencyType" in piece) {
-                    return <Currency key={key} currencyValue={piece} />;
-                  }
-                  console.error(
-                    `Unexpected value in ActivityContent description: ${piece}, aborting.`
-                  );
-                  return undefined;
-                })
-                // remove undefined pieces (i.e. errors)
-                .filter(x => !!x)
-                // Put spaces between each component
-                .reduce(
-                  (memo, nextComponent, idx) => [
-                    ...memo,
-                    <Text key={`spacing-${idx}`}> </Text>,
-                    nextComponent
-                  ],
-                  [] as React.ReactNode[]
-                )}
+            {description && <Text compoundContent={{ content: description }} />}
           </Text>
         </View>
         {body && (
