@@ -1,7 +1,7 @@
 import { Config } from "./prod.config";
 
 export const config: Config = {
-  apiBase: "https://raha-test.appspot.com/api/",
+  apiBase: "http://localhost:4000/api/",
   publicVideoBucket: "raha-video-test",
   firebase: {
     ios: {

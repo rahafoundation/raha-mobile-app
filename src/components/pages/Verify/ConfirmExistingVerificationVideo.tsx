@@ -82,7 +82,7 @@ export class ConfirmExistingVerificationVideo extends React.Component<
         )}
         {this.state.step === ConfirmSteps.Retake && (
           <React.Fragment>
-            <Text>
+            <Text style={styles.text}>
               Please take a new video containing yourself where you verify{" "}
               <Text style={styles.name}>
                 {this.props.toVerifyMemberFullName}
