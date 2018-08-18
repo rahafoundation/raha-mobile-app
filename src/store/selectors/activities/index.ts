@@ -12,7 +12,7 @@ import {
   VideoReference,
   ActivityDirection,
   ActivityContent,
-  PredeterminedBodyType
+  BodyType
 } from "./types";
 import { getMemberById } from "../members";
 import { RahaState } from "../../reducers";
@@ -87,7 +87,10 @@ function convertOperationsToActivities(
               // TRUST operations
               actor: creatorMember as Member,
               description: ["just joined Raha!"],
-              body: [videoReferenceForMember(creatorMember as Member)]
+              body: {
+                type: BodyType.MEDIA,
+                media: [videoReferenceForMember(creatorMember as Member)]
+              }
             }
           };
 
@@ -112,7 +115,10 @@ function convertOperationsToActivities(
               // TRUST operations
               actor: creatorMember as Member,
               description: ["requested a friend to verify their account."],
-              body: [videoReferenceForMember(creatorMember as Member)],
+              body: {
+                type: BodyType.MEDIA,
+                media: [videoReferenceForMember(creatorMember as Member)]
+              },
               nextInChain: {
                 direction: ActivityDirection.NonDirectional,
                 content: {
@@ -142,7 +148,10 @@ function convertOperationsToActivities(
               // TRUST operations
               actor: creatorMember as Member,
               description: ["verified their friend's account!"],
-              body: [videoReferenceForMember(creatorMember as Member)],
+              body: {
+                type: BodyType.MEDIA,
+                media: [videoReferenceForMember(creatorMember as Member)]
+              },
               nextInChain: {
                 direction: ActivityDirection.Forward,
                 content: {
@@ -171,7 +180,7 @@ function convertOperationsToActivities(
           };
           const amountGiven: CurrencyValue = {
             value: amountDonated.value.plus(new Big(operation.data.amount)),
-            role: CurrencyRole.Positive,
+            role: CurrencyRole.Transaction,
             currencyType: CurrencyType.Raha
           };
           const newActivity: Activity = {
@@ -182,14 +191,17 @@ function convertOperationsToActivities(
               // TRUST operations
               actor: creatorMember as Member,
               description: ["gave", amountGiven, "for"],
-              body: { text: operation.data.memo },
+              body: { type: BodyType.TEXT, text: operation.data.memo },
               nextInChain: {
                 direction: ActivityDirection.Forward,
                 content: {
                   actor: givenToMember,
                   description: ["donated", amountDonated],
                   // TODO: make this configurable
-                  body: { text: "Because every life has value" },
+                  body: {
+                    type: BodyType.TEXT,
+                    text: "Because every life has value"
+                  },
                   nextInChain: {
                     direction: ActivityDirection.Forward,
                     content: {
@@ -206,7 +218,7 @@ function convertOperationsToActivities(
           const amountMinted: CurrencyValue = {
             value: new Big(operation.data.amount),
             currencyType: CurrencyType.Raha,
-            role: CurrencyRole.Positive
+            role: CurrencyRole.Transaction
           };
 
           switch (operation.data.type) {
@@ -220,8 +232,7 @@ function convertOperationsToActivities(
                   actor: creatorMember as Member,
                   description: ["minted", amountMinted, "of basic income."],
                   body: {
-                    predeterminedBodyType:
-                      PredeterminedBodyType.MINT_BASIC_INCOME
+                    type: BodyType.MINT_BASIC_INCOME
                   },
                   nextInChain: {
                     direction: ActivityDirection.NonDirectional,
@@ -258,7 +269,10 @@ function convertOperationsToActivities(
                     amountMinted,
                     "for inviting a friend to Raha!"
                   ],
-                  body: [videoReferenceForMember(invitedMember)],
+                  body: {
+                    type: BodyType.MEDIA,
+                    media: [videoReferenceForMember(invitedMember)]
+                  },
                   nextInChain: {
                     direction: ActivityDirection.Bidirectional,
                     content: {
@@ -313,7 +327,10 @@ function convertOperationsToActivities(
                 requestedMember === GENESIS_MEMBER
                   ? ["joined Raha!"]
                   : ["just requested a friend to join Raha!"],
-              body: [videoReferenceForMember(creatorMember as Member)],
+              body: {
+                type: BodyType.MEDIA,
+                media: [videoReferenceForMember(creatorMember as Member)]
+              },
               // only show a member in the chain if one will be present, i.e.
               // if this is not one of the first members of Raha.
               ...(requestedMember === GENESIS_MEMBER
@@ -354,7 +371,7 @@ function convertOperationsToActivities(
               actor: creatorMember,
               description: ["trusted a new friend"],
               body: {
-                predeterminedBodyType: PredeterminedBodyType.TRUST_MEMBER
+                type: BodyType.TRUST_MEMBER
               },
               nextInChain: {
                 direction: ActivityDirection.Forward,
