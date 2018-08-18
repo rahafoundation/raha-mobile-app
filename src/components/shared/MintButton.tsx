@@ -16,6 +16,7 @@ import {
 import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
 
 import { Button } from "./elements";
+import { CurrencyRole, CurrencyType, CurrencyValue } from "./Currency";
 
 interface OwnProps {}
 interface StateProps {
@@ -33,21 +34,31 @@ type Props = OwnProps & StateProps & MergedProps;
 
 const MintButtonComponent: React.StatelessComponent<Props> = props => {
   const { mintableAmount, mintApiCallStatus, mint } = props;
-  const mintableAmountText = mintableAmount ? mintableAmount.toString() : "0";
   const buttonDisabled =
     (mintableAmount && mintableAmount.lte(0)) ||
     (mintApiCallStatus &&
       mintApiCallStatus.status === ApiCallStatusType.STARTED);
-  const buttonText = `Mint${
-    mintableAmount && mintableAmount.lte(0) ? "" : ` +ℝ${mintableAmountText}`
-  }`;
-  return <Button title={buttonText} onPress={mint} disabled={buttonDisabled} />;
+  const mintValue: CurrencyValue | undefined = mintableAmount
+    ? {
+        value: mintableAmount,
+        role: CurrencyRole.None,
+        currencyType: CurrencyType.Raha
+      }
+    : undefined;
+  return (
+    <Button
+      title={["Mint", ...(mintValue ? [mintValue] : [])]}
+      onPress={mint}
+      disabled={buttonDisabled}
+    />
+  );
 };
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
-  state,
-  ownProps
-) => {
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  OwnProps,
+  RahaState
+> = state => {
   const loggedInMember = getLoggedInMember(state);
   if (loggedInMember) {
     return {

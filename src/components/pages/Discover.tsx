@@ -169,7 +169,7 @@ function getCard(
         {info.action && (
           <Button
             title={info.action}
-            buttonStyle={styles.actionButton}
+            style={styles.actionButton}
             onPress={() => info.uri(navigation)}
           />
         )}

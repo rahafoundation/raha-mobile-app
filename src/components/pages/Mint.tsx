@@ -1,5 +1,6 @@
 import * as React from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { Big } from "big.js";
+import { StyleSheet, View, Image, TextStyle } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
@@ -13,6 +14,8 @@ import { getUnclaimedReferrals } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
 import { Button, Container, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";
+import { Currency, CurrencyRole, CurrencyType } from "../shared/Currency";
+import { fontSizes } from "../../helpers/fonts";
 
 type OwnProps = NavigationScreenProps<{}>;
 
@@ -30,15 +33,7 @@ const MintView: React.StatelessComponent<Props> = ({
 }) => {
   let net = loggedInMember
     .get("balance")
-    .minus(loggedInMember.get("totalMinted"))
-    .toString();
-  let netColor;
-  if (net.substr(0, 1) === "-") {
-    netColor = colors.currency.negative;
-  } else {
-    netColor = colors.currency.positive;
-    net = `+${net}`;
-  }
+    .minus(loggedInMember.get("totalMinted"));
 
   const hasUnclaimedReferrals = unclaimedReferralIds
     ? unclaimedReferralIds.length > 0
@@ -46,16 +41,23 @@ const MintView: React.StatelessComponent<Props> = ({
 
   const navigateToReferralBonuses = hasUnclaimedReferrals
     ? () => {
-        navigation.navigate(RouteName.ReferralBonusPage, { unclaimedReferralIds });
+        navigation.navigate(RouteName.ReferralBonusPage, {
+          unclaimedReferralIds
+        });
       }
     : () => {};
 
   return (
     <Container>
       <View style={styles.centerFlex}>
-        <Text style={{ fontSize: 36 }}>
-          ℝ{loggedInMember.get("balance").toString()}
-        </Text>
+        <Currency
+          style={fontSizes.large}
+          currencyValue={{
+            value: loggedInMember.get("balance"),
+            role: CurrencyRole.Transaction,
+            currencyType: CurrencyType.Raha
+          }}
+        />
         <Text style={styles.numberLabel}>balance</Text>
       </View>
       <View
@@ -65,19 +67,36 @@ const MintView: React.StatelessComponent<Props> = ({
         ]}
       >
         <View style={styles.centerFlex}>
-          <Text style={styles.subStat}>
-            ℝ{loggedInMember.get("totalMinted").toString()}
-          </Text>
+          <Currency
+            style={styles.subStat}
+            currencyValue={{
+              value: loggedInMember.get("totalMinted"),
+              role: CurrencyRole.Transaction,
+              currencyType: CurrencyType.Raha
+            }}
+          />
           <Text style={styles.numberLabel}>minted</Text>
         </View>
         <View style={styles.centerFlex}>
-          <Text style={[styles.subStat, { color: netColor }]}>ℝ{net}</Text>
+          <Currency
+            style={styles.subStat}
+            currencyValue={{
+              value: net,
+              role: CurrencyRole.Transaction,
+              currencyType: CurrencyType.Raha
+            }}
+          />
           <Text style={styles.numberLabel}>transactions</Text>
         </View>
         <View style={styles.centerFlex}>
-          <Text style={styles.subStat}>
-            ℝ{loggedInMember.get("totalDonated").toString()}
-          </Text>
+          <Currency
+            style={styles.subStat}
+            currencyValue={{
+              value: loggedInMember.get("totalDonated"),
+              role: CurrencyRole.Donation,
+              currencyType: CurrencyType.Raha
+            }}
+          />
           <Text style={styles.numberLabel}>donated</Text>
         </View>
       </View>
@@ -103,7 +122,14 @@ const MintView: React.StatelessComponent<Props> = ({
           }}
         >
           <Button
-            title="Invite +ℝ60"
+            title={[
+              "Invite",
+              {
+                value: new Big(60),
+                role: CurrencyRole.None,
+                currencyType: CurrencyType.Raha
+              }
+            ]}
             onPress={() => {
               navigation.navigate(RouteName.InvitePage);
             }}
@@ -126,29 +152,31 @@ const MintView: React.StatelessComponent<Props> = ({
   );
 };
 
+const subStatStyle: TextStyle = fontSizes.large;
+const numberLabelStyle: TextStyle = {
+  color: colors.bodyText,
+  ...fontSizes.small
+};
 const styles = StyleSheet.create({
   centerFlex: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center"
   },
-  subStat: {
-    fontSize: 22
-  },
-  numberLabel: {
-    color: colors.bodyText,
-    fontSize: 14
-  }
+  subStat: subStatStyle,
+  numberLabel: numberLabelStyle
 });
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
-  state,
-  props
-) => {
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  OwnProps,
+  RahaState
+> = state => {
   const loggedInMember = getLoggedInMember(state);
   if (!loggedInMember) {
-    // TODO Throw an error.
-    return {} as Props;
+    // TODO: gracefully deal with this situation.
+    console.error("Member not logged in, should not have gotten here.");
+    return {} as StateProps;
   }
   return {
     loggedInMember,
