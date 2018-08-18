@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, TextStyle, TextProps } from "react-native";
+import { StyleSheet, TextStyle, TextProps, StyleProp } from "react-native";
 
 import {
   Member as MemberData,
@@ -8,10 +8,11 @@ import {
 import { Text } from "./elements";
 import { RouteName } from "./Navigation";
 import { TextLink } from "./elements/TextLink";
+import { fonts, fontSizes } from "../../helpers/fonts";
 
 interface OwnProps {
   member: MemberData | typeof RAHA_BASIC_INCOME_MEMBER;
-  style?: TextProps["style"];
+  style?: StyleProp<TextStyle>;
 }
 type MemberNameProps = OwnProps;
 
@@ -41,7 +42,8 @@ export const MemberName: React.StatelessComponent<MemberNameProps> = ({
 };
 
 const memberName: TextStyle = {
-  fontWeight: "700"
+  ...fonts.Lato.Bold,
+  ...fontSizes.medium
 };
 
 const styles = StyleSheet.create({
