@@ -4,6 +4,7 @@ import {
 } from "../../../store/reducers/members";
 import { CurrencyValue } from "../../../components/shared/Currency";
 import { RouteName } from "../../../components/shared/Navigation";
+import { Omit } from "../../../../types/omit";
 
 /**
  * Represents the direction of the relationship between actors in an activity.
@@ -12,7 +13,7 @@ import { RouteName } from "../../../components/shared/Navigation";
  */
 export enum ActivityDirection {
   Forward = "Forward",
-  Backward = "Backward",
+  // Backward = "Backward",  // I think Backwards messes with the flow of the feed.
   Bidirectional = "Bidirectional",
   NonDirectional = "NonDirectional"
 }
@@ -115,6 +116,8 @@ export interface ActivityCallToAction {
 export interface Activity {
   id: string;
   timestamp: Date;
-  content: ActivityContent;
+  // make body required for top-level activity, but not for children
+  content: Required<Pick<ActivityContent, "body">> &
+    Omit<ActivityContent, "body">;
   callToAction?: ActivityCallToAction;
 }
