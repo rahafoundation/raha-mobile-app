@@ -24,7 +24,7 @@ import { connect, MapStateToProps } from "react-redux";
 
 import { app } from "../../firebaseInit";
 import { Give as GiveScreen } from "../pages/Give";
-import { Home } from "../pages/Home";
+import { Feed } from "../pages/Feed";
 import { Mint } from "../pages/Mint";
 import { LogIn } from "../pages/LogIn";
 import { PendingInvites } from "../pages/PendingInvites";
@@ -35,7 +35,7 @@ import { MemberList as MemberListScreen } from "../pages/MemberList";
 import { Onboarding } from "../pages/Onboarding/Onboarding";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
-import { Button, Text } from "./elements";
+import { Text } from "./elements";
 import { Discover } from "../pages/Discover";
 import { LeaderBoard } from "../pages/LeaderBoard";
 import { Invite } from "../pages/Invite/Invite";
@@ -252,10 +252,10 @@ function createHeaderNavigationOptions(title: string) {
   });
 }
 
-const HomeTab = createNavigatorForTab(
+const FeedTab = createNavigatorForTab(
   {
     [RouteName.FeedPage]: {
-      screen: Home,
+      screen: Feed,
       navigationOptions: createHeaderNavigationOptions("Raha")
     }
   },
@@ -335,7 +335,7 @@ const SignedInNavigator = createSwitchNavigator(
     },
     App: createBottomTabNavigator(
       {
-        [RouteName.FeedTab]: HomeTab,
+        [RouteName.FeedTab]: FeedTab,
         [RouteName.DiscoverTab]: DiscoverTab,
         [RouteName.MintTab]: MintTab,
         [RouteName.ProfileTab]: ProfileTab
