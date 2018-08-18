@@ -113,7 +113,7 @@ function convertOperationsToActivities(
               description: ["requested a friend to verify their account."],
               body: [videoReferenceForMember(creatorMember as Member)],
               nextInChain: {
-                direction: ActivityDirection.Forward,
+                direction: ActivityDirection.NonDirectional,
                 content: {
                   actor: requestedMember
                 }
@@ -222,7 +222,7 @@ function convertOperationsToActivities(
                     iconName: "parachute-box"
                   },
                   nextInChain: {
-                    direction: ActivityDirection.Forward,
+                    direction: ActivityDirection.NonDirectional,
                     content: {
                       actor: RAHA_BASIC_INCOME_MEMBER
                     }
@@ -256,6 +256,7 @@ function convertOperationsToActivities(
                     amountMinted,
                     "for inviting a friend to Raha!"
                   ],
+                  body: [videoReferenceForMember(invitedMember)],
                   nextInChain: {
                     direction: ActivityDirection.Bidirectional,
                     content: {
@@ -317,7 +318,7 @@ function convertOperationsToActivities(
                 ? {}
                 : {
                     nextInChain: {
-                      direction: ActivityDirection.Forward,
+                      direction: ActivityDirection.NonDirectional,
                       content: {
                         actor: requestedMember
                       }
@@ -349,7 +350,7 @@ function convertOperationsToActivities(
             timestamp: operation.created_at,
             content: {
               actor: creatorMember,
-              description: ["trusts a new friend"],
+              description: ["trusted a new friend"],
               body: { iconName: "handshake" },
               nextInChain: {
                 direction: ActivityDirection.Forward,
