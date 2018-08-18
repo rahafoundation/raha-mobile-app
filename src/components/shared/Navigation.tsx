@@ -88,8 +88,8 @@ export enum RouteName {
   InitializationRouter = "InitializationRouter",
   AccountPage = "Account",
   GivePage = "Give",
-  HomePage = "Home Page",
-  HomeTab = "Home",
+  FeedPage = "Feed Page",
+  FeedTab = "Feed",
   InvitePage = "Invite",
   LogInPage = "LogIn",
   MemberListPage = "Member List",
@@ -254,13 +254,13 @@ function createHeaderNavigationOptions(title: string) {
 
 const HomeTab = createNavigatorForTab(
   {
-    [RouteName.HomePage]: {
+    [RouteName.FeedPage]: {
       screen: Home,
       navigationOptions: createHeaderNavigationOptions("Raha")
     }
   },
   {
-    initialRouteName: RouteName.HomePage
+    initialRouteName: RouteName.FeedPage
   }
 );
 
@@ -314,7 +314,7 @@ function getIconForRoute(routeName: RouteName): string {
   switch (routeName) {
     case RouteName.ProfileTab:
       return "user";
-    case RouteName.HomeTab:
+    case RouteName.FeedTab:
       return "list-alt";
     case RouteName.MintTab:
       return "parachute-box";
@@ -329,13 +329,13 @@ const SignedInNavigator = createSwitchNavigator(
   {
     [RouteName.InitializationRouter]: {
       screen: (props: NavigationScreenProps) => (
-        <InitializationRouter {...props} defaultRoute={RouteName.HomeTab} />
+        <InitializationRouter {...props} defaultRoute={RouteName.FeedTab} />
       ),
       navigationOptions: { header: null }
     },
     App: createBottomTabNavigator(
       {
-        [RouteName.HomeTab]: HomeTab,
+        [RouteName.FeedTab]: HomeTab,
         [RouteName.DiscoverTab]: DiscoverTab,
         [RouteName.MintTab]: MintTab,
         [RouteName.ProfileTab]: ProfileTab
