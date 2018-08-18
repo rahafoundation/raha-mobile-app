@@ -416,10 +416,8 @@ function activityContentContainsMember(
     if (memberId === RAHA_BASIC_INCOME_MEMBER) {
       return true;
     }
-  } else {
-    if (content.actor.get("memberId") === memberId) {
-      return true;
-    }
+  } else if (content.actor.get("memberId") === memberId) {
+    return true;
   }
 
   if (content.nextInChain) {
