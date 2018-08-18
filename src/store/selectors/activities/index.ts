@@ -11,7 +11,8 @@ import {
   Activity,
   VideoReference,
   ActivityDirection,
-  ActivityContent
+  ActivityContent,
+  PredeterminedBodyType
 } from "./types";
 import { getMemberById } from "../members";
 import { RahaState } from "../../reducers";
@@ -219,7 +220,8 @@ function convertOperationsToActivities(
                   actor: creatorMember as Member,
                   description: ["minted", amountMinted, "of basic income."],
                   body: {
-                    iconName: "parachute-box"
+                    predeterminedBodyType:
+                      PredeterminedBodyType.MINT_BASIC_INCOME
                   },
                   nextInChain: {
                     direction: ActivityDirection.NonDirectional,
@@ -351,7 +353,9 @@ function convertOperationsToActivities(
             content: {
               actor: creatorMember,
               description: ["trusted a new friend"],
-              body: { iconName: "handshake" },
+              body: {
+                predeterminedBodyType: PredeterminedBodyType.TRUST_MEMBER
+              },
               nextInChain: {
                 direction: ActivityDirection.Forward,
                 content: {

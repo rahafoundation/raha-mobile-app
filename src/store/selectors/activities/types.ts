@@ -39,14 +39,16 @@ export interface ImageReference {
 export type MediaReference = VideoReference | ImageReference;
 
 /**
- * Reference to an icon to display.
- * TODO: actually limit iconName to available icons
- * TODO: this is a display concern, not a data one. We should make this just
- * refer to the type of activity and let the rendering logic decide to use these
- * icons instead.
+ * Reference to a body that the application independently decides how to
+ * display, like by displaying an icon.
  */
-export interface IconReference {
-  iconName: string;
+export enum PredeterminedBodyType {
+  MINT_BASIC_INCOME,
+  TRUST_MEMBER
+}
+
+export interface PredeterminedBody {
+  predeterminedBodyType: PredeterminedBodyType;
 }
 
 /**
@@ -57,7 +59,7 @@ export type ActivityBody =
       text: string;
     }
   | MediaReference[]
-  | IconReference;
+  | PredeterminedBody;
 
 /**
  * The content of an Activity. Missing some metadata that makes a complete,
