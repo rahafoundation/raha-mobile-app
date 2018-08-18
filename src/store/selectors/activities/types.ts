@@ -41,7 +41,9 @@ export type MediaReference = VideoReference | ImageReference;
 /**
  * Types of bodies that the app has built-in logic to display.
  */
-export enum PredeterminedBodyType {
+export enum BodyType {
+  MEDIA,
+  TEXT,
   MINT_BASIC_INCOME,
   TRUST_MEMBER
 }
@@ -51,18 +53,27 @@ export enum PredeterminedBodyType {
  * display, like by displaying an icon.
  */
 export interface PredeterminedBody {
-  predeterminedBodyType: PredeterminedBodyType;
+  predeterminedBodyType: BodyType;
+}
+
+export interface MediaBody {
+  type: BodyType.MEDIA;
+  media: MediaReference[];
+}
+
+export interface TextBody {
+  type: BodyType.TEXT;
+  text: string;
 }
 
 /**
  * Body to display for a given activity.
  */
 export type ActivityBody =
-  | {
-      text: string;
-    }
-  | MediaReference[]
-  | PredeterminedBody;
+  | TextBody
+  | MediaBody
+  | { type: BodyType.MINT_BASIC_INCOME }
+  | { type: BodyType.TRUST_MEMBER };
 
 /**
  * The content of an Activity. Missing some metadata that makes a complete,
