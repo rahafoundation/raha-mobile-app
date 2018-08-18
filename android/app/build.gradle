@@ -168,6 +168,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-svg')
     // Multidex support for < Android 5.0 (API level 21)
     implementation 'com.android.support:multidex:1.0.3'
 

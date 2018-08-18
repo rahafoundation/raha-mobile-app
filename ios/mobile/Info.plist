@@ -75,7 +75,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Raha needs access to your camera to record invite videos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Raha needs access to your microphone to record invite videos.</string>
 	<key>UIAppFonts</key>
