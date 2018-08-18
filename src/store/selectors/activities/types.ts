@@ -39,14 +39,17 @@ export interface ImageReference {
 export type MediaReference = VideoReference | ImageReference;
 
 /**
- * Reference to a body that the application independently decides how to
- * display, like by displaying an icon.
+ * Types of bodies that the app has built-in logic to display.
  */
 export enum PredeterminedBodyType {
   MINT_BASIC_INCOME,
   TRUST_MEMBER
 }
 
+/**
+ * Reference to a body that the application independently decides how to
+ * display, like by displaying an icon.
+ */
 export interface PredeterminedBody {
   predeterminedBodyType: PredeterminedBodyType;
 }
