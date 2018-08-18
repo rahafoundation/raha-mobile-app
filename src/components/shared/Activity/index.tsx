@@ -18,7 +18,8 @@ import {
   Activity as ActivityData,
   ActivityContent as ActivityContentData,
   ActivityCallToAction as CallToActionData,
-  ActivityDirection
+  ActivityDirection,
+  PredeterminedBodyType
 } from "../../../store/selectors/activities/types";
 import { MemberName } from "../MemberName";
 import { MemberThumbnail } from "../MemberThumbnail";
@@ -64,6 +65,28 @@ const CallToAction: React.StatelessComponent<{
   );
 };
 
+function iconNameForPredeterminedBody(bodyType: PredeterminedBodyType): string {
+  switch (bodyType) {
+    case PredeterminedBodyType.MINT_BASIC_INCOME:
+      return "parachute-box";
+    case PredeterminedBodyType.TRUST_MEMBER:
+      return "handshake";
+    default:
+      console.error(`Invalid predetermined body type '${bodyType}'`);
+      // render an innocuous default icon
+      return "cube";
+  }
+}
+
+/**
+ * Currently all predetermined bodies are displayed as a large icon.
+ */
+const PredeterminedBody: React.StatelessComponent<{
+  bodyType: PredeterminedBodyType;
+}> = ({ bodyType }) => (
+  <Icon name={iconNameForPredeterminedBody(bodyType)} style={styles.iconBody} />
+);
+
 class ActivityContentBody extends React.Component<{
   body: ActivityContentData["body"];
   onFindVideoElems: (elems: VideoWithPlaceholderView[]) => void;
@@ -84,10 +107,10 @@ class ActivityContentBody extends React.Component<{
       );
     }
 
-    if ("iconName" in body) {
+    if ("predeterminedBodyType" in body) {
       return (
         <View style={styles.contentBody}>
-          <Icon name={body.iconName} style={styles.iconBody} />
+          <PredeterminedBody bodyType={body.predeterminedBodyType} />
         </View>
       );
     }
