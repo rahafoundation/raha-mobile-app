@@ -38,6 +38,7 @@ type OwnProps = NavigationScreenProps<NavParams>;
 
 type StateProps = {
   member: Member;
+  loggedInMember?: Member;
   isOwnProfile: boolean;
   activities: Activity[];
 };
@@ -50,7 +51,10 @@ type ProfileProps = StateProps & OwnProps & DispatchProps;
 
 const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
   <View style={styles.thumbnail}>
-    <VideoWithPlaceholder style={styles.video} uri={props.member.videoUri} />
+    <VideoWithPlaceholder
+      style={styles.profileVideo}
+      uri={props.member.videoUri}
+    />
   </View>
 );
 
@@ -105,6 +109,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
   activities,
   navigation,
   member,
+  loggedInMember,
   isOwnProfile,
   trust
 }) => (
@@ -117,26 +122,27 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
           <View style={styles.headerDetails}>
             <Text style={styles.memberUsername}>@{member.get("username")}</Text>
             <Stats navigation={navigation} member={member} />
-            {!isOwnProfile && (
-              <View style={styles.actions}>
-                <Button
-                  title="Trust"
-                  onPress={() => trust(member.get("memberId"))}
-                  //@ts-ignore Because Button does have a rounded property
-                  rounded
-                />
-                <Button
-                  title="Give"
-                  onPress={() =>
-                    navigation.navigate(RouteName.GivePage, {
-                      toMember: member
-                    })
-                  }
-                  //@ts-ignore Because Button does have a rounded property
-                  rounded
-                />
-              </View>
-            )}
+            {!!loggedInMember &&
+              !isOwnProfile && (
+                <View style={styles.memberActions}>
+                  <Button
+                    style={{ marginRight: 12 }}
+                    title="Trusted"
+                    onPress={() => trust(member.get("memberId"))}
+                    disabled={member
+                      .get("trustedBy")
+                      .includes(loggedInMember.get("memberId"))}
+                  />
+                  <Button
+                    title="Give"
+                    onPress={() =>
+                      navigation.navigate(RouteName.GivePage, {
+                        toMember: member
+                      })
+                    }
+                  />
+                </View>
+              )}
           </View>
         </View>
       }
@@ -172,36 +178,48 @@ const memberUsernameStyle: TextStyle = {
   ...fontSizes.medium
 };
 
+const thumbnailStyle: ViewStyle = {
+  flexGrow: 0,
+  flexBasis: 120,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  marginRight: 20
+};
+
+const detailsSpacer: ViewStyle = {
+  marginTop: 15
+};
+
+const memberActionsStyle: ViewStyle = {
+  ...detailsSpacer,
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center"
+};
+
+const statsContainerStyle: ViewStyle = {
+  ...detailsSpacer,
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center"
+};
+
+const profileVideoStyle: ViewStyle = {
+  width: "100%",
+  aspectRatio: 1
+};
+
 const styles = StyleSheet.create({
   header: headerStyle,
-  thumbnail: {
-    flexGrow: 0,
-    flexBasis: 130,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    marginRight: 25
-  },
+  thumbnail: thumbnailStyle,
   memberUsername: memberUsernameStyle,
   headerDetails: headerDetailsStyle,
-  actions: {
-    marginTop: 15,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center"
-  },
-  statsContainer: {
-    marginTop: 15,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center"
-  },
-  video: {
-    width: "100%",
-    aspectRatio: 1
-  },
+  memberActions: memberActionsStyle,
+  statsContainer: statsContainerStyle,
+  profileVideo: profileVideoStyle,
   statNumber: statNumberStyle,
   statLabel: statLabelStyle
 });
@@ -228,6 +246,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return {
     activities,
     member,
+    loggedInMember,
     isOwnProfile:
       !!loggedInMember &&
       loggedInMember.get("memberId") === member.get("memberId")
