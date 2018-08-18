@@ -1,6 +1,11 @@
 import "es6-symbol/implement";
 import * as React from "react";
-import { TouchableOpacity, StyleSheet, TextStyle } from "react-native";
+import {
+  TouchableOpacity,
+  StyleSheet,
+  TextStyle,
+  ViewStyle
+} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import {
@@ -36,8 +41,9 @@ import { LeaderBoard } from "../pages/LeaderBoard";
 import { Invite } from "../pages/Invite/Invite";
 import { Account } from "../pages/Account";
 import { colors, palette } from "../../helpers/colors";
-import { fonts } from "../../helpers/fonts";
+import { fonts, fontSizes } from "../../helpers/fonts";
 import { InitializationRouter } from "../pages/InitializationRouter";
+import { Member } from "../../store/reducers/members";
 
 /**
  * Gets the current screen from navigation state.
@@ -107,9 +113,14 @@ const subHeaderStyle: TextStyle = {
   fontSize: 18
 };
 
-const headerStyle: TextStyle = {
-  marginLeft: 12,
-  fontSize: 32,
+const headerStyle: ViewStyle = {
+  paddingHorizontal: 12,
+  backgroundColor: colors.darkAccent
+};
+
+const headerTextStyle: TextStyle = {
+  marginHorizontal: 12,
+  ...fontSizes.xlarge,
   ...fonts.Lato.Semibold
 };
 
@@ -121,16 +132,29 @@ const navIconFocusedStyle: TextStyle = {
   color: palette.mint
 };
 
+const labelStyle: TextStyle = {
+  ...fonts.Lato.Bold,
+  ...fontSizes.small
+};
+
+const giveButtonStyle: TextStyle = {
+  ...fonts.Lato.Bold,
+  ...fontSizes.large
+};
+
 const styles = StyleSheet.create({
   header: headerStyle,
+  headerText: headerTextStyle,
   subHeader: subHeaderStyle,
   navIcon: navIconStyle,
-  navIconFocused: navIconFocusedStyle
+  navIconFocused: navIconFocusedStyle,
+  label: labelStyle,
+  giveButton: giveButtonStyle
 });
 
 const HeaderTitle: React.StatelessComponent<HeaderProps> = props => {
   return (
-    <Text style={[styles.header, props.style]}>
+    <Text style={[styles.headerText, props.style]}>
       {props.title}
       {props.subtitle && (
         <Text style={styles.subHeader}> - {props.subtitle}</Text>
@@ -153,15 +177,13 @@ const MemberList = {
 const Profile: NavigationRouteConfig = {
   screen: ProfileScreen,
   navigationOptions: ({ navigation }: any) => {
-    const member = navigation.getParam("member");
+    const member: Member = navigation.getParam("member");
     return {
       headerTitle: (
-        <HeaderTitle title={member ? member.fullName : "Your Profile"} />
+        <HeaderTitle title={member ? member.get("fullName") : "Your Profile"} />
       ),
       headerRight: settingsButton(navigation),
-      headerStyle: {
-        backgroundColor: colors.darkAccent
-      }
+      headerStyle: styles.header
     };
   }
 };
@@ -181,12 +203,14 @@ type HeaderProps = {
 
 function giveButton(navigation: any) {
   return (
-    <Button
-      title="Give"
+    <Text
       onPress={() => {
         navigation.navigate(RouteName.GivePage);
       }}
-    />
+      style={styles.giveButton}
+    >
+      Give
+    </Text>
   );
 }
 
@@ -197,7 +221,7 @@ function settingsButton(navigation: any) {
         navigation.navigate(RouteName.AccountPage);
       }}
     >
-      <Icon name="ellipsis-h" size={25} />
+      <Icon name="ellipsis-h" size={20} />
     </TouchableOpacity>
   );
 }
@@ -223,9 +247,7 @@ function createHeaderNavigationOptions(title: string) {
   return ({ navigation }: any) => ({
     headerTitle: <HeaderTitle title={title} />,
     headerRight: giveButton(navigation),
-    headerStyle: {
-      backgroundColor: colors.darkAccent
-    }
+    headerStyle: styles.header
   });
 }
 
@@ -294,7 +316,7 @@ function getIconForRoute(routeName: RouteName): string {
     case RouteName.HomeTab:
       return "list-alt";
     case RouteName.MintTab:
-      return "gem";
+      return "parachute-box";
     case RouteName.DiscoverTab:
       return "newspaper";
     default:
@@ -335,11 +357,15 @@ const SignedInNavigator = createSwitchNavigator(
               />
             );
           },
-          headerStyle: {
-            backgroundColor: colors.pageBackground
-          },
-          labelStyle: {
-            color: colors.bodyText
+          headerStyle: [
+            styles.header,
+            {
+              backgroundColor: colors.pageBackground
+            }
+          ],
+          tabBarOptions: {
+            activeTintColor: palette.mint,
+            labelStyle: styles.label
           },
           tabBarColor: palette.lightGray
         })
@@ -374,9 +400,7 @@ const SignedOutNavigator = createSwitchNavigator(
           headerTitle: (
             <HeaderTitle title="Raha" subtitle="Basic Income Network" />
           ),
-          headerStyle: {
-            backgroundColor: colors.darkBackground
-          }
+          headerStyle: styles.header
         }
       }
     )
