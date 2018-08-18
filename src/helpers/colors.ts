@@ -16,6 +16,7 @@ export const palette = {
   darkMint: "#509f6d",
 
   lavender: "#cb6ddf",
+  paleLavender: "#f1b4ff",
   red: "#da3e52"
 };
 
@@ -33,8 +34,8 @@ export const colors = {
 
   // Components
   divider: palette.lightGray,
-  button: palette.blue,
-  disabledButton: palette.paleBlue,
+  button: palette.lavender,
+  disabledButton: palette.paleLavender,
   lightAccent: palette.blueWhite,
   darkAccent: palette.mint,
 
