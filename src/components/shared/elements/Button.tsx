@@ -76,7 +76,8 @@ const disabledStyle: ViewStyle = {
 
 const textStyle: TextStyle = {
   ...fonts.Lato.Bold,
-  color: palette.offWhite
+  color: palette.offWhite,
+  textAlign: "center"
 };
 const disabledTextStyle: TextStyle = {};
 
