@@ -269,8 +269,6 @@ const activityStyle: ViewStyle = {
   paddingHorizontal: 20,
   display: "flex",
   flexDirection: "column"
-  // borderBottomColor: palette.veryLightGray,
-  // borderBottomWidth: 1
 };
 
 const contentSectionStyle: ViewStyle = {
@@ -279,16 +277,11 @@ const contentSectionStyle: ViewStyle = {
 
 const metadataRowStyle: ViewStyle = {
   ...contentSectionStyle
-  // borderTopColor: palette.veryLightGray,
-  // borderTopWidth: 1,
-  // paddingBottom: 10,
-  // marginLeft: leftColumnWidth / 2
 };
 
 const timestampStyle: TextStyle = {
   color: colors.secondaryText,
   ...fontSizes.small
-  // textAlign: "right"
 };
 
 const actorRowStyle: ViewStyle = {
