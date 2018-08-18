@@ -66,23 +66,10 @@ const CallToAction: React.StatelessComponent<{
   );
 };
 
-function iconNameForPredeterminedBody(bodyType: BodyType): string {
-  switch (bodyType) {
-    case BodyType.MINT_BASIC_INCOME:
-      return "parachute-box";
-    case BodyType.TRUST_MEMBER:
-      return "handshake";
-    default:
-      console.error(`Invalid predetermined body type '${bodyType}'`);
-      // render an innocuous default icon
-      return "cube";
-  }
-}
-
 /**
  * Currently all predetermined bodies are displayed as a large icon.
  */
-const IconBody: React.StatelessComponent<{
+const IconContentBody: React.StatelessComponent<{
   iconName: string;
 }> = ({ iconName }) => <Icon name={iconName} style={styles.iconBody} />;
 
@@ -118,29 +105,38 @@ class ActivityContentBody extends React.Component<{
   body: ActivityContentData["body"];
   onFindVideoElems: (elems: VideoWithPlaceholderView[]) => void;
 }> {
-  render() {
-    const { body } = this.props;
+  renderBody = () => {
+    const { body, onFindVideoElems } = this.props;
     if (!body) {
-      return <React.Fragment />;
+      return undefined;
     }
     switch (body.type) {
       case BodyType.MINT_BASIC_INCOME:
-        return <IconBody iconName="parachute-box" />;
+        return <IconContentBody iconName="parachute-box" />;
       case BodyType.TRUST_MEMBER:
-        return <IconBody iconName="handshake" />;
+        return <IconContentBody iconName="handshake" />;
       case BodyType.TEXT:
         return <Text>{body.text}</Text>;
       case BodyType.MEDIA:
         return (
           <MediaContentBody
             media={body.media}
-            onFindVideoElems={this.props.onFindVideoElems}
+            onFindVideoElems={onFindVideoElems}
           />
         );
       default:
         console.error("Unexpected body type:", JSON.stringify(body));
-        return <React.Fragment />;
+        return undefined;
     }
+  };
+
+  render() {
+    const body = this.renderBody();
+    return body === undefined ? (
+      <React.Fragment />
+    ) : (
+      <View style={styles.contentBody}>{body}</View>
+    );
   }
 }
 
