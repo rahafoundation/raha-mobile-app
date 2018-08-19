@@ -4,12 +4,11 @@
  */
 import * as React from "react";
 import { formatRelative } from "date-fns";
-import { View, StyleSheet, TextStyle, ViewStyle, Image } from "react-native";
+import { View, Image } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 import { Text } from "../elements";
-import { colors, palette } from "../../../helpers/colors";
 import {
   VideoWithPlaceholderView,
   VideoWithPlaceholder
@@ -24,16 +23,18 @@ import {
 } from "../../../store/selectors/activities/types";
 import { MemberName } from "../MemberName";
 import { MemberThumbnail } from "../MemberThumbnail";
-import { Currency } from "../elements/Currency";
 import { TextLink } from "../elements/TextLink";
 import { ArrowHeadDirection, ArrowHead } from "./ArrowHead";
-import { fontSizes } from "../../../helpers/fonts";
 import { MixedText } from "../elements/MixedText";
+import { styles, leftColumnWidth, chainIndicatorColor } from "./styles";
 
 type Props = {
   activity: ActivityData;
 };
 
+/**
+ * TODO: test this for proper output
+ */
 const CallToAction: React.StatelessComponent<{
   callToAction: CallToActionData;
 }> = ({ callToAction: { actor, actions } }) => {
@@ -42,12 +43,11 @@ const CallToAction: React.StatelessComponent<{
       <MemberThumbnail style={styles.actorThumbnail} member={actor} />
       {actions.map(action => (
         <View>
+          {/* TODO: don't ad hoc figure out value of piece like this, add explicit differentiator */}
+          {/* TODO: Figure out how to unify ActionLink handling with MixedText? */}
           {action.text.map(piece => {
-            if (typeof piece === "string") {
-              return <Text>piece</Text>;
-            }
-            if ("currencyType" in piece) {
-              return <Currency currencyValue={piece} />;
+            if (typeof piece === "string" || "currencyType" in piece) {
+              return <MixedText content={[piece]} />;
             }
             if ("destination" in piece) {
               return (
@@ -184,7 +184,7 @@ class ActivityContent extends React.Component<{
                   <ArrowHead
                     direction={ArrowHeadDirection.Up}
                     width={12}
-                    color={palette.veryLightGray}
+                    color={chainIndicatorColor}
                   />
                 )}
               <View style={styles.chainIndicatorLine} />
@@ -196,7 +196,7 @@ class ActivityContent extends React.Component<{
                   <ArrowHead
                     direction={ArrowHeadDirection.Down}
                     width={12}
-                    color={palette.veryLightGray}
+                    color={chainIndicatorColor}
                   />
                 )}
             </View>
@@ -249,7 +249,7 @@ export class ActivityView extends React.Component<
           }}
         />
         {callToAction && <CallToAction callToAction={callToAction} />}
-        <View style={metadataRowStyle}>
+        <View style={styles.metadataRow}>
           <Text style={styles.timestamp}>
             {formatRelative(timestamp, new Date()).toUpperCase()}
           </Text>
@@ -258,110 +258,5 @@ export class ActivityView extends React.Component<
     );
   }
 }
-
-const leftColumnWidth = 50;
-const activitySpacing = 30;
-const sectionSpacing = 10;
-
-const activityStyle: ViewStyle = {
-  marginTop: activitySpacing - sectionSpacing,
-  paddingHorizontal: 20,
-  display: "flex",
-  flexDirection: "column"
-};
-
-const contentSectionStyle: ViewStyle = {
-  marginTop: sectionSpacing
-};
-
-const metadataRowStyle: ViewStyle = {
-  ...contentSectionStyle
-};
-
-const timestampStyle: TextStyle = {
-  color: colors.secondaryText,
-  ...fontSizes.small
-};
-
-const actorRowStyle: ViewStyle = {
-  ...contentSectionStyle,
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
-  overflow: "hidden"
-};
-
-const actorThumbnailStyle: ViewStyle = {
-  flexGrow: 0,
-  flexShrink: 0,
-  flexBasis: leftColumnWidth,
-  marginRight: 10
-};
-
-const contentBodyRowStyle: ViewStyle = {
-  ...contentSectionStyle,
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center"
-};
-
-const invisibleStyle: ViewStyle = {
-  opacity: 0
-};
-
-const chainIndicatorWidth = 3;
-const chainIndicatorStyle: ViewStyle = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  height: "100%",
-  flexGrow: 0
-};
-
-const chainIndicatorLineStyle: ViewStyle = {
-  backgroundColor: palette.veryLightGray,
-  width: chainIndicatorWidth,
-  marginHorizontal: (leftColumnWidth - chainIndicatorWidth) / 2,
-  minHeight: 50,
-  flexGrow: 1
-};
-
-const descriptionStyle: TextStyle = {
-  flexShrink: 1
-};
-
-const contentBodyStyle: ViewStyle = {
-  flexShrink: 1,
-  flexGrow: 1
-};
-
-const iconBodyStyle: TextStyle = {
-  fontSize: 80,
-  color: palette.mediumGray,
-  textAlign: "center"
-};
-
-// TODO: calculate proper dimensions dynamically, so that different screen sizes
-// render properly
-const mediaBodyStyle: ViewStyle = {
-  height: 300,
-  width: 300
-};
-
-const styles = StyleSheet.create({
-  activity: activityStyle,
-  metadataRow: metadataRowStyle,
-  timestamp: timestampStyle,
-  description: descriptionStyle,
-  actorRow: actorRowStyle,
-  actorThumbnail: actorThumbnailStyle,
-  contentBodyRow: contentBodyRowStyle,
-  contentBody: contentBodyStyle,
-  mediaBody: mediaBodyStyle,
-  iconBody: iconBodyStyle,
-  invisible: invisibleStyle,
-  chainIndicator: chainIndicatorStyle,
-  chainIndicatorLine: chainIndicatorLineStyle
-});
 
 export const Activity = withNavigation<Props>(ActivityView);
