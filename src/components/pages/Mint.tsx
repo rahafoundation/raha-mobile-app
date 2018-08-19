@@ -126,14 +126,7 @@ const MintView: React.StatelessComponent<Props> = ({
           }}
         >
           <Button
-            title={[
-              "Invite",
-              {
-                value: new Big(60),
-                role: CurrencyRole.None,
-                currencyType: CurrencyType.Raha
-              }
-            ]}
+            title="Invite"
             onPress={() => {
               navigation.navigate(RouteName.InvitePage);
             }}
