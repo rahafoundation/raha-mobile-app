@@ -8,38 +8,23 @@ import {
 } from "react-native";
 import { fonts } from "../../../helpers/fonts";
 import { colors, palette } from "../../../helpers/colors";
-import { CurrencyValue } from "./Currency";
 import { Text } from "./Text";
+import { MixedTextProps, MixedText } from "./MixedText";
 
 // TODO: add size, color options
-interface ButtonProps {
-  title: string | (string | CurrencyValue)[];
+interface BaseButtonProps {
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
-  textStyle?: StyleProp<TextStyle>;
   disabledStyle?: StyleProp<ViewStyle>;
-  disabledTextStyle?: StyleProp<TextStyle>;
   disabled?: boolean;
 }
 
-export const Button: React.StatelessComponent<ButtonProps> = props => {
-  const {
-    title,
-    onPress,
-    style,
-    textStyle,
-    disabled,
-    disabledTextStyle,
-    disabledStyle
-  } = props;
+const ArbitraryButton: React.StatelessComponent<BaseButtonProps> = props => {
+  const { onPress, style, disabled, disabledStyle } = props;
 
   const disabledStyles = [
     styles.disabled,
     ...(disabledStyle ? [disabledStyle] : [])
-  ];
-  const disabledTextStyles = [
-    styles.disabledText,
-    ...(disabledTextStyle ? [disabledTextStyle] : [])
   ];
 
   return (
@@ -48,18 +33,42 @@ export const Button: React.StatelessComponent<ButtonProps> = props => {
       onPress={onPress}
       disabled={disabled}
     >
-      <Text
+      {props.children}
+    </TouchableOpacity>
+  );
+};
+
+interface TextBodyProps {
+  children?: undefined;
+  title: MixedTextProps["content"];
+  textStyle?: StyleProp<TextStyle>;
+  disabledTextStyle?: StyleProp<TextStyle>;
+}
+
+export type ButtonProps = BaseButtonProps & TextBodyProps;
+
+/**
+ * Button component for the app. Title may be text or mixed content as defined
+ * in MixedText.
+ */
+export const Button: React.StatelessComponent<ButtonProps> = props => {
+  const disabledTextStyles = [
+    styles.disabledText,
+    ...(disabledTextStyle ? [disabledTextStyle] : [])
+  ];
+
+  return (
+    <ArbitraryButton {...props}>
+      <MixedText
         style={[
           styles.text,
           textStyle,
-          ...(disabled ? disabledTextStyles : [])
+          ...(props.disabled ? disabledTextStyles : [])
         ]}
-        compoundContent={{
-          content: typeof title === "string" ? [title] : title,
-          textTransform: (s: string) => s.toUpperCase()
-        }}
+        content={props.title}
+        textTransform={s => s.toUpperCase()}
       />
-    </TouchableOpacity>
+    </ArbitraryButton>
   );
 };
 
