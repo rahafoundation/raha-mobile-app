@@ -91,12 +91,12 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
 
     this.deeplinkInitialized = true;
 
-    // must provide all deeplink props or none of them
-    if (this.props.inviteVideoToken && !this.props.hasValidInviteToken) {
+    // We ask the user to sign up via the regular invite flow if the specified token is invalid for any reason.
+    if (this.props.inviteToken && !this.props.hasValidInviteToken) {
       this.dropdown.alertWithType(
         "error",
         "Error: Invalid Deeplink",
-        "Unable to process deeplink. Please try signing up directly from your phone."
+        "Unable to process deeplink invitation. Please check the invite link you were sent or sign up using the regular onboarding flow."
       );
       return;
     }
@@ -105,7 +105,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       this.props.invitingMember,
       this.props.inviteVideoToken
     );
-    // videoDownloadUrl must be present if using deeplinking
+    // We must be able to access the video specified by the invite.
     if (!videoDownloadUrl) {
       this.dropdown.alertWithType(
         "error",
@@ -190,7 +190,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
     if (!videoDownloadUrl) {
       this.dropdown.alertWithType(
         "error",
-        "Error: Could not upload video",
+        "Error: Could not verify video uploaded",
         "Invalid video. Please retry."
       );
       this.setState({
@@ -204,6 +204,8 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
     if (!this.props.isLoggedIn) {
       this.props.navigation.replace(RouteName.LogInPage, {
         redirectTo: RouteName.OnboardingPage,
+        // We will only get to the Onboarding page while not logged-in if the user
+        // was directed here by a deeplink invitation.
         loginMessage:
           "Welcome to Raha! Please sign up with your\nmobile number to accept your invite.",
         redirectParams: this.props.navigation.state.params
@@ -240,7 +242,9 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
                   this.props.hasValidInviteToken &&
                   this.props.inviteVideoIsJoint &&
                   this.state.inviteVideoIsValid
-                    ? OnboardingStep.CREATE_ACCOUNT
+                    ? // The new member does not need to take a verification video
+                      // if they have a valid joint invite video.
+                      OnboardingStep.CREATE_ACCOUNT
                     : OnboardingStep.CAMERA
               });
             }}
@@ -310,7 +314,10 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
           <OnboardingCreateAccount
             verifiedName={fullName}
             videoToken={
-              this.state.inviteVideoIsValid && this.props.inviteVideoToken
+              this.props.hasValidInviteToken &&
+              this.props.inviteVideoToken &&
+              this.state.inviteVideoIsValid &&
+              this.props.inviteVideoIsJoint
                 ? this.props.inviteVideoToken
                 : this.videoToken
             }
@@ -362,6 +369,7 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
   ownProps
 ) => {
   const firebaseUser = getLoggedInFirebaseUser(state);
+  // This token is provided when the user navigates via deep link.
   const deeplinkInviteToken = ownProps.navigation.getParam("t");
 
   const invitingOperation = deeplinkInviteToken
@@ -377,16 +385,22 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
     ? invitingOperation.data.is_joint_video
     : undefined;
 
+  // We have a valid invite token only if all these things are true. If not,
+  // then we will throw an error in `initializeDeeplinkParams` and go through the
+  // default uninvited onboarding flow.
+  const hasValidInviteToken =
+    !!deeplinkInviteToken &&
+    !!invitingOperation &&
+    !!invitingMember &&
+    !!inviteVideoToken &&
+    inviteVideoIsJoint !== undefined;
+
   return {
     displayName: firebaseUser ? firebaseUser.displayName : null,
     isLoggedIn:
       state.authentication.isLoaded && state.authentication.isLoggedIn,
     inviteToken: deeplinkInviteToken,
-    hasValidInviteToken:
-      !!invitingOperation &&
-      !!invitingMember &&
-      !!inviteVideoToken &&
-      inviteVideoIsJoint !== undefined,
+    hasValidInviteToken,
     inviteVideoToken,
     invitingMember,
     inviteVideoIsJoint
