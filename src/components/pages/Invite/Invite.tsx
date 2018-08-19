@@ -10,7 +10,7 @@ import { InviteCamera } from "./InviteCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
 import {
   getLoggedInMember,
-  getGenericPrivateVideoRef
+  getAuthRestrictedVideoRef
 } from "../../../store/selectors/authentication";
 import { Member } from "../../../store/reducers/members";
 import { RahaState } from "../../../store";
@@ -52,7 +52,7 @@ class InviteView extends React.Component<InviteProps, InviteState> {
   constructor(props: InviteProps) {
     super(props);
     this.inviteToken = generateToken();
-    this.videoUploadRef = getGenericPrivateVideoRef(this.inviteToken);
+    this.videoUploadRef = getAuthRestrictedVideoRef(this.inviteToken);
     this.state = {
       step: InviteStep.SPLASH,
       isJointVideo: false

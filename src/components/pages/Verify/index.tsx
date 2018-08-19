@@ -12,7 +12,7 @@ import { VerifyCamera } from "./VerifyCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
 import {
   getLoggedInMember,
-  getGenericPrivateVideoRef
+  getAuthRestrictedVideoRef
 } from "../../../store/selectors/authentication";
 import { Member } from "../../../store/reducers/members";
 import { RahaState } from "../../../store";
@@ -57,7 +57,7 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
     super(props);
     this.steps = [];
     this.videoToken = generateToken();
-    this.videoUploadRef = getGenericPrivateVideoRef(this.videoToken);
+    this.videoUploadRef = getAuthRestrictedVideoRef(this.videoToken);
     this.state = {
       step: props.inviteVideoToken
         ? VerifyStep.CONFIRM_EXISTING_VIDEO

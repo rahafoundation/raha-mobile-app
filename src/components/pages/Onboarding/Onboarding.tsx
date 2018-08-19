@@ -10,15 +10,12 @@ import { OnboardingSplash } from "./OnboardingSplash";
 import { VerifyName } from "./VerifyName";
 import {
   getLoggedInFirebaseUser,
-  getGenericPrivateVideoRef
+  getAuthRestrictedVideoRef
 } from "../../../store/selectors/authentication";
 import { OnboardingCamera } from "./OnboardingCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
 import { OnboardingCreateAccount } from "./OnboardingCreateAccount";
-import {
-  getMemberByUsername,
-  getMemberById
-} from "../../../store/selectors/members";
+import { getMemberById } from "../../../store/selectors/members";
 import { RouteName } from "../../shared/Navigation";
 import { Loading } from "../../shared/Loading";
 import { generateToken } from "../../../helpers/token";
@@ -276,7 +273,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       }
       case OnboardingStep.VIDEO_PREVIEW: {
         const videoUri = this._verifyVideoUri();
-        const videoUploadRef = getGenericPrivateVideoRef(this.videoToken);
+        const videoUploadRef = getAuthRestrictedVideoRef(this.videoToken);
         if (!videoUri || !videoUploadRef) {
           return <React.Fragment />;
         }
@@ -357,7 +354,7 @@ async function extractDeeplinkVideoUrl(
   if (!videoToken || !invitingMember) {
     return undefined;
   }
-  return await getGenericPrivateVideoRef(videoToken).getDownloadURL();
+  return await getAuthRestrictedVideoRef(videoToken).getDownloadURL();
 }
 
 const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (

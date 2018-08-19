@@ -38,22 +38,12 @@ export function getLoggedInMember(state: RahaState) {
     : undefined;
 }
 
-export function getPrivateVideoInviteRef(state: RahaState) {
-  const loggedInUserId = getLoggedInFirebaseUserId(state);
-  return loggedInUserId
-    ? storage
-        .ref()
-        .child("private-video")
-        .child(loggedInUserId)
-        .child("invite.mp4")
-    : undefined;
-}
-
 /**
+ * Videos put into this bucket are restricted to logged-in users only.
  * TODO we should eventually just use this everywhere instead of type-specific video urls.
  * @param token A unique string (UUID) by which to identify the uploaded video.
  */
-export function getGenericPrivateVideoRef(token: string) {
+export function getAuthRestrictedVideoRef(token: string) {
   return storage
     .ref()
     .child("private-video")

@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 
 import { Text, Button } from "../../shared/elements";
 import { VideoWithPlaceholder } from "../../shared/VideoWithPlaceholder";
-import { getGenericPrivateVideoRef } from "../../../store/selectors/authentication";
+import { getAuthRestrictedVideoRef } from "../../../store/selectors/authentication";
 import { Loading } from "../../shared/Loading";
 
 interface Props {
@@ -36,7 +36,7 @@ export class ConfirmExistingVerificationVideo extends React.Component<
   }
 
   async getVideoUrl() {
-    const videoUrl = await getGenericPrivateVideoRef(
+    const videoUrl = await getAuthRestrictedVideoRef(
       this.props.inviteVideoToken
     ).getDownloadURL();
     this.setState({
