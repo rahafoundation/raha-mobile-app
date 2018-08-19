@@ -12,7 +12,8 @@ import {
   View,
   TouchableOpacity,
   Image,
-  PermissionsAndroid
+  PermissionsAndroid,
+  Platform
 } from "react-native";
 import { RNCamera, CameraType } from "react-native-camera";
 
@@ -40,6 +41,9 @@ export class Camera extends React.Component<CameraProps, CameraState> {
   }
 
   async requestPermissions() {
+    if (Platform.OS === "ios") {
+      return;
+    }
     try {
       const results = await PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.CAMERA,
