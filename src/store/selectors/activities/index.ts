@@ -54,6 +54,10 @@ export function allActivities(state: RahaState): Activity[] {
  * Interpret a list of operations as a list of activities.
  * TODO: make this more sophisticated, so that it's not just a one-to-one
  * mapping from ops to activities
+ * TODO: don't encode the actual string values of activities here; otherwise
+ * internationalization and stuff like that gets harder. That's display
+ * logic, so just provide blobs with the necessary info to render it in the
+ * view layer.
  *
  * @param operations All operations, expected in chronological order, oldest
  * first.
