@@ -2,8 +2,9 @@ import * as React from "react";
 import { Big } from "big.js";
 import { Text } from ".";
 import { fonts } from "../../../helpers/fonts";
-import { StyleSheet, TextStyle, StyleProp } from "react-native";
+import { TextStyle, StyleProp } from "react-native";
 import { colors } from "../../../helpers/colors";
+import { Omit } from "../../../../types/omit";
 
 /**
  * Currencies to display in the app. As of now, the only valid currency to
@@ -47,6 +48,19 @@ export function currencySymbol(currency: CurrencyType) {
 interface CurrencyProps {
   currencyValue: CurrencyValue;
   style?: StyleProp<TextStyle>;
+}
+
+/**
+ * Renders a currency value as a string. Doesn't require a Role.
+ *
+ * WARNING: this will only render correctly if using the Raha Bold font, as the
+ * Raha currency character uses a special unicode glyph that only that font
+ * currently supports. Will patch the other Raha fonts soon.
+ */
+export function currencyToString(currencyValue: Omit<CurrencyValue, "role">) {
+  return `${currencySymbol(
+    currencyValue.currencyType
+  )}${currencyValue.value.round(2, 0).toFixed(2)}`;
 }
 
 export const Currency: React.StatelessComponent<CurrencyProps> = ({
