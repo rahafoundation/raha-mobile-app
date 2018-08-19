@@ -141,6 +141,42 @@ class ActivityContentBody extends React.Component<{
   }
 }
 
+const ChainIndicator: React.StatelessComponent<{
+  nextInChain: ActivityContentData["nextInChain"];
+}> = ({ nextInChain }) => {
+  return (
+    <View
+      style={[
+        styles.chainIndicator,
+        ...(nextInChain ? [] : [styles.invisible])
+      ]}
+    >
+      {nextInChain &&
+        [
+          ActivityDirection.Bidirectional
+          // ActivityDirection.Backward
+        ].includes(nextInChain.direction) && (
+          <ArrowHead
+            direction={ArrowHeadDirection.Up}
+            width={12}
+            color={chainIndicatorColor}
+          />
+        )}
+      <View style={styles.chainIndicatorLine} />
+      {nextInChain &&
+        [ActivityDirection.Bidirectional, ActivityDirection.Forward].includes(
+          nextInChain.direction
+        ) && (
+          <ArrowHead
+            direction={ArrowHeadDirection.Down}
+            width={12}
+            color={chainIndicatorColor}
+          />
+        )}
+    </View>
+  );
+};
+
 class ActivityContent extends React.Component<{
   content: ActivityContentData;
   onFindVideoElems: (elems: VideoWithPlaceholderView[]) => void;
@@ -169,37 +205,7 @@ class ActivityContent extends React.Component<{
         </View>
         {body && (
           <View style={styles.contentBodyRow}>
-            {/* TODO: render chain direction */}
-            <View
-              style={[
-                styles.chainIndicator,
-                ...(nextInChain ? [] : [styles.invisible])
-              ]}
-            >
-              {nextInChain &&
-                [
-                  ActivityDirection.Bidirectional
-                  // ActivityDirection.Backward
-                ].includes(nextInChain.direction) && (
-                  <ArrowHead
-                    direction={ArrowHeadDirection.Up}
-                    width={12}
-                    color={chainIndicatorColor}
-                  />
-                )}
-              <View style={styles.chainIndicatorLine} />
-              {nextInChain &&
-                [
-                  ActivityDirection.Bidirectional,
-                  ActivityDirection.Forward
-                ].includes(nextInChain.direction) && (
-                  <ArrowHead
-                    direction={ArrowHeadDirection.Down}
-                    width={12}
-                    color={chainIndicatorColor}
-                  />
-                )}
-            </View>
+            <ChainIndicator nextInChain={nextInChain} />
             <ActivityContentBody
               body={body}
               onFindVideoElems={elems =>
