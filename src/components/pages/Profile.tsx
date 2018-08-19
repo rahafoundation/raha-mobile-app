@@ -116,43 +116,48 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
   loggedInMember,
   isOwnProfile,
   trust
-}) => (
-  <Container>
-    <ActivityFeed
-      activities={activities}
-      header={
-        <View style={styles.header}>
-          <Thumbnail member={member} />
-          <View style={styles.headerDetails}>
-            <Text style={styles.memberUsername}>@{member.get("username")}</Text>
-            <Stats navigation={navigation} member={member} />
-            {!!loggedInMember &&
-              !isOwnProfile && (
-                <View style={styles.memberActions}>
-                  <Button
-                    style={{ marginRight: 12 }}
-                    title="Trusted"
-                    onPress={() => trust(member.get("memberId"))}
-                    disabled={member
-                      .get("trustedBy")
-                      .includes(loggedInMember.get("memberId"))}
-                  />
-                  <Button
-                    title="Give"
-                    onPress={() =>
-                      navigation.navigate(RouteName.GivePage, {
-                        toMember: member
-                      })
-                    }
-                  />
-                </View>
-              )}
+}) => {
+  const alreadyTrusted =
+    loggedInMember &&
+    member.get("trustedBy").includes(loggedInMember.get("memberId"));
+  return (
+    <Container>
+      <ActivityFeed
+        activities={activities}
+        header={
+          <View style={styles.header}>
+            <Thumbnail member={member} />
+            <View style={styles.headerDetails}>
+              <Text style={styles.memberUsername}>
+                @{member.get("username")}
+              </Text>
+              <Stats navigation={navigation} member={member} />
+              {!!loggedInMember &&
+                !isOwnProfile && (
+                  <View style={styles.memberActions}>
+                    <Button
+                      style={{ marginRight: 12 }}
+                      title={alreadyTrusted ? "Trusted" : "Trust"}
+                      onPress={() => trust(member.get("memberId"))}
+                      disabled={alreadyTrusted}
+                    />
+                    <Button
+                      title="Give"
+                      onPress={() =>
+                        navigation.navigate(RouteName.GivePage, {
+                          toMember: member
+                        })
+                      }
+                    />
+                  </View>
+                )}
+            </View>
           </View>
-        </View>
-      }
-    />
-  </Container>
-);
+        }
+      />
+    </Container>
+  );
+};
 
 const headerStyle: ViewStyle = {
   backgroundColor: colors.darkAccent,
