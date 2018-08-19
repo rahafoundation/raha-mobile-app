@@ -93,7 +93,7 @@ class AccountView extends React.Component<Props, State> {
         </View>
 
         <Button
-          title="View pending invites and flag fake accounts."
+          title="View pending invites and flag fake accounts"
           onPress={() => navigation.navigate(RouteName.PendingInvitesPage)}
           style={styles.row}
         />
