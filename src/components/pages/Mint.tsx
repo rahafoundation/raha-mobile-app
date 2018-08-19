@@ -14,7 +14,7 @@ import { getUnclaimedReferrals } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
 import { Button, Container, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";
-import { Currency, CurrencyRole, CurrencyType } from "../shared/Currency";
+import { Currency, CurrencyRole, CurrencyType } from "../shared/elements/Currency";
 import { fontSizes } from "../../helpers/fonts";
 
 type OwnProps = NavigationScreenProps<{}>;

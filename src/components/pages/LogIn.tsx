@@ -418,7 +418,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
       return;
     }
     if (this.props.hasAccount) {
-      this.props.navigation.navigate(RouteName.HomePage);
+      this.props.navigation.navigate(RouteName.FeedPage);
       return;
     }
     this.props.navigation.navigate(RouteName.OnboardingPage);

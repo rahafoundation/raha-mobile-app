@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { fonts } from "../../../helpers/fonts";
 import { colors, palette } from "../../../helpers/colors";
-import { CurrencyValue } from "../Currency";
+import { CurrencyValue } from "./Currency";
 import { Text } from "./Text";
 
 // TODO: add size, color options

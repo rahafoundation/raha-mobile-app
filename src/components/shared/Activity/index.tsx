@@ -24,7 +24,7 @@ import {
 } from "../../../store/selectors/activities/types";
 import { MemberName } from "../MemberName";
 import { MemberThumbnail } from "../MemberThumbnail";
-import { Currency } from "../Currency";
+import { Currency } from "../elements/Currency";
 import { TextLink } from "../elements/TextLink";
 import { ArrowHeadDirection, ArrowHead } from "./ArrowHead";
 import { fontSizes } from "../../../helpers/fonts";

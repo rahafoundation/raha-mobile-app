@@ -13,7 +13,7 @@ import {
 
 import { fonts, fontSizes } from "../../../helpers/fonts";
 import { colors } from "../../../helpers/colors";
-import { Currency, CurrencyValue } from "../Currency";
+import { Currency, CurrencyValue } from "./Currency";
 
 export type CompoundContent = (string | CurrencyValue)[];
 

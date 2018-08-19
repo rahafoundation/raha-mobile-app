@@ -16,7 +16,7 @@ import {
 import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
 
 import { Button } from "./elements";
-import { CurrencyRole, CurrencyType, CurrencyValue } from "./Currency";
+import { CurrencyRole, CurrencyType, CurrencyValue } from "./elements/Currency";
 
 interface OwnProps {}
 interface StateProps {

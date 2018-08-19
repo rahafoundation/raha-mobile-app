@@ -27,7 +27,7 @@ import {
   CurrencyValue,
   CurrencyRole,
   CurrencyType
-} from "../../../components/shared/Currency";
+} from "../../../components/shared/elements/Currency";
 import { isUnconfirmedRequestInvite } from "../operations";
 import { List } from "immutable";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";

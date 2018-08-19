@@ -2,7 +2,7 @@ import {
   Member,
   RAHA_BASIC_INCOME_MEMBER
 } from "../../../store/reducers/members";
-import { CurrencyValue } from "../../../components/shared/Currency";
+import { CurrencyValue } from "../../../components/shared/elements/Currency";
 import { RouteName } from "../../../components/shared/Navigation";
 import { Omit } from "../../../../types/omit";
 
