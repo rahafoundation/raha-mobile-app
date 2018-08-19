@@ -3,40 +3,31 @@
  */
 
 import * as React from "react";
-import { TextProps, TextStyle, StyleSheet, StyleProp } from "react-native";
 
-import { Text } from "./Text";
-import { fonts, fontSizes } from "../../../helpers/fonts";
-import { colors } from "../../../helpers/colors";
+import { Text, TextProps } from "./Text";
 import { Currency, CurrencyValue } from "./Currency";
 
-export type MixedContent = (string | CurrencyValue)[];
+export type MixedContent = string | (string | CurrencyValue)[];
 
-function renderMixedContent(
-  compoundContent: {
-    textTransform?: (text: string) => string;
-    content: MixedContent;
-  },
-  textStyle: StyleProp<TextStyle>
-) {}
+export interface MixedTextProps extends TextProps {
+  children?: undefined;
+  content: MixedContent;
+  textTransform?: (text: string) => string;
+}
 
 /**
  * Special Text element that lets you render arrays of multiple types of special
  * text values.
  */
-export const MixedText: React.StatelessComponent<
-  TextProps & {
-    children: MixedContent;
-    textTransform?: (text: string) => string;
-  }
-> = props => {
-  const { children, textTransform, ...rest } = props;
+export const MixedText: React.StatelessComponent<MixedTextProps> = props => {
+  const { content, textTransform, ...rest } = props;
+  const arrayContent = typeof content === "string" ? [content] : content;
 
   const transformed = textTransform
-    ? children.map(
+    ? arrayContent.map(
         c => (textTransform && typeof c === "string" ? textTransform(c) : c)
       )
-    : children;
+    : arrayContent;
   return (
     <Text {...rest}>
       {transformed
