@@ -44,21 +44,10 @@ export class ConfirmExistingVerificationVideo extends React.Component<
     });
   }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.padding} />
-        <Text style={styles.back} onPress={this.props.onBack}>
-          Back
-        </Text>
-        <View style={styles.video}>
-          {this.state.videoUrl ? (
-            <VideoWithPlaceholder uri={this.state.videoUrl} />
-          ) : (
-            <Loading />
-          )}
-        </View>
-        {this.state.step === ConfirmSteps.VerifyIsTogether && (
+  _renderVerifyStep() {
+    switch (this.state.step) {
+      case ConfirmSteps.VerifyIsTogether:
+        return (
           <React.Fragment>
             <Text style={styles.text}>
               Does the above video contain you inviting{" "}
@@ -79,8 +68,9 @@ export class ConfirmExistingVerificationVideo extends React.Component<
               />
             </View>
           </React.Fragment>
-        )}
-        {this.state.step === ConfirmSteps.Retake && (
+        );
+      case ConfirmSteps.Retake:
+        return (
           <React.Fragment>
             <Text style={styles.text}>
               Please take a new video containing yourself where you verify{" "}
@@ -97,8 +87,9 @@ export class ConfirmExistingVerificationVideo extends React.Component<
               />
             </View>
           </React.Fragment>
-        )}
-        {this.state.step === ConfirmSteps.ConfirmVideo && (
+        );
+      case ConfirmSteps.ConfirmVideo:
+        return (
           <React.Fragment>
             <Text style={styles.text}>
               Verification helps other members know who to trust, and every
@@ -124,7 +115,28 @@ export class ConfirmExistingVerificationVideo extends React.Component<
               />
             </View>
           </React.Fragment>
-        )}
+        );
+      default:
+        console.error("Invalid step", this.state.step);
+        return <React.Fragment />;
+    }
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <View style={styles.padding} />
+        <Text style={styles.back} onPress={this.props.onBack}>
+          Back
+        </Text>
+        <View style={styles.video}>
+          {this.state.videoUrl ? (
+            <VideoWithPlaceholder uri={this.state.videoUrl} />
+          ) : (
+            <Loading />
+          )}
+        </View>
+        {this._renderVerifyStep()}
         <View style={styles.padding} />
       </View>
     );
