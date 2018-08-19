@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Big } from "big.js";
-import { Text } from "./elements";
-import { fonts } from "../../helpers/fonts";
+import { Text } from ".";
+import { fonts } from "../../../helpers/fonts";
 import { StyleSheet, TextStyle, StyleProp } from "react-native";
-import { colors } from "../../helpers/colors";
+import { colors } from "../../../helpers/colors";
 
 /**
  * Currencies to display in the app. As of now, the only valid currency to
