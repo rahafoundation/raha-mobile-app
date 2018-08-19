@@ -111,6 +111,9 @@ export interface ActionLink {
 
 /**
  * An invitation for a member to take action.
+ *
+ * TODO: don't just ad hoc figure out what the value type is, actually provide a
+ * differentiator
  */
 export interface CallToAction {
   text: (string | CurrencyValue | ActionLink)[];
