@@ -31,11 +31,16 @@ import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { RouteName } from "../../shared/Navigation";
 import { Button, Text } from "../../shared/elements";
 import { ReferralBonusNavParams } from ".";
-import { CurrencyRole, CurrencyType } from "../../shared/elements/Currency";
+import {
+  CurrencyRole,
+  CurrencyType,
+  Currency,
+  CurrencyValue
+} from "../../shared/elements/Currency";
 import { MemberThumbnail } from "../../shared/MemberThumbnail";
 
 const REFERRAL_BONUS = new Big(60);
-const REFERRAL_BONUS_VALUE = {
+const REFERRAL_BONUS_VALUE: CurrencyValue = {
   currencyType: CurrencyType.Raha,
   value: REFERRAL_BONUS,
   role: CurrencyRole.None
@@ -109,11 +114,9 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
       <View>
         {!!mintBonusApiCallStatus &&
         mintBonusApiCallStatus.status === ApiCallStatusType.SUCCESS ? (
-          <Text
-            compoundContent={{
-              content: ["Minted", REFERRAL_BONUS_VALUE]
-            }}
-          />
+          <Text>
+            Minted <Currency currencyValue={REFERRAL_BONUS_VALUE} />
+          </Text>
         ) : (
           actionButton
         )}

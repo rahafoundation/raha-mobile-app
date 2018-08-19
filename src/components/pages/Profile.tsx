@@ -28,7 +28,11 @@ import { colors } from "../../helpers/colors";
 import { VideoWithPlaceholder } from "../shared/VideoWithPlaceholder";
 import { activitiesForMember } from "../../store/selectors/activities";
 import { Activity } from "../../store/selectors/activities/types";
-import { CurrencyType, CurrencyRole, Currency } from "../shared/elements/Currency";
+import {
+  CurrencyType,
+  CurrencyRole,
+  Currency
+} from "../shared/elements/Currency";
 import { fontSizes, fonts } from "../../helpers/fonts";
 
 interface NavParams {

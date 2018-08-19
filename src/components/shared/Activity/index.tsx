@@ -28,6 +28,7 @@ import { Currency } from "../elements/Currency";
 import { TextLink } from "../elements/TextLink";
 import { ArrowHeadDirection, ArrowHead } from "./ArrowHead";
 import { fontSizes } from "../../../helpers/fonts";
+import { MixedText } from "../elements/MixedText";
 
 type Props = {
   activity: ActivityData;
@@ -163,7 +164,7 @@ class ActivityContent extends React.Component<{
             */}
           <Text style={styles.description}>
             <MemberName member={actor} />
-            {description && <Text compoundContent={{ content: description }} />}
+            {description && <MixedText content={description} />}
           </Text>
         </View>
         {body && (
