@@ -10,7 +10,7 @@ export const Container: React.StatelessComponent<ViewProps> = props => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.lightBackground,
+    backgroundColor: colors.pageBackground,
     flex: 1
   }
 });

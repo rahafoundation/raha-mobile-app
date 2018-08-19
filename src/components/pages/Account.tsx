@@ -1,13 +1,12 @@
 import * as React from "react";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { signOut } from "../../store/actions/authentication";
-import { View, StyleSheet, ScrollView, TouchableHighlight } from "react-native";
+import { View, StyleSheet, ScrollView, ViewStyle } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 import { Member } from "../../store/reducers/members";
 import { RahaThunkDispatch, RahaState } from "../../store";
 import { getLoggedInMember } from "../../store/selectors/authentication";
 import { Text, Button } from "../shared/elements";
-import { colors } from "../../helpers/colors";
 import {
   getAncestorsArray,
   getValidMemberById
@@ -15,6 +14,7 @@ import {
 import { MemberThumbnail } from "../shared/MemberThumbnail";
 import { fonts } from "../../helpers/fonts";
 import { RouteName } from "../shared/Navigation";
+import { MemberName } from "../shared/MemberName";
 
 const DAYS_TILL_INACTIVITY = 400;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -40,8 +40,6 @@ type State = {
   timeRemaining: string;
 };
 
-const Break: React.StatelessComponent<{}> = () => <View style={styles.break} />;
-
 // TODO show total Raha outstanding and total donated.
 // Eventually it could be AccountTab instead of ProfileTab.
 // At that point might want to migrate leaderboards and contact us here.
@@ -64,40 +62,76 @@ class AccountView extends React.Component<Props, State> {
   }
 
   render() {
-    const { navigation, signOut, trustedForRecovery, votingDirectlyFor } = this.props;
+    const {
+      navigation,
+      signOut,
+      trustedForRecovery,
+      votingDirectlyFor
+    } = this.props;
     const { timeRemaining } = this.state;
     return (
       <ScrollView>
-        <Text>
-          After {<Text style={fonts.Lato.Bold}>{timeRemaining}</Text>} without
-          minting or giving Raha your account balance will be donated.
-        </Text>
-        <Break />
-        <Text>Your Raha Parliament vote goes to:</Text>
-        <MemberThumbnail member={votingDirectlyFor} />
-        <Break />
-        <Text>Trusted for account recovery:</Text>
-        <MemberThumbnail member={trustedForRecovery} />
-        <Break />
-        <TouchableHighlight
-          onPress={() => navigation.navigate(RouteName.PendingInvites)}
-        >
-          <Text>View pending invites and flag fake accounts.</Text>
-        </TouchableHighlight>
-        <Break />
-        <Button title="Sign Out" onPress={signOut} />
+        <View style={styles.row}>
+          <Text>
+            After {<Text style={fonts.Lato.Bold}>{timeRemaining}</Text>} without
+            minting or giving Raha your account balance will be donated.
+          </Text>
+        </View>
+        <View style={styles.row}>
+          <Text>Your Raha Parliament vote goes to:</Text>
+        </View>
+        <View style={styles.memberRow}>
+          <MemberThumbnail
+            style={styles.memberThumbnail}
+            member={votingDirectlyFor}
+          />
+          <MemberName member={votingDirectlyFor} />
+        </View>
+
+        <View style={styles.row}>
+          <Text>Trusted for account recovery:</Text>
+        </View>
+
+        <View style={styles.memberRow}>
+          <MemberThumbnail
+            style={styles.memberThumbnail}
+            member={trustedForRecovery}
+          />
+          <MemberName member={trustedForRecovery} />
+        </View>
+
+        <Button
+          title="View pending invites and flag fake accounts"
+          onPress={() => navigation.navigate(RouteName.PendingInvitesPage)}
+          style={styles.row}
+        />
+        <Button style={styles.row} title="Sign Out" onPress={signOut} />
       </ScrollView>
     );
   }
 }
 
+const rowStyle: ViewStyle = {
+  marginTop: 12,
+  marginHorizontal: 12
+};
+
+const memberRowStyle: ViewStyle = {
+  ...rowStyle,
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "flex-start"
+};
+
+const memberThumbnailStyle: ViewStyle = {
+  marginRight: 8
+};
+
 const styles = StyleSheet.create({
-  break: {
-    backgroundColor: colors.border2,
-    height: 5,
-    marginTop: 2,
-    marginBottom: 2
-  }
+  row: rowStyle,
+  memberRow: memberRowStyle,
+  memberThumbnail: memberThumbnailStyle
 });
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
@@ -125,8 +159,8 @@ const mapStateToProps: MapStateToProps<
     state,
     ancestorsArray[trustedForRecoveryIndex]
   );
-  // TODO need ability to change your vote, and to view who 
-  // your vote finally ends up with assuming the member 
+  // TODO need ability to change your vote, and to view who
+  // your vote finally ends up with assuming the member
   // you are directly voting keeps their current preference (and ideally the full chain)
   const votingDirectlyFor = trustedForRecovery;
   // const finalVoteIsfor = getValidMemberById(

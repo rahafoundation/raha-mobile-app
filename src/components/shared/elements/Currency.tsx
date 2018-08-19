@@ -1,9 +1,10 @@
 import * as React from "react";
 import { Big } from "big.js";
-import { Text } from "./elements";
-import { fonts } from "../../helpers/fonts";
-import { StyleSheet, TextStyle } from "react-native";
-import { colors } from "../../helpers/colors";
+import { Text } from ".";
+import { fonts } from "../../../helpers/fonts";
+import { TextStyle, StyleProp } from "react-native";
+import { colors } from "../../../helpers/colors";
+import { Omit } from "../../../../types/omit";
 
 /**
  * Currencies to display in the app. As of now, the only valid currency to
@@ -18,8 +19,7 @@ export enum CurrencyType {
  * money used for different purposes in-app.
  */
 export enum CurrencyRole {
-  Positive = "Positive",
-  Negative = "Negative",
+  Transaction = "Transaction",
   None = "None", // just a plain number
   Donation = "Donation"
 }
@@ -47,9 +47,28 @@ export function currencySymbol(currency: CurrencyType) {
 
 interface CurrencyProps {
   currencyValue: CurrencyValue;
-  style?: TextStyle;
+  style?: StyleProp<TextStyle>;
 }
 
+/**
+ * Renders a currency value as a string. Doesn't require a Role.
+ *
+ * WARNING: this will only render correctly if using the Raha Bold font, as the
+ * Raha currency character uses a special unicode glyph that only that font
+ * currently supports. Will patch the other Raha fonts soon.
+ *
+ * Commented out to avoid misuse for now.
+ */
+// export function currencyToString(currencyValue: Omit<CurrencyValue, "role">) {
+//   return `${currencySymbol(
+//     currencyValue.currencyType
+//   )}${currencyValue.value.round(2, 0).toFixed(2)}`;
+// }
+
+/**
+ * Component to render a currency value. Use this component to ensure that the
+ * Raha currency glyph gets rendered properly.
+ */
 export const Currency: React.StatelessComponent<CurrencyProps> = ({
   currencyValue,
   style
@@ -61,9 +80,9 @@ export const Currency: React.StatelessComponent<CurrencyProps> = ({
     // from API.
     <Text
       style={[
-        fonts.Lato.Bold,
-        roleStylesheet[currencyValue.role],
-        ...(style ? [style] : [])
+        ...(style ? [style] : []),
+        roleStyles(currencyValue.value)[currencyValue.role],
+        fonts.Lato.Bold
       ]}
     >
       {currencySymbol(currencyValue.currencyType)}
@@ -72,16 +91,14 @@ export const Currency: React.StatelessComponent<CurrencyProps> = ({
   );
 };
 
-const roleStyles: { [key in CurrencyRole]: TextStyle } = {
+const roleStyles: (
+  value: Big
+) => { [key in CurrencyRole]: TextStyle } = value => ({
   [CurrencyRole.Donation]: {
     color: colors.currency.donation
   },
-  [CurrencyRole.Positive]: {
-    color: colors.currency.positive
-  },
-  [CurrencyRole.Negative]: {
-    color: colors.currency.negative
+  [CurrencyRole.Transaction]: {
+    color: value.lte(0) ? colors.currency.negative : colors.currency.positive
   },
   [CurrencyRole.None]: {}
-};
-const roleStylesheet = StyleSheet.create(roleStyles);
+});

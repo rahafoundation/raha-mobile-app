@@ -9,7 +9,7 @@
 
 import { Big } from "big.js";
 import * as React from "react";
-import { TouchableOpacity, View, StyleSheet } from "react-native";
+import { TouchableOpacity, View, StyleSheet, ViewStyle } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 import { connect, MergeProps, MapStateToProps } from "react-redux";
 
@@ -31,8 +31,20 @@ import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { RouteName } from "../../shared/Navigation";
 import { Button, Text } from "../../shared/elements";
 import { ReferralBonusNavParams } from ".";
+import {
+  CurrencyRole,
+  CurrencyType,
+  Currency,
+  CurrencyValue
+} from "../../shared/elements/Currency";
+import { MemberThumbnail } from "../../shared/MemberThumbnail";
 
 const REFERRAL_BONUS = new Big(60);
+const REFERRAL_BONUS_VALUE: CurrencyValue = {
+  currencyType: CurrencyType.Raha,
+  value: REFERRAL_BONUS,
+  role: CurrencyRole.None
+};
 
 type OwnProps = NavigationScreenProps<ReferralBonusNavParams> & {
   invitedMember: Member;
@@ -72,53 +84,38 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
   const actionButton = invitedMember.get("inviteConfirmed") ? (
     <Button
       onPress={mintReferralBonus}
-      loading={isMinting}
       disabled={isMinting}
-      title={`Mint +ℝ${REFERRAL_BONUS.toString()}`}
+      title={["Mint", REFERRAL_BONUS_VALUE]}
     />
   ) : (
-    <Button
-      onPress={trustMember}
-      loading={isTrusting}
-      disabled={isTrusting}
-      title="Trust"
-    />
+    <Button onPress={trustMember} disabled={isTrusting} title="Trust" />
   );
 
   const message = invitedMember.get("inviteConfirmed")
     ? `You invited ${invitedMember.get("fullName")}!`
     : `You must trust ${invitedMember.get(
         "fullName"
-      )} before minting your bonus!`;
+      )} before minting your bonus.`;
 
   return (
     <TouchableOpacity
       style={styles.row}
       delayPressIn={20}
       onPress={() =>
-        navigation.push(RouteName.Profile, { member: invitedMember })
+        navigation.push(RouteName.ProfilePage, { member: invitedMember })
       }
     >
-      <Text
-        style={[
-          styles.memberIcon,
-          {
-            backgroundColor: getMemberColor(invitedMember)
-          }
-        ]}
-      >
-        {getInitialsForName(invitedMember.get("fullName"))}
-      </Text>
-      <View style={styles.messageView}>
-        <Text style={styles.messageText} numberOfLines={3} ellipsizeMode="tail">
+      <MemberThumbnail style={styles.thumbnail} member={invitedMember} />
+      <View style={styles.rowMessage}>
+        <Text numberOfLines={3} ellipsizeMode="tail">
           {message}
         </Text>
       </View>
-      <View style={styles.actionView}>
+      <View>
         {!!mintBonusApiCallStatus &&
         mintBonusApiCallStatus.status === ApiCallStatusType.SUCCESS ? (
-          <Text style={styles.actionText}>
-            Minted +ℝ{REFERRAL_BONUS.toString()}
+          <Text>
+            Minted <Currency currencyValue={REFERRAL_BONUS_VALUE} />
           </Text>
         ) : (
           actionButton
@@ -171,41 +168,31 @@ export const ReferralThumbnail = connect(
   mergeProps
 )(ReferralThumbnailComponent);
 
+const rowStyle: ViewStyle = {
+  display: "flex",
+  flexDirection: "row",
+  marginHorizontal: 12,
+  marginTop: 12,
+  alignItems: "center"
+};
+
+const rowSpacer: ViewStyle = {
+  marginRight: 12
+};
+
+const thumbnailStyle: ViewStyle = {
+  ...rowSpacer
+};
+
+const rowMessageStyle: ViewStyle = {
+  ...rowSpacer,
+  flexBasis: "100%",
+  flexGrow: 0,
+  flexShrink: 1
+};
+
 const styles = StyleSheet.create({
-  row: {
-    height: 75,
-    flex: 1,
-    flexDirection: "row"
-  },
-  memberIcon: {
-    fontSize: 30,
-    textAlign: "center",
-    textAlignVertical: "center",
-    height: 75,
-    width: 75
-  },
-  messageView: {
-    flex: 1,
-    alignSelf: "center"
-  },
-  messageText: {
-    flex: 0,
-    margin: 8
-  },
-  actionView: {
-    width: 150,
-    alignSelf: "center"
-  },
-  actionText: {
-    color: "#4CAF50",
-    alignSelf: "center"
-  },
-  mintButton: {
-    flex: 0,
-    backgroundColor: "#4CAF50"
-  },
-  trustButton: {
-    flex: 0,
-    backgroundColor: "#03A9F4"
-  }
+  row: rowStyle,
+  rowMessage: rowMessageStyle,
+  thumbnail: thumbnailStyle
 });

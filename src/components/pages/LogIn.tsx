@@ -418,10 +418,10 @@ class LogInView extends React.Component<LogInProps, LogInState> {
       return;
     }
     if (this.props.hasAccount) {
-      this.props.navigation.navigate(RouteName.Home);
+      this.props.navigation.navigate(RouteName.FeedPage);
       return;
     }
-    this.props.navigation.navigate(RouteName.Onboarding);
+    this.props.navigation.navigate(RouteName.OnboardingPage);
   }
 
   _handleInitiatePhoneLogIn = (number: string) => {
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     width: Dimensions.get("window").width - 24,
-    backgroundColor: colors.lightBackground
+    backgroundColor: colors.pageBackground
   },
   image: {
     flex: 1

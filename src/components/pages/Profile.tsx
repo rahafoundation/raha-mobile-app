@@ -4,7 +4,13 @@
  * as ability to Mint.
  */
 import * as React from "react";
-import { StyleSheet, TouchableHighlight, View } from "react-native";
+import {
+  StyleSheet,
+  TouchableHighlight,
+  View,
+  TextStyle,
+  ViewStyle
+} from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
 
@@ -20,6 +26,14 @@ import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication"
 import { Button, Container, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";
 import { VideoWithPlaceholder } from "../shared/VideoWithPlaceholder";
+import { activitiesForMember } from "../../store/selectors/activities";
+import { Activity } from "../../store/selectors/activities/types";
+import {
+  CurrencyType,
+  CurrencyRole,
+  Currency
+} from "../shared/elements/Currency";
+import { fontSizes, fonts } from "../../helpers/fonts";
 
 interface NavParams {
   member: Member;
@@ -28,7 +42,9 @@ type OwnProps = NavigationScreenProps<NavParams>;
 
 type StateProps = {
   member: Member;
+  loggedInMember?: Member;
   isOwnProfile: boolean;
+  activities: Activity[];
 };
 
 type DispatchProps = {
@@ -39,10 +55,10 @@ type ProfileProps = StateProps & OwnProps & DispatchProps;
 
 const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
   <View style={styles.thumbnail}>
-    <View style={styles.video}>
-      <VideoWithPlaceholder uri={props.member.videoUri} />
-    </View>
-    <Text style={styles.memberUsername}>@{props.member.get("username")}</Text>
+    <VideoWithPlaceholder
+      style={styles.profileVideo}
+      uri={props.member.videoUri}
+    />
   </View>
 );
 
@@ -51,143 +67,170 @@ type StatsProps = NavigationScreenProps<NavParams> & {
 };
 const Stats: React.StatelessComponent<StatsProps> = props => (
   <View style={styles.statsContainer}>
-    <View style={styles.stat}>
-      <Text style={styles.number}>
-        ℝ{props.member.get("balance").toFixed(2)}
-      </Text>
-      <Text style={styles.numberLabel}>balance</Text>
+    <View>
+      <Currency
+        style={styles.statNumber}
+        currencyValue={{
+          value: props.member.get("balance"),
+          currencyType: CurrencyType.Raha,
+          role: CurrencyRole.None
+        }}
+      />
+      <Text style={styles.statLabel}>balance</Text>
     </View>
     <TouchableHighlight
       onPress={() => {
-        props.navigation.push(RouteName.MemberList, {
+        props.navigation.push(RouteName.MemberListPage, {
           memberIds: Array.from(props.member.get("trustedBy")),
           title: "Trusted By"
         });
       }}
     >
-      <View style={styles.stat}>
-        <Text style={styles.number}>{props.member.get("trustedBy").size}</Text>
-        <Text style={styles.numberLabel}>trusted by</Text>
+      <View>
+        <Text style={styles.statNumber}>
+          {props.member.get("trustedBy").size}
+        </Text>
+        <Text style={styles.statLabel}>trusted by</Text>
       </View>
     </TouchableHighlight>
     <TouchableHighlight
       onPress={() =>
-        props.navigation.push(RouteName.MemberList, {
+        props.navigation.push(RouteName.MemberListPage, {
           memberIds: Array.from(props.member.get("trusts")),
           title: "Trusted By"
         })
       }
     >
-      <View style={styles.stat}>
-        <Text style={styles.number}>{props.member.get("trusts").size}</Text>
-        <Text style={styles.numberLabel}>trusts</Text>
+      <View>
+        <Text style={styles.statNumber}>{props.member.get("trusts").size}</Text>
+        <Text style={styles.statLabel}>trusts</Text>
       </View>
     </TouchableHighlight>
   </View>
 );
 
-const ProfileView: React.StatelessComponent<ProfileProps> = props => (
-  <Container>
-    <ActivityFeed
-      header={
-        <View style={styles.header}>
-          <Thumbnail member={props.member} />
-          <View style={styles.interactions}>
-            <Stats navigation={props.navigation} member={props.member} />
-            {!props.isOwnProfile && (
-              <View style={styles.actions}>
-                <Button
-                  title="Trust"
-                  onPress={() => props.trust(props.member.get("memberId"))}
-                  //@ts-ignore Because Button does have a rounded property
-                  rounded
-                />
-                <Button
-                  title="Give"
-                  onPress={() =>
-                    props.navigation.navigate(RouteName.Give, {
-                      toMember: props.member
-                    })
-                  }
-                  //@ts-ignore Because Button does have a rounded property
-                  rounded
-                />
-              </View>
-            )}
+const ProfileView: React.StatelessComponent<ProfileProps> = ({
+  activities,
+  navigation,
+  member,
+  loggedInMember,
+  isOwnProfile,
+  trust
+}) => {
+  const alreadyTrusted =
+    loggedInMember &&
+    member.get("trustedBy").includes(loggedInMember.get("memberId"));
+  return (
+    <Container>
+      <ActivityFeed
+        activities={activities}
+        header={
+          <View style={styles.header}>
+            <Thumbnail member={member} />
+            <View style={styles.headerDetails}>
+              <Text style={styles.memberUsername}>
+                @{member.get("username")}
+              </Text>
+              <Stats navigation={navigation} member={member} />
+              {!!loggedInMember &&
+                !isOwnProfile && (
+                  <View style={styles.memberActions}>
+                    <Button
+                      style={{ marginRight: 12 }}
+                      title={alreadyTrusted ? "Trusted" : "Trust"}
+                      onPress={() => trust(member.get("memberId"))}
+                      disabled={alreadyTrusted}
+                    />
+                    <Button
+                      title="Give"
+                      onPress={() =>
+                        navigation.navigate(RouteName.GivePage, {
+                          toMember: member
+                        })
+                      }
+                    />
+                  </View>
+                )}
+            </View>
           </View>
-        </View>
-      }
-      filter={operation =>
-        operation.creator_uid === props.member.get("memberId") ||
-        ("to_uid" in operation.data &&
-          operation.data.to_uid === props.member.get("memberId"))
-      }
-    />
-  </Container>
-);
+        }
+      />
+    </Container>
+  );
+};
+
+const headerStyle: ViewStyle = {
+  backgroundColor: colors.darkAccent,
+  padding: 20,
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "flex-start",
+  alignItems: "center"
+};
+
+const headerDetailsStyle: ViewStyle = {
+  flexGrow: 1
+};
+
+const statNumberStyle: TextStyle = {
+  ...fonts.Lato.Bold,
+  ...fontSizes.large
+};
+
+const statLabelStyle: TextStyle = {
+  color: colors.bodyText,
+  ...fontSizes.small
+};
+
+const memberUsernameStyle: TextStyle = {
+  ...fonts.Lato.Semibold,
+  ...fontSizes.medium
+};
+
+const thumbnailStyle: ViewStyle = {
+  flexGrow: 0,
+  flexBasis: 120,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  marginRight: 20
+};
+
+const detailsSpacer: ViewStyle = {
+  marginTop: 15
+};
+
+const memberActionsStyle: ViewStyle = {
+  ...detailsSpacer,
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center"
+};
+
+const statsContainerStyle: ViewStyle = {
+  ...detailsSpacer,
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center"
+};
+
+const profileVideoStyle: ViewStyle = {
+  width: "100%",
+  aspectRatio: 1
+};
 
 const styles = StyleSheet.create({
-  header: {
-    marginBottom: 20,
-    backgroundColor: colors.darkAccent,
-    padding: 10,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center"
-  },
-  thumbnail: {
-    flexGrow: 0,
-    flexBasis: 100,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center"
-  },
-  memberUsername: {
-    fontWeight: "600",
-    fontSize: 12,
-    textAlign: "center",
-    color: colors.lightAccent
-  },
-  interactions: {
-    flexGrow: 1,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-around",
-    alignItems: "stretch",
-    alignSelf: "stretch",
-    marginTop: 20
-  },
-  actions: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    marginHorizontal: 20
-  },
-  statsContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginLeft: 10,
-    marginRight: 25
-  },
-  stat: {
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  video: {
-    width: "100%",
-    aspectRatio: 1
-  },
-  number: {
-    fontWeight: "bold",
-    fontSize: 16
-  },
-  numberLabel: {
-    color: colors.bodyText,
-    fontSize: 12
-  }
+  header: headerStyle,
+  thumbnail: thumbnailStyle,
+  memberUsername: memberUsernameStyle,
+  headerDetails: headerDetailsStyle,
+  memberActions: memberActionsStyle,
+  statsContainer: statsContainerStyle,
+  profileVideo: profileVideoStyle,
+  statNumber: statNumberStyle,
+  statLabel: statLabelStyle
 });
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
@@ -202,14 +245,17 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   props
 ) => {
-  const loggedInMemberId = getLoggedInFirebaseUserId(state);
-  const loggedInMember =
-    state.authentication.isLoggedIn && loggedInMemberId
-      ? getMemberById(state, loggedInMemberId)
-      : undefined;
+  // NOTE: always should be present since this page is only showed when logged
+  // in.
+  const loggedInMemberId = getLoggedInFirebaseUserId(state) as MemberId;
+  // TODO: provide loading state if logged in member isn't present
+  const loggedInMember = getMemberById(state, loggedInMemberId);
   const member: Member = props.navigation.getParam("member", loggedInMember);
+  const activities = activitiesForMember(state, member.get("memberId"));
   return {
+    activities,
     member,
+    loggedInMember,
     isOwnProfile:
       !!loggedInMember &&
       loggedInMember.get("memberId") === member.get("memberId")

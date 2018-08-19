@@ -1,34 +1,30 @@
 import * as React from "react";
-import { Map } from "immutable";
 import { connect, MapStateToProps } from "react-redux";
 
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
-import {
-  ActivityFeed,
-  isUnconfirmedRequestInvite
-} from "../shared/Activity/ActivityFeed";
+import { ActivityFeed } from "../shared/Activity/ActivityFeed";
 import { Container } from "../shared/elements";
 import { RahaState } from "../../store";
-import { Member } from "../../store/reducers/members";
+import { Activity } from "../../store/selectors/activities/types";
+import { pendingInviteActivities } from "../../store/selectors/activities";
 
 type StateProps = {
-  membersById: Map<MemberId, Member>;
+  pendingInviteActivities: Activity[];
 };
 
-const PendingInvitesView: React.StatelessComponent<StateProps> = props => {
+const PendingInvitesView: React.StatelessComponent<StateProps> = ({
+  pendingInviteActivities
+}) => {
   return (
     <Container>
-      <ActivityFeed
-        filter={operation =>
-          isUnconfirmedRequestInvite(props.membersById, operation)
-        }
-      />
+      <ActivityFeed activities={pendingInviteActivities} />
     </Container>
   );
 };
 
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
-  return { membersById: state.members.byMemberId };
+  return {
+    pendingInviteActivities: pendingInviteActivities(state)
+  };
 };
 
 export const PendingInvites = connect(mapStateToProps)(PendingInvitesView);
