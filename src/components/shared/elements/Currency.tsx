@@ -56,13 +56,19 @@ interface CurrencyProps {
  * WARNING: this will only render correctly if using the Raha Bold font, as the
  * Raha currency character uses a special unicode glyph that only that font
  * currently supports. Will patch the other Raha fonts soon.
+ *
+ * Commented out to avoid misuse for now.
  */
-export function currencyToString(currencyValue: Omit<CurrencyValue, "role">) {
-  return `${currencySymbol(
-    currencyValue.currencyType
-  )}${currencyValue.value.round(2, 0).toFixed(2)}`;
-}
+// export function currencyToString(currencyValue: Omit<CurrencyValue, "role">) {
+//   return `${currencySymbol(
+//     currencyValue.currencyType
+//   )}${currencyValue.value.round(2, 0).toFixed(2)}`;
+// }
 
+/**
+ * Component to render a currency value. Use this component to ensure that the
+ * Raha currency glyph gets rendered properly.
+ */
 export const Currency: React.StatelessComponent<CurrencyProps> = ({
   currencyValue,
   style
