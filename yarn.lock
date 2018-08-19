@@ -490,18 +490,19 @@
     lodash "^4.17.5"
     to-fast-properties "^2.0.0"
 
-"@raha/api-shared@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@raha/api-shared/-/api-shared-0.1.5.tgz#faf302cbdc41990ed6ae8a45300bfc404accca19"
+"@raha/api-shared@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@raha/api-shared/-/api-shared-0.1.6.tgz#1d125374b3d1c5e2c587fd6875312856d06a814a"
   dependencies:
+    big.js "^5.1.2"
     enum-values "^1.2.1"
     http-status "^1.2.0"
 
-"@raha/api@^0.2.4":
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.2.4.tgz#83a565c7a6843b461498a852204e25b0df07fccb"
+"@raha/api@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.2.5.tgz#28e866fbfd16ecea40cc499643220d611d4e622b"
   dependencies:
-    "@raha/api-shared" "^0.1.5"
+    "@raha/api-shared" "^0.1.6"
     big.js "^5.0.3"
     url-join "^4.0.0"
 
