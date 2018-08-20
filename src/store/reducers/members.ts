@@ -20,17 +20,17 @@ import { MembersAction } from "../actions/members";
 import { OperationInvalidError } from "../../errors/OperationInvalidError";
 import { config } from "../../data/config";
 
-export const GENESIS_REQUEST_INVITE_OPS = [
+export const GENESIS_CREATE_MEMBER_OPS = [
   "InuYAjMISl6operovXIR",
   "SKI5CxMXWd4qjJm1zm1y",
   "SUswrxogVQ6S0rH8O2h7",
   "Y8FiyjOLs9O8AZNGzhwQ"
 ];
-export const GENESIS_TRUST_OPS = [
-  "va9A8nQ4C4ZiAsJG2nLt",
-  "CmVDdktn3c3Uo5pP4rV6",
-  "uAFLhBjYtrpTXOZkJ6BD",
-  "y5EKzzihWm8RlDCcfv6d"
+export const GENESIS_VERIFY_OPS = [
+  "MXWYBxTN00yuSrOUicms",
+  "QZqLrlOALH4bMDhy9dhh",
+  "UH0ASdG8c2f1MVxWSAnw",
+  "vN5lzdG2y5UZa968D1yP"
 ];
 export const GENESIS_MEMBER = Symbol("GENESIS");
 export const RAHA_BASIC_INCOME_MEMBER = Symbol("RAHA_BASIC_INCOME_MEMBER_ID");
@@ -70,6 +70,7 @@ interface RequiredMemberFields {
   username: string;
   fullName: string;
   createdAt: Date;
+  isVerified: boolean;
   inviteConfirmed: boolean;
   lastMintedBasicIncomeAt: Date;
   lastOpCreatedAt: Date;
@@ -145,11 +146,6 @@ export class Member {
 
   public beTrustedByMember(memberId: MemberId) {
     return this.withFields({
-      // TODO inviteConfirmed should eventually be modified only by the verify
-      // operation, not the trust operation. Thus, remove this once all RequestInvite operations have been
-      // migrated to "CreateMember".
-      inviteConfirmed:
-        this.fields.inviteConfirmed || this.fields.invitedBy === memberId,
       trustedBy: this.fields.trustedBy.add(memberId)
     });
   }
@@ -174,6 +170,7 @@ export class Member {
     return this.withFields({
       inviteConfirmed:
         this.fields.inviteConfirmed || this.fields.invitedBy === memberId,
+      isVerified: true,
       verified: this.fields.verified.add(memberId)
     });
   }
@@ -208,7 +205,7 @@ export interface MembersState {
  */
 function operationIsRelevantAndValid(operation: Operation): boolean {
   if (!operation.creator_uid) {
-    if (GENESIS_TRUST_OPS.includes(operation.id)) {
+    if (GENESIS_VERIFY_OPS.includes(operation.id)) {
       return false; // no need for the genesis ops to be reflected in app state.
     }
     throw new OperationInvalidError(
@@ -231,7 +228,7 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
     if (!!operation.data.to_uid) {
       return true;
     }
-    return GENESIS_REQUEST_INVITE_OPS.includes(operation.id);
+    return false;
   }
 
   if (operation.op_code === OperationType.TRUST) {
@@ -342,12 +339,14 @@ function applyOperation(
           request_invite_from_member_id
         } = operation.data;
 
-        if (request_invite_from_member_id) {
-          assertMemberIdPresentInState(
-            newState,
-            request_invite_from_member_id,
-            operation
-          );
+        if (!GENESIS_CREATE_MEMBER_OPS.includes(operation.id)) {
+          if (request_invite_from_member_id) {
+            assertMemberIdPresentInState(
+              newState,
+              request_invite_from_member_id,
+              operation
+            );
+          }
         }
 
         const memberData = {
@@ -356,16 +355,36 @@ function applyOperation(
           fullName: full_name,
           createdAt: createdAt,
           inviteConfirmed: false,
+          isVerified: false,
           lastMintedBasicIncomeAt: createdAt,
-          lastOpCreatedAt: createdAt,
-          ...(request_invite_from_member_id
-            ? { invitedBy: request_invite_from_member_id }
-            : {})
+          lastOpCreatedAt: createdAt
         };
+
+        // the initial users weren't invited by anyone; so no need to hook up any associations.
+        if (GENESIS_CREATE_MEMBER_OPS.includes(operation.id)) {
+          return addMemberToState(
+            newState,
+            new Member({
+              ...memberData,
+              invitedBy: GENESIS_MEMBER,
+              inviteConfirmed: true,
+              isVerified: true
+            })
+          );
+        }
 
         assertMemberIdNotPresentInState(newState, creator_uid, operation);
 
-        const newMember = new Member(memberData);
+        const newMember = new Member({
+          ...memberData,
+          ...(request_invite_from_member_id
+            ? { invitedBy: request_invite_from_member_id }
+            : {})
+        });
+
+        if (request_invite_from_member_id) {
+          newMember.trustMember(request_invite_from_member_id);
+        }
 
         return addMemberToState(newState, newMember);
       }
@@ -387,16 +406,21 @@ function applyOperation(
       case OperationType.VERIFY: {
         const { to_uid } = operation.data;
 
-        assertMemberIdPresentInState(newState, creator_uid, operation);
         assertMemberIdPresentInState(newState, to_uid, operation);
 
+        // This association does not need to be created if this is a GENESIS verification operation,
+        // as the IsVerified flag has already been marked true on GENESIS members.
+        if (GENESIS_VERIFY_OPS.includes(operation.id)) {
+          return newState;
+        }
+
+        assertMemberIdPresentInState(newState, creator_uid, operation);
         const verifier = (newState.byMemberId.get(
           creator_uid
         ) as Member).verifyMember(to_uid);
         const verified = (newState.byMemberId.get(
           to_uid
         ) as Member).beVerifiedByMember(creator_uid);
-
         return addMembersToState(newState, [verifier, verified]);
       }
       case OperationType.REQUEST_INVITE: {
@@ -411,18 +435,6 @@ function applyOperation(
           lastOpCreatedAt: createdAt
         };
 
-        // the initial users weren't invited by anyone; so no need to hook up any associations.
-        if (GENESIS_REQUEST_INVITE_OPS.includes(operation.id)) {
-          return addMemberToState(
-            newState,
-            new Member({
-              ...memberData,
-              invitedBy: GENESIS_MEMBER,
-              inviteConfirmed: true
-            })
-          );
-        }
-
         assertMemberIdPresentInState(newState, to_uid, operation);
         assertMemberIdNotPresentInState(newState, creator_uid, operation);
 
@@ -432,7 +444,8 @@ function applyOperation(
         const inviteRequester = new Member({
           ...memberData,
           invitedBy: to_uid,
-          inviteConfirmed: false
+          inviteConfirmed: false,
+          isVerified: false
         }).trustMember(to_uid);
         return addMembersToState(newState, [inviter, inviteRequester]);
       }
