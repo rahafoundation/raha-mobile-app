@@ -140,12 +140,15 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
                 !isOwnProfile && (
                   <View style={styles.memberActions}>
                     <Button
-                      style={{ marginRight: 12 }}
-                      title={alreadyTrusted ? "Trusted" : "Trust"}
+                      // TODO: Come up with a solution for indicating action completed
+                      // Changing the text on these buttons forces them off the side of small screens
+                      title="Trust"
                       onPress={() => trust(member.get("memberId"))}
                       disabled={alreadyTrusted}
                     />
                     <Button
+                      // TODO: Come up with a solution for indicating action completed
+                      // Changing the text on these buttons forces them off the side of small screens
                       title="Verify"
                       onPress={() =>
                         navigation.navigate(RouteName.Verify, {
@@ -217,7 +220,7 @@ const memberActionsStyle: ViewStyle = {
   ...detailsSpacer,
   display: "flex",
   flexDirection: "row",
-  justifyContent: "center",
+  justifyContent: "space-between",
   alignItems: "center"
 };
 
