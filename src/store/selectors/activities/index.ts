@@ -20,8 +20,7 @@ import {
   Member,
   RAHA_BASIC_INCOME_MEMBER,
   GENESIS_MEMBER,
-  GENESIS_TRUST_OPS,
-  GENESIS_REQUEST_INVITE_OPS
+  GENESIS_VERIFY_OPS
 } from "../../reducers/members";
 import {
   CurrencyValue,
@@ -68,7 +67,7 @@ function convertOperationsToActivities(
 ): Activity[] {
   return operations.reduce(
     (memo, operation) => {
-      const creatorMember = GENESIS_TRUST_OPS.includes(operation.id)
+      const creatorMember = GENESIS_VERIFY_OPS.includes(operation.id)
         ? GENESIS_MEMBER
         : getMemberById(state, operation.creator_uid);
       if (!creatorMember) {
@@ -88,7 +87,7 @@ function convertOperationsToActivities(
             timestamp: operation.created_at,
             content: {
               // type suggestions since GENESIS_MEMBER is only possible for
-              // TRUST operations
+              // VERIFY operations
               actor: creatorMember as Member,
               description: ["just joined Raha!"],
               body: {
@@ -116,7 +115,7 @@ function convertOperationsToActivities(
             timestamp: operation.created_at,
             content: {
               // type suggestions since GENESIS_MEMBER is only possible for
-              // TRUST operations
+              // VERIFY operations
               actor: creatorMember as Member,
               description: ["requested a friend to verify their account."],
               body: {
@@ -144,13 +143,16 @@ function convertOperationsToActivities(
             return memo;
           }
 
+          if (creatorMember === GENESIS_MEMBER) {
+            // don't display the genesis verify ops
+            return memo;
+          }
+
           const newActivity: Activity = {
             id: operation.id,
             timestamp: operation.created_at,
             content: {
-              // type suggestions since GENESIS_MEMBER is only possible for
-              // TRUST operations
-              actor: creatorMember as Member,
+              actor: creatorMember,
               description: ["verified their friend's account!"],
               body: {
                 type: BodyType.MEDIA,
@@ -192,7 +194,7 @@ function convertOperationsToActivities(
             timestamp: operation.created_at,
             content: {
               // type suggestions since GENESIS_MEMBER is only possible for
-              // TRUST operations
+              // VERIFY operations
               actor: creatorMember as Member,
               description: ["gave", amountGiven, "for"],
               body: { type: BodyType.TEXT, text: operation.data.memo },
@@ -232,7 +234,7 @@ function convertOperationsToActivities(
                 timestamp: operation.created_at,
                 content: {
                   // type suggestions since GENESIS_MEMBER is only possible for
-                  // TRUST operations
+                  // VERIFY operations
                   actor: creatorMember as Member,
                   description: ["minted", amountMinted, "of basic income."],
                   body: {
@@ -255,7 +257,7 @@ function convertOperationsToActivities(
               );
               if (!invitedMember) {
                 console.error(
-                  `Mint operation with invted member (id: ${
+                  `Mint operation with invited member (id: ${
                     operation.data.invited_member_id
                   }) missing, invalid.`
                 );
@@ -266,7 +268,7 @@ function convertOperationsToActivities(
                 timestamp: operation.created_at,
                 content: {
                   // type suggestions since GENESIS_MEMBER is only possible for
-                  // TRUST operations
+                  // VERIFY operations
                   actor: creatorMember as Member,
                   description: [
                     "minted",
@@ -305,11 +307,7 @@ function convertOperationsToActivities(
 
         case OperationType.REQUEST_INVITE: {
           // genesis member case
-          const requestedMember = GENESIS_REQUEST_INVITE_OPS.includes(
-            operation.id
-          )
-            ? GENESIS_MEMBER
-            : getMemberById(state, operation.data.to_uid);
+          const requestedMember = getMemberById(state, operation.data.to_uid);
 
           if (!requestedMember) {
             console.error(
@@ -325,39 +323,25 @@ function convertOperationsToActivities(
             timestamp: operation.created_at,
             content: {
               // type suggestions since GENESIS_MEMBER is only possible for
-              // TRUST operations
+              // VERIFY operations
               actor: creatorMember as Member,
-              description:
-                requestedMember === GENESIS_MEMBER
-                  ? ["joined Raha!"]
-                  : ["just requested a friend to join Raha!"],
+              description: ["just requested a friend to join Raha!"],
               body: {
                 type: BodyType.MEDIA,
                 media: [videoReferenceForMember(creatorMember as Member)]
               },
-              // only show a member in the chain if one will be present, i.e.
-              // if this is not one of the first members of Raha.
-              ...(requestedMember === GENESIS_MEMBER
-                ? {}
-                : {
-                    nextInChain: {
-                      direction: ActivityDirection.NonDirectional,
-                      content: {
-                        actor: requestedMember
-                      }
-                    }
-                  })
+              nextInChain: {
+                direction: ActivityDirection.NonDirectional,
+                content: {
+                  actor: requestedMember
+                }
+              }
             }
           };
 
           return [...memo, newActivity];
         }
         case OperationType.TRUST: {
-          if (creatorMember === GENESIS_MEMBER) {
-            // don't display the genesis trust ops
-            return memo;
-          }
-
           const trustedMember = getMemberById(state, operation.data.to_uid);
           if (!trustedMember) {
             console.error(
@@ -372,7 +356,9 @@ function convertOperationsToActivities(
             id: operation.id,
             timestamp: operation.created_at,
             content: {
-              actor: creatorMember,
+              // type suggestions since GENESIS_MEMBER is only possible for
+              // VERIFY operations
+              actor: creatorMember as Member,
               description: ["trusted a new friend"],
               body: {
                 type: BodyType.TRUST_MEMBER
@@ -387,6 +373,9 @@ function convertOperationsToActivities(
           };
           return [...memo, newActivity];
         }
+        case OperationType.INVITE:
+          // We do not display any activity for Invite operations.
+          return memo;
         default:
           // Shouldn't happen. Type assertion is because TypeScript also thinks
           // this should never happen.
