@@ -96,7 +96,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       this.dropdown.alertWithType(
         "error",
         "Error: Invalid Deeplink",
-        "Unable to process deeplink invitation. Please check the invite link you were sent or sign up using the regular onboarding flow."
+        "Unable to process deeplink invitation. Please sign up using the regular onboarding flow."
       );
       return;
     }
