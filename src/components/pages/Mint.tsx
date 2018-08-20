@@ -96,47 +96,57 @@ const MintView: React.StatelessComponent<Props> = ({
           <Text style={styles.numberLabel}>donated</Text>
         </View>
       </View>
-      <View style={[styles.centerFlex, { marginBottom: 12, flex: 2 }]}>
-        <Image
-          resizeMode="contain"
-          style={{ flex: 1, margin: 8 }}
-          source={require("../../assets/img/Mint.png")}
-        />
-        <MintButton />
-      </View>
-      <View style={[styles.centerFlex, { marginBottom: 12, flex: 2 }]}>
-        <Image
-          resizeMode="contain"
-          style={{ flex: 1, margin: 8 }}
-          source={require("../../assets/img/Invite.png")}
-        />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            width: "90%"
-          }}
-        >
-          <Button
-            title="Invite"
-            onPress={() => {
-              navigation.navigate(RouteName.InvitePage);
-            }}
-          />
-          {hasUnclaimedReferrals ? (
-            <Button
-              title="Claim bonuses!"
-              onPress={() => {
-                navigation.navigate(RouteName.ReferralBonusPage, {
-                  unclaimedReferralIds
-                });
-              }}
+      {loggedInMember.get("isVerified") ? (
+        <React.Fragment>
+          <View style={[styles.centerFlex, { marginBottom: 12, flex: 2 }]}>
+            <Image
+              resizeMode="contain"
+              style={{ flex: 1, margin: 8 }}
+              source={require("../../assets/img/Mint.png")}
             />
-          ) : (
-            undefined
-          )}
+            <MintButton />
+          </View>
+          <View style={[styles.centerFlex, { marginBottom: 12, flex: 2 }]}>
+            <Image
+              resizeMode="contain"
+              style={{ flex: 1, margin: 8 }}
+              source={require("../../assets/img/Invite.png")}
+            />
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-around",
+                width: "90%"
+              }}
+            >
+              <Button
+                title="Invite"
+                onPress={() => {
+                  navigation.navigate(RouteName.InvitePage);
+                }}
+              />
+              {hasUnclaimedReferrals ? (
+                <Button
+                  title="Claim bonuses!"
+                  onPress={() => {
+                    navigation.navigate(RouteName.ReferralBonusPage, {
+                      unclaimedReferralIds
+                    });
+                  }}
+                />
+              ) : (
+                undefined
+              )}
+            </View>
+          </View>
+        </React.Fragment>
+      ) : (
+        <View style={[styles.centerFlex, { flexGrow: 2 }]}>
+          <Text style={{ textAlign: "center", margin: 12 }}>
+            You must be verified before you can mint Raha or invite new people.
+          </Text>
         </View>
-      </View>
+      )}
     </Container>
   );
 };
