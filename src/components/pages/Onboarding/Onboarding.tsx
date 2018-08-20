@@ -4,24 +4,21 @@ import { View, StyleSheet, BackHandler } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import DropdownAlert from "react-native-dropdownalert";
 import { NavigationScreenProps } from "react-navigation";
-import { RNFirebase } from "react-native-firebase";
 
 import { RahaState } from "../../../store";
 import { OnboardingSplash } from "./OnboardingSplash";
 import { VerifyName } from "./VerifyName";
 import {
   getLoggedInFirebaseUser,
-  getPrivateVideoInviteRef,
-  getInviteVideoRef
+  getAuthRestrictedVideoRef
 } from "../../../store/selectors/authentication";
 import { OnboardingCamera } from "./OnboardingCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
 import { OnboardingCreateAccount } from "./OnboardingCreateAccount";
-import { getMemberByUsername } from "../../../store/selectors/members";
-import { Text } from "../../shared/elements";
-import { LogIn } from "../LogIn";
+import { getMemberById } from "../../../store/selectors/members";
 import { RouteName } from "../../shared/Navigation";
 import { Loading } from "../../shared/Loading";
+import { generateToken } from "../../../helpers/token";
 
 /**
  * Parent component for Onboarding flow.
@@ -37,18 +34,18 @@ enum OnboardingStep {
 }
 
 interface OnboardingParams {
-  t?: string; // video token
-  r?: string; // referrer username
-  j?: string; // isJointVideo
+  t?: string; // invite token
 }
 
 type ReduxStateProps = {
   displayName: string | null;
-  videoUploadRef?: RNFirebase.storage.Reference;
   isLoggedIn: boolean;
-  deeplinkVideoToken?: string;
-  deeplinkInvitingMember?: Member;
-  isJointVideo: boolean;
+
+  inviteToken?: string;
+  inviteVideoToken?: string;
+  invitingMember?: Member;
+  inviteVideoIsJoint?: boolean;
+  hasValidInviteToken: boolean;
 };
 
 type OwnProps = NavigationScreenProps<OnboardingParams>;
@@ -58,66 +55,71 @@ type OnboardingProps = ReduxStateProps & OwnProps;
 type OnboardingState = {
   step: OnboardingStep;
   verifiedName?: string;
-  videoUri?: string;
+  inviteVideoIsValid?: boolean;
   videoDownloadUrl?: string;
+  videoUri?: string;
 };
 
-export class OnboardingView extends React.Component<
-  OnboardingProps,
-  OnboardingState
-> {
+class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   dropdown: any;
   steps: OnboardingStep[];
   deeplinkInitialized: boolean;
+  videoToken: string;
 
   constructor(props: OnboardingProps) {
     super(props);
     this.steps = [];
     this.deeplinkInitialized = false;
+    this.videoToken = generateToken();
     this.state = {
       step: OnboardingStep.SPLASH
     };
+
+    if (this.props.hasValidInviteToken) {
+      this.initializeDeeplinkingState();
+    }
   }
 
   /**
    * If deeplinking params are present, makes sure they are valid, and fills in
    * the associated video download url into state.
    */
-  initializeDeeplinkingParams = async () => {
-    const deeplinkProps = [
-      this.props.deeplinkVideoToken,
-      this.props.deeplinkInvitingMember
-    ];
-    const presentDeeplinkProps = deeplinkProps.filter(p => !!p);
-    if (presentDeeplinkProps.length === 0) {
+  initializeDeeplinkingState = async () => {
+    if (!this.props.isLoggedIn) {
       return;
     }
 
-    // must provide all deeplink props or none of them
-    if (presentDeeplinkProps.length !== deeplinkProps.length) {
+    this.deeplinkInitialized = true;
+
+    // We ask the user to sign up via the regular invite flow if the specified token is invalid for any reason.
+    if (this.props.inviteToken && !this.props.hasValidInviteToken) {
       this.dropdown.alertWithType(
         "error",
         "Error: Invalid Deeplink",
-        "Unable to process deeplink. Please try signing up directly from your phone."
+        "Unable to process deeplink invitation. Please sign up using the regular onboarding flow."
       );
       return;
     }
 
     const videoDownloadUrl = await extractDeeplinkVideoUrl(
-      this.props.deeplinkInvitingMember,
-      this.props.deeplinkVideoToken
+      this.props.invitingMember,
+      this.props.inviteVideoToken
     );
-    // videoDownloadUrl must be present if using deeplinking
+    // We must be able to access the video specified by the invite.
     if (!videoDownloadUrl) {
       this.dropdown.alertWithType(
         "error",
         "Error: Invalid Deeplink",
         "Invite video doesn't exist or has expired. Please try signing up directly from your phone."
       );
+      this.setState({
+        inviteVideoIsValid: false
+      });
       return;
     }
     this.setState({
-      videoDownloadUrl
+      videoDownloadUrl,
+      inviteVideoIsValid: true
     });
   };
 
@@ -135,9 +137,8 @@ export class OnboardingView extends React.Component<
       this.steps.push(prevState.step);
     }
 
-    if (!this.deeplinkInitialized) {
-      this.deeplinkInitialized = true;
-      this.initializeDeeplinkingParams();
+    if (this.props.hasValidInviteToken && !this.deeplinkInitialized) {
+      this.initializeDeeplinkingState();
     }
   }
 
@@ -189,7 +190,7 @@ export class OnboardingView extends React.Component<
     if (!videoDownloadUrl) {
       this.dropdown.alertWithType(
         "error",
-        "Error: Could not upload video",
+        "Error: Could not verify video uploaded",
         "Invalid video. Please retry."
       );
       this.setState({
@@ -199,24 +200,15 @@ export class OnboardingView extends React.Component<
     return videoDownloadUrl;
   };
 
-  _verifyVideoUploadRef = () => {
-    const videoUploadRef = this.props.videoUploadRef;
-    if (!videoUploadRef) {
-      this.dropdown.alertWithType(
-        "error",
-        "Error: Upload",
-        "Invalid video storage. Please retry."
-      );
-    }
-    return videoUploadRef;
-  };
-
   _renderOnboardingStep() {
     if (!this.props.isLoggedIn) {
       this.props.navigation.replace(RouteName.LogInPage, {
         redirectTo: RouteName.OnboardingPage,
+        // We will only get to the Onboarding page while not logged-in if the user
+        // was directed here by a deeplink invitation.
         loginMessage:
-          "Welcome to Raha! Please sign up with your\nmobile number to accept your invite."
+          "Welcome to Raha! Please sign up with your\nmobile number to accept your invite.",
+        redirectParams: this.props.navigation.state.params
       });
       return <Loading />;
     }
@@ -247,8 +239,12 @@ export class OnboardingView extends React.Component<
               this.setState({
                 verifiedName: verifiedName,
                 step:
-                  this.props.isJointVideo && this.state.videoDownloadUrl
-                    ? OnboardingStep.CREATE_ACCOUNT
+                  this.props.hasValidInviteToken &&
+                  this.props.inviteVideoIsJoint &&
+                  this.state.inviteVideoIsValid
+                    ? // The new member does not need to take a verification video
+                      // if they have a valid joint invite video.
+                      OnboardingStep.CREATE_ACCOUNT
                     : OnboardingStep.CAMERA
               });
             }}
@@ -281,7 +277,7 @@ export class OnboardingView extends React.Component<
       }
       case OnboardingStep.VIDEO_PREVIEW: {
         const videoUri = this._verifyVideoUri();
-        const videoUploadRef = this._verifyVideoUploadRef();
+        const videoUploadRef = getAuthRestrictedVideoRef(this.videoToken);
         if (!videoUri || !videoUploadRef) {
           return <React.Fragment />;
         }
@@ -317,9 +313,19 @@ export class OnboardingView extends React.Component<
         return (
           <OnboardingCreateAccount
             verifiedName={fullName}
-            invitingMember={this.props.deeplinkInvitingMember}
-            isJointVideo={this.props.isJointVideo}
-            videoToken={this.props.deeplinkVideoToken}
+            videoToken={
+              this.props.hasValidInviteToken &&
+              this.props.inviteVideoToken &&
+              this.state.inviteVideoIsValid &&
+              this.props.inviteVideoIsJoint
+                ? this.props.inviteVideoToken
+                : this.videoToken
+            }
+            inviteToken={
+              this.props.hasValidInviteToken
+                ? this.props.inviteToken
+                : undefined
+            }
           />
         );
       }
@@ -355,7 +361,7 @@ async function extractDeeplinkVideoUrl(
   if (!videoToken || !invitingMember) {
     return undefined;
   }
-  return await getInviteVideoRef(videoToken).getDownloadURL();
+  return await getAuthRestrictedVideoRef(videoToken).getDownloadURL();
 }
 
 const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
@@ -363,21 +369,41 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
   ownProps
 ) => {
   const firebaseUser = getLoggedInFirebaseUser(state);
-  const deeplinkInviterUsername = ownProps.navigation.getParam("r");
-  const deeplinkInvitingMember = deeplinkInviterUsername
-    ? getMemberByUsername(state, deeplinkInviterUsername)
+  // This token is provided when the user navigates via deep link.
+  const deeplinkInviteToken = ownProps.navigation.getParam("t");
+
+  const invitingOperation = deeplinkInviteToken
+    ? state.invitations.byInviteToken.get(deeplinkInviteToken)
     : undefined;
-  const deeplinkVideoToken = ownProps.navigation.getParam("t");
-  const deeplinkIsJointVideo = ownProps.navigation.getParam("j");
+  const invitingMember = invitingOperation
+    ? getMemberById(state, invitingOperation.creator_uid)
+    : undefined;
+  const inviteVideoToken = invitingOperation
+    ? invitingOperation.data.video_token
+    : undefined;
+  const inviteVideoIsJoint = invitingOperation
+    ? invitingOperation.data.is_joint_video
+    : undefined;
+
+  // We have a valid invite token only if all these things are true. If not,
+  // then we will throw an error in `initializeDeeplinkParams` and go through the
+  // default uninvited onboarding flow.
+  const hasValidInviteToken =
+    !!deeplinkInviteToken &&
+    !!invitingOperation &&
+    !!invitingMember &&
+    !!inviteVideoToken &&
+    inviteVideoIsJoint !== undefined;
 
   return {
     displayName: firebaseUser ? firebaseUser.displayName : null,
-    videoUploadRef: getPrivateVideoInviteRef(state),
     isLoggedIn:
       state.authentication.isLoaded && state.authentication.isLoggedIn,
-    deeplinkVideoToken,
-    deeplinkInvitingMember,
-    isJointVideo: !!deeplinkIsJointVideo
+    inviteToken: deeplinkInviteToken,
+    hasValidInviteToken,
+    inviteVideoToken,
+    invitingMember,
+    inviteVideoIsJoint
   };
 };
 export const Onboarding = connect(mapStateToProps)(OnboardingView);

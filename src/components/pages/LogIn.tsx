@@ -15,7 +15,8 @@ import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
 import {
   NavigationEventSubscription,
-  NavigationScreenProps
+  NavigationScreenProps,
+  NavigationParams
 } from "react-navigation";
 import CountryPicker, {
   getAllCountries,
@@ -46,7 +47,6 @@ import { Map } from "immutable";
 import { TextInput } from "../shared/elements/TextInput";
 import { fonts } from "../../helpers/fonts";
 import { colors } from "../../helpers/colors";
-import { Loading } from "../shared/Loading";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 const countries = getAllCountries().reduce<Map<string, Country>>(
@@ -74,7 +74,11 @@ interface DispatchProps {
 type LogInProps = OwnProps &
   StateProps &
   DispatchProps &
-  NavigationScreenProps<{ redirectTo?: RouteName; loginMessage?: string }>;
+  NavigationScreenProps<{
+    redirectTo?: RouteName;
+    loginMessage?: string;
+    redirectParams?: any;
+  }>;
 
 interface LogInState {
   phoneNumber?: string;
@@ -411,9 +415,10 @@ class LogInView extends React.Component<LogInProps, LogInState> {
 
     const redirectTo = this.props.navigation.getParam("redirectTo");
     if (redirectTo) {
+      const redirectParams = this.props.navigation.getParam("redirectParams");
       this.props.navigation.navigate(
         redirectTo,
-        this.props.navigation.state.params
+        ...(redirectParams ? redirectParams : {})
       );
       return;
     }

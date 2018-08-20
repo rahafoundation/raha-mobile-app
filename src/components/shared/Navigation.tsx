@@ -44,6 +44,7 @@ import { colors, palette } from "../../helpers/colors";
 import { fonts, fontSizes } from "../../helpers/fonts";
 import { InitializationRouter } from "../pages/InitializationRouter";
 import { Member } from "../../store/reducers/members";
+import { Verify } from "../pages/Verify";
 
 /**
  * Gets the current screen from navigation state.
@@ -102,7 +103,8 @@ export enum RouteName {
   MintPage = "MintPage",
   MintTab = "Mint",
   ReferralBonusPage = "Referral Bonus",
-  PendingInvitesPage = "Pending Invites"
+  PendingInvitesPage = "Pending Invites",
+  Verify = "Verify"
 }
 
 export const DEEPLINK_ROUTES = {
@@ -236,7 +238,13 @@ export function createNavigatorForTab(
       ...routeConfigMap,
       [RouteName.ProfilePage]: Profile,
       [RouteName.MemberListPage]: MemberList,
-      [RouteName.GivePage]: Give
+      [RouteName.GivePage]: Give,
+      [RouteName.Verify]: {
+        screen: Verify,
+        navigationOptions: {
+          header: null
+        }
+      }
     },
     {
       ...stackConfig

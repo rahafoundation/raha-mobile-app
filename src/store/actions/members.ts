@@ -1,6 +1,7 @@
 import { trust as callTrust } from "@raha/api/dist/members/trust";
 import { requestInvite as callRequestInvite } from "@raha/api/dist/members/requestInvite";
 import { createMember as callCreateMember } from "@raha/api/dist/members/createMember";
+import { verify as callVerify } from "@raha/api/dist/members/verify";
 import { sendInvite as callSendInvite } from "@raha/api/dist/me/sendInvite";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
@@ -51,7 +52,7 @@ export const createMember: AsyncActionCreator = (
   fullName: string,
   username: string,
   videoToken: string,
-  requestInviteFromMemberId?: string
+  inviteToken?: string
 ) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
@@ -66,14 +67,12 @@ export const createMember: AsyncActionCreator = (
         fullName,
         username,
         videoToken,
-        requestInviteFromMemberId
+        inviteToken
       );
-
-      // TODO, this should probably potentially return multiple operations, which implies a different return type for the endpoint
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [body]
+        operations: body
       };
       dispatch(action);
     },
@@ -121,7 +120,7 @@ export const sendInvite: AsyncActionCreator = (
   isJointVideo: boolean
 ) => {
   return wrapApiCallAction(
-    async (dispatch, getState) => {
+    async (_, getState) => {
       const authToken = await getAuthToken(getState());
       if (!authToken) {
         throw new UnauthenticatedError();
@@ -137,5 +136,34 @@ export const sendInvite: AsyncActionCreator = (
     },
     ApiEndpointName.SEND_INVITE,
     videoToken
+  );
+};
+
+export const verify: AsyncActionCreator = (
+  memberId: MemberId,
+  videoToken: string
+) => {
+  return wrapApiCallAction(
+    async (dispatch, getState) => {
+      const authToken = await getAuthToken(getState());
+      if (!authToken) {
+        throw new UnauthenticatedError();
+      }
+
+      const { body } = await callVerify(
+        config.apiBase,
+        authToken,
+        memberId,
+        videoToken
+      );
+
+      const action: OperationsAction = {
+        type: OperationsActionType.ADD_OPERATIONS,
+        operations: [body]
+      };
+      dispatch(action);
+    },
+    ApiEndpointName.VERIFY_MEMBER,
+    memberId
   );
 };

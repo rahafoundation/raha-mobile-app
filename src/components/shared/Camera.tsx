@@ -7,10 +7,17 @@
  */
 
 import * as React from "react";
-import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Image,
+  PermissionsAndroid,
+  Platform
+} from "react-native";
 import { RNCamera, CameraType } from "react-native-camera";
 
-import { Text } from "./elements";
+import { Text, Button } from "./elements";
 
 type CameraProps = {
   onVideoRecorded: (uri: string) => any;
@@ -19,28 +26,49 @@ type CameraProps = {
 interface CameraState {
   type: keyof CameraType;
   isVideoRecording: boolean;
+  permissionsDenied: boolean;
 }
 
 export class Camera extends React.Component<CameraProps, CameraState> {
   state: CameraState = {
     type: "front",
-    isVideoRecording: false
+    isVideoRecording: false,
+    permissionsDenied: false
   };
 
-  // async componentWillMount() {
-  //   await this.requestPermissions();
-  // }
+  async componentWillMount() {
+    await this.requestPermissions();
+  }
 
-  // async requestPermissions() {
-  //   const results = await Promise.all([
-  //     Permissions.askAsync(Permissions.CAMERA),
-  //     Permissions.askAsync(Permissions.AUDIO_RECORDING)
-  //   ]);
-  //   this.setState({
-  //     hasCameraPermission: results[0].status === "granted",
-  //     hasAudioRecordPermission: results[1].status === "granted"
-  //   });
-  // }
+  async requestPermissions() {
+    if (Platform.OS === "ios") {
+      return;
+    }
+    try {
+      const results = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+      ]);
+      if (
+        results[PermissionsAndroid.PERMISSIONS.CAMERA] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+        results[PermissionsAndroid.PERMISSIONS.RECORD_AUDIO] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+        results[PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE] ===
+          PermissionsAndroid.RESULTS.GRANTED &&
+        results[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] ===
+          PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        this.setState({ permissionsDenied: false });
+      } else {
+        this.setState({ permissionsDenied: true });
+      }
+    } catch (exception) {
+      console.error(exception);
+    }
+  }
 
   startRecordVideo = async (camera: RNCamera) => {
     await new Promise(resolve =>
@@ -59,37 +87,36 @@ export class Camera extends React.Component<CameraProps, CameraState> {
   render() {
     return (
       <View style={styles.container}>
-        <RNCamera
-          style={styles.camera}
-          type={RNCamera.Constants.Type[this.state.type]}
-          captureAudio
-        >
-          {({ camera, status }) => {
-            if (status === "NOT_AUTHORIZED") {
+        {this.state.permissionsDenied ? (
+          <React.Fragment>
+            <Text style={styles.text}>
+              In order to verify your identity, you must record a video of
+              yourself. Please approve the permissions to continue.
+            </Text>
+            <Button
+              title="Approve Permissions"
+              onPress={() => {
+                this.requestPermissions();
+              }}
+            />
+          </React.Fragment>
+        ) : (
+          <RNCamera
+            style={styles.camera}
+            type={RNCamera.Constants.Type[this.state.type]}
+            captureAudio
+          >
+            {({ camera }) => {
               return (
-                <View>
-                  <Text>
-                    In order to verify your identity, you must record a video of
-                    yourself. Please approve the permissions to continue.
-                  </Text>
-                  {/* TODO: figure out how to request permissions */}
-                  {/* <Button
-                    title="Approve Permissions"
-                    onPress={() => {
-                      this.requestPermissions();
-                    }} */}
+                <View style={styles.cameraButtons}>
+                  {this.renderFlipButton()}
+                  {this.renderRecordButton(camera)}
+                  <View style={{ flex: 1 }} />
                 </View>
               );
-            }
-            return (
-              <View style={styles.cameraButtons}>
-                {this.renderFlipButton()}
-                {this.renderRecordButton(camera)}
-                <View style={{ flex: 1 }} />
-              </View>
-            );
-          }}
-        </RNCamera>
+            }}
+          </RNCamera>
+        )}
       </View>
     );
   }
@@ -185,6 +212,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 10,
     color: "white",
+    textAlign: "center"
+  },
+  text: {
+    fontSize: 18,
+    marginVertical: 4,
+    marginHorizontal: 40,
     textAlign: "center"
   }
 });

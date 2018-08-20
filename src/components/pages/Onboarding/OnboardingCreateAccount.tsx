@@ -6,34 +6,32 @@ import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 import { getUsername } from "../../../helpers/username";
 import { RahaState } from "../../../store";
-import {
-  requestInviteFromMember,
-  createMember
-} from "../../../store/actions/members";
+import { createMember } from "../../../store/actions/members";
 import {
   ApiCallStatus,
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
-import { Member } from "../../../store/reducers/members";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { Text, Button } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
 
 type ReduxStateProps = {
-  requestInviteStatus?: ApiCallStatus;
   createMemberStatus?: ApiCallStatus;
 };
 
 type DispatchProps = {
-  requestInviteFromMember: typeof requestInviteFromMember;
-  createMember: typeof createMember;
+  createMember: (
+    fullName: string,
+    username: string,
+    videoToken: string,
+    inviteToken?: string
+  ) => void;
 };
 
 type OwnProps = {
-  invitingMember?: Member;
-  isJointVideo: boolean;
   verifiedName: string;
-  videoToken?: string;
+  videoToken: string;
+  inviteToken?: string;
 };
 
 type OnboardingCreateAccountProps = OwnProps & ReduxStateProps & DispatchProps;
@@ -47,37 +45,16 @@ class OnboardingCreateAccountView extends React.Component<
 
   createAccount = () => {
     const username = getUsername(this.props.verifiedName);
-    if (this.props.invitingMember) {
-      if (this.props.isJointVideo) {
-        this.props.requestInviteFromMember(
-          this.props.invitingMember.get("memberId"),
-          this.props.verifiedName,
-          username,
-          this.props.videoToken
-        );
-      } else {
-        // Create member with identifying video and inviter
-        this.props.createMember(
-          this.props.verifiedName,
-          username,
-          this.props.videoToken,
-          this.props.invitingMember.get("memberId")
-        );
-      }
-    } else {
-      // Create member with identifying video and no inviter
-      this.props.createMember(
-        this.props.verifiedName,
-        username,
-        this.props.videoToken,
-        undefined
-      );
-    }
+    this.props.createMember(
+      this.props.verifiedName,
+      username,
+      this.props.videoToken,
+      this.props.inviteToken
+    );
   };
 
   private _renderRequestingStatus = () => {
-    const status =
-      this.props.requestInviteStatus || this.props.createMemberStatus;
+    const status = this.props.createMemberStatus;
     const statusType = status ? status.status : undefined;
     switch (statusType) {
       case ApiCallStatusType.STARTED:
@@ -117,7 +94,8 @@ class OnboardingCreateAccountView extends React.Component<
               }
             >
               Terms of Service
-            </Text>,{" "}
+            </Text>
+            ,{" "}
             <Text
               style={styles.linkText}
               onPress={() =>
@@ -125,7 +103,8 @@ class OnboardingCreateAccountView extends React.Component<
               }
             >
               Privacy Policy
-            </Text>, and{" "}
+            </Text>
+            , and{" "}
             <Text
               style={styles.linkText}
               onPress={() =>
@@ -133,7 +112,8 @@ class OnboardingCreateAccountView extends React.Component<
               }
             >
               Code of Conduct
-            </Text>.
+            </Text>
+            .
           </Text>
 
           <Button title="Join" onPress={this.createAccount} />
@@ -169,22 +149,15 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const requestInviteStatus = ownProps.invitingMember
-    ? getStatusOfApiCall(
-        state,
-        ApiEndpointName.REQUEST_INVITE,
-        ownProps.invitingMember.get("memberId")
-      )
-    : undefined;
   const createMemberStatus = getStatusOfApiCall(
     state,
     ApiEndpointName.CREATE_MEMBER,
     ownProps.verifiedName
   );
-  return { requestInviteStatus, createMemberStatus };
+  return { createMemberStatus };
 };
 
 export const OnboardingCreateAccount = connect(
   mapStateToProps,
-  { requestInviteFromMember, createMember }
+  { createMember }
 )(OnboardingCreateAccountView);

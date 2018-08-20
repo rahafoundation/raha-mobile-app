@@ -2,7 +2,8 @@ import { List } from "immutable";
 
 import {
   Operation,
-  OperationType
+  OperationType,
+  RequestVerificationOperation
 } from "@raha/api-shared/dist/models/Operation";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import { Member } from "../reducers/members";
@@ -31,4 +32,17 @@ export function isUnconfirmedRequestInvite(
     return false;
   }
   return !isInviteConfirmed(state, operation.creator_uid);
+}
+
+export function getRequestVerificationOperation(
+  operations: List<Operation>,
+  creatorMemberId: MemberId,
+  toMemberId: MemberId
+) {
+  return operations.filter(
+    op =>
+      op.op_code === OperationType.REQUEST_VERIFICATION &&
+      op.creator_uid === creatorMemberId &&
+      op.data.to_uid === toMemberId
+  ) as List<RequestVerificationOperation>;
 }
