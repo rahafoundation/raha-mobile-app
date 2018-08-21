@@ -3,6 +3,7 @@ package app.raha.mobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.microsoft.appcenter.reactnative.appcenter.AppCenterReactNativePackage;
 import com.horcrux.svg.SvgPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import io.invertase.firebase.RNFirebasePackage;
@@ -34,6 +35,7 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(new MainReactPackage(),
+            new AppCenterReactNativePackage(MainApplication.this),
             new SvgPackage(), new RNDeviceInfo(), new RNFirebasePackage(),
           new RNFirebaseAnalyticsPackage(), new RNFirebaseAuthPackage(), new RNFirebaseStoragePackage(),
           new RNFirebaseMessagingPackage(), new RNFirebaseNotificationsPackage(), new RNCameraPackage(),
