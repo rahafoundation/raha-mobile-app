@@ -20,7 +20,7 @@ export interface MixedTextProps extends TextProps {
  * text values.
  */
 export const MixedText: React.StatelessComponent<MixedTextProps> = props => {
-  const { content, textTransform, ...rest } = props;
+  const { content, textTransform, style, ...rest } = props;
   const arrayContent = typeof content === "string" ? [content] : content;
 
   const transformed = textTransform
@@ -36,15 +36,13 @@ export const MixedText: React.StatelessComponent<MixedTextProps> = props => {
           const key = `content-${idx}`;
           if (typeof piece === "string") {
             return (
-              <Text style={props.style} key={key}>
+              <Text style={style} key={key}>
                 {piece}
               </Text>
             );
           }
           if ("currencyType" in piece) {
-            return (
-              <Currency style={props.style} key={key} currencyValue={piece} />
-            );
+            return <Currency style={style} key={key} currencyValue={piece} />;
           }
           console.error(
             "Unexpected value in compoundContent:",
@@ -59,7 +57,7 @@ export const MixedText: React.StatelessComponent<MixedTextProps> = props => {
         .reduce(
           (memo, nextComponent, idx) => [
             ...memo,
-            <Text style={props.style} key={`spacing-${idx}`}>
+            <Text style={style} key={`spacing-${idx}`}>
               {" "}
             </Text>,
             nextComponent

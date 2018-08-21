@@ -4,7 +4,6 @@ import { Text } from ".";
 import { fonts } from "../../../helpers/fonts";
 import { TextStyle, StyleProp } from "react-native";
 import { colors } from "../../../helpers/colors";
-import { Omit } from "../../../../types/omit";
 
 /**
  * Currencies to display in the app. As of now, the only valid currency to
