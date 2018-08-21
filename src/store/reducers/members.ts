@@ -386,7 +386,17 @@ function applyOperation(
           newMember.trustMember(request_invite_from_member_id);
         }
 
-        return addMemberToState(newState, newMember);
+        const inviter = request_invite_from_member_id
+          ? newState.byMemberId.get(request_invite_from_member_id)
+          : undefined;
+        const updatedInviter = inviter
+          ? inviter.inviteMember(creator_uid)
+          : undefined;
+
+        return addMembersToState(newState, [
+          newMember,
+          ...(updatedInviter ? [updatedInviter] : [])
+        ]);
       }
       case OperationType.REQUEST_VERIFICATION: {
         const { to_uid } = operation.data;
