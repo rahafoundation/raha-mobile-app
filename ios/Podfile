@@ -10,6 +10,7 @@ target 'mobile' do
   # use_frameworks!
 
   # Pods for mobile
+  pod 'AppCenterReactNativeShared', '~> 1.7.1'
 
   target 'mobileTests' do
     inherit! :search_paths
