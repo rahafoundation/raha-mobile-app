@@ -15,6 +15,7 @@
   "dependencies": {
     "@raha/api": "^0.2.5",
     "@raha/api-shared": "^0.1.6",
+    "appcenter": "^1.7.1",
     "big.js": "^5.1.2",
     "core-js": "^2.5.7",
     "date-fns": "^2.0.0-alpha.16",
@@ -104,7 +105,8 @@
       "node_modules/(?!(react-native|react-navigation-tabs|react-native-vector-icons|react-native-paper|react-navigation-tabs|react-native-elements|react-native-video|react-navigation|react-native-country-picker-modal|react-native-safe-area-view|react-native-device-info|react-native-dropdownalert|react-native-camera)/)"
     ],
     "setupFiles": [
-      "<rootDir>/scripts/jest/setup"
+      "<rootDir>/scripts/jest/setup",
+      "<rootDir>/node_modules/appcenter/test/AppCenterMock.js"
     ]
   }
 }
