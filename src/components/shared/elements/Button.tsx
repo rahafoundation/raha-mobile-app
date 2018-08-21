@@ -62,7 +62,7 @@ export const Button: React.StatelessComponent<ButtonProps> = props => {
       <MixedText
         style={[
           styles.text,
-          textStyle,
+          props.textStyle,
           ...(props.disabled ? disabledTextStyles : [])
         ]}
         content={props.title}
