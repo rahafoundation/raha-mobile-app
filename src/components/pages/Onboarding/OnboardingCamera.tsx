@@ -6,7 +6,8 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Camera } from "../../shared/Camera";
-import { Text } from "../../shared/elements";
+import { Text, PageContainer } from "../../shared/elements";
+import { fontSizes } from "../../../helpers/fonts";
 
 type OwnProps = {
   verifiedFullName: string;
@@ -17,7 +18,7 @@ type OnboardingCameraProps = OwnProps;
 export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <PageContainer style={styles.container}>
         <Text style={styles.headerText}>
           Please record a video of yourself stating your identity.
         </Text>
@@ -28,29 +29,36 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
         />
         <View style={styles.promptContainer}>
           <Text style={styles.promptHeader}>Example of what to say:</Text>
-          <Text style={styles.text}>
+          <Text style={styles.promptText}>
             "My name is {this.props.verifiedFullName} and I'm joining Raha
             because I believe every life has value."
           </Text>
         </View>
-      </View>
+      </PageContainer>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  headerText: {
-    margin: 4,
-    textAlign: "center",
-    fontSize: 12
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center"
   },
-  text: {
-    fontSize: 12,
-    textAlign: "center"
+  headerText: {
+    marginBottom: 20,
+    textAlign: "center",
+    ...fontSizes.medium
   },
   promptHeader: {
-    fontSize: 10,
-    marginBottom: 4,
+    marginTop: 20,
+    ...fontSizes.large,
+    marginBottom: 12,
+    textAlign: "center"
+  },
+  promptText: {
+    ...fontSizes.medium,
     textAlign: "center"
   },
   promptContainer: {
