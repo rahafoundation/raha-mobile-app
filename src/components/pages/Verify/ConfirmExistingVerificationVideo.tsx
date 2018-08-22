@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 
-import { Text, Button } from "../../shared/elements";
+import { Text, Button, Container } from "../../shared/elements";
 import { VideoWithPlaceholder } from "../../shared/VideoWithPlaceholder";
 import { getAuthRestrictedVideoRef } from "../../../store/selectors/authentication";
 import { Loading } from "../../shared/Loading";
@@ -124,7 +124,7 @@ export class ConfirmExistingVerificationVideo extends React.Component<
 
   render() {
     return (
-      <View style={styles.container}>
+      <Container style={styles.container}>
         <View style={styles.padding} />
         <Text style={styles.back} onPress={this.props.onBack}>
           Back
@@ -138,14 +138,13 @@ export class ConfirmExistingVerificationVideo extends React.Component<
         </View>
         {this._renderVerifyStep()}
         <View style={styles.padding} />
-      </View>
+      </Container>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center"
