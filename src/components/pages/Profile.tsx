@@ -121,9 +121,13 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
   const alreadyTrusted =
     loggedInMember &&
     member.get("trustedBy").includes(loggedInMember.get("memberId"));
-  const alreadyVerified =
+  const canVerify =
+    // member is logged in
     loggedInMember &&
-    member.get("verifiedBy").includes(loggedInMember.get("memberId"));
+    // member is verified
+    loggedInMember.get("verifiedBy").size > 0 &&
+    // current member hasn't already verified the target member
+    !member.get("verifiedBy").includes(loggedInMember.get("memberId"));
   return (
     <Container>
       <ActivityFeed
@@ -155,7 +159,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
                           toMemberId: member.get("memberId")
                         })
                       }
-                      disabled={alreadyVerified}
+                      disabled={!canVerify}
                     />
                     <Button
                       title={currencySymbol(CurrencyType.Raha)}

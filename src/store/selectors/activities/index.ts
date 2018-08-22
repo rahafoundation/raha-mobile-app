@@ -31,11 +31,15 @@ import { isUnconfirmedRequestInvite } from "../operations";
 import { List } from "immutable";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
-function videoReferenceForMember(member: Member): VideoReference {
+function videoReferenceForUri(videoUri: string): VideoReference {
   return {
-    videoUri: member.videoUri,
-    thumbnailUri: `${member.videoUri}.thumb.jpg`
+    videoUri,
+    thumbnailUri: `${videoUri}.thumb.jpg`
   };
+}
+
+function videoReferenceForMember(member: Member): VideoReference {
+  return videoReferenceForUri(member.videoUri);
 }
 
 /**
@@ -156,7 +160,7 @@ function convertOperationsToActivities(
               description: ["verified their friend's account!"],
               body: {
                 type: BodyType.MEDIA,
-                media: [videoReferenceForMember(creatorMember as Member)]
+                media: [videoReferenceForUri(operation.data.video_url)]
               },
               nextInChain: {
                 direction: ActivityDirection.Forward,
