@@ -132,12 +132,6 @@ export const confirmPhoneLogIn: AsyncActionCreator = (
   }
 };
 
-export const initiateEmailLogIn: AsyncActionCreator = (
-  emailAddress: string
-) => async dispatch => {
-  auth.sendSignInLinkToEmail(emailAddress);
-};
-
 export const signOut: AsyncActionCreator = () => async dispatch => {
   await auth.signOut(); // TODO handle error
   dispatch(signOutAction());
