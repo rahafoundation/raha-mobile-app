@@ -67,7 +67,7 @@ export const reducer: Reducer<AuthenticationState> = (
         isLoaded: true,
         isLoggedIn: false
       };
-    case PhoneLogInActionType.PHONE_LOGIN_CANCELED: {
+    case PhoneLogInActionType.CANCELED: {
       // clear phone login status
       return {
         ...state,
@@ -76,12 +76,12 @@ export const reducer: Reducer<AuthenticationState> = (
         }
       };
     }
-    case PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER:
+    case PhoneLogInActionType.SENDING_PHONE_NUMBER:
       return {
         ...state,
         phoneLogInStatus: { status: PhoneLogInStatus.SENDING_PHONE_NUMBER }
       };
-    case PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED:
+    case PhoneLogInActionType.SENDING_PHONE_NUMBER_FAILED:
       return {
         ...state,
         phoneLogInStatus: {
@@ -89,21 +89,21 @@ export const reducer: Reducer<AuthenticationState> = (
           errorMessage: action.errorMessage
         }
       };
-    case PhoneLogInActionType.PHONE_LOGIN_WAITING_FOR_CONFIRMATION_INPUT:
+    case PhoneLogInActionType.WAITING_FOR_CONFIRMATION_INPUT:
       return {
         ...state,
         phoneLogInStatus: {
           status: PhoneLogInStatus.WAITING_FOR_CONFIRMATION_INPUT
         }
       };
-    case PhoneLogInActionType.PHONE_LOGIN_SENDING_CONFIRMATION:
+    case PhoneLogInActionType.SENDING_CONFIRMATION:
       return {
         ...state,
         phoneLogInStatus: {
           status: PhoneLogInStatus.SENDING_CONFIRMATION
         }
       };
-    case PhoneLogInActionType.PHONE_LOGIN_SENDING_CONFIRMATION_FAILED:
+    case PhoneLogInActionType.SENDING_CONFIRMATION_FAILED:
       return {
         ...state,
         phoneLogInStatus: {
