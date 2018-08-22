@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Big } from "big.js";
-import { StyleSheet, View, Image, TextStyle } from "react-native";
+import { StyleSheet, View, Image, TextStyle, ViewStyle } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
@@ -30,41 +30,29 @@ type StateProps = {
 
 type Props = OwnProps & StateProps;
 
-const MintView: React.StatelessComponent<Props> = ({
-  loggedInMember,
-  unclaimedReferralIds,
-  navigation
-}) => {
-  let net = loggedInMember
+const MoneySection: React.StatelessComponent<Props> = ({ loggedInMember }) => {
+  const net = loggedInMember
     .get("balance")
     .minus(loggedInMember.get("totalMinted"));
-
-  const hasUnclaimedReferrals = unclaimedReferralIds
-    ? unclaimedReferralIds.length > 0
-    : false;
-
   return (
-    <View>
-      <View style={styles.centerFlex}>
-        <Currency
-          style={fontSizes.large}
-          currencyValue={{
-            value: loggedInMember.get("balance"),
-            role: CurrencyRole.Transaction,
-            currencyType: CurrencyType.Raha
-          }}
-        />
-        <Text style={styles.numberLabel}>balance</Text>
-      </View>
-      <View
-        style={[
-          styles.centerFlex,
-          { flexDirection: "row", marginHorizontal: 10 }
-        ]}
-      >
-        <View style={styles.centerFlex}>
+    <React.Fragment>
+      <View style={styles.balanceSection}>
+        <View style={styles.moneyElement}>
           <Currency
-            style={styles.subStat}
+            style={styles.currencyValue}
+            currencyValue={{
+              value: loggedInMember.get("balance"),
+              role: CurrencyRole.Transaction,
+              currencyType: CurrencyType.Raha
+            }}
+          />
+          <Text style={styles.numberLabel}>balance</Text>
+        </View>
+      </View>
+      <View style={styles.donationSection}>
+        <View style={styles.moneyElement}>
+          <Currency
+            style={styles.currencyValue}
             currencyValue={{
               value: loggedInMember.get("totalMinted"),
               role: CurrencyRole.Transaction,
@@ -73,9 +61,9 @@ const MintView: React.StatelessComponent<Props> = ({
           />
           <Text style={styles.numberLabel}>minted</Text>
         </View>
-        <View style={styles.centerFlex}>
+        <View style={styles.moneyElement}>
           <Currency
-            style={styles.subStat}
+            style={styles.currencyValue}
             currencyValue={{
               value: net,
               role: CurrencyRole.Transaction,
@@ -84,9 +72,9 @@ const MintView: React.StatelessComponent<Props> = ({
           />
           <Text style={styles.numberLabel}>transactions</Text>
         </View>
-        <View style={styles.centerFlex}>
+        <View style={styles.moneyElement}>
           <Currency
-            style={styles.subStat}
+            style={styles.currencyValue}
             currencyValue={{
               value: loggedInMember.get("totalDonated"),
               role: CurrencyRole.Donation,
@@ -96,73 +84,128 @@ const MintView: React.StatelessComponent<Props> = ({
           <Text style={styles.numberLabel}>donated</Text>
         </View>
       </View>
-      {loggedInMember.get("isVerified") ? (
-        <React.Fragment>
-          <View style={[styles.centerFlex, { marginBottom: 12, flex: 2 }]}>
-            <Image
-              resizeMode="contain"
-              style={{ flex: 1, margin: 8 }}
-              source={require("../../assets/img/Mint.png")}
-            />
-            <MintButton />
-          </View>
-          <View style={[styles.centerFlex, { marginBottom: 12, flex: 2 }]}>
-            <Image
-              resizeMode="contain"
-              style={{ flex: 1, margin: 8 }}
-              source={require("../../assets/img/Invite.png")}
-            />
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-around",
-                width: "90%"
-              }}
-            >
-              <Button
-                title="Invite"
-                onPress={() => {
-                  navigation.navigate(RouteName.InvitePage);
-                }}
-              />
-              {hasUnclaimedReferrals ? (
-                <Button
-                  title="Claim bonuses!"
-                  onPress={() => {
-                    navigation.navigate(RouteName.ReferralBonusPage, {
-                      unclaimedReferralIds
-                    });
-                  }}
-                />
-              ) : (
-                undefined
-              )}
-            </View>
-          </View>
-        </React.Fragment>
-      ) : (
-        <View style={[styles.centerFlex, { flexGrow: 2 }]}>
-          <Text style={{ textAlign: "center", margin: 12 }}>
-            You must be verified before you can mint Raha or invite new people.
-          </Text>
-        </View>
-      )}
+    </React.Fragment>
+  );
+};
+
+const Actions: React.StatelessComponent<Props> = props => {
+  const { loggedInMember, unclaimedReferralIds, navigation } = props;
+  const hasUnclaimedReferrals = unclaimedReferralIds
+    ? unclaimedReferralIds.length > 0
+    : false;
+
+  if (loggedInMember.get("verifiedBy").size === 0) {
+    return (
+      <Text style={{ textAlign: "center", margin: 12 }}>
+        You must be verified before you can mint Raha or invite new people.
+      </Text>
+    );
+  }
+
+  return (
+    <View style={styles.actionsSection}>
+      <Image
+        resizeMode="contain"
+        style={styles.actionImage}
+        source={require("../../assets/img/Mint.png")}
+      />
+      <MintButton style={styles.mintButton} />
+      <Image
+        resizeMode="contain"
+        style={[styles.actionImage, styles.sectionSpacer]}
+        source={require("../../assets/img/Invite.png")}
+      />
+      <View style={styles.inviteSectionButtons}>
+        <Button
+          title="Invite"
+          onPress={() => {
+            navigation.navigate(RouteName.InvitePage);
+          }}
+        />
+        <Button
+          title={
+            hasUnclaimedReferrals ? "Claim bonuses!" : "No bonuses available"
+          }
+          onPress={() => {
+            navigation.navigate(RouteName.ReferralBonusPage, {
+              unclaimedReferralIds
+            });
+          }}
+          disabled={!hasUnclaimedReferrals}
+        />
+      </View>
     </View>
   );
 };
 
-const subStatStyle: TextStyle = fontSizes.large;
+const MintView: React.StatelessComponent<Props> = props => {
+  return (
+    <View style={styles.container}>
+      <MoneySection {...props} />
+      <Actions {...props} />
+    </View>
+  );
+};
+
+const currencyValueStyle: TextStyle = {
+  ...fontSizes.large
+};
+
 const numberLabelStyle: TextStyle = {
   color: colors.bodyText,
   ...fontSizes.small
 };
+
+const sectionSpacer: ViewStyle = {
+  marginTop: 20
+};
+
+const donationSectionStyle: ViewStyle = {
+  ...sectionSpacer,
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "flex-start"
+};
+
+const balanceSectionStyle: ViewStyle = {};
+
+const moneyElementStyle: ViewStyle = { marginRight: 20 };
+
+const mintButtonStyle: ViewStyle = { ...sectionSpacer };
+const inviteSectionButtonsStyle: ViewStyle = {
+  ...sectionSpacer,
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-evenly"
+};
+
+const containerStyle: ViewStyle = {
+  padding: 20
+};
+
+const actionsSectionStyle: ViewStyle = {
+  marginTop: 20
+};
+
+const actionImageStyle: ViewStyle = {
+  // shrink images to ensure screen doesn't overflow
+  maxWidth: "100%",
+  maxHeight: 150
+};
+
 const styles = StyleSheet.create({
-  centerFlex: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  subStat: subStatStyle,
+  container: containerStyle,
+  sectionSpacer,
+  mintButton: mintButtonStyle,
+  balanceSection: balanceSectionStyle,
+  donationSection: donationSectionStyle,
+  moneyElement: moneyElementStyle,
+  actionImage: actionImageStyle,
+  actionsSection: actionsSectionStyle,
+  inviteSectionButtons: inviteSectionButtonsStyle,
+  currencyValue: currencyValueStyle,
   numberLabel: numberLabelStyle
 });
 
