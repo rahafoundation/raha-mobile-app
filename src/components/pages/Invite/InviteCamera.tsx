@@ -6,7 +6,7 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Camera } from "../../shared/Camera";
-import { Text } from "../../shared/elements";
+import { Text, Container } from "../../shared/elements";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { RahaState } from "../../../store";
 import { MapStateToProps, connect } from "react-redux";
@@ -25,7 +25,7 @@ type InviteCameraProps = ReduxStateProps & OwnProps;
 export class InviteCameraView extends React.Component<InviteCameraProps> {
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <Container>
         <Text style={styles.headerText}>
           {this.props.jointVideo
             ? "Record a video with the person you're inviting."
@@ -50,7 +50,7 @@ export class InviteCameraView extends React.Component<InviteCameraProps> {
             </Text>
           )}
         </View>
-      </View>
+      </Container>
     );
   }
 }

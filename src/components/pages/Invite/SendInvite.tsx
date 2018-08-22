@@ -12,7 +12,7 @@ import {
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { Text, Button, TextInput } from "../../shared/elements";
+import { Text, Button, TextInput, Container } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
 
 type ReduxStateProps = {
@@ -95,7 +95,7 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
       (status === ApiCallStatusType.STARTED ||
         status === ApiCallStatusType.SUCCESS);
     return (
-      <View style={styles.container}>
+      <Container style={styles.container}>
         <Text style={styles.back} onPress={this.props.onBack}>
           Back
         </Text>
@@ -121,7 +121,7 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
           />
           {this._renderSendingStatus()}
         </View>
-      </View>
+      </Container>
     );
   }
 }
@@ -148,7 +148,6 @@ export const SendInvite = connect(
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.darkBackground,
-    flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center"

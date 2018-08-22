@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
-import { Text, Button } from "../../shared/elements";
+import { Text, Button, Container } from "../../shared/elements";
 
 interface Props {
   onContinue: () => void;
@@ -9,7 +9,7 @@ interface Props {
 
 export const InviteSplash: React.StatelessComponent<Props> = props => {
   return (
-    <View style={styles.container}>
+    <Container style={styles.container}>
       <Text style={styles.back} onPress={props.onBack}>
         Back
       </Text>
@@ -26,13 +26,12 @@ export const InviteSplash: React.StatelessComponent<Props> = props => {
         title="Continue"
         onPress={props.onContinue}
       />
-    </View>
+    </Container>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center"

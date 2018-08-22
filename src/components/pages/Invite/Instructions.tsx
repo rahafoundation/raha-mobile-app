@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
-import { Text, Button } from "../../shared/elements";
+import { Text, Button, Container } from "../../shared/elements";
 
 interface Props {
   isJointVideo: boolean;
@@ -10,7 +10,7 @@ interface Props {
 
 export const Instructions: React.StatelessComponent<Props> = props => {
   return (
-    <View style={styles.container}>
+    <Container style={styles.container}>
       <Text style={styles.back} onPress={props.onBack}>
         Back
       </Text>
@@ -32,13 +32,12 @@ export const Instructions: React.StatelessComponent<Props> = props => {
           onPress={props.onContinue}
         />
       </View>
-    </View>
+    </Container>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center"
