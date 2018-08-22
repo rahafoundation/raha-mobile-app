@@ -6,7 +6,7 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Camera } from "../../shared/Camera";
-import { Text, PageContainer } from "../../shared/elements";
+import { Text, IndependentPageContainer } from "../../shared/elements";
 import { fontSizes } from "../../../helpers/fonts";
 
 type OwnProps = {
@@ -18,7 +18,7 @@ type OnboardingCameraProps = OwnProps;
 export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
   render() {
     return (
-      <PageContainer style={styles.container}>
+      <IndependentPageContainer style={styles.container}>
         <Text style={styles.headerText}>
           Please record a video of yourself stating your identity.
         </Text>
@@ -34,7 +34,7 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
             because I believe every life has value."
           </Text>
         </View>
-      </PageContainer>
+      </IndependentPageContainer>
     );
   }
 }

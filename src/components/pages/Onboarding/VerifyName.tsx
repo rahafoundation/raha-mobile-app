@@ -2,7 +2,7 @@ import * as React from "react";
 import { Member } from "../../../store/reducers/members";
 import { View, StyleSheet, Dimensions } from "react-native";
 
-import { Button, Text, TextInput, PageContainer } from "../../shared/elements";
+import { Button, Text, TextInput, IndependentPageContainer } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
 
 /**
@@ -32,7 +32,7 @@ export class VerifyName extends React.Component<
 
   render() {
     return (
-      <PageContainer style={styles.container}>
+      <IndependentPageContainer style={styles.container}>
         <Text style={styles.back} onPress={this.props.onBack}>
           Back
         </Text>
@@ -59,7 +59,7 @@ export class VerifyName extends React.Component<
             />
           </View>
         </View>
-      </PageContainer>
+      </IndependentPageContainer>
     );
   }
 }

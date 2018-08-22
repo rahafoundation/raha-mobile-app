@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 
-import { Text, Button, PageContainer } from "../../shared/elements";
+import { Text, Button, IndependentPageContainer } from "../../shared/elements";
 import { VideoWithPlaceholder } from "../../shared/VideoWithPlaceholder";
 import { getAuthRestrictedVideoRef } from "../../../store/selectors/authentication";
 import { Loading } from "../../shared/Loading";
@@ -124,7 +124,7 @@ export class ConfirmExistingVerificationVideo extends React.Component<
 
   render() {
     return (
-      <PageContainer style={styles.container}>
+      <IndependentPageContainer style={styles.container}>
         <View style={styles.padding} />
         <Text style={styles.back} onPress={this.props.onBack}>
           Back
@@ -138,7 +138,7 @@ export class ConfirmExistingVerificationVideo extends React.Component<
         </View>
         {this._renderVerifyStep()}
         <View style={styles.padding} />
-      </PageContainer>
+      </IndependentPageContainer>
     );
   }
 }

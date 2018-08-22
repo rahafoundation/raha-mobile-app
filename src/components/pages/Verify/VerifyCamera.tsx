@@ -6,7 +6,7 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Camera } from "../../shared/Camera";
-import { Text, PageContainer } from "../../shared/elements";
+import { Text, IndependentPageContainer } from "../../shared/elements";
 
 type OwnProps = {
   ownFullName: string;
@@ -17,7 +17,7 @@ type OwnProps = {
 export class VerifyCamera extends React.Component<OwnProps> {
   render() {
     return (
-      <PageContainer>
+      <IndependentPageContainer>
         <Text style={styles.headerText}>
           Record a video of yourself verifying your friend's identity.
         </Text>
@@ -36,7 +36,7 @@ export class VerifyCamera extends React.Component<OwnProps> {
             ."
           </Text>
         </View>
-      </PageContainer>
+      </IndependentPageContainer>
     );
   }
 }

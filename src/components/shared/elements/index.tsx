@@ -1,4 +1,4 @@
 export * from "./Button";
-export * from "./PageContainer";
+export * from "./IndependentPageContainer";
 export * from "./Text";
 export * from "./TextInput";

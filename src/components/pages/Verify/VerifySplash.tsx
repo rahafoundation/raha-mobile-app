@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
-import { Text, Button, PageContainer } from "../../shared/elements";
+import { Text, Button, IndependentPageContainer } from "../../shared/elements";
 
 interface Props {
   onContinue: () => void;
@@ -9,7 +9,7 @@ interface Props {
 
 export const VerifySplash: React.StatelessComponent<Props> = props => {
   return (
-    <PageContainer style={styles.container}>
+    <IndependentPageContainer style={styles.container}>
       <Text style={styles.back} onPress={props.onBack}>
         Back
       </Text>
@@ -26,7 +26,7 @@ export const VerifySplash: React.StatelessComponent<Props> = props => {
         title="Continue"
         onPress={props.onContinue}
       />
-    </PageContainer>
+    </IndependentPageContainer>
   );
 };
 
