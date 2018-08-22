@@ -2,7 +2,7 @@ import * as React from "react";
 import { Member } from "../../../store/reducers/members";
 import { View, StyleSheet, Dimensions } from "react-native";
 
-import { Button, Text, TextInput } from "../../shared/elements";
+import { Button, Text, TextInput, Container } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
 
 /**
@@ -32,7 +32,7 @@ export class VerifyName extends React.Component<
 
   render() {
     return (
-      <View style={styles.container}>
+      <Container style={styles.container}>
         <Text style={styles.back} onPress={this.props.onBack}>
           Back
         </Text>
@@ -57,7 +57,7 @@ export class VerifyName extends React.Component<
             }}
           />
         </View>
-      </View>
+      </Container>
     );
   }
 }
@@ -70,7 +70,6 @@ const styles = StyleSheet.create({
     margin: 12
   },
   container: {
-    flex: 1,
     backgroundColor: colors.darkBackground,
     alignItems: "center",
     justifyContent: "center"

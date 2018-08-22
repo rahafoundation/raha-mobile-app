@@ -12,7 +12,7 @@ import {
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { Text, Button } from "../../shared/elements";
+import { Text, Button, Container } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
 
 type ReduxStateProps = {
@@ -70,7 +70,7 @@ class OnboardingCreateAccountView extends React.Component<
 
   render() {
     return (
-      <View style={styles.container}>
+      <Container style={styles.container}>
         <View style={styles.card}>
           <Text style={styles.text}>
             By clicking Join, I agree that this is my real identity, my full
@@ -119,7 +119,7 @@ class OnboardingCreateAccountView extends React.Component<
           <Button title="Join" onPress={this.createAccount} />
           {this._renderRequestingStatus()}
         </View>
-      </View>
+      </Container>
     );
   }
 }
@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
     color: "#0074D9"
   },
   container: {
-    flex: 1,
     backgroundColor: colors.darkBackground,
     alignItems: "center",
     justifyContent: "center"

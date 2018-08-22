@@ -6,7 +6,7 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Camera } from "../../shared/Camera";
-import { Text } from "../../shared/elements";
+import { Text, Container } from "../../shared/elements";
 
 type OwnProps = {
   verifiedFullName: string;
@@ -17,7 +17,7 @@ type OnboardingCameraProps = OwnProps;
 export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <Container>
         <Text style={styles.headerText}>
           Please record a video of yourself stating your identity.
         </Text>
@@ -33,7 +33,7 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
             because I believe every life has value."
           </Text>
         </View>
-      </View>
+      </Container>
     );
   }
 }

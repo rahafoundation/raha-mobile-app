@@ -12,7 +12,7 @@ import {
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { Text, Button } from "../../shared/elements";
+import { Text, Button, Container } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
 
 type ReduxStateProps = {
@@ -75,7 +75,7 @@ class SubmitVerificationView extends React.Component<SubmitVerificationProps> {
       (status === ApiCallStatusType.STARTED ||
         status === ApiCallStatusType.SUCCESS);
     return (
-      <View style={styles.container}>
+      <Container style={styles.container}>
         <Text style={styles.back} onPress={this.props.onBack}>
           Back
         </Text>
@@ -94,7 +94,7 @@ class SubmitVerificationView extends React.Component<SubmitVerificationProps> {
           />
           {this._renderSubmittingStatus()}
         </View>
-      </View>
+      </Container>
     );
   }
 }
@@ -118,7 +118,6 @@ export const SubmitVerification = connect(
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.darkBackground,
-    flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center"
