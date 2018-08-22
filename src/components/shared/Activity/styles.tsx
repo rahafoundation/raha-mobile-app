@@ -1,7 +1,6 @@
 import { ViewStyle, TextStyle, StyleSheet } from "react-native";
-import { colors } from "react-native-elements";
 import { fontSizes } from "../../../helpers/fonts";
-import { palette } from "../../../helpers/colors";
+import { colors, palette } from "../../../helpers/colors";
 
 export const leftColumnWidth = 50;
 const activitySpacing = 30;
