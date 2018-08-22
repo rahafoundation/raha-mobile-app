@@ -7,8 +7,7 @@ import {
   Text as NativeText,
   TextProps,
   TextStyle,
-  StyleSheet,
-  StyleProp
+  StyleSheet
 } from "react-native";
 
 import { fonts, fontSizes } from "../../../helpers/fonts";
@@ -19,9 +18,11 @@ export { TextProps } from "react-native";
 /**
  * General purpose text component for the app, including app styling.
  */
-export const Text: React.StatelessComponent<TextProps> = props => {
-  const textStyle: StyleProp<TextStyle> = [styles.text, props.style];
-  return <NativeText {...props} style={textStyle} />;
+export const Text: React.StatelessComponent<TextProps> = ({
+  style,
+  ...props
+}) => {
+  return <NativeText {...props} style={[styles.text, style]} />;
 };
 
 const textStyle: TextStyle = {

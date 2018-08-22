@@ -23,8 +23,8 @@ const metadataRowStyle: ViewStyle = {
 };
 
 const timestampStyle: TextStyle = {
-  color: colors.secondaryText,
-  ...fontSizes.small
+  ...fontSizes.small,
+  color: colors.secondaryText
 };
 
 const actorRowStyle: ViewStyle = {
