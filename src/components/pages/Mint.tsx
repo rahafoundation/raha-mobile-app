@@ -12,7 +12,7 @@ import { getLoggedInMember } from "../../store/selectors/authentication";
 import { NavigationScreenProps } from "react-navigation";
 import { getUnclaimedReferrals } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
-import { Button, Container, Text } from "../shared/elements";
+import { Button, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";
 import {
   Currency,
@@ -44,7 +44,7 @@ const MintView: React.StatelessComponent<Props> = ({
     : false;
 
   return (
-    <Container>
+    <View>
       <View style={styles.centerFlex}>
         <Currency
           style={fontSizes.large}
@@ -147,7 +147,7 @@ const MintView: React.StatelessComponent<Props> = ({
           </Text>
         </View>
       )}
-    </Container>
+    </View>
   );
 };
 
@@ -158,7 +158,7 @@ const numberLabelStyle: TextStyle = {
 };
 const styles = StyleSheet.create({
   centerFlex: {
-    flex: 1,
+    display: "flex",
     alignItems: "center",
     justifyContent: "center"
   },

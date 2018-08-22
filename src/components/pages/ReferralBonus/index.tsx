@@ -4,7 +4,7 @@
  */
 
 import * as React from "react";
-import { FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
@@ -15,7 +15,6 @@ import { mintReferralBonus } from "../../../store/actions/wallet";
 import { Member } from "../../../store/reducers/members";
 import { getMembersByIds } from "../../../store/selectors/members";
 import { ReferralThumbnail } from "./ReferralThumbnail";
-import { Container } from "../../shared/elements";
 
 export interface ReferralBonusNavParams {
   unclaimedReferralIds: (MemberId | undefined)[];
@@ -40,7 +39,7 @@ const ReferralsComponent: React.StatelessComponent<Props> = ({
 }) => {
   const members = unclaimedReferralMembers.filter(m => m) as Member[];
   return (
-    <Container>
+    <View>
       <FlatList
         data={members}
         keyExtractor={m => m.get("memberId")}
@@ -48,7 +47,7 @@ const ReferralsComponent: React.StatelessComponent<Props> = ({
           <ReferralThumbnail invitedMember={m.item} navigation={navigation} />
         )}
       />
-    </Container>
+    </View>
   );
 };
 

@@ -29,7 +29,7 @@ import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { getMemberById } from "../../../store/selectors/members";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
-import { Button, Container, Text } from "../../shared/elements";
+import { Button, Text } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
 
 const MAX_MEMO_LENGTH = 140;
@@ -202,7 +202,7 @@ class GiveFormView extends React.Component<Props, State> {
         keyboardVerticalOffset={56} // Offset by the header
         behavior="padding"
       >
-        <Container style={styles.container}>
+        <View style={styles.container}>
           <ScrollView ref={ref => (this.scrollView = ref)}>
             <View style={styles.toRow}>
               {this.state.toMember ? (
@@ -210,9 +210,8 @@ class GiveFormView extends React.Component<Props, State> {
                   <FormLabel>To:</FormLabel>
                   <View style={styles.selectedMember}>
                     <Text onPress={this.clearTo}>
-                      {this.state.toMember.get("fullName")} ({this.state.toMember.get(
-                        "username"
-                      )})
+                      {this.state.toMember.get("fullName")} (
+                      {this.state.toMember.get("username")})
                     </Text>
                   </View>
                 </React.Fragment>
@@ -280,9 +279,9 @@ class GiveFormView extends React.Component<Props, State> {
                 containerStyle={styles.section}
               >
                 You will give {this.state.amount.toString()} Raha to{" "}
-                {this.state.toMember.get("fullName")} for "{this.state.memo
-                  ? `${this.state.memo}`
-                  : ""}".
+                {this.state.toMember.get("fullName")} for "
+                {this.state.memo ? `${this.state.memo}` : ""}
+                ".
               </FormValidationMessage>
             ) : (
               <React.Fragment />
@@ -300,7 +299,7 @@ class GiveFormView extends React.Component<Props, State> {
               />
             </View>
           </ScrollView>
-        </Container>
+        </View>
       </KeyboardAvoidingView>
     );
   }

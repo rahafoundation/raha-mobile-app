@@ -7,7 +7,6 @@ import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 
 import { ActivityFeed } from "../shared/Activity/ActivityFeed";
-import { Container } from "../shared/elements";
 import { RahaState } from "../../store";
 import { allActivities } from "../../store/selectors/activities";
 import { Activity } from "../../store/selectors/activities/types";
@@ -17,11 +16,7 @@ type StateProps = {
 };
 
 const FeedView: React.StatelessComponent<StateProps> = ({ activities }) => {
-  return (
-    <Container>
-      <ActivityFeed activities={activities} />
-    </Container>
-  );
+  return <ActivityFeed activities={activities} />;
 };
 
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {

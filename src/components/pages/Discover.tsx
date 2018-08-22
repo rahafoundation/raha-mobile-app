@@ -18,7 +18,7 @@ import {
 import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { NavigationScreenProp } from "react-navigation";
 import { RouteName } from "../shared/Navigation";
-import { Button, Container, Text } from "../shared/elements";
+import { Button, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";
 import { fonts } from "../../helpers/fonts";
 
@@ -184,7 +184,7 @@ export const Discover: React.StatelessComponent<DiscoverProps> = ({
   // Add padding so last card does not end up hidden by tab bar
   cards.push(<View key="end_padding" style={{ height: 75 }} />);
   return (
-    <Container>
+    <View>
       <View style={{ marginTop: 8 }}>
         <MemberSearchBar
           lightTheme
@@ -196,7 +196,7 @@ export const Discover: React.StatelessComponent<DiscoverProps> = ({
         />
       </View>
       <ScrollView>{cards}</ScrollView>
-    </Container>
+    </View>
   );
 };
 

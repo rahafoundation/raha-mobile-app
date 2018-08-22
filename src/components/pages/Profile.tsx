@@ -23,7 +23,7 @@ import { trustMember } from "../../store/actions/members";
 import { getMemberById } from "../../store/selectors/members";
 import { ActivityFeed } from "../shared/Activity/ActivityFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
-import { Button, Container, Text } from "../shared/elements";
+import { Button, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";
 import { VideoWithPlaceholder } from "../shared/VideoWithPlaceholder";
 import { activitiesForMember } from "../../store/selectors/activities";
@@ -129,7 +129,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
     // current member hasn't already verified the target member
     !member.get("verifiedBy").includes(loggedInMember.get("memberId"));
   return (
-    <Container>
+    <View>
       <ActivityFeed
         activities={activities}
         header={
@@ -175,7 +175,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
           </View>
         }
       />
-    </Container>
+    </View>
   );
 };
 

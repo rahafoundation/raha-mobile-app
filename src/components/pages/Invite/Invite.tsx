@@ -5,7 +5,7 @@ import { MapStateToProps, connect } from "react-redux";
 import { RNFirebase } from "react-native-firebase";
 import DropdownAlert from "react-native-dropdownalert";
 
-import { Container } from "../../shared/elements";
+import { PageContainer } from "../../shared/elements";
 import { InviteCamera } from "./InviteCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
 import {
@@ -212,10 +212,10 @@ class InviteView extends React.Component<InviteProps, InviteState> {
 
   render() {
     return (
-      <Container>
+      <PageContainer>
         {this._renderStep()}
         <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
-      </Container>
+      </PageContainer>
     );
   }
 }
