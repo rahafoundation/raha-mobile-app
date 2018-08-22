@@ -339,14 +339,15 @@ function applyOperation(
           request_invite_from_member_id
         } = operation.data;
 
-        if (!GENESIS_CREATE_MEMBER_OPS.includes(operation.id)) {
-          if (request_invite_from_member_id) {
-            assertMemberIdPresentInState(
-              newState,
-              request_invite_from_member_id,
-              operation
-            );
-          }
+        if (
+          !GENESIS_CREATE_MEMBER_OPS.includes(operation.id) &&
+          request_invite_from_member_id
+        ) {
+          assertMemberIdPresentInState(
+            newState,
+            request_invite_from_member_id,
+            operation
+          );
         }
 
         const memberData = {
