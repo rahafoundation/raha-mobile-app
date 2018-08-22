@@ -9,7 +9,8 @@ import {
   TextStyle,
   Image,
   Dimensions,
-  Platform
+  Platform,
+  ViewStyle
 } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
@@ -35,7 +36,7 @@ import { RahaState, RahaThunkDispatch } from "../../store";
 import { RouteName } from "../shared/Navigation";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { getMemberById } from "../../store/selectors/members";
-import { Button, Container, Text } from "../shared/elements";
+import { Button, Text } from "../shared/elements";
 import { PhoneLogInStatus } from "../../store/reducers/authentication";
 import { FormLabel } from "react-native-elements";
 import {
@@ -45,7 +46,7 @@ import {
 } from "google-libphonenumber";
 import { Map } from "immutable";
 import { TextInput } from "../shared/elements/TextInput";
-import { fonts } from "../../helpers/fonts";
+import { fonts, fontSizes } from "../../helpers/fonts";
 import { colors } from "../../helpers/colors";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -167,24 +168,25 @@ class PhoneNumberForm extends React.Component<
       <React.Fragment>
         <Text style={fonts.Lato.Bold as TextStyle} />
 
-        <FormLabel>Phone number</FormLabel>
+        <Text style={styles.phoneLabel}>Phone number</Text>
         <View style={styles.phoneInput}>
-          <CountryPicker
-            ref={elem => {
-              this.countryPicker = elem;
-            }}
-            cca2={this.state.country.cca2}
-            showCallingCode
-            onChange={this._handleCountryInput}
-            filterable
-          />
           <TouchableOpacity
             onPress={() => {
               if (this.countryPicker) {
                 this.countryPicker.openModal();
               }
             }}
+            style={styles.countryPicker}
           >
+            <CountryPicker
+              ref={elem => {
+                this.countryPicker = elem;
+              }}
+              cca2={this.state.country.cca2}
+              showCallingCode
+              onChange={this._handleCountryInput}
+              filterable
+            />
             <Text style={styles.callingCode}>
               +{this.state.country.callingCode}
             </Text>
@@ -501,7 +503,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
     const loginMessage =
       this.props.loginMessage || this.props.navigation.getParam("loginMessage");
     return (
-      <Container style={styles.container}>
+      <View style={styles.container}>
         <Image
           resizeMode="contain"
           style={styles.image}
@@ -518,13 +520,30 @@ class LogInView extends React.Component<LogInProps, LogInState> {
           {this._renderContents()}
         </View>
         <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
-      </Container>
+      </View>
     );
   }
 }
 
+const phoneLabelStyle: TextStyle = {
+  ...fonts.Lato.Bold,
+  ...fontSizes.medium,
+  color: colors.secondaryText
+};
+
+const countryPickerStyle: ViewStyle = {
+  display: "flex",
+  flexDirection: "row",
+  // inconsistent display behavior on ios and android
+  alignItems: Platform.OS === "android" ? "center" : "baseline",
+  flexWrap: "nowrap"
+};
+
 const styles = StyleSheet.create({
   container: {
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
     width: "100%",
     alignItems: "center",
     backgroundColor: colors.darkBackground
@@ -534,35 +553,35 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     width: Dimensions.get("window").width - 24,
-    backgroundColor: colors.pageBackground
+    backgroundColor: colors.pageBackground,
+    paddingHorizontal: 20
   },
   image: {
     flex: 1
   },
   androidMessage: {
     textAlign: "center",
-    marginBottom: 8,
-    fontSize: 12
+    marginBottom: 8
   },
   message: {
     margin: 18,
-    fontSize: 16,
     textAlign: "center"
   },
+  countryPicker: countryPickerStyle,
   phoneInput: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "baseline",
-    paddingHorizontal: 20,
+    alignItems: "center",
     marginTop: 10,
     marginBottom: 25
   },
+  phoneLabel: phoneLabelStyle,
   callingCode: {
     marginLeft: 15,
     fontSize: 20
   },
   phoneNumberInput: {
-    flex: 1,
+    flexGrow: 1,
     fontSize: 20,
     marginLeft: 15
   },
