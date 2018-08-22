@@ -17,8 +17,12 @@ import { Member } from "../../store/reducers/members";
 
 import { Button } from "./elements";
 import { CurrencyRole, CurrencyType, CurrencyValue } from "./elements/Currency";
+import { StyleProp, ViewStyle } from "react-native";
 
-interface OwnProps {}
+interface OwnProps {
+  style?: StyleProp<ViewStyle>;
+}
+
 interface StateProps {
   loggedInMember?: Member;
   mintableAmount?: Big;
@@ -53,6 +57,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
     : undefined;
   return (
     <Button
+      style={props.style}
       title={["Mint", ...(mintValue ? [mintValue] : [])]}
       onPress={mint}
       disabled={!canMint}
