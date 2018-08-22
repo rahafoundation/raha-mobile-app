@@ -59,15 +59,18 @@ export const Button: React.StatelessComponent<ButtonProps> = props => {
 
   return (
     <ArbitraryButton {...props}>
-      <MixedText
-        style={[
-          styles.text,
-          props.textStyle,
-          ...(props.disabled ? disabledTextStyles : [])
-        ]}
-        content={props.title}
-        textTransform={s => s.toUpperCase()}
-      />
+      {/* Hack to make Android properly center text: Wrap in another <Text />*/}
+      <Text style={{ textAlign: "center" }}>
+        <MixedText
+          style={[
+            styles.text,
+            props.textStyle,
+            ...(props.disabled ? disabledTextStyles : [])
+          ]}
+          content={props.title}
+          textTransform={s => s.toUpperCase()}
+        />
+      </Text>
     </ArbitraryButton>
   );
 };
