@@ -34,13 +34,16 @@ type Props = OwnProps & StateProps & MergedProps;
 
 const MintButtonComponent: React.StatelessComponent<Props> = props => {
   const { mintableAmount, mintApiCallStatus, mint, loggedInMember } = props;
-  const buttonDisabled =
-    !loggedInMember ||
-    (!loggedInMember.get("inviteConfirmed") ||
-      loggedInMember.get("verifiedBy").size <= 0) ||
-    (mintableAmount && mintableAmount.lte(0)) ||
-    (mintApiCallStatus &&
-      mintApiCallStatus.status === ApiCallStatusType.STARTED);
+  const canMint =
+    // member is logged in
+    loggedInMember &&
+    // member has been verified
+    loggedInMember.get("verifiedBy").size > 0 &&
+    // member has raha to mint
+    (mintableAmount && mintableAmount.gt(0)) &&
+    // api call hasn't started
+    (!mintApiCallStatus ||
+      mintApiCallStatus.status !== ApiCallStatusType.SUCCESS);
   const mintValue: CurrencyValue | undefined = mintableAmount
     ? {
         value: mintableAmount,
@@ -52,7 +55,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
     <Button
       title={["Mint", ...(mintValue ? [mintValue] : [])]}
       onPress={mint}
-      disabled={buttonDisabled}
+      disabled={!canMint}
     />
   );
 };
