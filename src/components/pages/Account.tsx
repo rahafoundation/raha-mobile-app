@@ -118,7 +118,7 @@ const rowStyle: ViewStyle = {
 
 const memberRowStyle: ViewStyle = {
   ...rowStyle,
-  display: "flex",
+
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "flex-start"

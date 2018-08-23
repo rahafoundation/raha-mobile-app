@@ -60,7 +60,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
 };
 
 const memberEntryStyle: ViewStyle = {
-  display: "flex",
+
   flexDirection: "row",
   justifyContent: "flex-start",
   alignItems: "center",

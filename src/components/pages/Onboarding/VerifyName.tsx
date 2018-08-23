@@ -2,7 +2,12 @@ import * as React from "react";
 import { Member } from "../../../store/reducers/members";
 import { View, StyleSheet, Dimensions } from "react-native";
 
-import { Button, Text, TextInput, IndependentPageContainer } from "../../shared/elements";
+import {
+  Button,
+  Text,
+  TextInput,
+  IndependentPageContainer
+} from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
 
 /**
@@ -32,7 +37,7 @@ export class VerifyName extends React.Component<
 
   render() {
     return (
-      <IndependentPageContainer style={styles.container}>
+      <IndependentPageContainer containerStyle={styles.container}>
         <Text style={styles.back} onPress={this.props.onBack}>
           Back
         </Text>
@@ -66,7 +71,7 @@ export class VerifyName extends React.Component<
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
+
     flexDirection: "column",
     justifyContent: "flex-start", // so that back button stays pushed to top
     backgroundColor: colors.darkBackground
@@ -81,7 +86,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
 
     // center children in screen
-    display: "flex",
+
     alignItems: "center",
     justifyContent: "center"
   },

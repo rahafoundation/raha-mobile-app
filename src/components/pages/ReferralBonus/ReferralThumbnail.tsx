@@ -169,7 +169,7 @@ export const ReferralThumbnail = connect(
 )(ReferralThumbnailComponent);
 
 const rowStyle: ViewStyle = {
-  display: "flex",
+
   flexDirection: "row",
   marginHorizontal: 12,
   marginTop: 12,

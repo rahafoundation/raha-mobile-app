@@ -162,7 +162,7 @@ const sectionSpacer: ViewStyle = {
 
 const donationSectionStyle: ViewStyle = {
   ...sectionSpacer,
-  display: "flex",
+
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "flex-start"
@@ -175,7 +175,7 @@ const moneyElementStyle: ViewStyle = { marginRight: 20 };
 const mintButtonStyle: ViewStyle = { ...sectionSpacer };
 const inviteSectionButtonsStyle: ViewStyle = {
   ...sectionSpacer,
-  display: "flex",
+
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-evenly"

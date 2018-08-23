@@ -18,7 +18,7 @@ type OnboardingCameraProps = OwnProps;
 export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
   render() {
     return (
-      <IndependentPageContainer style={styles.container}>
+      <IndependentPageContainer containerStyle={styles.container}>
         <Text style={styles.headerText}>
           Please record a video of yourself stating your identity.
         </Text>
@@ -41,7 +41,7 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
+
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center"

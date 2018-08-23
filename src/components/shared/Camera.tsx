@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   camera: {
     // ensure children are pushed to the bottom
-    display: "flex",
+
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-end",

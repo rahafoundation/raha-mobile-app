@@ -532,7 +532,7 @@ const phoneLabelStyle: TextStyle = {
 };
 
 const countryPickerStyle: ViewStyle = {
-  display: "flex",
+
   flexDirection: "row",
   // inconsistent display behavior on ios and android
   alignItems: Platform.OS === "android" ? "center" : "baseline",
@@ -541,7 +541,7 @@ const countryPickerStyle: ViewStyle = {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
+
     flexDirection: "column",
     height: "100%",
     width: "100%",
@@ -569,7 +569,7 @@ const styles = StyleSheet.create({
   },
   countryPicker: countryPickerStyle,
   phoneInput: {
-    display: "flex",
+
     flexDirection: "row",
     alignItems: "center",
     marginTop: 10,
@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
     marginLeft: 15
   },
   confirmationInput: {
-    display: "flex",
+
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,

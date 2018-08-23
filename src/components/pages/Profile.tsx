@@ -182,7 +182,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
 const headerStyle: ViewStyle = {
   backgroundColor: colors.darkAccent,
   padding: 20,
-  display: "flex",
+
   flexDirection: "row",
   justifyContent: "flex-start",
   alignItems: "center"
@@ -210,7 +210,7 @@ const memberUsernameStyle: TextStyle = {
 const thumbnailStyle: ViewStyle = {
   flexGrow: 0,
   flexBasis: 120,
-  display: "flex",
+
   flexDirection: "column",
   alignItems: "center",
   marginRight: 20
@@ -222,7 +222,7 @@ const detailsSpacer: ViewStyle = {
 
 const memberActionsStyle: ViewStyle = {
   ...detailsSpacer,
-  display: "flex",
+
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center"
@@ -230,7 +230,7 @@ const memberActionsStyle: ViewStyle = {
 
 const statsContainerStyle: ViewStyle = {
   ...detailsSpacer,
-  display: "flex",
+
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center"

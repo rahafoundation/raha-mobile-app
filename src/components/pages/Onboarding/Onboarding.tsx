@@ -300,7 +300,6 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
                 step: OnboardingStep.CAMERA
               });
             }}
-            fullScreen
           />
         );
       }
