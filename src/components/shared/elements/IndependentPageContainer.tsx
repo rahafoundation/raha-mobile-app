@@ -1,11 +1,11 @@
 import * as React from "react";
-import { StyleSheet, ViewProps, StyleProp, View } from "react-native";
+import { StyleSheet, ViewProps, StyleProp, View, Platform } from "react-native";
 
-import { SafeAreaView } from "../SafeAreaView";
+import { SafeAreaView } from "react-navigation";
 import { colors } from "../../../helpers/colors";
 
 interface IndependentPageContainerProps {
-  style?: StyleProp<ViewProps>;
+  containerStyle?: StyleProp<ViewProps>;
 }
 
 /**
@@ -26,10 +26,25 @@ interface IndependentPageContainerProps {
  */
 export const IndependentPageContainer: React.StatelessComponent<
   IndependentPageContainerProps
-> = ({ style, children }) => {
+> = ({ containerStyle, children }) => {
   return (
-    <View style={[styles.container, style]}>
-      <SafeAreaView>{children}</SafeAreaView>
+    <View style={[styles.container, containerStyle]}>
+      {Platform.OS === "ios" ? (
+        <SafeAreaView
+          forceInset={{
+            top: "always",
+            left: "always",
+            bottom: "always",
+            right: "always"
+          }}
+        >
+          {children}
+        </SafeAreaView>
+      ) : (
+        // Android doesn't allow overlapping with statusbar anyway, so no need
+        // to use a SafeAreaView
+        <View>{children}</View>
+      )}
     </View>
   );
 };
