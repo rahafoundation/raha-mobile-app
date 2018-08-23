@@ -68,3 +68,8 @@
 -dontwarn java.nio.file.*
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -dontwarn okio.**
+
+# react-native-firebase
+# https://rnfirebase.io/docs/v4.3.x/installation/android#Using-with-Proguard-enabled
+-keep class io.invertase.firebase.** { *; }
+-dontwarn io.invertase.firebase.**
