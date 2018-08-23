@@ -124,7 +124,7 @@ export class ConfirmExistingVerificationVideo extends React.Component<
 
   render() {
     return (
-      <IndependentPageContainer style={styles.container}>
+      <IndependentPageContainer containerStyle={styles.container}>
         <View style={styles.padding} />
         <Text style={styles.back} onPress={this.props.onBack}>
           Back

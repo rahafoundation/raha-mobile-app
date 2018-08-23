@@ -217,7 +217,6 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
                 step: VerifyStep.CAMERA
               });
             }}
-            fullScreen={false}
           />
         );
       }
