@@ -22,20 +22,25 @@ import Video from "react-native-video";
 
 type Props = {
   uri: string;
+  autoplay?: boolean;
   style?: StyleProp<ViewStyle>;
 };
 
-const initialState = {
-  isPressed: false,
+const initialState = (props: VideoWithPlaceholderViewProps) => ({
+  isPressed: props.autoplay ? true : false, // TODO: this is a little weird
   videoLoaded: false,
-  videoPaused: true
-};
+  videoPaused: props.autoplay ? false : true
+});
 
+type VideoWithPlaceholderViewProps = Props & NavigationInjectedProps;
 export class VideoWithPlaceholderView extends React.Component<
-  Props & NavigationInjectedProps,
-  typeof initialState
+  VideoWithPlaceholderViewProps,
+  ReturnType<typeof initialState>
 > {
-  state = initialState;
+  constructor(props: VideoWithPlaceholderViewProps) {
+    super(props);
+    this.state = initialState(props);
+  }
 
   navSub?: NavigationEventSubscription;
   video: Video | null = null;
@@ -56,7 +61,7 @@ export class VideoWithPlaceholderView extends React.Component<
   };
 
   reset = () => {
-    this.setState(initialState);
+    this.setState(initialState(this.props));
   };
 
   onEnd = () => {
