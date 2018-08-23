@@ -176,15 +176,22 @@ const MemberList = {
   }
 };
 
+const OWN_PROFILE = Symbol("OWN_PROFILE");
 const Profile: NavigationRouteConfig = {
   screen: ProfileScreen,
   navigationOptions: ({ navigation }: any) => {
-    const member: Member = navigation.getParam("member");
+    const member = navigation.getParam("member", OWN_PROFILE) as
+      | Member
+      | typeof OWN_PROFILE;
+
+    const title =
+      member !== OWN_PROFILE ? member.get("fullName") : "Your Profile";
+    const headerRight =
+      member === OWN_PROFILE ? settingsButton(navigation) : <React.Fragment />;
+
     return {
-      headerTitle: (
-        <HeaderTitle title={member ? member.get("fullName") : "Your Profile"} />
-      ),
-      headerRight: settingsButton(navigation),
+      headerTitle: <HeaderTitle title={title} />,
+      headerRight,
       headerStyle: styles.header
     };
   }
