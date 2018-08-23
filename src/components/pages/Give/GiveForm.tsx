@@ -346,9 +346,7 @@ export const GiveForm = connect(
 )(GiveFormView);
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 8
-  },
+  container: {},
 
   section: {
     marginTop: 16

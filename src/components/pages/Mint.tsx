@@ -61,7 +61,8 @@ const MoneySection: React.StatelessComponent<Props> = ({ loggedInMember }) => {
           />
           <Text style={styles.numberLabel}>minted</Text>
         </View>
-        <View style={styles.moneyElement}>
+        {/* TODO: make this more intuitive, or remove. This value is confusing */}
+        {/* <View style={styles.moneyElement}>
           <Currency
             style={styles.currencyValue}
             currencyValue={{
@@ -71,7 +72,7 @@ const MoneySection: React.StatelessComponent<Props> = ({ loggedInMember }) => {
             }}
           />
           <Text style={styles.numberLabel}>transactions</Text>
-        </View>
+        </View> */}
         <View style={styles.moneyElement}>
           <Currency
             style={styles.currencyValue}
