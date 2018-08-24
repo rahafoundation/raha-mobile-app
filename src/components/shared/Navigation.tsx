@@ -262,8 +262,13 @@ export function createNavigatorForTab(
 function createHeaderNavigationOptions(title: string) {
   return ({ navigation }: any) => ({
     headerTitle: <HeaderTitle title={title} />,
-    headerRight: giveButton(navigation),
-    headerStyle: styles.header
+    headerStyle: styles.header,
+    // only show give button if not on give page
+    ...(navigation.state.routeName === RouteName.GivePage
+      ? {}
+      : {
+          headerRight: giveButton(navigation)
+        })
   });
 }
 
