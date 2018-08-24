@@ -31,6 +31,7 @@ export const MemberName: React.StatelessComponent<MemberNameProps> = ({
   return (
     <TextLink
       style={[styles.memberName, style]}
+      colored={false}
       destination={{
         type: LinkType.InApp,
         route: {
