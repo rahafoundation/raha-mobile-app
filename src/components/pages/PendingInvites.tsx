@@ -5,7 +5,8 @@ import { ActivityFeed } from "../shared/Activity/ActivityFeed";
 import { RahaState } from "../../store";
 import { Activity } from "../../store/selectors/activities/types";
 import { pendingInviteActivities } from "../../store/selectors/activities";
-import { View } from "react-native";
+import { View, StyleSheet, ViewStyle } from "react-native";
+import { colors } from "../../helpers/colors";
 
 type StateProps = {
   pendingInviteActivities: Activity[];
@@ -15,7 +16,7 @@ const PendingInvitesView: React.StatelessComponent<StateProps> = ({
   pendingInviteActivities
 }) => {
   return (
-    <View>
+    <View style={styles.page}>
       <ActivityFeed activities={pendingInviteActivities} />
     </View>
   );
@@ -28,3 +29,10 @@ const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
 };
 
 export const PendingInvites = connect(mapStateToProps)(PendingInvitesView);
+
+const pageStyle: ViewStyle = {
+  backgroundColor: colors.pageBackground
+};
+const styles = StyleSheet.create({
+  page: pageStyle
+});
