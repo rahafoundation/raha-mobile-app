@@ -1,6 +1,13 @@
 import * as React from "react";
 import { Big } from "big.js";
-import { StyleSheet, View, Image, TextStyle, ViewStyle } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  TextStyle,
+  ViewStyle,
+  Dimensions
+} from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
@@ -35,7 +42,7 @@ const MoneySection: React.StatelessComponent<Props> = ({ loggedInMember }) => {
     .get("balance")
     .minus(loggedInMember.get("totalMinted"));
   return (
-    <React.Fragment>
+    <View style={styles.financesSection}>
       <View style={styles.balanceSection}>
         <View style={styles.moneyElement}>
           <Currency
@@ -85,7 +92,7 @@ const MoneySection: React.StatelessComponent<Props> = ({ loggedInMember }) => {
           <Text style={styles.numberLabel}>donated</Text>
         </View>
       </View>
-    </React.Fragment>
+    </View>
   );
 };
 
@@ -141,7 +148,7 @@ const Actions: React.StatelessComponent<Props> = props => {
 
 const MintView: React.StatelessComponent<Props> = props => {
   return (
-    <View style={styles.container}>
+    <View style={styles.page}>
       <MoneySection {...props} />
       <Actions {...props} />
     </View>
@@ -157,49 +164,70 @@ const numberLabelStyle: TextStyle = {
   ...fontSizes.small
 };
 
+// shared to create consistent spacing
 const sectionSpacer: ViewStyle = {
   marginTop: 20
 };
 
-const donationSectionStyle: ViewStyle = {
-  ...sectionSpacer,
+const financesSectionStyle: ViewStyle = {
+  flex: 0, // don't expand to fill space
+  alignSelf: "stretch", // take full width
+  marginBottom: 20,
 
+  // balance on left side, other financial info pushed to right.
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center"
+};
+
+const donationSectionStyle: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "flex-start"
 };
-
 const balanceSectionStyle: ViewStyle = {};
-
 const moneyElementStyle: ViewStyle = { marginRight: 20 };
-
 const mintButtonStyle: ViewStyle = { ...sectionSpacer };
+
 const inviteSectionButtonsStyle: ViewStyle = {
   ...sectionSpacer,
 
+  alignSelf: "stretch",
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-evenly"
 };
 
-const containerStyle: ViewStyle = {
-  padding: 20
+const pageStyle: ViewStyle = {
+  backgroundColor: colors.pageBackground,
+  height: "100%",
+  padding: 20,
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "space-between"
 };
 
 const actionsSectionStyle: ViewStyle = {
-  marginTop: 20
+  ...sectionSpacer,
+  flex: 1,
+
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "space-between"
 };
 
 const actionImageStyle: ViewStyle = {
   // shrink images to ensure screen doesn't overflow
-  maxWidth: "100%",
-  maxHeight: 150
+  flex: -1,
+  flexBasis: 200,
+  maxWidth: "100%"
 };
 
 const styles = StyleSheet.create({
-  container: containerStyle,
+  page: pageStyle,
   sectionSpacer,
   mintButton: mintButtonStyle,
+  financesSection: financesSectionStyle,
   balanceSection: balanceSectionStyle,
   donationSection: donationSectionStyle,
   moneyElement: moneyElementStyle,
