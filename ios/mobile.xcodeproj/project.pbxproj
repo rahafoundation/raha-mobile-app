@@ -557,6 +557,8 @@
 		B7028C19212FE9D000A9C3A7 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		B7028C6A212FEFD200A9C3A7 /* CodePush.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CodePush.xcodeproj; path = "../node_modules/react-native-code-push/ios/CodePush.xcodeproj"; sourceTree = "<group>"; };
 		B7028CA5212FF03F00A9C3A7 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B7028CA7212FF10900A9C3A7 /* template.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = template.debug.xcconfig; sourceTree = "<group>"; };
+		B7028CA8212FF13900A9C3A7 /* template.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = template.release.xcconfig; sourceTree = "<group>"; };
 		B9317978BFFD40848659BAE3 /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/ios/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		C485D608F7A24434A0CCDBB7 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		C93D3C19D1884E4C9FEFC230 /* RNSVG.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
@@ -1025,6 +1027,8 @@
 			children = (
 				B7028C18212FE9C600A9C3A7 /* debug.xcconfig */,
 				B7028C19212FE9D000A9C3A7 /* release.xcconfig */,
+				B7028CA7212FF10900A9C3A7 /* template.debug.xcconfig */,
+				B7028CA8212FF13900A9C3A7 /* template.release.xcconfig */,
 			);
 			path = BuildConfig;
 			sourceTree = "<group>";

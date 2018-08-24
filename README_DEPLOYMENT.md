@@ -33,9 +33,19 @@ so we should never need to both release to codepush and publish to the app store
 
 1. Make sure you have the latest dependencies installed by running `yarn install`.
 1. Login to appcenter via `yarn run appcenter login`.
-1. Add the codepush Android deployment keys to your `~/.gradle/gradle.properties` file so that
-   so that your builds contain the proper codepush keys. The codepush deployment keys
-   are shared via keybase.
+
+#### Android
+
+Add the codepush Android deployment keys to your `~/.gradle/gradle.properties` file so that
+so that your builds contain the proper codepush keys. The codepush deployment keys
+are shared via keybase.
+
+#### iOS
+
+Add the codepush iOS deployment keys to your buildconfig settings.
+
+1. Copy and rename the `ios/BuildConfig/template.<debug/release>.xcconfig files` by removing the "template." prefix.
+1. Retrieve the codepush keys from keybase in the `iOS` directory and update the relevant values in the new config files you just created.
 
 ### Releasing an update to codepush
 
