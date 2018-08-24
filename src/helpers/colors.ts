@@ -31,6 +31,7 @@ export const colors = {
   // Text
   bodyText: palette.darkGray,
   secondaryText: palette.lightGray,
+  link: palette.darkMint,
 
   // Components
   divider: palette.lightGray,
