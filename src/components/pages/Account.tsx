@@ -15,6 +15,7 @@ import { MemberThumbnail } from "../shared/MemberThumbnail";
 import { fonts } from "../../helpers/fonts";
 import { RouteName } from "../shared/Navigation";
 import { MemberName } from "../shared/MemberName";
+import { colors } from '../../helpers/colors';
 
 const DAYS_TILL_INACTIVITY = 400;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -70,7 +71,7 @@ class AccountView extends React.Component<Props, State> {
     } = this.props;
     const { timeRemaining } = this.state;
     return (
-      <ScrollView>
+      <ScrollView style={styles.page}>
         <View style={styles.row}>
           <Text>
             After {<Text style={fonts.Lato.Bold}>{timeRemaining}</Text>} without
@@ -111,6 +112,9 @@ class AccountView extends React.Component<Props, State> {
   }
 }
 
+const pageStyle: ViewStyle = {
+  backgroundColor: colors.pageBackground
+}
 const rowStyle: ViewStyle = {
   marginTop: 12,
   marginHorizontal: 12
@@ -129,6 +133,7 @@ const memberThumbnailStyle: ViewStyle = {
 };
 
 const styles = StyleSheet.create({
+  page: pageStyle,
   row: rowStyle,
   memberRow: memberRowStyle,
   memberThumbnail: memberThumbnailStyle

@@ -12,7 +12,8 @@ import {
   ScrollView,
   Linking,
   StyleSheet,
-  TextStyle
+  TextStyle,
+  ViewStyle
 } from "react-native";
 
 import { MemberSearchBar } from "../shared/MemberSearchBar";
@@ -184,7 +185,7 @@ export const Discover: React.StatelessComponent<DiscoverProps> = ({
   // Add padding so last card does not end up hidden by tab bar
   cards.push(<View key="end_padding" style={{ height: 75 }} />);
   return (
-    <View>
+    <View style={styles.page}>
       <View style={{ marginTop: 8 }}>
         <MemberSearchBar
           lightTheme
@@ -200,7 +201,11 @@ export const Discover: React.StatelessComponent<DiscoverProps> = ({
   );
 };
 
+const pageStyle: ViewStyle = {
+  backgroundColor: colors.pageBackground
+};
 const styles = StyleSheet.create({
+  page: pageStyle,
   card: {
     marginTop: 8,
     marginLeft: 8,

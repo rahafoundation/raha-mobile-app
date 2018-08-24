@@ -10,13 +10,19 @@ import { ActivityFeed } from "../shared/Activity/ActivityFeed";
 import { RahaState } from "../../store";
 import { allActivities } from "../../store/selectors/activities";
 import { Activity } from "../../store/selectors/activities/types";
+import { colors } from "../../helpers/colors";
+import { View } from "react-native";
 
 type StateProps = {
   activities: Activity[];
 };
 
 const FeedView: React.StatelessComponent<StateProps> = ({ activities }) => {
-  return <ActivityFeed activities={activities} />;
+  return (
+    <View style={{ backgroundColor: colors.pageBackground }}>
+      <ActivityFeed activities={activities} />
+    </View>
+  );
 };
 
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {

@@ -129,7 +129,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
     // current member hasn't already verified the target member
     !member.get("verifiedBy").includes(loggedInMember.get("memberId"));
   return (
-    <View>
+    <View style={styles.body}>
       <ActivityFeed
         activities={activities}
         header={
@@ -177,6 +177,10 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
       />
     </View>
   );
+};
+
+const bodyStyle: ViewStyle = {
+  backgroundColor: colors.pageBackground
 };
 
 const headerStyle: ViewStyle = {
@@ -242,6 +246,7 @@ const profileVideoStyle: ViewStyle = {
 };
 
 const styles = StyleSheet.create({
+  body: bodyStyle,
   header: headerStyle,
   thumbnail: thumbnailStyle,
   memberUsername: memberUsernameStyle,
