@@ -15,9 +15,11 @@ be used largely for small changes like bugfixes.
 1.  Download and copy the `release.keystore` somewhere locally and copy the signing
     keys from `release-signing.txt` into your `~/.gradle/gradle.properties`.
     Adjust the keystore path accordingly (use an absolute path).
-2.  Run `yarn bundle:android` to create a bundled and signed APK in
+1.  Update the `versionCode` and `versionName` values in `android/app/build.gradle`'s `defaultConfig` block.
+    See: https://developer.android.com/studio/publish/versioning for more details.
+1.  Run `yarn bundle:android` to create a bundled and signed APK in
     `./android/app/build/outputs/apk/prod/release/app-prod-release.apk`.
-3.  You can install this APK on your physical device through `adb install PATH.apk`.
+1.  You can install this APK on your physical device through `adb install PATH.apk`.
 
 ## Deploying JS updates via codepush
 

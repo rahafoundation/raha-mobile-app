@@ -31,6 +31,10 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
+# Configs
+ios/BuildConfig/debug.xcconfig
+ios/BuildConfig/release.xcconfig
+
 # Android/IntelliJ
 #
 build/
