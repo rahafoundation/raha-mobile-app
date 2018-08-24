@@ -12,8 +12,10 @@ import {
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { Text, Button } from "../../shared/elements";
+import { Text, Button, IndependentPageContainer } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
+import { styles } from "./styles";
+import { TextLink, LinkType } from "../../shared/elements/TextLink";
 
 type ReduxStateProps = {
   createMemberStatus?: ApiCallStatus;
@@ -70,80 +72,63 @@ class OnboardingCreateAccountView extends React.Component<
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.card}>
-          <Text style={styles.text}>
-            By clicking Join, I agree that this is my real identity, my full
-            name, and the only time I have joined Raha. I am at least 13 years
-            old. I understand that creating duplicate or fake accounts may
-            result in me and people I have invited losing access to our
-            accounts.
-          </Text>
-          <Text style={styles.text}>
-            I understand and agree that after 1 year of inactivity, all of my
-            Raha will be irrevocably and irretrievably donated to fund basic
-            income, with 80% going directly to members and 20% to the
-            member-owned Raha Parliament.
-          </Text>
-          <Text style={styles.text}>
-            I have also read and agree to the{" "}
-            <Text
-              style={styles.linkText}
-              onPress={() =>
-                Linking.openURL("https://web.raha.app/terms-of-service")
-              }
-            >
-              Terms of Service
-            </Text>
-            ,{" "}
-            <Text
-              style={styles.linkText}
-              onPress={() =>
-                Linking.openURL("https://web.raha.app/privacy-policy")
-              }
-            >
-              Privacy Policy
-            </Text>
-            , and{" "}
-            <Text
-              style={styles.linkText}
-              onPress={() =>
-                Linking.openURL("https://web.raha.app/code-of-conduct")
-              }
-            >
-              Code of Conduct
-            </Text>
-            .
-          </Text>
+      <IndependentPageContainer containerStyle={styles.cardPageContainer}>
+        <View style={styles.page}>
+          <View style={styles.body}>
+            <View style={styles.card}>
+              <Text style={styles.paragraph}>
+                By clicking Join, I agree that this is my real identity, my full
+                name, and the only time I have joined Raha. I am at least 13
+                years old. I understand that creating duplicate or fake accounts
+                may result in me and people I have invited losing access to our
+                accounts.
+              </Text>
+              <Text style={styles.paragraph}>
+                I understand and agree that after 1 year of inactivity, all of
+                my Raha will be irrevocably and irretrievably donated to fund
+                basic income, with 80% going directly to members and 20% to the
+                member-owned Raha Parliament.
+              </Text>
+              <Text style={styles.paragraph}>
+                I have also read and agree to the{" "}
+                <TextLink
+                  destination={{
+                    type: LinkType.Website,
+                    url: "https://web.raha.app/terms-of-service"
+                  }}
+                >
+                  Terms of Service
+                </TextLink>
+                ,{" "}
+                <TextLink
+                  destination={{
+                    type: LinkType.Website,
+                    url: "https://web.raha.app/privacy-policy"
+                  }}
+                >
+                  Privacy Policy
+                </TextLink>
+                , and{" "}
+                <TextLink
+                  destination={{
+                    type: LinkType.Website,
+                    url: "https://web.raha.app/code-of-conduct"
+                  }}
+                >
+                  Code of Conduct
+                </TextLink>
+                .
+              </Text>
 
-          <Button title="Join" onPress={this.createAccount} />
-          {this._renderRequestingStatus()}
+              <Button title="Join" onPress={this.createAccount} />
+              {this._renderRequestingStatus()}
+            </View>
+          </View>
         </View>
-      </View>
+      </IndependentPageContainer>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  linkText: {
-    color: "#0074D9"
-  },
-  container: {
-    flex: 1,
-    backgroundColor: colors.darkBackground,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  card: {
-    backgroundColor: colors.pageBackground,
-    width: Dimensions.get("window").width - 24,
-    padding: 12,
-    borderRadius: 12
-  },
-  text: {
-    marginBottom: 12
-  }
-});
 
 const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
   state,

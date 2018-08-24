@@ -9,6 +9,7 @@ import {
   IndependentPageContainer
 } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
+import { styles } from "./styles";
 
 /**
  * Page that confirms user's full name
@@ -37,63 +38,38 @@ export class VerifyName extends React.Component<
 
   render() {
     return (
-      <IndependentPageContainer containerStyle={styles.container}>
-        <Text style={styles.back} onPress={this.props.onBack}>
-          Back
-        </Text>
-        <View style={styles.body}>
-          <View style={styles.card}>
-            <Text style={{ fontSize: 18 }}>Please confirm your full name:</Text>
-            <TextInput
-              placeholder="What's your full name?"
-              onChangeText={text => this.setState({ verifiedName: text })}
-              value={this.state.verifiedName}
-            />
-            <Button
-              title={`Confirm`}
-              disabled={
-                this.state.verifiedName === undefined ||
-                this.state.verifiedName.length === 0
-              }
-              onPress={() => {
-                const verifiedName = this.state.verifiedName;
-                if (verifiedName) {
-                  this.props.onVerifiedName(verifiedName.trim());
+      <IndependentPageContainer containerStyle={styles.cardPageContainer}>
+        <View style={styles.page}>
+          <Text style={styles.back} onPress={this.props.onBack}>
+            Back
+          </Text>
+          <View style={styles.body}>
+            <View style={styles.card}>
+              <Text style={{ fontSize: 18 }}>
+                Please confirm your full name:
+              </Text>
+              <TextInput
+                placeholder="What's your full name?"
+                onChangeText={text => this.setState({ verifiedName: text })}
+                value={this.state.verifiedName}
+              />
+              <Button
+                title={`Confirm`}
+                disabled={
+                  this.state.verifiedName === undefined ||
+                  this.state.verifiedName.length === 0
                 }
-              }}
-            />
+                onPress={() => {
+                  const verifiedName = this.state.verifiedName;
+                  if (verifiedName) {
+                    this.props.onVerifiedName(verifiedName.trim());
+                  }
+                }}
+              />
+            </View>
           </View>
         </View>
       </IndependentPageContainer>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-
-    flexDirection: "column",
-    justifyContent: "flex-start", // so that back button stays pushed to top
-    backgroundColor: colors.darkBackground
-  },
-  back: {
-    marginLeft: 12,
-    marginTop: 12
-  },
-  body: {
-    // make the body take up all remaining space
-    flexBasis: "100%",
-    flexShrink: 1,
-
-    // center children in screen
-
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  card: {
-    backgroundColor: colors.pageBackground,
-    width: Dimensions.get("window").width - 24,
-    padding: 12,
-    borderRadius: 12
-  }
-});
