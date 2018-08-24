@@ -21,6 +21,13 @@ be used largely for small changes like bugfixes.
     `./android/app/build/outputs/apk/prod/release/app-prod-release.apk`.
 1.  You can install this APK on your physical device through `adb install PATH.apk`.
 
+Note, to build dev versions of the app - you can use the following commands:
+
+1. `yarn config:[prod|test]` - this controls whether you're running against the prod/test api
+1. `cd android`
+1. `./gradlew assemble[DevProd|DevTest|Prod]Release`
+1. adb install as described above.
+
 ## Deploying JS updates via codepush
 
 Minor JS updates can be deployed to the app without having to go through the App Store
