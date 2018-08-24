@@ -3,7 +3,8 @@ import { List } from "immutable";
 import {
   Operation,
   OperationType,
-  RequestVerificationOperation
+  RequestVerificationOperation,
+  CreateMemberOperation
 } from "@raha/api-shared/dist/models/Operation";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import { Member } from "../reducers/members";
@@ -45,4 +46,12 @@ export function getRequestVerificationOperation(
       op.creator_uid === creatorMemberId &&
       op.data.to_uid === toMemberId
   ) as List<RequestVerificationOperation>;
+}
+
+export function getCreateMemberOperationFor(state: RahaState, member: Member) {
+  return state.operations.find(
+    operation =>
+      operation.op_code === OperationType.CREATE_MEMBER &&
+      operation.creator_uid === member.get("memberId")
+  ) as CreateMemberOperation | undefined;
 }

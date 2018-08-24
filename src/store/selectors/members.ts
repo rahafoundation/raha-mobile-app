@@ -161,6 +161,12 @@ export function getMembersSortedByVotes(state: RahaState) {
   });
 }
 
+export function getUnverifiedMembers(state: RahaState) {
+  return state.members.byMemberId
+    .filter(member => !member.get("isVerified"))
+    .toList();
+}
+
 export function isInviteConfirmed(
   state: RahaState,
   memberId: MemberId
