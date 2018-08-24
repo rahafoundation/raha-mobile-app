@@ -31,7 +31,7 @@ export class VerifyCamera extends React.Component<OwnProps> {
           <Text style={styles.text}>
             "Hi, my name is{" "}
             <Text style={styles.name}>{this.props.ownFullName}</Text> and I'm
-            verifying that this is account belongs to{" "}
+            verifying that this account belongs to{" "}
             <Text style={styles.name}>{this.props.toFullName}</Text>
             ."
           </Text>
