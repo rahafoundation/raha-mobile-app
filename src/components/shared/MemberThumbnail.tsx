@@ -62,7 +62,7 @@ const getStyles = (
   member: Member | typeof RAHA_BASIC_INCOME_MEMBER
 ) => {
   const touchableWrapperStyle: ViewStyle = {
-    display: "flex",
+
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

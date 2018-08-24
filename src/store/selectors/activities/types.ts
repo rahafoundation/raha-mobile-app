@@ -5,6 +5,7 @@ import {
 import { CurrencyValue } from "../../../components/shared/elements/Currency";
 import { RouteName } from "../../../components/shared/Navigation";
 import { Omit } from "../../../../types/omit";
+import { LinkDestination } from "../../../components/shared/elements/TextLink";
 
 /**
  * Represents the direction of the relationship between actors in an activity.
@@ -92,21 +93,11 @@ export interface ActivityContent {
 }
 
 /**
- * Reference to another part of the app to redirect to.
- * TODO: make params more specific.
- * TODO: move this out of activities; colocate with RouteName
- */
-export interface RouteDescriptor {
-  routeName: RouteName;
-  params: any;
-}
-
-/**
  * A renderable link that directs a user to an action they can take.
  */
 export interface ActionLink {
   text: string;
-  destination: RouteDescriptor;
+  destination: LinkDestination;
 }
 
 /**

@@ -1,6 +1,13 @@
 import * as React from "react";
 import { Big } from "big.js";
-import { StyleSheet, View, Image, TextStyle } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  TextStyle,
+  ViewStyle,
+  Dimensions
+} from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
@@ -12,7 +19,7 @@ import { getLoggedInMember } from "../../store/selectors/authentication";
 import { NavigationScreenProps } from "react-navigation";
 import { getUnclaimedReferrals } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
-import { Button, Container, Text } from "../shared/elements";
+import { Button, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";
 import {
   Currency,
@@ -30,41 +37,29 @@ type StateProps = {
 
 type Props = OwnProps & StateProps;
 
-const MintView: React.StatelessComponent<Props> = ({
-  loggedInMember,
-  unclaimedReferralIds,
-  navigation
-}) => {
-  let net = loggedInMember
+const MoneySection: React.StatelessComponent<Props> = ({ loggedInMember }) => {
+  const net = loggedInMember
     .get("balance")
     .minus(loggedInMember.get("totalMinted"));
-
-  const hasUnclaimedReferrals = unclaimedReferralIds
-    ? unclaimedReferralIds.length > 0
-    : false;
-
   return (
-    <Container>
-      <View style={styles.centerFlex}>
-        <Currency
-          style={fontSizes.large}
-          currencyValue={{
-            value: loggedInMember.get("balance"),
-            role: CurrencyRole.Transaction,
-            currencyType: CurrencyType.Raha
-          }}
-        />
-        <Text style={styles.numberLabel}>balance</Text>
-      </View>
-      <View
-        style={[
-          styles.centerFlex,
-          { flexDirection: "row", marginHorizontal: 10 }
-        ]}
-      >
-        <View style={styles.centerFlex}>
+    <View style={styles.financesSection}>
+      <View style={styles.balanceSection}>
+        <View style={styles.moneyElement}>
           <Currency
-            style={styles.subStat}
+            style={styles.currencyValue}
+            currencyValue={{
+              value: loggedInMember.get("balance"),
+              role: CurrencyRole.Transaction,
+              currencyType: CurrencyType.Raha
+            }}
+          />
+          <Text style={styles.numberLabel}>balance</Text>
+        </View>
+      </View>
+      <View style={styles.donationSection}>
+        <View style={styles.moneyElement}>
+          <Currency
+            style={styles.currencyValue}
             currencyValue={{
               value: loggedInMember.get("totalMinted"),
               role: CurrencyRole.Transaction,
@@ -73,9 +68,10 @@ const MintView: React.StatelessComponent<Props> = ({
           />
           <Text style={styles.numberLabel}>minted</Text>
         </View>
-        <View style={styles.centerFlex}>
+        {/* TODO: make this more intuitive, or remove. This value is confusing */}
+        {/* <View style={styles.moneyElement}>
           <Currency
-            style={styles.subStat}
+            style={styles.currencyValue}
             currencyValue={{
               value: net,
               role: CurrencyRole.Transaction,
@@ -83,10 +79,10 @@ const MintView: React.StatelessComponent<Props> = ({
             }}
           />
           <Text style={styles.numberLabel}>transactions</Text>
-        </View>
-        <View style={styles.centerFlex}>
+        </View> */}
+        <View style={styles.moneyElement}>
           <Currency
-            style={styles.subStat}
+            style={styles.currencyValue}
             currencyValue={{
               value: loggedInMember.get("totalDonated"),
               role: CurrencyRole.Donation,
@@ -96,73 +92,149 @@ const MintView: React.StatelessComponent<Props> = ({
           <Text style={styles.numberLabel}>donated</Text>
         </View>
       </View>
-      {loggedInMember.get("isVerified") ? (
-        <React.Fragment>
-          <View style={[styles.centerFlex, { marginBottom: 12, flex: 2 }]}>
-            <Image
-              resizeMode="contain"
-              style={{ flex: 1, margin: 8 }}
-              source={require("../../assets/img/Mint.png")}
-            />
-            <MintButton />
-          </View>
-          <View style={[styles.centerFlex, { marginBottom: 12, flex: 2 }]}>
-            <Image
-              resizeMode="contain"
-              style={{ flex: 1, margin: 8 }}
-              source={require("../../assets/img/Invite.png")}
-            />
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-around",
-                width: "90%"
-              }}
-            >
-              <Button
-                title="Invite"
-                onPress={() => {
-                  navigation.navigate(RouteName.InvitePage);
-                }}
-              />
-              {hasUnclaimedReferrals ? (
-                <Button
-                  title="Claim bonuses!"
-                  onPress={() => {
-                    navigation.navigate(RouteName.ReferralBonusPage, {
-                      unclaimedReferralIds
-                    });
-                  }}
-                />
-              ) : (
-                undefined
-              )}
-            </View>
-          </View>
-        </React.Fragment>
-      ) : (
-        <View style={[styles.centerFlex, { flexGrow: 2 }]}>
-          <Text style={{ textAlign: "center", margin: 12 }}>
-            You must be verified before you can mint Raha or invite new people.
-          </Text>
-        </View>
-      )}
-    </Container>
+    </View>
   );
 };
 
-const subStatStyle: TextStyle = fontSizes.large;
+const Actions: React.StatelessComponent<Props> = props => {
+  const { loggedInMember, unclaimedReferralIds, navigation } = props;
+  const hasUnclaimedReferrals = unclaimedReferralIds
+    ? unclaimedReferralIds.length > 0
+    : false;
+
+  if (loggedInMember.get("verifiedBy").size === 0) {
+    return (
+      <Text style={{ textAlign: "center", margin: 12 }}>
+        You must be verified before you can mint Raha or invite new people.
+      </Text>
+    );
+  }
+
+  return (
+    <View style={styles.actionsSection}>
+      <Image
+        resizeMode="contain"
+        style={styles.actionImage}
+        source={require("../../assets/img/Mint.png")}
+      />
+      <MintButton style={styles.mintButton} />
+      <Image
+        resizeMode="contain"
+        style={[styles.actionImage, styles.sectionSpacer]}
+        source={require("../../assets/img/Invite.png")}
+      />
+      <View style={styles.inviteSectionButtons}>
+        <Button
+          title="Invite"
+          onPress={() => {
+            navigation.navigate(RouteName.InvitePage);
+          }}
+        />
+        <Button
+          title={
+            hasUnclaimedReferrals ? "Claim bonuses!" : "No bonuses available"
+          }
+          onPress={() => {
+            navigation.navigate(RouteName.ReferralBonusPage, {
+              unclaimedReferralIds
+            });
+          }}
+          disabled={!hasUnclaimedReferrals}
+        />
+      </View>
+    </View>
+  );
+};
+
+const MintView: React.StatelessComponent<Props> = props => {
+  return (
+    <View style={styles.page}>
+      <MoneySection {...props} />
+      <Actions {...props} />
+    </View>
+  );
+};
+
+const currencyValueStyle: TextStyle = {
+  ...fontSizes.large
+};
+
 const numberLabelStyle: TextStyle = {
   color: colors.bodyText,
   ...fontSizes.small
 };
+
+// shared to create consistent spacing
+const sectionSpacer: ViewStyle = {
+  marginTop: 20
+};
+
+const financesSectionStyle: ViewStyle = {
+  flex: 0, // don't expand to fill space
+  alignSelf: "stretch", // take full width
+  marginBottom: 20,
+
+  // balance on left side, other financial info pushed to right.
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center"
+};
+
+const donationSectionStyle: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "flex-start"
+};
+const balanceSectionStyle: ViewStyle = {};
+const moneyElementStyle: ViewStyle = { marginRight: 20 };
+const mintButtonStyle: ViewStyle = { ...sectionSpacer };
+
+const inviteSectionButtonsStyle: ViewStyle = {
+  ...sectionSpacer,
+
+  alignSelf: "stretch",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-evenly"
+};
+
+const pageStyle: ViewStyle = {
+  backgroundColor: colors.pageBackground,
+  height: "100%",
+  padding: 20,
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "space-between"
+};
+
+const actionsSectionStyle: ViewStyle = {
+  ...sectionSpacer,
+  flex: 1,
+
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "space-between"
+};
+
+const actionImageStyle: ViewStyle = {
+  // shrink images to ensure screen doesn't overflow
+  flex: -1,
+  flexBasis: 200,
+  maxWidth: "100%"
+};
+
 const styles = StyleSheet.create({
-  centerFlex: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  subStat: subStatStyle,
+  page: pageStyle,
+  sectionSpacer,
+  mintButton: mintButtonStyle,
+  financesSection: financesSectionStyle,
+  balanceSection: balanceSectionStyle,
+  donationSection: donationSectionStyle,
+  moneyElement: moneyElementStyle,
+  actionImage: actionImageStyle,
+  actionsSection: actionsSectionStyle,
+  inviteSectionButtons: inviteSectionButtonsStyle,
+  currencyValue: currencyValueStyle,
   numberLabel: numberLabelStyle
 });
 

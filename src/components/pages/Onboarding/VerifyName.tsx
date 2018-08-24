@@ -2,8 +2,14 @@ import * as React from "react";
 import { Member } from "../../../store/reducers/members";
 import { View, StyleSheet, Dimensions } from "react-native";
 
-import { Button, Text, TextInput } from "../../shared/elements";
+import {
+  Button,
+  Text,
+  TextInput,
+  IndependentPageContainer
+} from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
+import { styles } from "./styles";
 
 /**
  * Page that confirms user's full name
@@ -32,53 +38,38 @@ export class VerifyName extends React.Component<
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.back} onPress={this.props.onBack}>
-          Back
-        </Text>
-        <View style={styles.card}>
-          <Text style={{ fontSize: 18 }}>Please confirm your full name:</Text>
-          <TextInput
-            placeholder="What's your full name?"
-            onChangeText={text => this.setState({ verifiedName: text })}
-            value={this.state.verifiedName}
-          />
-          <Button
-            title={`Confirm`}
-            disabled={
-              this.state.verifiedName === undefined ||
-              this.state.verifiedName.length === 0
-            }
-            onPress={() => {
-              const verifiedName = this.state.verifiedName;
-              if (verifiedName) {
-                this.props.onVerifiedName(verifiedName.trim());
-              }
-            }}
-          />
+      <IndependentPageContainer containerStyle={styles.cardPageContainer}>
+        <View style={styles.page}>
+          <Text style={styles.back} onPress={this.props.onBack}>
+            Back
+          </Text>
+          <View style={styles.body}>
+            <View style={styles.card}>
+              <Text style={{ fontSize: 18 }}>
+                Please confirm your full name:
+              </Text>
+              <TextInput
+                placeholder="What's your full name?"
+                onChangeText={text => this.setState({ verifiedName: text })}
+                value={this.state.verifiedName}
+              />
+              <Button
+                title={`Confirm`}
+                disabled={
+                  this.state.verifiedName === undefined ||
+                  this.state.verifiedName.length === 0
+                }
+                onPress={() => {
+                  const verifiedName = this.state.verifiedName;
+                  if (verifiedName) {
+                    this.props.onVerifiedName(verifiedName.trim());
+                  }
+                }}
+              />
+            </View>
+          </View>
         </View>
-      </View>
+      </IndependentPageContainer>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  back: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    margin: 12
-  },
-  container: {
-    flex: 1,
-    backgroundColor: colors.darkBackground,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  card: {
-    backgroundColor: colors.pageBackground,
-    width: Dimensions.get("window").width - 24,
-    padding: 12,
-    borderRadius: 12
-  }
-});

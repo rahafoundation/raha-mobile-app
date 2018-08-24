@@ -13,7 +13,6 @@ import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";
 import { getMembersByIds } from "../../store/selectors/members";
 import { MemberThumbnail } from "../shared/MemberThumbnail";
-import { Container } from "../shared/elements";
 import { MemberName } from "../shared/MemberName";
 
 interface NavParams {
@@ -32,7 +31,7 @@ export const MemberListView: React.StatelessComponent<Props> = ({
   members
 }) => {
   return (
-    <Container>
+    <View>
       <FlatList
         data={members}
         keyExtractor={m => m.get("memberId")}
@@ -43,7 +42,7 @@ export const MemberListView: React.StatelessComponent<Props> = ({
           </View>
         )}
       />
-    </Container>
+    </View>
   );
 };
 
@@ -61,7 +60,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
 };
 
 const memberEntryStyle: ViewStyle = {
-  display: "flex",
+
   flexDirection: "row",
   justifyContent: "flex-start",
   alignItems: "center",

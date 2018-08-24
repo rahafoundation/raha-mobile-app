@@ -8,10 +8,11 @@ console.ignoredYellowBox = ["Setting a timer"];
 
 import * as React from "react";
 import { RNFirebase } from "react-native-firebase";
-import { View, StyleSheet, Dimensions } from "react-native";
-import { VideoPlayer } from "react-native-video-processing";
+import { View, StyleSheet, Dimensions, ViewStyle } from "react-native";
+import { ProcessingManager } from "react-native-video-processing";
 
 import { Button, Text } from "../../shared/elements";
+import { VideoWithPlaceholder } from "../../shared/VideoWithPlaceholder";
 
 const BYTES_PER_MIB = 1024 * 1024;
 const MAX_MB = 60;
@@ -23,7 +24,6 @@ type VideoPreviewProps = {
   onVideoUploaded: (videoDownloadUrl: string) => any;
   onError: (errorType: string, errorMessage: string) => any;
   onRetakeClicked: () => any;
-  fullScreen: boolean;
 };
 
 type VideoStateProps = {
@@ -41,8 +41,6 @@ export class VideoPreview extends React.Component<
   VideoPreviewProps,
   VideoStateProps
 > {
-  videoPlayerRef?: any;
-
   constructor(props: VideoPreviewProps) {
     super(props);
     this.state = {
@@ -51,6 +49,7 @@ export class VideoPreview extends React.Component<
   }
 
   compressAndUploadVideo = async () => {
+    // TODO: just default to square videos for simplicity
     const options = {
       width: 480,
       height: 640,
@@ -60,7 +59,10 @@ export class VideoPreview extends React.Component<
       this.setState({
         uploadStatus: UploadStatus.UPLOADING
       });
-      const newSource = await this.videoPlayerRef.compress(options);
+      const newSource = await ProcessingManager.compress(
+        this.props.videoUri,
+        options
+      );
       this.uploadVideo(this.props.videoUploadRef, newSource);
     } catch (error) {
       this.props.onError("Error: Video Upload", error);
@@ -149,24 +151,16 @@ export class VideoPreview extends React.Component<
     const videoUri = this.props.videoUri;
     return (
       videoUri && (
-        <VideoPlayer
-          style={[
-            styles.video,
-            this.props.fullScreen ? {} : styles.videoWithHeaderAndNavBar
-          ]}
-          ref={(ref: any) => (this.videoPlayerRef = ref)}
-          play={true}
-          replay={true}
-          source={videoUri}
-          resizeMode={VideoPlayer.Constants.resizeMode.COVER}
-        />
+        <View style={styles.videoContainer}>
+          <VideoWithPlaceholder uri={videoUri} autoplay={true} />
+        </View>
       )
     );
   }
 
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         {this.renderVideo()}
         {this.renderButtonsOrStatus()}
       </View>
@@ -174,24 +168,21 @@ export class VideoPreview extends React.Component<
   }
 }
 
+const videoContainerStyle: ViewStyle = {
+  width: "100%",
+  aspectRatio: 1
+};
+
+const actionRowStyle: ViewStyle = {
+  // center buttons
+  flexDirection: "row",
+  justifyContent: "space-around",
+  alignItems: "center",
+
+  marginTop: 20
+};
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "space-around"
-  },
-  video: {
-    width: "100%",
-    aspectRatio: 3 / 4
-  },
-  videoWithHeaderAndNavBar: {
-    maxHeight: Dimensions.get("window").height - 200
-  },
-  actionRow: {
-    height: 75,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center"
-  }
+  videoContainer: videoContainerStyle,
+  actionRow: actionRowStyle
 });

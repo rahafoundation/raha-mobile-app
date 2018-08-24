@@ -23,7 +23,7 @@ import { trustMember } from "../../store/actions/members";
 import { getMemberById } from "../../store/selectors/members";
 import { ActivityFeed } from "../shared/Activity/ActivityFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
-import { Button, Container, Text } from "../shared/elements";
+import { Button, Text } from "../shared/elements";
 import { colors } from "../../helpers/colors";
 import { VideoWithPlaceholder } from "../shared/VideoWithPlaceholder";
 import { activitiesForMember } from "../../store/selectors/activities";
@@ -129,7 +129,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
     // current member hasn't already verified the target member
     !member.get("verifiedBy").includes(loggedInMember.get("memberId"));
   return (
-    <Container>
+    <View style={styles.body}>
       <ActivityFeed
         activities={activities}
         header={
@@ -175,14 +175,18 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
           </View>
         }
       />
-    </Container>
+    </View>
   );
+};
+
+const bodyStyle: ViewStyle = {
+  backgroundColor: colors.pageBackground
 };
 
 const headerStyle: ViewStyle = {
   backgroundColor: colors.darkAccent,
   padding: 20,
-  display: "flex",
+
   flexDirection: "row",
   justifyContent: "flex-start",
   alignItems: "center"
@@ -210,7 +214,7 @@ const memberUsernameStyle: TextStyle = {
 const thumbnailStyle: ViewStyle = {
   flexGrow: 0,
   flexBasis: 120,
-  display: "flex",
+
   flexDirection: "column",
   alignItems: "center",
   marginRight: 20
@@ -222,7 +226,7 @@ const detailsSpacer: ViewStyle = {
 
 const memberActionsStyle: ViewStyle = {
   ...detailsSpacer,
-  display: "flex",
+
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center"
@@ -230,7 +234,7 @@ const memberActionsStyle: ViewStyle = {
 
 const statsContainerStyle: ViewStyle = {
   ...detailsSpacer,
-  display: "flex",
+
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center"
@@ -242,6 +246,7 @@ const profileVideoStyle: ViewStyle = {
 };
 
 const styles = StyleSheet.create({
+  body: bodyStyle,
   header: headerStyle,
   thumbnail: thumbnailStyle,
   memberUsername: memberUsernameStyle,

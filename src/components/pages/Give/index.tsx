@@ -5,6 +5,8 @@ import { Member } from "../../../store/reducers/members";
 import { GiveForm } from "./GiveForm";
 import { Success } from "./Success";
 import { NavigationScreenProp } from "react-navigation";
+import { View, StyleSheet, ViewStyle } from "react-native";
+import { colors } from "../../../helpers/colors";
 
 type Props = {
   navigation: NavigationScreenProp<{}>;
@@ -52,19 +54,31 @@ export class Give extends React.Component<Props, State> {
 
   public render() {
     const { operationIdentifer, toMember, amount, memo } = this.state;
-    return toMember && amount ? (
-      <Success
-        toMember={toMember}
-        amount={amount}
-        memo={memo}
-        onResetCallback={this.onReset}
-      />
-    ) : (
-      <GiveForm
-        toMemberId={toMember && toMember.get("memberId")}
-        identifier={operationIdentifer}
-        onSuccessCallback={this.onSuccess}
-      />
+    return (
+      <View style={styles.page}>
+        {toMember && amount ? (
+          <Success
+            toMember={toMember}
+            amount={amount}
+            memo={memo}
+            onResetCallback={this.onReset}
+          />
+        ) : (
+          <GiveForm
+            toMemberId={toMember && toMember.get("memberId")}
+            identifier={operationIdentifer}
+            onSuccessCallback={this.onSuccess}
+          />
+        )}
+      </View>
     );
   }
 }
+
+const pageStyle: ViewStyle = {
+  backgroundColor: colors.pageBackground,
+  minHeight: "100%"
+};
+const styles = StyleSheet.create({
+  page: pageStyle
+});

@@ -1,9 +1,9 @@
 import { Big } from "big.js";
 import * as React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { Member } from "../../../store/reducers/members";
-import { Button, Container, Text } from "../../shared/elements";
+import { Button, Text } from "../../shared/elements";
 import { colors, palette } from "../../../helpers/colors";
 import { fonts } from "../../../helpers/fonts";
 
@@ -16,7 +16,7 @@ type OwnProps = {
 
 export const Success: React.StatelessComponent<OwnProps> = props => {
   return (
-    <Container style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.message}>
         You sent{" "}
         <Text style={styles.amount}>{props.amount.toString()} Raha</Text> to{" "}
@@ -27,7 +27,7 @@ export const Success: React.StatelessComponent<OwnProps> = props => {
         </Text>
       </Text>
       <Button title="Give again" onPress={() => props.onResetCallback()} />
-    </Container>
+    </View>
   );
 };
 

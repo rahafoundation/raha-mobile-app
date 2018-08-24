@@ -12,7 +12,7 @@ import {
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { Text, Button } from "../../shared/elements";
+import { Text, Button, IndependentPageContainer } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
 
 type ReduxStateProps = {
@@ -75,26 +75,28 @@ class SubmitVerificationView extends React.Component<SubmitVerificationProps> {
       (status === ApiCallStatusType.STARTED ||
         status === ApiCallStatusType.SUCCESS);
     return (
-      <View style={styles.container}>
+      <IndependentPageContainer containerStyle={styles.container}>
         <Text style={styles.back} onPress={this.props.onBack}>
           Back
         </Text>
-        <View style={styles.card}>
-          <Text style={styles.text}>
-            By clicking the "Verify" button below, you are confirming that you
-            believe that this account belongs to{" "}
-            <Text style={styles.name}>{this.props.toMemberFullName}</Text> and
-            this is the only time they have joined Raha.
-          </Text>
-          <Button
-            title="Verify"
-            onPress={this.submitVerification}
-            disabled={isRequestSendingOrSent}
-            style={styles.button}
-          />
-          {this._renderSubmittingStatus()}
+        <View style={styles.body}>
+          <View style={styles.card}>
+            <Text style={styles.text}>
+              By clicking the "Verify" button below, you are confirming that you
+              believe that this account belongs to{" "}
+              <Text style={styles.name}>{this.props.toMemberFullName}</Text> and
+              this is the only time they have joined Raha.
+            </Text>
+            <Button
+              title="Verify"
+              onPress={this.submitVerification}
+              disabled={isRequestSendingOrSent}
+              style={styles.button}
+            />
+            {this._renderSubmittingStatus()}
+          </View>
         </View>
-      </View>
+      </IndependentPageContainer>
     );
   }
 }
@@ -117,8 +119,10 @@ export const SubmitVerification = connect(
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.darkBackground,
-    flex: 1,
+    backgroundColor: colors.darkBackground
+  },
+  body: {
+    height: "100%",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center"

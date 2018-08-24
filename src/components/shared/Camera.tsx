@@ -89,7 +89,7 @@ export class Camera extends React.Component<CameraProps, CameraState> {
       <View style={styles.container}>
         {this.state.permissionsDenied ? (
           <React.Fragment>
-            <Text style={styles.text}>
+            <Text style={styles.permissionsText}>
               In order to verify your identity, you must record a video of
               yourself. Please approve the permissions to continue.
             </Text>
@@ -185,15 +185,17 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    width: "100%"
   },
   camera: {
-    flex: 1,
-    aspectRatio: 3 / 4,
+    // ensure children are pushed to the bottom
+
     flexDirection: "column",
-    justifyContent: "flex-end"
+    alignItems: "center",
+    justifyContent: "flex-end",
+
+    aspectRatio: 1,
+    width: "100%"
   },
   cameraButtons: {
     height: "25%",
@@ -214,7 +216,7 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center"
   },
-  text: {
+  permissionsText: {
     fontSize: 18,
     marginVertical: 4,
     marginHorizontal: 40,

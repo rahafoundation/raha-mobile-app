@@ -5,6 +5,7 @@ import validator from "validator";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
+import { styles as sharedStyles } from "./styles";
 import { RahaState } from "../../../store";
 import { sendInvite } from "../../../store/actions/members";
 import {
@@ -67,20 +68,20 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
       : undefined;
     switch (statusType) {
       case ApiCallStatusType.STARTED:
-        return <Text style={styles.text}>Sending invite...</Text>;
+        return <Text style={sharedStyles.paragraph}>Sending invite...</Text>;
       case ApiCallStatusType.SUCCESS:
         return (
           <React.Fragment>
-            <Text style={styles.text}>Invite successful!</Text>
+            <Text style={sharedStyles.paragraph}>Invite successful!</Text>
             <Button
-              style={styles.button}
+              style={sharedStyles.button}
               title="Return"
               onPress={this.props.onExit}
             />
           </React.Fragment>
         );
       case ApiCallStatusType.FAILURE:
-        return <Text style={styles.text}>Invite failed.</Text>;
+        return <Text style={sharedStyles.paragraph}>Invite failed.</Text>;
       default:
         return undefined;
     }
@@ -95,31 +96,34 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
       (status === ApiCallStatusType.STARTED ||
         status === ApiCallStatusType.SUCCESS);
     return (
-      <View style={styles.container}>
-        <Text style={styles.back} onPress={this.props.onBack}>
+      <View style={[sharedStyles.page, styles.page]}>
+        <Text style={sharedStyles.back} onPress={this.props.onBack}>
           Back
         </Text>
-        <View style={styles.card}>
-          <TextInput
-            style={{ fontSize: 18, marginTop: 24, textAlign: "center" }}
-            placeholder="What's your friend's email?"
-            onChangeText={text => {
-              this.setState({
-                email: text.trim(),
-                enteredInvalidEmail: false
-              });
-            }}
-          />
-          {this.state.enteredInvalidEmail && (
-            <Text style={styles.text}>Please enter a valid email.</Text>
-          )}
-          <Button
-            title="Invite"
-            onPress={this.sendInvite}
-            disabled={isRequestSendingOrSent}
-            style={styles.button}
-          />
-          {this._renderSendingStatus()}
+        <View style={sharedStyles.body}>
+          <View style={styles.card}>
+            <TextInput
+              placeholder="What's your friend's email?"
+              onChangeText={text => {
+                this.setState({
+                  email: text.trim(),
+                  enteredInvalidEmail: false
+                });
+              }}
+            />
+            {this.state.enteredInvalidEmail && (
+              <Text style={sharedStyles.paragraph}>
+                Please enter a valid email.
+              </Text>
+            )}
+            <Button
+              title="Invite"
+              onPress={this.sendInvite}
+              disabled={isRequestSendingOrSent}
+              style={sharedStyles.button}
+            />
+            {this._renderSendingStatus()}
+          </View>
         </View>
       </View>
     );
@@ -146,32 +150,13 @@ export const SendInvite = connect(
 )(SendInviteView);
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.darkBackground,
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center"
+  page: {
+    backgroundColor: colors.darkBackground
   },
   card: {
     backgroundColor: colors.pageBackground,
     width: Dimensions.get("window").width - 24,
     padding: 12,
     borderRadius: 12
-  },
-  text: {
-    fontSize: 18,
-    marginVertical: 4,
-    marginHorizontal: 40,
-    textAlign: "center"
-  },
-  button: {
-    margin: 12
-  },
-  back: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    margin: 12
   }
 });

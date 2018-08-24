@@ -24,13 +24,14 @@ export const colors = {
   brandColor: palette.mint,
 
   // Main
-  pageBackground: palette.offWhite,
+  pageBackground: "#fff",
   primaryBorder: palette.mint,
   darkBackground: palette.mint,
 
   // Text
   bodyText: palette.darkGray,
   secondaryText: palette.lightGray,
+  link: palette.darkMint,
 
   // Components
   divider: palette.lightGray,

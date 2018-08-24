@@ -7,7 +7,7 @@ import DropdownAlert from "react-native-dropdownalert";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
-import { Container } from "../../shared/elements";
+import { IndependentPageContainer } from "../../shared/elements";
 import { VerifyCamera } from "./VerifyCamera";
 import { VideoPreview } from "../Camera/VideoPreview";
 import {
@@ -217,7 +217,6 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
                 step: VerifyStep.CAMERA
               });
             }}
-            fullScreen={false}
           />
         );
       }
@@ -244,10 +243,10 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
 
   render() {
     return (
-      <Container>
+      <IndependentPageContainer>
         {this._renderStep()}
         <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
-      </Container>
+      </IndependentPageContainer>
     );
   }
 }

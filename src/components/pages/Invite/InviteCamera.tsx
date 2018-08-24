@@ -10,6 +10,8 @@ import { Text } from "../../shared/elements";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { RahaState } from "../../../store";
 import { MapStateToProps, connect } from "react-redux";
+import { styles as sharedStyles } from "./styles";
+import { fonts, fontSizes } from "../../../helpers/fonts";
 
 type ReduxStateProps = {
   ownFullName: string;
@@ -25,8 +27,8 @@ type InviteCameraProps = ReduxStateProps & OwnProps;
 export class InviteCameraView extends React.Component<InviteCameraProps> {
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <Text style={styles.headerText}>
+      <View style={sharedStyles.page}>
+        <Text style={sharedStyles.paragraph}>
           {this.props.jointVideo
             ? "Record a video with the person you're inviting."
             : "Record a video of yourself inviting your friend to Raha."}
@@ -38,13 +40,13 @@ export class InviteCameraView extends React.Component<InviteCameraProps> {
         />
         <View style={styles.promptContainer}>
           <Text style={styles.promptHeader}>Example of what to say:</Text>
-          <Text style={styles.text}>
+          <Text style={sharedStyles.paragraph}>
             "Hi, my name is{" "}
             <Text style={styles.name}>{this.props.ownFullName}</Text> and I'm
             inviting <Text style={styles.name}>Jane Doe</Text> to Raha."
           </Text>
           {this.props.jointVideo && (
-            <Text style={styles.text}>
+            <Text style={sharedStyles.paragraph}>
               "My name is <Text style={styles.name}>Jane Doe</Text> and I'm
               joining Raha because I believe every life has value."
             </Text>
@@ -56,17 +58,9 @@ export class InviteCameraView extends React.Component<InviteCameraProps> {
 }
 
 const styles = StyleSheet.create({
-  headerText: {
-    margin: 4,
-    textAlign: "center",
-    fontSize: 12
-  },
-  text: {
-    fontSize: 12,
-    textAlign: "center"
-  },
   name: {
-    fontWeight: "bold"
+    ...fonts.Lato.Bold,
+    ...fontSizes.large
   },
   promptHeader: {
     fontSize: 10,

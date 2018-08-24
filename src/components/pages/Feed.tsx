@@ -7,10 +7,11 @@ import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 
 import { ActivityFeed } from "../shared/Activity/ActivityFeed";
-import { Container } from "../shared/elements";
 import { RahaState } from "../../store";
 import { allActivities } from "../../store/selectors/activities";
 import { Activity } from "../../store/selectors/activities/types";
+import { colors } from "../../helpers/colors";
+import { View } from "react-native";
 
 type StateProps = {
   activities: Activity[];
@@ -18,9 +19,9 @@ type StateProps = {
 
 const FeedView: React.StatelessComponent<StateProps> = ({ activities }) => {
   return (
-    <Container>
+    <View style={{ backgroundColor: colors.pageBackground }}>
       <ActivityFeed activities={activities} />
-    </Container>
+    </View>
   );
 };
 

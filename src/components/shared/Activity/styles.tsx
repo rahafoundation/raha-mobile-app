@@ -1,7 +1,6 @@
 import { ViewStyle, TextStyle, StyleSheet } from "react-native";
-import { colors } from "react-native-elements";
 import { fontSizes } from "../../../helpers/fonts";
-import { palette } from "../../../helpers/colors";
+import { colors, palette } from "../../../helpers/colors";
 
 export const leftColumnWidth = 50;
 const activitySpacing = 30;
@@ -11,7 +10,7 @@ export const chainIndicatorColor = palette.veryLightGray;
 const activityStyle: ViewStyle = {
   marginTop: activitySpacing - sectionSpacing,
   paddingHorizontal: 20,
-  display: "flex",
+
   flexDirection: "column"
 };
 
@@ -24,13 +23,13 @@ const metadataRowStyle: ViewStyle = {
 };
 
 const timestampStyle: TextStyle = {
-  color: colors.secondaryText,
-  ...fontSizes.small
+  ...fontSizes.small,
+  color: colors.secondaryText
 };
 
 const actorRowStyle: ViewStyle = {
   ...contentSectionStyle,
-  display: "flex",
+
   flexDirection: "row",
   alignItems: "center",
   overflow: "hidden"
@@ -45,7 +44,7 @@ const actorThumbnailStyle: ViewStyle = {
 
 const contentBodyRowStyle: ViewStyle = {
   ...contentSectionStyle,
-  display: "flex",
+
   flexDirection: "row",
   alignItems: "center"
 };
@@ -56,7 +55,7 @@ const invisibleStyle: ViewStyle = {
 
 const chainIndicatorWidth = 3;
 const chainIndicatorStyle: ViewStyle = {
-  display: "flex",
+
   flexDirection: "column",
   alignItems: "center",
   height: "100%",

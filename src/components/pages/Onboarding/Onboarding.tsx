@@ -19,6 +19,7 @@ import { getMemberById } from "../../../store/selectors/members";
 import { RouteName } from "../../shared/Navigation";
 import { Loading } from "../../shared/Loading";
 import { generateToken } from "../../../helpers/token";
+import { IndependentPageContainer } from "../../shared/elements";
 
 /**
  * Parent component for Onboarding flow.
@@ -282,26 +283,27 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
           return <React.Fragment />;
         }
         return (
-          <VideoPreview
-            videoUri={videoUri}
-            videoUploadRef={videoUploadRef}
-            onVideoUploaded={(videoDownloadUrl: string) =>
-              this.setState({
-                videoDownloadUrl: videoDownloadUrl,
-                step: OnboardingStep.CREATE_ACCOUNT
-              })
-            }
-            onRetakeClicked={() => {
-              this.setState({ step: OnboardingStep.CAMERA });
-            }}
-            onError={(errorType: string, errorMessage: string) => {
-              this.dropdown.alertWithType("error", errorType, errorMessage);
-              this.setState({
-                step: OnboardingStep.CAMERA
-              });
-            }}
-            fullScreen
-          />
+          <IndependentPageContainer>
+            <VideoPreview
+              videoUri={videoUri}
+              videoUploadRef={videoUploadRef}
+              onVideoUploaded={(videoDownloadUrl: string) =>
+                this.setState({
+                  videoDownloadUrl: videoDownloadUrl,
+                  step: OnboardingStep.CREATE_ACCOUNT
+                })
+              }
+              onRetakeClicked={() => {
+                this.setState({ step: OnboardingStep.CAMERA });
+              }}
+              onError={(errorType: string, errorMessage: string) => {
+                this.dropdown.alertWithType("error", errorType, errorMessage);
+                this.setState({
+                  step: OnboardingStep.CAMERA
+                });
+              }}
+            />
+          </IndependentPageContainer>
         );
       }
       case OnboardingStep.CREATE_ACCOUNT: {
@@ -340,19 +342,13 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         {this._renderOnboardingStep()}
         <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-});
 
 async function extractDeeplinkVideoUrl(
   invitingMember?: Member,

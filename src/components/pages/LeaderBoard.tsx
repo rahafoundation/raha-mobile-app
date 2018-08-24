@@ -4,7 +4,7 @@
  */
 import * as React from "react";
 import { MapStateToProps, connect } from "react-redux";
-import { FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 
 import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";
@@ -14,7 +14,6 @@ import {
   getMembersSortedByInvites
 } from "../../store/selectors/members";
 import { MemberThumbnail } from "../shared/MemberThumbnail";
-import { Container } from "../shared/elements";
 
 enum LeaderBoardTypes {
   Trust = "Trust",
@@ -52,7 +51,7 @@ export const LeaderBoardView: React.StatelessComponent<Props> = ({
   membersAndScores
 }) => {
   return (
-    <Container>
+    <View>
       <FlatList
         data={membersAndScores}
         keyExtractor={m => m[0].get("memberId")}
@@ -60,7 +59,7 @@ export const LeaderBoardView: React.StatelessComponent<Props> = ({
           <MemberThumbnail member={m.item[0]} score={m.item[1]} />
         )}
       />
-    </Container>
+    </View>
   );
 };
 

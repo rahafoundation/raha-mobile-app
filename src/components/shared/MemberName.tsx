@@ -7,7 +7,7 @@ import {
 } from "../../store/reducers/members";
 import { Text } from "./elements";
 import { RouteName } from "./Navigation";
-import { TextLink } from "./elements/TextLink";
+import { TextLink, LinkType } from "./elements/TextLink";
 import { fonts, fontSizes } from "../../helpers/fonts";
 
 interface OwnProps {
@@ -31,9 +31,13 @@ export const MemberName: React.StatelessComponent<MemberNameProps> = ({
   return (
     <TextLink
       style={[styles.memberName, style]}
+      colored={false}
       destination={{
-        routeName: RouteName.ProfilePage,
-        params: { member }
+        type: LinkType.InApp,
+        route: {
+          name: RouteName.ProfilePage,
+          params: { member }
+        }
       }}
     >
       {member.get("fullName")}

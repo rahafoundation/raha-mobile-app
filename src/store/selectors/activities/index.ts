@@ -4,7 +4,8 @@ import {
   Operation,
   OperationType,
   MintType,
-  MintOperation
+  MintOperation,
+  CreateMemberOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 import {
@@ -14,7 +15,7 @@ import {
   ActivityContent,
   BodyType
 } from "./types";
-import { getMemberById } from "../members";
+import { getMemberById, getUnverifiedMembers } from "../members";
 import { RahaState } from "../../reducers";
 import {
   Member,
@@ -27,7 +28,10 @@ import {
   CurrencyRole,
   CurrencyType
 } from "../../../components/shared/elements/Currency";
-import { isUnconfirmedRequestInvite } from "../operations";
+import {
+  isUnconfirmedRequestInvite,
+  getCreateMemberOperationFor
+} from "../operations";
 import { List } from "immutable";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
@@ -399,7 +403,8 @@ function convertOperationsToActivities(
 }
 
 /**
- * Get all activities that specifically are pending invites.
+ * Get all activities that specifically are pending invites, sorted newest to
+ * oldest.
  *
  * DANGER: this filters operations directly and creates a custom list of
  * Activities rather than going through the global activities list, so we should
@@ -409,12 +414,14 @@ function convertOperationsToActivities(
 export const pendingInviteActivities = (state: RahaState): Activity[] => {
   return convertOperationsToActivities(
     state,
-    state.operations.filter(op => {
-      if (op.op_code !== OperationType.REQUEST_INVITE) {
-        return false;
-      }
-      return isUnconfirmedRequestInvite(state, op);
-    })
+    (getUnverifiedMembers(state)
+      .map(member => getCreateMemberOperationFor(state, member))
+      .filter(op => !!op) as List<CreateMemberOperation>).sort(
+      (op1, op2) =>
+        // hack since API has type bug: dates aren't actually being boxed into
+        // Date objects.
+        new Date(op2.created_at).getTime() - new Date(op1.created_at).getTime()
+    )
   );
 };
 
