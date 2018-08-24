@@ -202,104 +202,99 @@ class GiveFormView extends React.Component<Props, State> {
         keyboardVerticalOffset={56} // Offset by the header
         behavior="padding"
       >
-        <View style={styles.container}>
-          <ScrollView ref={ref => (this.scrollView = ref)}>
-            <View style={styles.toRow}>
-              {this.state.toMember ? (
-                <React.Fragment>
-                  <FormLabel>To:</FormLabel>
-                  <View style={styles.selectedMember}>
-                    <Text onPress={this.clearTo}>
-                      {this.state.toMember.get("fullName")} (
-                      {this.state.toMember.get("username")})
-                    </Text>
-                  </View>
-                </React.Fragment>
-              ) : (
-                <View style={styles.searchBar}>
-                  <MemberSearchBar
-                    lightTheme
-                    onMemberSelected={this.onMemberSelected}
-                    excludeMembers={
-                      this.props.loggedInMember
-                        ? [this.props.loggedInMember]
-                        : []
-                    }
-                    placeholderText="To..."
-                  />
-                </View>
-              )}
-            </View>
+        <ScrollView ref={ref => (this.scrollView = ref)}>
+          <View style={styles.toRow}>
             {this.state.toMember ? (
-              <FormValidationMessage
-                labelStyle={styles.helper}
-                containerStyle={styles.section}
-              >
-                {this.state.toMember.get("fullName")} is currently donating{" "}
-                {DONATION_RATE}% of all Raha they receive back to the Raha basic
-                income pool. This donation will be used to fund future basic
-                income distributions for everyone in the Raha network.
-              </FormValidationMessage>
+              <React.Fragment>
+                <FormLabel>To:</FormLabel>
+                <View style={styles.selectedMember}>
+                  <Text onPress={this.clearTo}>
+                    {this.state.toMember.get("fullName")} (
+                    {this.state.toMember.get("username")})
+                  </Text>
+                </View>
+              </React.Fragment>
             ) : (
-              <React.Fragment />
+              <View style={styles.searchBar}>
+                <MemberSearchBar
+                  lightTheme
+                  onMemberSelected={this.onMemberSelected}
+                  excludeMembers={
+                    this.props.loggedInMember ? [this.props.loggedInMember] : []
+                  }
+                  placeholderText="To..."
+                />
+              </View>
             )}
-            <View>
-              <FormLabel>Amount</FormLabel>
-              <FormInput
-                keyboardType="numeric"
-                value={this.state.amount && this.state.amount.toString()}
-                onChangeText={this.onChangeAmount}
-                placeholder="0.00"
-              />
-              <FormValidationMessage labelStyle={styles.helper}>
-                Your balance:{" "}
-                {this.props.loggedInMember
-                  ? this.props.loggedInMember.get("balance").toString()
-                  : 0}{" "}
-                Raha
-              </FormValidationMessage>
-            </View>
-            <View>
-              <FormLabel>Message</FormLabel>
-              <FormInput
-                value={this.state.memo}
-                onChangeText={this.onChangeMemo}
-                ref={ref => (this.msgInput = ref)}
-                multiline={true}
-                placeholder="for being so amazing!"
-                autoCapitalize="none"
-              />
-              <FormValidationMessage labelStyle={styles.helper}>
-                {MAX_MEMO_LENGTH - this.state.memo.length} characters remaining
-              </FormValidationMessage>
-            </View>
-            {this.state.toMember && this.state.amount ? (
-              <FormValidationMessage
-                labelStyle={styles.helper}
-                containerStyle={styles.section}
-              >
-                You will give {this.state.amount.toString()} Raha to{" "}
-                {this.state.toMember.get("fullName")} for "
-                {this.state.memo ? `${this.state.memo}` : ""}
-                ".
-              </FormValidationMessage>
-            ) : (
-              <React.Fragment />
-            )}
-            <View style={styles.section}>
-              <Button
-                title="Give"
-                onPress={this.giveRaha}
-                disabled={
-                  !this.validateForm() ||
-                  (this.props.apiCallStatus &&
-                    this.props.apiCallStatus.status ===
-                      ApiCallStatusType.STARTED)
-                }
-              />
-            </View>
-          </ScrollView>
-        </View>
+          </View>
+          {this.state.toMember ? (
+            <FormValidationMessage
+              labelStyle={styles.helper}
+              containerStyle={styles.section}
+            >
+              {this.state.toMember.get("fullName")} is currently donating{" "}
+              {DONATION_RATE}% of all Raha they receive back to the Raha basic
+              income pool. This donation will be used to fund future basic
+              income distributions for everyone in the Raha network.
+            </FormValidationMessage>
+          ) : (
+            <React.Fragment />
+          )}
+          <View>
+            <FormLabel>Amount</FormLabel>
+            <FormInput
+              keyboardType="numeric"
+              value={this.state.amount && this.state.amount.toString()}
+              onChangeText={this.onChangeAmount}
+              placeholder="0.00"
+            />
+            <FormValidationMessage labelStyle={styles.helper}>
+              Your balance:{" "}
+              {this.props.loggedInMember
+                ? this.props.loggedInMember.get("balance").toString()
+                : 0}{" "}
+              Raha
+            </FormValidationMessage>
+          </View>
+          <View>
+            <FormLabel>Message</FormLabel>
+            <FormInput
+              value={this.state.memo}
+              onChangeText={this.onChangeMemo}
+              ref={ref => (this.msgInput = ref)}
+              multiline={true}
+              placeholder="for being so amazing!"
+              autoCapitalize="none"
+            />
+            <FormValidationMessage labelStyle={styles.helper}>
+              {MAX_MEMO_LENGTH - this.state.memo.length} characters remaining
+            </FormValidationMessage>
+          </View>
+          {this.state.toMember && this.state.amount ? (
+            <FormValidationMessage
+              labelStyle={styles.helper}
+              containerStyle={styles.section}
+            >
+              You will give {this.state.amount.toString()} Raha to{" "}
+              {this.state.toMember.get("fullName")} for "
+              {this.state.memo ? `${this.state.memo}` : ""}
+              ".
+            </FormValidationMessage>
+          ) : (
+            <React.Fragment />
+          )}
+          <View style={styles.section}>
+            <Button
+              title="Give"
+              onPress={this.giveRaha}
+              disabled={
+                !this.validateForm() ||
+                (this.props.apiCallStatus &&
+                  this.props.apiCallStatus.status === ApiCallStatusType.STARTED)
+              }
+            />
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     );
   }
@@ -346,8 +341,6 @@ export const GiveForm = connect(
 )(GiveFormView);
 
 const styles = StyleSheet.create({
-  container: {},
-
   section: {
     marginTop: 16
   },
