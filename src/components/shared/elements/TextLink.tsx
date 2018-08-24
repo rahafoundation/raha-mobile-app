@@ -1,18 +1,6 @@
 import * as React from "react";
-import {
-  NavigationInjectedProps,
-  withNavigation,
-  NavigationScreenProp
-} from "react-navigation";
-import {
-  TouchableOpacity,
-  Text,
-  TextStyle,
-  StyleSheet,
-  ViewStyle,
-  StyleProp,
-  Linking
-} from "react-native";
+import { NavigationInjectedProps, withNavigation } from "react-navigation";
+import { Text, TextStyle, StyleSheet, StyleProp, Linking } from "react-native";
 import { fonts } from "../../../helpers/fonts";
 import { RouteName } from "../Navigation";
 import { colors } from "../../../helpers/colors";
@@ -49,6 +37,7 @@ export type LinkDestination =
 
 interface OwnProps {
   destination: LinkDestination;
+  colored?: boolean;
   style?: StyleProp<TextStyle>;
 }
 
@@ -73,13 +62,18 @@ function determineOnPress({ destination, navigation }: TextLinkProps) {
 /**
  * A text-based link.
  *
+ * Default is colored like a hyperlink, but can be uncolored.
+ *
  * TODO: move above link/route definitions to somewhere else, to support other
  * ways of linking content, like Buttons
  */
 const TextLinkView: React.StatelessComponent<TextLinkProps> = props => {
-  const { style, children } = props;
+  const { style, children, colored } = props;
   return (
-    <Text onPress={determineOnPress(props)} style={[styles.text, style]}>
+    <Text
+      onPress={determineOnPress(props)}
+      style={[styles.text, colored ? styles.colored : undefined, style]}
+    >
       {children}
     </Text>
   );
@@ -93,9 +87,14 @@ const TextLinkView: React.StatelessComponent<TextLinkProps> = props => {
 export const TextLink = withNavigation(TextLinkView);
 
 const textStyle: TextStyle = {
-  ...fonts.Lato.Bold,
+  ...fonts.Lato.Bold
+};
+
+const coloredStyle: TextStyle = {
   color: colors.link
 };
+
 const styles = StyleSheet.create({
-  text: textStyle
+  text: textStyle,
+  colored: coloredStyle
 });
