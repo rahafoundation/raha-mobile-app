@@ -27,9 +27,11 @@ type Props = {
 };
 
 const initialState = (props: VideoWithPlaceholderViewProps) => ({
-  isPressed: props.autoplay ? true : false, // TODO: this is a little weird
+  // TODO: this is a little weird, as autoplay doesn't have to do with user
+  // interaction, but necessary to start video automatically.
+  isPressed: !!props.autoplay,
   videoLoaded: false,
-  videoPaused: props.autoplay ? false : true
+  videoPaused: !props.autoplay
 });
 
 type VideoWithPlaceholderViewProps = Props & NavigationInjectedProps;
