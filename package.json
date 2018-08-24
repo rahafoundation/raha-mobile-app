@@ -11,8 +11,14 @@
     "config:prod": "cp ./src/data/prod.config.ts ./src/data/config.ts && cp ./ios/data/config/firebase/GoogleService-Info.prod.plist ./ios/mobile/GoogleService-Info.plist && cp ./android/data/config/firebase/google-services.prod.json ./android/app/google-services.json",
     "config:test": "cp ./src/data/test.config.ts ./src/data/config.ts && cp ./ios/data/config/firebase/GoogleService-Info.test.plist ./ios/mobile/GoogleService-Info.plist && cp ./android/data/config/firebase/google-services.test.json ./android/app/google-services.json",
     "bundle:android": "yarn config:prod && cd android && ./gradlew assembleProdRelease && cd ..",
-    "codepush:release": "appcenter codepush release-react --app rahafoundation/Android-Raha-App -d Staging && appcenter codepush release-react --app rahafoundation/iOS-Raha-App -d Staging",
-    "codepush:promote": "appcenter codepush promote --app rahafoundation/Android-Raha-App -s Staging -d Production && appcenter codepush promote --app rahafoundation/iOS-Raha-App -s Staging -d Production"
+    "codepush:android:release": "appcenter codepush release-react --app rahafoundation/Raha-App -d Staging ",
+    "codepush:android:promote": "appcenter codepush promote --app rahafoundation/Raha-App -s Staging -d Production",
+    "codepush:android:history:staging": "appcenter codepush deployment history Staging --app rahafoundation/Raha-App",
+    "codepush:android:history:production": "appcenter codepush deployment history Production --app rahafoundation/Raha-App",
+    "codepush:ios:release": "appcenter codepush release-react --app rahafoundation/iOS-Raha-App -d Staging --plist-file ios/mobile/Info.plist",
+    "codepush:ios:promote": "appcenter codepush promote --app rahafoundation/iOS-Raha-App -s Staging -d Production",
+    "codepush:ios:history:staging": "appcenter codepush deployment history Staging --app rahafoundation/iOS-Raha-App",
+    "codepush:ios:history:production": "appcenter codepush deployment history Production --app rahafoundation/iOS-Raha-App"
   },
   "dependencies": {
     "@raha/api": "^0.2.5",

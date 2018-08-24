@@ -49,9 +49,16 @@ Add the codepush iOS deployment keys to your buildconfig settings.
 
 ### Releasing an update to codepush
 
-1. Run `yarn codepush:release`. This will push a codepush update using our Staging
+Under normal circumstances, we'd like to release to Android and iOS simulatenously to avoid versions getting out of sync.
+
+TODO: Update what extraordinary circumstances are if we ever encounter them.
+
+1. Run `yarn codepush:[android|ios]:release`. This will push a codepush update using our Staging
    key which all non-prod-release builds use. Test that the update looks correct on
    one of these builds.
-1. Once you've verified the update is working, run `yarn codepush:promote` to promote
+1. Once you've verified the update is working, run `yarn codepush:[android|ios]:promote` to promote
    the staging update to the Production environment. All app installs via the app stores
    should then receive this update.
+1. Once you've promoted a codepush release, tag the current commit with the codepush release label with
+   `git tag -a codepush-[android|ios]-[label]`. You can list the labels of production codepush releases by
+   using `yarn codepush:[android|ios]:history:production`.
