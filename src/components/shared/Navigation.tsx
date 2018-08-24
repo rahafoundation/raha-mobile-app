@@ -121,8 +121,8 @@ const headerStyle: ViewStyle = {
 };
 
 const headerTextStyle: TextStyle = {
-  ...fontSizes.xlarge,
-  ...fonts.Lato.Semibold
+  ...fontSizes.large,
+  ...fonts.Lato.Bold
 };
 
 const navIconStyle: TextStyle = {
