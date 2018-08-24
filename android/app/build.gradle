@@ -206,3 +206,6 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+// RN Firebase requires that this line be at
+apply plugin: 'com.google.gms.google-services'
