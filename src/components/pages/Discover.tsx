@@ -83,17 +83,28 @@ function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
 // TODO below JSON should be available from website.
 const DISCOVER_INFO = convertCardArr([
   {
-    header: "Check out the Raha Marketplace",
+    header: "Did you know?",
     bodyChoices: [
-      "Buy everything from books and posters to instruments, get your resume reviewed, and more!"
+      '"Cash transfers have positive impacts, including on children."',
+      '"Cash transfers have long-term impacts."',
+      '"The poor do not systematically abuse cash transfers (e.g. on alcohol)."'
     ],
-    action: "Visit the marketplace",
-    uri: "https://discuss.raha.app/c/marketplace"
+    action: "Read more at GiveDirectly.org",
+    uri: "https://www.givedirectly.org/research-on-cash-transfers"
   },
+  // TODO in-app marketplace
+  // {
+  //   header: "Check out the Raha Marketplace",
+  //   bodyChoices: [
+  //     "Buy everything from books and posters to instruments, get your resume reviewed, and more!"
+  //   ],
+  //   action: "Visit the marketplace",
+  //   uri: "https://discuss.raha.app/c/marketplace"
+  // },
   {
     header: "Climb the leaderboard",
     bodyChoices: [
-      "Invite more people to mint bonus Raha and get to the top of the leaderboard ranks!"
+      "Invite more people to get to the top of the leaderboard ranks!"
     ],
     action: "View the leaderboard",
     uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard" // Why does RouteName.LeaderBoard break?
@@ -106,30 +117,21 @@ const DISCOVER_INFO = convertCardArr([
   },
   {
     header: "Meet the Raha Community",
-    bodyChoices: ["Discuss UBI in the Raha Forums!"],
+    bodyChoices: ["Join discussions in the Raha Forums!"],
     action: "Check out the forums",
     uri: "https://discuss.raha.app/"
-  },
-  {
-    header: "Raha supports...",
-    bodyChoices: [
-      "Universal Basic Income to end extreme poverty.",
-      "Trusted identities for safe and secure payments.",
-      "Delegative democracy and values-based development."
-    ],
-    action: "Read the Raha Manifesto",
-    uri: "https://raha.app"
-  },
-  {
-    header: "Did you know?",
-    bodyChoices: [
-      '"Cash transfers have positive impacts, including on children."',
-      '"Cash transfers have long-term impacts."',
-      '"The poor do not systematically abuse cash transfers (e.g. on alcohol)."'
-    ],
-    action: "Read more at GiveDirectly.org",
-    uri: "https://www.givedirectly.org/research-on-cash-transfers"
   }
+  // TODO point to /what-is-raha/? Ensure does not try to deep link?
+  // {
+  //   header: "Raha supports...",
+  //   bodyChoices: [
+  //     "Universal Basic Income to end extreme poverty.",
+  //     "Trusted identities for safe and secure payments.",
+  //     "Delegative democracy and values-based development."
+  //   ],
+  //   action: "Read the Raha Manifesto",
+  //   uri: "https://raha.app"
+  // },
 ]);
 
 type DiscoverProps = {
