@@ -62,8 +62,7 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
             selfie-video of yourself stating your name and intent to join Raha.
           </Text>
           <Text style={[sharedStyles.paragraph, styles.paragraph]}>
-            Before you can mint your Raha basic income, an existing member must
-            also record a video vouching for your identity.
+            An existing member must also record a video vouching for your identity.
           </Text>
         </View>
 

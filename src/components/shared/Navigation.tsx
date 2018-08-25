@@ -410,7 +410,7 @@ const SignedOutNavigator = createSwitchNavigator(
         headerMode: "screen",
         navigationOptions: {
           headerTitle: (
-            <HeaderTitle title="Raha" subtitle="Basic Income Network" />
+            <HeaderTitle title="Raha" subtitle="Identity Network" />
           ),
           headerStyle: styles.header
         }
