@@ -140,19 +140,19 @@ android {
             dimension "environment"
             applicationId 'app.raha.mobileTest'
             resValue "string", "app_name", "Raha Test"
-            resValue "string", "appcenter_codepush_key", RAHA_APPCENTER_CODEPUSH_STAGING_KEY
+            resValue "string", "appcenter_codepush_key", project.hasProperty('RAHA_APPCENTER_CODEPUSH_STAGING_KEY') ? RAHA_APPCENTER_CODEPUSH_STAGING_KEY : ""
         }
         devProd {
             dimension "environment"
             applicationId 'app.raha.mobileProd'
             resValue "string", "app_name", "Raha Prod"
-            resValue "string", "appcenter_codepush_key", RAHA_APPCENTER_CODEPUSH_STAGING_KEY
+            resValue "string", "appcenter_codepush_key", project.hasProperty('RAHA_APPCENTER_CODEPUSH_STAGING_KEY') ? RAHA_APPCENTER_CODEPUSH_STAGING_KEY : ""
         }
         prod {
             dimension "environment"
             applicationId 'app.raha.mobile'
             resValue "string", "app_name", "Raha"
-            resValue "string", "appcenter_codepush_key", RAHA_APPCENTER_CODEPUSH_PROD_KEY
+            resValue "string", "appcenter_codepush_key", project.hasProperty('RAHA_APPCENTER_CODEPUSH_STAGING_KEY') ? RAHA_APPCENTER_CODEPUSH_STAGING_KEY : ""
         }
     }
 
