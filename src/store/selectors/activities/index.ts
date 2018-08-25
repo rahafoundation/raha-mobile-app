@@ -29,7 +29,6 @@ import {
   CurrencyType
 } from "../../../components/shared/elements/Currency";
 import {
-  isUnconfirmedRequestInvite,
   getCreateMemberOperationFor
 } from "../operations";
 import { List } from "immutable";
@@ -50,11 +49,16 @@ function videoReferenceForMember(member: Member): VideoReference {
  * Get all activities in Raha history.
  * TODO: only get a subset, or at least a paginated list, of activities; this is
  * not scalable.
+ * TODO: settle on filtering by either opFilter or activityFilter, both seem unecessary?
  *
  * @returns Activities to render in reverse chronological order (new -> old)
  */
-export function allActivities(state: RahaState): Activity[] {
-  return convertOperationsToActivities(state, state.operations).reverse();
+export function activities(state: RahaState, opFilter: (operation: Operation) => boolean): Activity[] {
+  let operations = state.operations;
+  if (opFilter) {
+    operations = operations.filter(opFilter);
+  }
+  return convertOperationsToActivities(state, operations).reverse();
 }
 
 /**
@@ -408,7 +412,7 @@ function convertOperationsToActivities(
  *
  * DANGER: this filters operations directly and creates a custom list of
  * Activities rather than going through the global activities list, so we should
- * probably ensure that this remains correct once options and activities are no
+ * probably ensure that this remains correct once operations and activities are no
  * longer 1:1.
  */
 export const pendingInviteActivities = (state: RahaState): Activity[] => {
@@ -454,7 +458,7 @@ function activityContentContainsMember(
  * TODO: make this more efficient.
  */
 export const activitiesForMember = (state: RahaState, memberId: MemberId) => {
-  return allActivities(state).filter(activity =>
+  return activities(state).filter(activity =>
     activityContentContainsMember(activity.content, memberId)
   );
 };

@@ -167,6 +167,7 @@ export function getUnverifiedMembers(state: RahaState) {
     .toList();
 }
 
+// TODO currently dead code, delete?
 export function isInviteConfirmed(
   state: RahaState,
   memberId: MemberId

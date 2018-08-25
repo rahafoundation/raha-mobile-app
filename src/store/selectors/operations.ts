@@ -25,6 +25,7 @@ export function getOperationsForCreator(
   return operations.filter(op => op.creator_uid === creatorMemberId);
 }
 
+// TODO currently dead code, delete?
 export function isUnconfirmedRequestInvite(
   state: RahaState,
   operation: Operation
