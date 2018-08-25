@@ -8,10 +8,11 @@ import { connect, MapStateToProps } from "react-redux";
 
 import { ActivityFeed } from "../shared/Activity/ActivityFeed";
 import { RahaState } from "../../store";
-import { allActivities } from "../../store/selectors/activities";
+import { activities } from "../../store/selectors/activities";
 import { Activity } from "../../store/selectors/activities/types";
 import { colors } from "../../helpers/colors";
 import { View } from "react-native";
+import { OperationType } from '@raha/api-shared/dist/models/Operation';
 
 type StateProps = {
   activities: Activity[];
@@ -25,8 +26,19 @@ const FeedView: React.StatelessComponent<StateProps> = ({ activities }) => {
   );
 };
 
+// TODO this logic should probably get pushed into conversion from ops to activities.
+const INVALID_FEED_OPS = new Set([
+  OperationType.MINT,
+  OperationType.TRUST,
+  OperationType.REQUEST_INVITE,
+  OperationType.REQUEST_VERIFICATION,
+  OperationType.CREATE_MEMBER
+]);
+
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
-  return { activities: allActivities(state) };
+  return {
+    activities: activities(state, op => !INVALID_FEED_OPS.has(op.op_code))
+  };
 };
 
 export const Feed = connect(mapStateToProps)(FeedView);
