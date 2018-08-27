@@ -28,9 +28,7 @@ import {
   CurrencyRole,
   CurrencyType
 } from "../../../components/shared/elements/Currency";
-import {
-  getCreateMemberOperationFor
-} from "../operations";
+import { getCreateMemberOperationFor } from "../operations";
 import { List } from "immutable";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
@@ -53,7 +51,10 @@ function videoReferenceForMember(member: Member): VideoReference {
  *
  * @returns Activities to render in reverse chronological order (new -> old)
  */
-export function activities(state: RahaState, opFilter: (operation: Operation) => boolean): Activity[] {
+export function activities(
+  state: RahaState,
+  opFilter: (operation: Operation) => boolean
+): Activity[] {
   let operations = state.operations;
   if (opFilter) {
     operations = operations.filter(opFilter);
@@ -73,7 +74,7 @@ export function activities(state: RahaState, opFilter: (operation: Operation) =>
  * @param operations All operations, expected in chronological order, oldest
  * first.
  */
-function convertOperationsToActivities(
+export function convertOperationsToActivities(
   state: RahaState,
   operations: List<Operation>
 ): Activity[] {

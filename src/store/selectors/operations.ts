@@ -49,6 +49,17 @@ export function getRequestVerificationOperation(
   ) as List<RequestVerificationOperation>;
 }
 
+export function operationsForMember(
+  operations: List<Operation>,
+  memberId: MemberId
+) {
+  return operations.filter(
+    op =>
+      op.creator_uid === memberId ||
+      ("to_uid" in op.data && op.data.to_uid === memberId)
+  );
+}
+
 export function getCreateMemberOperationFor(state: RahaState, member: Member) {
   return state.operations.find(
     operation =>

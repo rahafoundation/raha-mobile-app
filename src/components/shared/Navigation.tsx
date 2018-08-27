@@ -32,6 +32,7 @@ import { Profile as ProfileScreen } from "../pages/Profile";
 import { getMemberById } from "../../store/selectors/members";
 import { RahaState } from "../../store";
 import { MemberList as MemberListScreen } from "../pages/MemberList";
+import { ActivityList as ActivityListScreen } from "../pages/ActivityList";
 import { Onboarding } from "../pages/Onboarding/Onboarding";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
@@ -94,6 +95,7 @@ export enum RouteName {
   InvitePage = "Invite",
   LogInPage = "LogIn",
   MemberListPage = "Member List",
+  ActivityListPage = "Activity List",
   OnboardingPage = "Onboarding",
   ProfilePage = "Profile Page",
   ProfileTab = "Profile",
@@ -176,6 +178,18 @@ const MemberList = {
   }
 };
 
+const ActivityList = {
+  screen: ActivityListScreen,
+  navigationOptions: ({ navigation }: any) => {
+    return {
+      headerTitle: (
+        <HeaderTitle title={navigation.getParam("title", "Activity List")} />
+      ),
+      headerStyle: styles.header
+    };
+  }
+};
+
 const OWN_PROFILE = Symbol("OWN_PROFILE");
 const Profile: NavigationRouteConfig = {
   screen: ProfileScreen,
@@ -245,6 +259,7 @@ export function createNavigatorForTab(
       ...routeConfigMap,
       [RouteName.ProfilePage]: Profile,
       [RouteName.MemberListPage]: MemberList,
+      [RouteName.ActivityListPage]: ActivityList,
       [RouteName.GivePage]: Give,
       [RouteName.Verify]: {
         screen: Verify,
@@ -409,9 +424,7 @@ const SignedOutNavigator = createSwitchNavigator(
       {
         headerMode: "screen",
         navigationOptions: {
-          headerTitle: (
-            <HeaderTitle title="Raha" subtitle="Identity Network" />
-          ),
+          headerTitle: <HeaderTitle title="Raha" subtitle="Identity Network" />,
           headerStyle: styles.header
         }
       }
