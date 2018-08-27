@@ -5,7 +5,7 @@
 import * as React from "react";
 import { MapStateToProps, connect } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
-import { FlatList, View, StyleSheet, ViewStyle, TextStyle } from "react-native";
+import { FlatList, View, StyleSheet, ViewStyle } from "react-native";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
@@ -60,7 +60,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
 };
 
 const memberEntryStyle: ViewStyle = {
-
   flexDirection: "row",
   justifyContent: "flex-start",
   alignItems: "center",

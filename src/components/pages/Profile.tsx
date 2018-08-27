@@ -4,13 +4,7 @@
  * as ability to Mint.
  */
 import * as React from "react";
-import {
-  StyleSheet,
-  TouchableHighlight,
-  View,
-  TextStyle,
-  ViewStyle
-} from "react-native";
+import { TouchableHighlight, View } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
 
@@ -24,9 +18,11 @@ import { getMemberById } from "../../store/selectors/members";
 import { ActivityFeed } from "../shared/Activity/ActivityFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button, Text } from "../shared/elements";
-import { colors } from "../../helpers/colors";
 import { VideoWithPlaceholder } from "../shared/VideoWithPlaceholder";
-import { activitiesForMember } from "../../store/selectors/activities";
+import {
+  activitiesForMember,
+  convertOperationsToActivities
+} from "../../store/selectors/activities";
 import { Activity } from "../../store/selectors/activities/types";
 import {
   CurrencyType,
@@ -34,7 +30,9 @@ import {
   Currency,
   currencySymbol
 } from "../shared/elements/Currency";
-import { fontSizes, fonts } from "../../helpers/fonts";
+import { styles } from "./Profile.styles";
+import { operationsForMember } from "../../store/selectors/operations";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 interface NavParams {
   member: Member;
@@ -46,6 +44,7 @@ type StateProps = {
   member: Member;
   isOwnProfile: boolean;
   activities: Activity[];
+  verifiedActivities: Activity[];
 };
 
 type DispatchProps = {
@@ -65,53 +64,78 @@ const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
 
 type StatsProps = NavigationScreenProps<NavParams> & {
   member: Member;
+  verifiedActivities: Activity[];
 };
-const Stats: React.StatelessComponent<StatsProps> = props => (
-  <View style={styles.statsContainer}>
-    <View>
-      <Currency
-        style={styles.statNumber}
-        currencyValue={{
-          value: props.member.get("balance"),
-          currencyType: CurrencyType.Raha,
-          role: CurrencyRole.None
+const Stats: React.StatelessComponent<StatsProps> = ({
+  member,
+  verifiedActivities,
+  navigation
+}) => (
+  <View>
+    <View style={styles.statsContainer}>
+      <View>
+        <Currency
+          style={styles.statNumber}
+          currencyValue={{
+            value: member.get("balance"),
+            currencyType: CurrencyType.Raha,
+            role: CurrencyRole.None
+          }}
+        />
+        <Text style={styles.statLabel}>balance</Text>
+      </View>
+      <TouchableHighlight
+        onPress={() => {
+          navigation.push(RouteName.MemberListPage, {
+            memberIds: Array.from(member.get("trustedBy")),
+            title: "Trusted By"
+          });
         }}
-      />
-      <Text style={styles.statLabel}>balance</Text>
+      >
+        <View>
+          <Text style={[styles.statNumber, styles.floatRight]}>
+            {member.get("trustedBy").size}
+          </Text>
+          <Text style={styles.statLabel}>trusted by</Text>
+        </View>
+      </TouchableHighlight>
     </View>
-    <TouchableHighlight
-      onPress={() => {
-        props.navigation.push(RouteName.MemberListPage, {
-          memberIds: Array.from(props.member.get("trustedBy")),
-          title: "Trusted By"
-        });
-      }}
-    >
-      <View>
-        <Text style={styles.statNumber}>
-          {props.member.get("trustedBy").size}
-        </Text>
-        <Text style={styles.statLabel}>trusted by</Text>
-      </View>
-    </TouchableHighlight>
-    <TouchableHighlight
-      onPress={() =>
-        props.navigation.push(RouteName.MemberListPage, {
-          memberIds: Array.from(props.member.get("trusts")),
-          title: "Trusted By"
-        })
-      }
-    >
-      <View>
-        <Text style={styles.statNumber}>{props.member.get("trusts").size}</Text>
-        <Text style={styles.statLabel}>trusts</Text>
-      </View>
-    </TouchableHighlight>
+    <View style={styles.statsContainer}>
+      <TouchableHighlight
+        onPress={() =>
+          navigation.push(RouteName.ActivityListPage, {
+            activities: verifiedActivities,
+            title: "Verified By"
+          })
+        }
+      >
+        <View>
+          <Text style={styles.statNumber}>{member.get("verifiedBy").size}</Text>
+          <Text style={styles.statLabel}>verified by</Text>
+        </View>
+      </TouchableHighlight>
+      <TouchableHighlight
+        onPress={() =>
+          navigation.push(RouteName.MemberListPage, {
+            memberIds: Array.from(member.get("trusts")),
+            title: "Trusted By"
+          })
+        }
+      >
+        <View>
+          <Text style={[styles.statNumber, styles.floatRight]}>
+            {member.get("trusts").size}
+          </Text>
+          <Text style={styles.statLabel}>trusts</Text>
+        </View>
+      </TouchableHighlight>
+    </View>
   </View>
 );
 
 const ProfileView: React.StatelessComponent<ProfileProps> = ({
   activities,
+  verifiedActivities,
   navigation,
   member,
   loggedInMember,
@@ -134,129 +158,56 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
         activities={activities}
         header={
           <View style={styles.header}>
-            <Thumbnail member={member} />
-            <View style={styles.headerDetails}>
-              <Text style={styles.memberUsername}>
-                @{member.get("username")}
-              </Text>
-              <Stats navigation={navigation} member={member} />
-              {!!loggedInMember &&
-                !isOwnProfile && (
-                  <View style={styles.memberActions}>
-                    <Button
-                      // TODO: Come up with a solution for indicating action completed
-                      // Changing the text on these buttons forces them off the side of small screens
-                      title="Trust"
-                      onPress={() => trust(member.get("memberId"))}
-                      disabled={alreadyTrusted}
-                    />
-                    <Button
-                      // TODO: Come up with a solution for indicating action completed
-                      // Changing the text on these buttons forces them off the side of small screens
-                      title="Verify"
-                      onPress={() =>
-                        navigation.navigate(RouteName.Verify, {
-                          toMemberId: member.get("memberId")
-                        })
-                      }
-                      disabled={!canVerify}
-                    />
-                    <Button
-                      title={currencySymbol(CurrencyType.Raha)}
-                      onPress={() =>
-                        navigation.navigate(RouteName.GivePage, {
-                          toMember: member
-                        })
-                      }
-                    />
-                  </View>
-                )}
+            <View style={styles.headerProfile}>
+              <Thumbnail member={member} />
+              <View style={styles.headerDetails}>
+                <Text style={styles.memberUsername}>
+                  @{member.get("username")}
+                </Text>
+                <Stats
+                  navigation={navigation}
+                  member={member}
+                  verifiedActivities={verifiedActivities}
+                />
+              </View>
             </View>
+            {!!loggedInMember &&
+              !isOwnProfile && (
+                <View style={styles.memberActions}>
+                  <Button
+                    // TODO: Come up with a solution for indicating action completed
+                    // Changing the text on these buttons forces them off the side of small screens
+                    title="Trust"
+                    onPress={() => trust(member.get("memberId"))}
+                    disabled={alreadyTrusted}
+                  />
+                  <Button
+                    // TODO: Come up with a solution for indicating action completed
+                    // Changing the text on these buttons forces them off the side of small screens
+                    title="Verify"
+                    onPress={() =>
+                      navigation.navigate(RouteName.Verify, {
+                        toMemberId: member.get("memberId")
+                      })
+                    }
+                    disabled={!canVerify}
+                  />
+                  <Button
+                    title={currencySymbol(CurrencyType.Raha)}
+                    onPress={() =>
+                      navigation.navigate(RouteName.GivePage, {
+                        toMember: member
+                      })
+                    }
+                  />
+                </View>
+              )}
           </View>
         }
       />
     </View>
   );
 };
-
-const bodyStyle: ViewStyle = {
-  backgroundColor: colors.pageBackground
-};
-
-const headerStyle: ViewStyle = {
-  backgroundColor: colors.darkAccent,
-  padding: 20,
-
-  flexDirection: "row",
-  justifyContent: "flex-start",
-  alignItems: "center"
-};
-
-const headerDetailsStyle: ViewStyle = {
-  flexGrow: 1
-};
-
-const statNumberStyle: TextStyle = {
-  ...fonts.Lato.Bold,
-  ...fontSizes.large
-};
-
-const statLabelStyle: TextStyle = {
-  color: colors.bodyText,
-  ...fontSizes.small
-};
-
-const memberUsernameStyle: TextStyle = {
-  ...fonts.Lato.Semibold,
-  ...fontSizes.medium
-};
-
-const thumbnailStyle: ViewStyle = {
-  flexGrow: 0,
-  flexBasis: 120,
-
-  flexDirection: "column",
-  alignItems: "center",
-  marginRight: 20
-};
-
-const detailsSpacer: ViewStyle = {
-  marginTop: 15
-};
-
-const memberActionsStyle: ViewStyle = {
-  ...detailsSpacer,
-
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center"
-};
-
-const statsContainerStyle: ViewStyle = {
-  ...detailsSpacer,
-
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center"
-};
-
-const profileVideoStyle: ViewStyle = {
-  width: "100%",
-  aspectRatio: 1
-};
-
-const styles = StyleSheet.create({
-  body: bodyStyle,
-  header: headerStyle,
-  thumbnail: thumbnailStyle,
-  memberUsername: memberUsernameStyle,
-  headerDetails: headerDetailsStyle,
-  memberActions: memberActionsStyle,
-  statsContainer: statsContainerStyle,
-  profileVideo: profileVideoStyle,
-  statNumber: statNumberStyle,
-  statLabel: statLabelStyle
-});
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   dispatch: RahaThunkDispatch
@@ -277,8 +228,17 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   const loggedInMember = getMemberById(state, loggedInMemberId);
   const member: Member = props.navigation.getParam("member", loggedInMember);
   const activities = activitiesForMember(state, member.get("memberId"));
+  const verifiedActivities: Activity[] = convertOperationsToActivities(
+    state,
+    operationsForMember(state.operations, member.get("memberId")).filter(
+      op =>
+        op.op_code === OperationType.VERIFY &&
+        op.data.to_uid === member.get("memberId")
+    )
+  );
   return {
     activities,
+    verifiedActivities,
     member,
     loggedInMember,
     isOwnProfile:
