@@ -7,7 +7,7 @@ import * as React from "react";
 import { StyleSheet, View, TextStyle } from "react-native";
 import { Camera } from "../../shared/Camera";
 import { Text, IndependentPageContainer } from "../../shared/elements";
-import { fontSizes, fonts } from "../../../helpers/fonts";
+import { fonts } from "../../../helpers/fonts";
 import { styles as sharedStyles } from "./styles";
 
 type OwnProps = {
