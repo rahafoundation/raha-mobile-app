@@ -8,7 +8,7 @@ console.ignoredYellowBox = ["Setting a timer"];
 
 import * as React from "react";
 import { RNFirebase } from "react-native-firebase";
-import { View, StyleSheet, Dimensions, ViewStyle } from "react-native";
+import { View, StyleSheet, ViewStyle } from "react-native";
 import { ProcessingManager } from "react-native-video-processing";
 
 import { Button, Text } from "../../shared/elements";
@@ -63,7 +63,12 @@ export class VideoPreview extends React.Component<
         this.props.videoUri,
         options
       );
-      this.uploadVideo(this.props.videoUploadRef, newSource);
+
+      // Bug-hack. React-native-video-processing returns a { source: uri } object in Android, and a plain string on iOS.
+      // https://github.com/shahen94/react-native-video-processing/issues/162
+      const uri = typeof newSource === "string" ? newSource : newSource.source;
+
+      this.uploadVideo(this.props.videoUploadRef, uri);
     } catch (error) {
       this.props.onError("Error: Video Upload", error);
       this.setState({
