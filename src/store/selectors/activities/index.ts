@@ -53,7 +53,7 @@ function videoReferenceForMember(member: Member): VideoReference {
  */
 export function activities(
   state: RahaState,
-  opFilter: (operation: Operation) => boolean
+  opFilter?: (operation: Operation) => boolean
 ): Activity[] {
   let operations = state.operations;
   if (opFilter) {
