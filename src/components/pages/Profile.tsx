@@ -125,7 +125,7 @@ const ProfileView: React.StatelessComponent<ProfileProps> = ({
     // member is logged in
     loggedInMember &&
     // member is verified
-    loggedInMember.get("verifiedBy").size > 0 &&
+    loggedInMember.get("isVerified") &&
     // current member hasn't already verified the target member
     !member.get("verifiedBy").includes(loggedInMember.get("memberId"));
   return (

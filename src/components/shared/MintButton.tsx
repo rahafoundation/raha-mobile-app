@@ -42,7 +42,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
     // member is logged in
     loggedInMember &&
     // member has been verified
-    loggedInMember.get("verifiedBy").size > 0 &&
+    loggedInMember.get("isVerified") &&
     // member has raha to mint
     (mintableAmount && mintableAmount.gt(0)) &&
     // api call hasn't started

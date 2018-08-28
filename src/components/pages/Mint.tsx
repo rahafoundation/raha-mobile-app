@@ -38,9 +38,6 @@ type StateProps = {
 type Props = OwnProps & StateProps;
 
 const MoneySection: React.StatelessComponent<Props> = ({ loggedInMember }) => {
-  const net = loggedInMember
-    .get("balance")
-    .minus(loggedInMember.get("totalMinted"));
   return (
     <View style={styles.financesSection}>
       <View style={styles.balanceSection}>
@@ -68,18 +65,6 @@ const MoneySection: React.StatelessComponent<Props> = ({ loggedInMember }) => {
           />
           <Text style={styles.numberLabel}>minted</Text>
         </View>
-        {/* TODO: make this more intuitive, or remove. This value is confusing */}
-        {/* <View style={styles.moneyElement}>
-          <Currency
-            style={styles.currencyValue}
-            currencyValue={{
-              value: net,
-              role: CurrencyRole.Transaction,
-              currencyType: CurrencyType.Raha
-            }}
-          />
-          <Text style={styles.numberLabel}>transactions</Text>
-        </View> */}
         <View style={styles.moneyElement}>
           <Currency
             style={styles.currencyValue}
@@ -101,8 +86,7 @@ const Actions: React.StatelessComponent<Props> = props => {
   const hasUnclaimedReferrals = unclaimedReferralIds
     ? unclaimedReferralIds.length > 0
     : false;
-
-  if (loggedInMember.get("verifiedBy").size === 0) {
+  if (!loggedInMember.get("isVerified")) {
     return (
       <Text style={{ textAlign: "center", margin: 12 }}>
         You must be verified before you can mint Raha or invite new people.
