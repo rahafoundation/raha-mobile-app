@@ -76,13 +76,6 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Raha needs access to your camera to record invite videos.</string>
-	<!-- TODO: we currently never ask for location, but since react-native
-	binaries flag calls for permissions in the react-native libs, it asks us for
-	these entries. If we ever do ask, we need to have better messages.
-	https://github.com/rahafoundation/raha-mobile-app/issues/233
-	 -->
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Raha needs access to your location.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Raha needs access to your location while the app is in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
