@@ -121,7 +121,7 @@ const DISCOVER_INFO = convertCardArr([
     action: "Check out the forums",
     uri: "https://discuss.raha.app/"
   }
-  // TODO point to /what-is-raha/? Ensure does not try to deep link?
+  // TODO point to /what-is-raha/?
   // {
   //   header: "Raha supports...",
   //   bodyChoices: [
