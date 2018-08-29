@@ -141,11 +141,11 @@ Not fully implemented yet
 ### ... on Android:
 
 - Clicking on a recognized HTTPS link (typing the URL manually
-  into Chrome doesn't work): [https://raha.app/invite?r=tina.roh.7659&t=0bzeq0zyfrbe](https://raha.app/invite?r=tina.roh.7659&t=0bzeq0zyfrbe)
+  into Chrome doesn't work): [https://d.raha.app/invite?t=0bzeq0zyfrbe](https://d.raha.app/i?t=0bzeq0zyfrbe)
 - via ADB:
 
 ```bash
-adb shell am start -W -a android.intent.action.VIEW -d "raha://invite?videoToken=0qmkd6zfhx8c\&inviterUsername=tina.roh.7659" app.raha.mobileTest
+adb shell am start -W -a android.intent.action.VIEW -d "raha://link/invite?t=0bzeq0zyfrbe" app.raha.mobileTest
 ```
 
 ## Debugger
