@@ -49,19 +49,18 @@ export class VideoPreview extends React.Component<
   }
 
   compressAndUploadVideo = async () => {
-    // TODO: just default to square videos for simplicity
-    const options = {
-      width: 480,
-      height: 640,
-      bitrateMultiplier: 5
-    };
     try {
+      const compressOptions = {
+        width: 480,
+        height: 640,
+        bitrateMultiplier: 5
+      };
       this.setState({
         uploadStatus: UploadStatus.UPLOADING
       });
-      const newSource = await ProcessingManager.compress(
+      var newSource = await ProcessingManager.compress(
         this.props.videoUri,
-        options
+        compressOptions
       );
 
       // Bug-hack. React-native-video-processing returns a { source: uri } object in Android, and a plain string on iOS.
