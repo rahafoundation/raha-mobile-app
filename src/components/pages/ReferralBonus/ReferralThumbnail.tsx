@@ -20,7 +20,6 @@ import {
   getMemberColor
 } from "../../../helpers/memberDisplay";
 import { RahaState } from "../../../store";
-import { trustMember } from "../../../store/actions/members";
 import { mintReferralBonus } from "../../../store/actions/wallet";
 import {
   ApiCallStatus,
@@ -38,6 +37,9 @@ import {
   CurrencyValue
 } from "../../shared/elements/Currency";
 import { MemberThumbnail } from "../../shared/MemberThumbnail";
+import { getLoggedInMember } from "../../../store/selectors/authentication";
+import { Loading } from "../../shared/Loading";
+import { fonts } from "../../../helpers/fonts";
 
 const REFERRAL_BONUS = new Big(60);
 const REFERRAL_BONUS_VALUE: CurrencyValue = {
@@ -47,55 +49,63 @@ const REFERRAL_BONUS_VALUE: CurrencyValue = {
 };
 
 type OwnProps = NavigationScreenProps<ReferralBonusNavParams> & {
+  loggedInMember?: Member;
   invitedMember: Member;
 };
 
 type StateProps = {
-  trustApiCallStatus?: ApiCallStatus;
   mintBonusApiCallStatus?: ApiCallStatus;
 };
 
 type DispatchProps = {
   mintReferralBonus: typeof mintReferralBonus;
-  trustMember: typeof trustMember;
 };
 
 type MergedProps = {
   mintReferralBonus: () => void;
-  trustMember: () => void;
 };
 
 type Props = OwnProps & StateProps & MergedProps;
 
 const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
+  loggedInMember,
   invitedMember,
   navigation,
-  trustApiCallStatus,
   mintBonusApiCallStatus,
   mintReferralBonus
 }) => {
-  const isTrusting =
-    !!trustApiCallStatus &&
-    trustApiCallStatus.status === ApiCallStatusType.STARTED;
+  if (!loggedInMember) {
+    return <Loading />;
+  }
+
   const isMinting =
     !!mintBonusApiCallStatus &&
     mintBonusApiCallStatus.status === ApiCallStatusType.STARTED;
 
-  const actionButton = invitedMember.get("inviteConfirmed") ? (
+  const canMintReferralBonus = invitedMember
+    .get("verifiedBy")
+    .includes(loggedInMember.get("memberId"));
+
+  const actionButton = canMintReferralBonus ? (
     <Button
       onPress={mintReferralBonus}
       disabled={isMinting}
       title={["Mint", REFERRAL_BONUS_VALUE]}
     />
-  ) : (
-    <Button onPress={trustMember} disabled={isTrusting} title="Trust" />
-  );
+  ) : null;
 
-  const message = invitedMember.get("inviteConfirmed")
-    ? `You invited ${invitedMember.get("fullName")}!`
-    : `You must trust ${invitedMember.get(
-        "fullName"
-      )} before minting your bonus.`;
+  const message = canMintReferralBonus ? (
+    <Text>
+      You invited{" "}
+      <Text style={fonts.Lato.Bold}>{invitedMember.get("fullName")}</Text>!
+    </Text>
+  ) : (
+    <Text>
+      You must verify{" "}
+      <Text style={fonts.Lato.Bold}>{invitedMember.get("fullName")}</Text>{" "}
+      before minting your bonus.
+    </Text>
+  );
 
   return (
     <TouchableOpacity
@@ -130,6 +140,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   ownProps
 ) => {
   return {
+    loggedInMember: getLoggedInMember(state),
     trustApiCallStatus: getStatusOfApiCall(
       state,
       ApiEndpointName.TRUST_MEMBER,
@@ -156,20 +167,17 @@ const mergeProps: MergeProps<
         REFERRAL_BONUS,
         ownProps.invitedMember.get("memberId")
       ),
-    trustMember: () =>
-      dispatchProps.trustMember(ownProps.invitedMember.get("memberId")),
     ...ownProps
   };
 };
 
 export const ReferralThumbnail = connect(
   mapStateToProps,
-  { mintReferralBonus, trustMember },
+  { mintReferralBonus },
   mergeProps
 )(ReferralThumbnailComponent);
 
 const rowStyle: ViewStyle = {
-
   flexDirection: "row",
   marginHorizontal: 12,
   marginTop: 12,
