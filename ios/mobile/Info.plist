@@ -58,7 +58,9 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
+	<key>CodePushDeploymentKey</key>
+	<string>$(APPCENTER_CODEPUSH_DEPLOYMENT_KEY)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -74,8 +76,10 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Raha needs access to your camera to record invite videos.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Raha needs access to your location while the app is in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Raha needs access to your location.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Raha needs access to your microphone to record invite videos.</string>
 	<key>UIAppFonts</key>
@@ -113,7 +117,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CodePushDeploymentKey</key>
-	<string>$(APPCENTER_CODEPUSH_DEPLOYMENT_KEY)</string>
 </dict>
 </plist>
