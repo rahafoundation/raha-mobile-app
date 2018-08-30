@@ -129,12 +129,14 @@ export class ConfirmExistingVerificationVideo extends React.Component<
         <Text style={styles.back} onPress={this.props.onBack}>
           Back
         </Text>
-        <View style={styles.video}>
-          {this.state.videoUrl ? (
-            <VideoWithPlaceholder uri={this.state.videoUrl} />
-          ) : (
-            <Loading />
-          )}
+        <View style={styles.videoRow}>
+          <View style={styles.video}>
+            {this.state.videoUrl ? (
+              <VideoWithPlaceholder uri={this.state.videoUrl} />
+            ) : (
+              <Loading />
+            )}
+          </View>
         </View>
         {this._renderVerifyStep()}
         <View style={styles.padding} />
@@ -152,9 +154,15 @@ const styles = StyleSheet.create({
   padding: {
     flexGrow: 1
   },
+  videoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 250
+  },
   video: {
-    aspectRatio: 1,
-    maxHeight: 250
+    height: 250,
+    aspectRatio: 1
   },
   text: {
     fontSize: 18,
