@@ -93,7 +93,8 @@ class MediaContentBody extends React.Component<{
             }}
             style={styles.mediaBody}
             key={idx}
-            uri={item.videoUri}
+            videoUri={item.videoUri}
+            placeholderUri={`${item.videoUri}.thumb.jpg`}
           />
         );
       }

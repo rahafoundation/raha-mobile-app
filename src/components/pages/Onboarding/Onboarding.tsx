@@ -10,10 +10,11 @@ import { OnboardingSplash } from "./OnboardingSplash";
 import { VerifyName } from "./VerifyName";
 import {
   getLoggedInFirebaseUser,
-  getAuthRestrictedVideoRef
+  getAuthRestrictedVideoRef,
+  getAuthRestrictedVideoThumbnailRef
 } from "../../../store/selectors/authentication";
 import { OnboardingCamera } from "./OnboardingCamera";
-import { VideoPreview } from "../Camera/VideoPreview";
+import { VideoUploader } from "../../shared/VideoUploader";
 import { OnboardingCreateAccount } from "./OnboardingCreateAccount";
 import { getMemberById } from "../../../store/selectors/members";
 import { RouteName } from "../../shared/Navigation";
@@ -279,14 +280,18 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       case OnboardingStep.VIDEO_PREVIEW: {
         const videoUri = this._verifyVideoUri();
         const videoUploadRef = getAuthRestrictedVideoRef(this.videoToken);
+        const thumbnailUploadRef = getAuthRestrictedVideoThumbnailRef(
+          this.videoToken
+        );
         if (!videoUri || !videoUploadRef) {
           return <React.Fragment />;
         }
         return (
           <IndependentPageContainer>
-            <VideoPreview
+            <VideoUploader
               videoUri={videoUri}
               videoUploadRef={videoUploadRef}
+              thumbnailUploadRef={thumbnailUploadRef}
               onVideoUploaded={(videoDownloadUrl: string) =>
                 this.setState({
                   videoDownloadUrl: videoDownloadUrl,
