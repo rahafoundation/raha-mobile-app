@@ -11,22 +11,27 @@ import { RNFirebase } from "react-native-firebase";
 import { View, StyleSheet, ViewStyle } from "react-native";
 import { ProcessingManager } from "react-native-video-processing";
 
-import { Button, Text } from "../../shared/elements";
-import { VideoWithPlaceholder } from "../../shared/VideoWithPlaceholder";
+import { Button, Text } from "./elements";
+import { VideoWithPlaceholder } from "./VideoWithPlaceholder";
 
 const BYTES_PER_MIB = 1024 * 1024;
 const MAX_MB = 60;
 const MAX_VIDEO_SIZE = MAX_MB * BYTES_PER_MIB;
 
-type VideoPreviewProps = {
+interface VideoUploaderProps {
   videoUri: string;
+  thumbnailUri?: string;
   videoUploadRef: RNFirebase.storage.Reference;
-  onVideoUploaded: (videoDownloadUrl: string) => any;
+  thumbnailUploadRef: RNFirebase.storage.Reference;
+  onVideoUploaded: (
+    videoDownloadUrl: string,
+    thumbnailDownloadUrl: string
+  ) => void;
   onError: (errorType: string, errorMessage: string) => any;
   onRetakeClicked: () => any;
-};
+}
 
-type VideoStateProps = {
+type VideoUploaderState = {
   uploadStatus: UploadStatus;
   videoDownloadUrl?: string;
 };
@@ -37,11 +42,11 @@ enum UploadStatus {
   UPLOADED
 }
 
-export class VideoPreview extends React.Component<
-  VideoPreviewProps,
-  VideoStateProps
+export class VideoUploader extends React.Component<
+  VideoUploaderProps,
+  VideoUploaderState
 > {
-  constructor(props: VideoPreviewProps) {
+  constructor(props: VideoUploaderProps) {
     super(props);
     this.state = {
       uploadStatus: UploadStatus.NOT_STARTED
@@ -59,16 +64,30 @@ export class VideoPreview extends React.Component<
       this.setState({
         uploadStatus: UploadStatus.UPLOADING
       });
-      const newSource = await ProcessingManager.compress(
-        this.props.videoUri,
-        options
-      );
+      const [compressedVideoSource, thumbnailSource] = await Promise.all([
+        ProcessingManager.compress(this.props.videoUri, options),
+        ProcessingManager.getPreviewForSecond(
+          this.props.videoUri,
+          0,
+          options, // use same width and height as actual video
+          "JPEG" // Already low res, so might as well compress to smaller format than PNG
+        )
+      ]);
+      const thumbnailUri = thumbnailSource.uri;
 
       // Bug-hack. React-native-video-processing returns a { source: uri } object in Android, and a plain string on iOS.
       // https://github.com/shahen94/react-native-video-processing/issues/162
-      const uri = typeof newSource === "string" ? newSource : newSource.source;
+      const compressedVideoUri =
+        typeof compressedVideoSource === "string"
+          ? compressedVideoSource
+          : compressedVideoSource.source;
 
-      this.uploadVideo(this.props.videoUploadRef, uri);
+      this.uploadVideo(
+        this.props.videoUploadRef,
+        this.props.thumbnailUploadRef,
+        compressedVideoUri,
+        thumbnailUri
+      );
     } catch (error) {
       this.props.onError("Error: Video Upload", error);
       this.setState({
@@ -79,7 +98,9 @@ export class VideoPreview extends React.Component<
 
   uploadVideo = async (
     videoUploadRef: RNFirebase.storage.Reference,
-    videoUri: string
+    thumbnailUploadRef: RNFirebase.storage.Reference,
+    videoUri: string,
+    thumbnailUri: string
   ) => {
     // TODO figure out why local fetch is broken.
     // const response = await fetch(videoUri);
@@ -99,14 +120,21 @@ export class VideoPreview extends React.Component<
     //   //@ts-ignore Expo Blob does not have data type
     //   contentType: blob.data.type
     // };
-    const uploadTask = videoUploadRef.put(videoUri, {
+
+    const videoUploadTask = videoUploadRef.put(videoUri, {
       contentType: "video/mp4"
     });
-    await uploadTask;
-    const videoDownloadUrl = await videoUploadRef.getDownloadURL();
+    const thumbnailUploadTask = thumbnailUploadRef.put(thumbnailUri, {
+      contentType: "image/jpeg"
+    });
+    await Promise.all([videoUploadTask, thumbnailUploadTask]);
+    const [videoDownloadUrl, thumbnailDownloadUrl] = await Promise.all([
+      videoUploadRef.getDownloadURL(),
+      thumbnailUploadRef.getDownloadURL()
+    ]);
     if (videoDownloadUrl) {
       this.setState({ uploadStatus: UploadStatus.UPLOADED });
-      this.props.onVideoUploaded(videoDownloadUrl);
+      this.props.onVideoUploaded(videoDownloadUrl, thumbnailDownloadUrl);
     } else {
       this.props.onError(
         "Error: Video Upload",
@@ -153,11 +181,15 @@ export class VideoPreview extends React.Component<
   }
 
   renderVideo() {
-    const videoUri = this.props.videoUri;
+    const { videoUri, thumbnailUri } = this.props;
     return (
       videoUri && (
         <View style={styles.videoContainer}>
-          <VideoWithPlaceholder uri={videoUri} autoplay={true} />
+          <VideoWithPlaceholder
+            videoUri={videoUri}
+            placeholderUri={thumbnailUri}
+            autoplay={true}
+          />
         </View>
       )
     );
