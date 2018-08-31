@@ -236,7 +236,6 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
       }
       case VerifyStep.CONFIRM_RECORDED_VIDEO: {
         const { localVideoToken, localVideoUri } = this.state.currentStepState;
-        console.warn("token", localVideoToken);
 
         return (
           <VideoUploader
