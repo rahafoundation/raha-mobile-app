@@ -2,17 +2,17 @@ import { BackHandler } from "react-native";
 import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
 import { MapStateToProps, connect } from "react-redux";
-import { RNFirebase } from "react-native-firebase";
 import DropdownAlert from "react-native-dropdownalert";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 import { IndependentPageContainer } from "../../shared/elements";
 import { VerifyCamera } from "./VerifyCamera";
-import { VideoPreview } from "../Camera/VideoPreview";
+import { VideoUploader } from "../../shared/VideoUploader";
 import {
   getLoggedInMember,
-  getAuthRestrictedVideoRef
+  getAuthRestrictedVideoRef,
+  getAuthRestrictedVideoThumbnailRef
 } from "../../../store/selectors/authentication";
 import { Member } from "../../../store/reducers/members";
 import { RahaState } from "../../../store";
@@ -27,7 +27,7 @@ enum VerifyStep {
   SPLASH,
   CONFIRM_EXISTING_VIDEO,
   CAMERA,
-  VIDEO_PREVIEW,
+  CONFIRM_RECORDED_VIDEO,
   CONFIRM_VERIFICATION
 }
 
@@ -41,56 +41,127 @@ type OwnProps = NavigationScreenProps<{ toMemberId: MemberId }>;
 
 type VerifyProps = OwnProps & ReduxStateProps;
 
+interface BaseVerifyState {
+  // necessary for handling back button presses.
+  previousSteps: CurrentVerifyState[];
+}
+
+/**
+ * Current state of the verification flow.
+ *
+ * There are two flows. In either case, you are logged in and verifying someone
+ * else. They are:
+ *
+ * ## You invited someone to Raha, and therefore a video of you verifying the
+ *    other person should already exist
+ *
+ * 1. CONFIRM_EXISTING_VIDEO. Video is present, you can confirm it or retake. If
+ *    you confirm it:
+ * 2. CONFIRM_VERIFICATION: All necessary information is present. Complete the
+ *    verification process.
+ *
+ * Else, go to the CAMERA step, and follow the flow as though you don't have an
+ * existent video.
+ *
+ * ## You are verifying someone you didn't invite, and therefore a video of you
+ *    verifying the other person does not exist.
+ *
+ * 1. SPLASH: Informational page
+ * 2. CAMERA: Take a video verifying the other person.
+ * 3. CONFIRM_RECORDED_VIDEO: Confirm that the video is acceptable, or retake
+ *    (go back to CAMERA step). If it's good, then proceeding to the next
+ *    step uploads it.
+ * 4. CONFIRM_VERIFICATION: See above.
+ */
+type CurrentVerifyState =
+  | {
+      // in the case of CONFIRM_EXISTING_VIDEO, we get the remote video token
+      // from props.
+      step:
+        | VerifyStep.CONFIRM_EXISTING_VIDEO
+        | VerifyStep.SPLASH
+        | VerifyStep.CAMERA;
+    }
+  | {
+      step: VerifyStep.CONFIRM_RECORDED_VIDEO;
+      localVideoUri: string;
+      // video not yet committed to the bucket named after this token.
+      localVideoToken: string;
+    }
+  | {
+      step: VerifyStep.CONFIRM_VERIFICATION;
+      remoteVideoToken: string;
+    };
+
 type VerifyState = {
-  step: VerifyStep;
-  videoUri?: string;
-  videoDownloadUrl?: string;
+  previousSteps: CurrentVerifyState[];
+  currentStep: CurrentVerifyState;
 };
 
 class VerifyView extends React.Component<VerifyProps, VerifyState> {
-  steps: VerifyStep[];
-  videoToken: string;
-  videoUploadRef: RNFirebase.storage.Reference;
   dropdown: any;
 
   constructor(props: VerifyProps) {
     super(props);
-    this.steps = [];
-    this.videoToken = generateToken();
-    this.videoUploadRef = getAuthRestrictedVideoRef(this.videoToken);
+    const initialStep = props.inviteVideoToken
+      ? VerifyStep.CONFIRM_EXISTING_VIDEO
+      : VerifyStep.SPLASH;
+
     this.state = {
-      step: props.inviteVideoToken
-        ? VerifyStep.CONFIRM_EXISTING_VIDEO
-        : VerifyStep.SPLASH
+      currentStep: {
+        step: initialStep
+      },
+      previousSteps: []
     };
   }
 
   componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this._handleBackPress);
+    BackHandler.addEventListener("hardwareBackPress", this._handlePreviousStep);
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this._handleBackPress);
+    BackHandler.removeEventListener(
+      "hardwareBackPress",
+      this._handlePreviousStep
+    );
   }
 
-  componentDidUpdate(prevProps: VerifyProps, prevState: VerifyState) {
-    // Track forward changes in steps so we can handle backpresses.
-    if (prevState && this.state.step > prevState.step) {
-      this.steps.push(prevState.step);
-    }
+  /**
+   * Handles forward state transitions.
+   *
+   * Use this to transition states rather than calling this.setState directly
+   * in this component, because we need to keep track of previous steps to
+   * properly handle back button presses.
+   */
+  _handleNextStep(newStep: CurrentVerifyState) {
+    this.setState({
+      currentStep: newStep,
+      previousSteps: [...this.state.previousSteps, this.state.currentStep]
+    });
   }
 
-  _handleBackPress = () => {
-    const previousStep = this.steps.pop();
-    if (previousStep === undefined) {
-      // Exit out of Onboarding flow.
+  /**
+   * Handles backwards state transitions.
+   *
+   * Use this to transition states rather than calling this.setState directly
+   * in this component, because we need to keep track of previous steps to
+   * properly handle back button presses.
+   *
+   * Returns true if a previous step existed, or false if we are backing out
+   * from the first step.
+   */
+  _handlePreviousStep = () => {
+    const { previousSteps } = this.state;
+    if (previousSteps.length === 0) {
+      // Should exit out of Onboarding flow.
       return false;
-    } else {
-      this.setState({
-        step: previousStep
-      });
-      return true;
     }
+
+    this.setState({
+      currentStep: previousSteps[previousSteps.length - 1],
+      previousSteps: previousSteps.slice(0, -1)
+    });
+    return true;
   };
 
   _handleExit = () => {
@@ -101,41 +172,9 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
    * A handler for software back button press.
    */
   _handleSoftBackPress = () => {
-    if (!this._handleBackPress()) {
+    if (!this._handlePreviousStep()) {
       this._handleExit();
     }
-  };
-
-  _verifyVideoUri = () => {
-    const videoUri = this.state.videoUri;
-    if (!videoUri) {
-      this.dropdown.alertWithType(
-        "error",
-        "Error: Can't show video",
-        "Invalid video. Please retake your video."
-      );
-      this.setState({
-        step: VerifyStep.CAMERA
-      });
-    }
-    return videoUri;
-  };
-
-  _verifyVideoToken = () => {
-    const videoToken = this.state.videoDownloadUrl
-      ? this.videoToken
-      : this.props.inviteVideoToken;
-    if (!videoToken) {
-      this.dropdown.alertWithType(
-        "error",
-        "Error: No verification video",
-        "No verification video found. Please take a verification video."
-      );
-      this.setState({
-        step: VerifyStep.CAMERA
-      });
-    }
-    return videoToken;
   };
 
   _renderStep() {
@@ -145,12 +184,12 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
       );
       return <React.Fragment />;
     }
-    switch (this.state.step) {
+    switch (this.state.currentStep.step) {
       case VerifyStep.SPLASH: {
         return (
           <VerifySplash
             onContinue={() => {
-              this.setState({
+              this._handleNextStep({
                 step: VerifyStep.CAMERA
               });
             }}
@@ -159,15 +198,19 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
         );
       }
       case VerifyStep.CONFIRM_EXISTING_VIDEO: {
-        if (this.props.inviteVideoToken) {
+        const { inviteVideoToken } = this.props;
+        if (inviteVideoToken) {
           return (
             <ConfirmExistingVerificationVideo
-              inviteVideoToken={this.props.inviteVideoToken}
+              inviteVideoToken={inviteVideoToken}
               onBack={this._handleSoftBackPress}
               onConfirm={() =>
-                this.setState({ step: VerifyStep.CONFIRM_VERIFICATION })
+                this._handleNextStep({
+                  step: VerifyStep.CONFIRM_VERIFICATION,
+                  remoteVideoToken: inviteVideoToken
+                })
               }
-              onRetake={() => this.setState({ step: VerifyStep.CAMERA })}
+              onRetake={() => this._handleNextStep({ step: VerifyStep.CAMERA })}
               toVerifyMemberFullName={this.props.toMember.get("fullName")}
             />
           );
@@ -182,9 +225,10 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
         return (
           <VerifyCamera
             onVideoRecorded={(videoUri: string) => {
-              this.setState({
-                videoUri: videoUri,
-                step: VerifyStep.VIDEO_PREVIEW
+              this._handleNextStep({
+                localVideoUri: videoUri,
+                step: VerifyStep.CONFIRM_RECORDED_VIDEO,
+                localVideoToken: generateToken()
               });
             }}
             ownFullName={this.props.loggedInMember.get("fullName")}
@@ -192,42 +236,37 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
           />
         );
       }
-      case VerifyStep.VIDEO_PREVIEW: {
-        const videoUri = this._verifyVideoUri();
-        if (!videoUri) {
-          console.error("Missing video URI for VideoPreview step");
-          return <React.Fragment />;
-        }
+      case VerifyStep.CONFIRM_RECORDED_VIDEO: {
+        const { localVideoToken, localVideoUri } = this.state.currentStep;
+        console.warn("token", localVideoToken);
+
         return (
-          <VideoPreview
-            videoUri={videoUri}
-            videoUploadRef={this.videoUploadRef}
-            onVideoUploaded={(videoDownloadUrl: string) =>
-              this.setState({
-                videoDownloadUrl,
-                step: VerifyStep.CONFIRM_VERIFICATION
+          <VideoUploader
+            videoUri={localVideoUri}
+            videoUploadRef={getAuthRestrictedVideoRef(localVideoToken)}
+            thumbnailUploadRef={getAuthRestrictedVideoThumbnailRef(
+              localVideoToken
+            )}
+            onVideoUploaded={() =>
+              this._handleNextStep({
+                step: VerifyStep.CONFIRM_VERIFICATION,
+                remoteVideoToken: localVideoToken
               })
             }
             onRetakeClicked={() => {
-              this.setState({ step: VerifyStep.CAMERA });
+              this._handleNextStep({ step: VerifyStep.CAMERA });
             }}
             onError={(errorType: string, errorMessage: string) => {
               this.dropdown.alertWithType("error", errorType, errorMessage);
-              this.setState({
-                step: VerifyStep.CAMERA
-              });
+              this._handleNextStep({ step: VerifyStep.CAMERA });
             }}
           />
         );
       }
       case VerifyStep.CONFIRM_VERIFICATION: {
-        const videoToken = this._verifyVideoToken();
-        if (!videoToken) {
-          return <React.Fragment />;
-        }
         return (
           <SubmitVerification
-            videoToken={videoToken}
+            videoToken={this.state.currentStep.remoteVideoToken}
             toMemberId={this.props.toMember.get("memberId")}
             toMemberFullName={this.props.toMember.get("fullName")}
             onBack={this._handleSoftBackPress}
@@ -236,7 +275,11 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
         );
       }
       default:
-        console.error("Unexpected step " + this.state.step);
+        console.error(
+          "Unexpected step " +
+            // type suggestion since TypeScript agrees this is impossible
+            (this.state.currentStep as CurrentVerifyState).step
+        );
         return undefined;
     }
   }
