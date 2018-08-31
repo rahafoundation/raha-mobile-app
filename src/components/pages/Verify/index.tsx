@@ -41,11 +41,6 @@ type OwnProps = NavigationScreenProps<{ toMemberId: MemberId }>;
 
 type VerifyProps = OwnProps & ReduxStateProps;
 
-interface BaseVerifyState {
-  // necessary for handling back button presses.
-  previousSteps: CurrentVerifyState[];
-}
-
 /**
  * Current state of the verification flow.
  *
@@ -73,7 +68,7 @@ interface BaseVerifyState {
  *    step uploads it.
  * 4. CONFIRM_VERIFICATION: See above.
  */
-type CurrentVerifyState =
+type VerifyStepState =
   | {
       // in the case of CONFIRM_EXISTING_VIDEO, we get the remote video token
       // from props.
@@ -93,10 +88,10 @@ type CurrentVerifyState =
       remoteVideoToken: string;
     };
 
-type VerifyState = {
-  previousSteps: CurrentVerifyState[];
-  currentStep: CurrentVerifyState;
-};
+interface VerifyState {
+  previousStepStates: VerifyStepState[];
+  currentStepState: VerifyStepState;
+}
 
 class VerifyView extends React.Component<VerifyProps, VerifyState> {
   dropdown: any;
@@ -108,10 +103,10 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
       : VerifyStep.SPLASH;
 
     this.state = {
-      currentStep: {
+      currentStepState: {
         step: initialStep
       },
-      previousSteps: []
+      previousStepStates: []
     };
   }
 
@@ -133,10 +128,13 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
    * in this component, because we need to keep track of previous steps to
    * properly handle back button presses.
    */
-  _handleNextStep(newStep: CurrentVerifyState) {
+  _handleNextStep(newStep: VerifyStepState) {
     this.setState({
-      currentStep: newStep,
-      previousSteps: [...this.state.previousSteps, this.state.currentStep]
+      currentStepState: newStep,
+      previousStepStates: [
+        ...this.state.previousStepStates,
+        this.state.currentStepState
+      ]
     });
   }
 
@@ -151,15 +149,15 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
    * from the first step.
    */
   _handlePreviousStep = () => {
-    const { previousSteps } = this.state;
-    if (previousSteps.length === 0) {
+    const { previousStepStates } = this.state;
+    if (previousStepStates.length === 0) {
       // Should exit out of Onboarding flow.
       return false;
     }
 
     this.setState({
-      currentStep: previousSteps[previousSteps.length - 1],
-      previousSteps: previousSteps.slice(0, -1)
+      currentStepState: previousStepStates[previousStepStates.length - 1],
+      previousStepStates: previousStepStates.slice(0, -1)
     });
     return true;
   };
@@ -184,7 +182,7 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
       );
       return <React.Fragment />;
     }
-    switch (this.state.currentStep.step) {
+    switch (this.state.currentStepState.step) {
       case VerifyStep.SPLASH: {
         return (
           <VerifySplash
@@ -237,7 +235,7 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
         );
       }
       case VerifyStep.CONFIRM_RECORDED_VIDEO: {
-        const { localVideoToken, localVideoUri } = this.state.currentStep;
+        const { localVideoToken, localVideoUri } = this.state.currentStepState;
         console.warn("token", localVideoToken);
 
         return (
@@ -254,11 +252,12 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
               })
             }
             onRetakeClicked={() => {
-              this._handleNextStep({ step: VerifyStep.CAMERA });
+              // because the only way to get to this step, is to come from the
+              // Camera page.
+              this._handlePreviousStep();
             }}
             onError={(errorType: string, errorMessage: string) => {
               this.dropdown.alertWithType("error", errorType, errorMessage);
-              this._handleNextStep({ step: VerifyStep.CAMERA });
             }}
           />
         );
@@ -266,7 +265,7 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
       case VerifyStep.CONFIRM_VERIFICATION: {
         return (
           <SubmitVerification
-            videoToken={this.state.currentStep.remoteVideoToken}
+            videoToken={this.state.currentStepState.remoteVideoToken}
             toMemberId={this.props.toMember.get("memberId")}
             toMemberFullName={this.props.toMember.get("fullName")}
             onBack={this._handleSoftBackPress}
@@ -278,7 +277,7 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
         console.error(
           "Unexpected step " +
             // type suggestion since TypeScript agrees this is impossible
-            (this.state.currentStep as CurrentVerifyState).step
+            (this.state.currentStepState as VerifyStepState).step
         );
         return undefined;
     }
