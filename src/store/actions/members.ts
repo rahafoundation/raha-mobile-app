@@ -1,5 +1,4 @@
 import { trust as callTrust } from "@raha/api/dist/members/trust";
-import { requestInvite as callRequestInvite } from "@raha/api/dist/members/requestInvite";
 import { createMember as callCreateMember } from "@raha/api/dist/members/createMember";
 import { verify as callVerify } from "@raha/api/dist/members/verify";
 import { sendInvite as callSendInvite } from "@raha/api/dist/me/sendInvite";
@@ -78,39 +77,6 @@ export const createMember: AsyncActionCreator = (
     },
     ApiEndpointName.CREATE_MEMBER,
     fullName
-  );
-};
-
-export const requestInviteFromMember: AsyncActionCreator = (
-  memberId: MemberId,
-  fullName: string,
-  username: string,
-  videoToken?: string
-) => {
-  return wrapApiCallAction(
-    async (dispatch, getState) => {
-      const authToken = await getAuthToken(getState());
-      if (!authToken) {
-        throw new UnauthenticatedError();
-      }
-
-      const { body } = await callRequestInvite(
-        config.apiBase,
-        authToken,
-        memberId,
-        fullName,
-        username,
-        videoToken
-      );
-
-      const action: OperationsAction = {
-        type: OperationsActionType.ADD_OPERATIONS,
-        operations: [body]
-      };
-      dispatch(action);
-    },
-    ApiEndpointName.REQUEST_INVITE,
-    memberId
   );
 };
 
