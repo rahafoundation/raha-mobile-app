@@ -1,6 +1,6 @@
-/*
- * This component assumes the uri given is a video, and there is a thumbnail
- * for this video that can be found by appending .thumb.jpg.
+/**
+ * Displays a video, but initially shows a placeholder image that must be
+ * tapped before displaying the video (unless props.autoplay is true).
  *
  * Very helpful for performance if showing many videos.
  */
@@ -20,11 +20,12 @@ import {
 } from "react-navigation";
 import Video from "react-native-video";
 
-type Props = {
-  uri: string;
+interface Props {
+  videoUri: string;
+  placeholderUri?: string; // TODO: if not present, show a generic placeholder
   autoplay?: boolean;
   style?: StyleProp<ViewStyle>;
-};
+}
 
 const initialState = (props: VideoWithPlaceholderViewProps) => ({
   // TODO: this is a little weird, as autoplay doesn't have to do with user
@@ -75,9 +76,9 @@ export class VideoWithPlaceholderView extends React.Component<
 
   render() {
     const { isPressed, videoLoaded, videoPaused } = this.state;
-    const imageProps = { source: { uri: this.props.uri + ".thumb.jpg" } };
+    const imageProps = { source: { uri: this.props.placeholderUri } };
     const videoProps = {
-      source: { uri: this.props.uri },
+      source: { uri: this.props.videoUri },
       paused: videoPaused || !videoLoaded
     };
     const renderImage = !isPressed || !videoLoaded;
