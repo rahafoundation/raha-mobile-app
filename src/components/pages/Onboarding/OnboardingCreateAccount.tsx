@@ -24,6 +24,7 @@ type ReduxStateProps = {
 type DispatchProps = {
   createMember: (
     fullName: string,
+    emailAddress: string,
     username: string,
     videoToken: string,
     inviteToken?: string
@@ -32,6 +33,7 @@ type DispatchProps = {
 
 type OwnProps = {
   verifiedName: string;
+  emailAddress: string;
   videoToken: string;
   inviteToken?: string;
 };
@@ -49,6 +51,7 @@ class OnboardingCreateAccountView extends React.Component<
     const username = getUsername(this.props.verifiedName);
     this.props.createMember(
       this.props.verifiedName,
+      this.props.emailAddress,
       username,
       this.props.videoToken,
       this.props.inviteToken

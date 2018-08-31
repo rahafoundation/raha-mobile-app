@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Member } from "../../../store/reducers/members";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View } from "react-native";
 
 import {
   Button,
@@ -8,7 +8,6 @@ import {
   TextInput,
   IndependentPageContainer
 } from "../../shared/elements";
-import { colors } from "../../../helpers/colors";
 import { styles } from "./styles";
 
 /**

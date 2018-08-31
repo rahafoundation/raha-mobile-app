@@ -21,6 +21,7 @@ import { RouteName } from "../../shared/Navigation";
 import { Loading } from "../../shared/Loading";
 import { generateToken } from "../../../helpers/token";
 import { IndependentPageContainer } from "../../shared/elements";
+import { InputEmail } from "./InputEmail";
 
 /**
  * Parent component for Onboarding flow.
@@ -28,6 +29,7 @@ import { IndependentPageContainer } from "../../shared/elements";
 enum OnboardingStep {
   SPLASH,
   VERIFY_NAME,
+  INPUT_EMAIL,
 
   CAMERA,
   VIDEO_PREVIEW,
@@ -57,6 +59,7 @@ type OnboardingProps = ReduxStateProps & OwnProps;
 type OnboardingState = {
   step: OnboardingStep;
   verifiedName?: string;
+  emailAddress?: string;
   inviteVideoIsValid?: boolean;
   videoDownloadUrl?: string;
   videoUri?: string;
@@ -172,6 +175,21 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
     return verifiedFullName;
   };
 
+  _verifyEmailAddress = () => {
+    const verifiedEmailAddress = this.state.emailAddress;
+    if (!verifiedEmailAddress) {
+      this.dropdown.alertWithType(
+        "error",
+        "Error: Missing email address",
+        "Need to specify email address before this step."
+      );
+      this.setState({
+        step: OnboardingStep.INPUT_EMAIL
+      });
+    }
+    return verifiedEmailAddress;
+  };
+
   _verifyVideoUri = () => {
     const videoUri = this.state.videoUri;
     if (!videoUri) {
@@ -240,6 +258,19 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
             onVerifiedName={(verifiedName: string) => {
               this.setState({
                 verifiedName: verifiedName,
+                step: OnboardingStep.INPUT_EMAIL
+              });
+            }}
+            onBack={this._handleBackPress}
+          />
+        );
+      }
+      case OnboardingStep.INPUT_EMAIL: {
+        return (
+          <InputEmail
+            onInputEmail={(email: string) => {
+              this.setState({
+                emailAddress: email,
                 step:
                   this.props.hasValidInviteToken &&
                   this.props.inviteVideoIsJoint &&
@@ -313,13 +344,15 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       }
       case OnboardingStep.CREATE_ACCOUNT: {
         const fullName = this._verifyFullName();
+        const emailAddress = this._verifyEmailAddress();
         const videoDownloadUrl = this._verifyVideoDownloadUrl();
-        if (!fullName || !videoDownloadUrl) {
+        if (!fullName || !emailAddress || !videoDownloadUrl) {
           return <React.Fragment />;
         }
         return (
           <OnboardingCreateAccount
             verifiedName={fullName}
+            emailAddress={emailAddress}
             videoToken={
               this.props.hasValidInviteToken &&
               this.props.inviteVideoToken &&
