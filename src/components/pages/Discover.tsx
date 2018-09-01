@@ -83,6 +83,36 @@ function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
 // TODO below JSON should be available from website.
 const DISCOVER_INFO = convertCardArr([
   {
+    header: "Check out Raha Services",
+    bodyChoices: [
+      "Find a personal trainer, get your resume reviewed, and more!"
+    ],
+    action: "Visit the marketplace",
+    uri: "https://discuss.raha.app/c/marketplace"
+  },
+  {
+    header: "Feedback or questions?",
+    bodyChoices: ["Contact the Raha team at hi@raha.app!"],
+    action: "Send us an email",
+    uri: "mailto:hi@raha.app"
+  },
+  {
+    header: "Raha supports...",
+    bodyChoices: [
+      "Universal Basic Income to end extreme poverty.",
+      "Trusted identities for safe and secure payments.",
+      "Delegative democracy and values-based development."
+    ],
+    action: "Read the Raha Manifesto",
+    uri: "https://raha.app/what-is-raha/"
+  },
+  {
+    header: "Meet the Raha Community",
+    bodyChoices: ["Join discussions in the Raha Forums!"],
+    action: "Check out the forums",
+    uri: "https://discuss.raha.app/"
+  },
+  {
     header: "Did you know?",
     bodyChoices: [
       '"Cash transfers have positive impacts, including on children."',
@@ -92,15 +122,6 @@ const DISCOVER_INFO = convertCardArr([
     action: "Read more at GiveDirectly.org",
     uri: "https://www.givedirectly.org/research-on-cash-transfers"
   },
-  // TODO in-app marketplace
-  // {
-  //   header: "Check out the Raha Marketplace",
-  //   bodyChoices: [
-  //     "Buy everything from books and posters to instruments, get your resume reviewed, and more!"
-  //   ],
-  //   action: "Visit the marketplace",
-  //   uri: "https://discuss.raha.app/c/marketplace"
-  // },
   {
     header: "Climb the leaderboard",
     bodyChoices: [
@@ -109,29 +130,6 @@ const DISCOVER_INFO = convertCardArr([
     action: "View the leaderboard",
     uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard" // Why does RouteName.LeaderBoard break?
   },
-  {
-    header: "Feedback or questions?",
-    bodyChoices: ["Contact the Raha team at hi@raha.app!"],
-    action: "Send us an email",
-    uri: "mailto:hi@raha.app"
-  },
-  {
-    header: "Meet the Raha Community",
-    bodyChoices: ["Join discussions in the Raha Forums!"],
-    action: "Check out the forums",
-    uri: "https://discuss.raha.app/"
-  }
-  // TODO point to /what-is-raha/?
-  // {
-  //   header: "Raha supports...",
-  //   bodyChoices: [
-  //     "Universal Basic Income to end extreme poverty.",
-  //     "Trusted identities for safe and secure payments.",
-  //     "Delegative democracy and values-based development."
-  //   ],
-  //   action: "Read the Raha Manifesto",
-  //   uri: "https://raha.app"
-  // },
 ]);
 
 type DiscoverProps = {
