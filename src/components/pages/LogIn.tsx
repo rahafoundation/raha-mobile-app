@@ -164,11 +164,17 @@ class PhoneNumberForm extends React.Component<
   };
 
   render() {
+    const phoneValid = phoneNumberIsValid(this.state.phoneNumber, this.state.country);
     return (
       <React.Fragment>
         <Text style={fonts.Lato.Bold as TextStyle} />
-
-        <Text style={styles.phoneLabel}>Phone number</Text>
+        <Button
+          title={
+            this.props.waitingForCode ? "Requesting..." : (phoneValid ? "Request SMS Code" : "Log In With Phone:")
+          }
+          onPress={this._handleSubmit}
+          disabled={this.props.waitingForCode || !phoneValid}
+        />
         <View style={styles.phoneInput}>
           <TouchableOpacity
             onPress={() => {
@@ -207,16 +213,6 @@ class PhoneNumberForm extends React.Component<
             Google Play Services.
           </Text>
         )}
-        <Button
-          title={
-            this.props.waitingForCode ? "Requesting..." : "Request SMS Code"
-          }
-          onPress={this._handleSubmit}
-          disabled={
-            this.props.waitingForCode ||
-            !phoneNumberIsValid(this.state.phoneNumber, this.state.country)
-          }
-        />
       </React.Fragment>
     );
   }
@@ -532,7 +528,6 @@ const phoneLabelStyle: TextStyle = {
 };
 
 const countryPickerStyle: ViewStyle = {
-
   flexDirection: "row",
   // inconsistent display behavior on ios and android
   alignItems: Platform.OS === "android" ? "center" : "baseline",
@@ -541,7 +536,6 @@ const countryPickerStyle: ViewStyle = {
 
 const styles = StyleSheet.create({
   container: {
-
     flexDirection: "column",
     height: "100%",
     width: "100%",
@@ -569,7 +563,6 @@ const styles = StyleSheet.create({
   },
   countryPicker: countryPickerStyle,
   phoneInput: {
-
     flexDirection: "row",
     alignItems: "center",
     marginTop: 10,
@@ -586,7 +579,6 @@ const styles = StyleSheet.create({
     marginLeft: 15
   },
   confirmationInput: {
-
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
