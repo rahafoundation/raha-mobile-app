@@ -4,8 +4,7 @@ import {
   View,
   StyleSheet,
   KeyboardAvoidingView,
-  ViewStyle,
-  ScrollView
+  ViewStyle
 } from "react-native";
 import {
   FormLabel,
@@ -164,6 +163,9 @@ class GiveFormView extends React.Component<Props, State> {
   public render() {
     return (
       <KeyboardAvoidingView
+        // this technically could work with height, but because of this issue,
+        // padding also works as a workaround.
+        // https://github.com/facebook/react-native/issues/13754
         behavior="padding"
         style={styles.container}
         keyboardVerticalOffset={64}
@@ -258,6 +260,9 @@ class GiveFormView extends React.Component<Props, State> {
             }
           />
         </View>
+
+        {/* Necessary for keyboard behavior; see the container and bottomFiller
+          * styles below. */}
         <View style={styles.bottomFiller} />
       </KeyboardAvoidingView>
     );
@@ -305,12 +310,19 @@ export const GiveForm = connect(
 )(GiveFormView);
 
 const containerStyle: ViewStyle = {
-  backgroundColor: colors.pageBackground,
+  // grow to maximum size
   flex: 1,
+
+  // have children align to the bottom of the page
   flexDirection: "column",
   justifyContent: "flex-end"
 };
 
+/*
+ * Push all content to the top by having this element fill up all remaining
+ * space. This way, when the keyboard comes up and pads the bottom, the
+ * focused text input remains on screen.
+ */
 const bottomFillerStyle: ViewStyle = {
   flex: 1
 };
