@@ -3,10 +3,9 @@ import * as React from "react";
 import {
   View,
   StyleSheet,
-  ScrollView,
   KeyboardAvoidingView,
-  Keyboard,
-  EmitterSubscription
+  ViewStyle,
+  ScrollView
 } from "react-native";
 import {
   FormLabel,
@@ -69,15 +68,8 @@ type State = {
 } & FormState;
 
 class GiveFormView extends React.Component<Props, State> {
-  keyboardDidShowListener?: EmitterSubscription;
-  keyboardDidHideListener?: EmitterSubscription;
-  scrollView: ScrollView | null;
-  msgInput: FormInput | null;
-
   public constructor(props: Props) {
     super(props);
-    this.scrollView = null;
-    this.msgInput = null;
     const toMemberId = props.toMemberId;
     this.state = {
       toMember: toMemberId ? props.getMemberById(toMemberId) : undefined,
@@ -152,32 +144,6 @@ class GiveFormView extends React.Component<Props, State> {
     }
   };
 
-  componentDidMount() {
-    this.keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      this._keyboardDidShow
-    );
-  }
-
-  componentWillUnmount() {
-    if (this.keyboardDidShowListener) {
-      this.keyboardDidShowListener.remove();
-    }
-  }
-
-  _keyboardDidShow = () => {
-    // Hack to wait until keyboard animation finishes to scroll to the bottom if
-    // the user selected the bottom-most form input. If we don't put this wait,
-    // the view will not scroll.
-    if (this.msgInput && this.msgInput.input.isFocused()) {
-      setTimeout(() => {
-        if (this.scrollView) {
-          this.scrollView.scrollToEnd();
-        }
-      }, 50);
-    }
-  };
-
   public componentDidUpdate(prevProps: Props, prevState: State) {
     if (
       this.props.apiCallStatus &&
@@ -198,103 +164,101 @@ class GiveFormView extends React.Component<Props, State> {
   public render() {
     return (
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        keyboardVerticalOffset={56} // Offset by the header
         behavior="padding"
+        style={styles.container}
+        keyboardVerticalOffset={64}
       >
-        <ScrollView ref={ref => (this.scrollView = ref)}>
-          <View style={styles.toRow}>
-            {this.state.toMember ? (
-              <React.Fragment>
-                <FormLabel>To:</FormLabel>
-                <View style={styles.selectedMember}>
-                  <Text onPress={this.clearTo}>
-                    {this.state.toMember.get("fullName")} (
-                    {this.state.toMember.get("username")})
-                  </Text>
-                </View>
-              </React.Fragment>
-            ) : (
-              <View style={styles.searchBar}>
-                <MemberSearchBar
-                  lightTheme
-                  onMemberSelected={this.onMemberSelected}
-                  excludeMembers={
-                    this.props.loggedInMember ? [this.props.loggedInMember] : []
-                  }
-                  placeholderText="To..."
-                />
-              </View>
-            )}
-          </View>
+        <View style={styles.toRow}>
           {this.state.toMember ? (
-            <FormValidationMessage
-              labelStyle={styles.helper}
-              containerStyle={styles.section}
-            >
-              {this.state.toMember.get("fullName")} is currently donating{" "}
-              {DONATION_RATE}% of all Raha they receive back to the Raha basic
-              income pool. This donation will be used to fund future basic
-              income distributions for everyone in the Raha network.
-            </FormValidationMessage>
+            <React.Fragment>
+              <FormLabel>To:</FormLabel>
+              <View style={styles.selectedMember}>
+                <Text onPress={this.clearTo}>
+                  {this.state.toMember.get("fullName")} (
+                  {this.state.toMember.get("username")})
+                </Text>
+              </View>
+            </React.Fragment>
           ) : (
-            <React.Fragment />
+            <View style={styles.searchBar}>
+              <MemberSearchBar
+                lightTheme
+                onMemberSelected={this.onMemberSelected}
+                excludeMembers={
+                  this.props.loggedInMember ? [this.props.loggedInMember] : []
+                }
+                placeholderText="To..."
+              />
+            </View>
           )}
-          <View>
-            <FormLabel>Amount</FormLabel>
-            <FormInput
-              keyboardType="numeric"
-              value={this.state.amount && this.state.amount.toString()}
-              onChangeText={this.onChangeAmount}
-              placeholder="0.00"
-            />
-            <FormValidationMessage labelStyle={styles.helper}>
-              Your balance:{" "}
-              {this.props.loggedInMember
-                ? this.props.loggedInMember.get("balance").toString()
-                : 0}{" "}
-              Raha
-            </FormValidationMessage>
-          </View>
-          <View>
-            <FormLabel>Message</FormLabel>
-            <FormInput
-              value={this.state.memo}
-              onChangeText={this.onChangeMemo}
-              ref={ref => (this.msgInput = ref)}
-              multiline={true}
-              placeholder="for being so amazing!"
-              autoCapitalize="none"
-            />
-            <FormValidationMessage labelStyle={styles.helper}>
-              {MAX_MEMO_LENGTH - this.state.memo.length} characters remaining
-            </FormValidationMessage>
-          </View>
-          {this.state.toMember && this.state.amount ? (
-            <FormValidationMessage
-              labelStyle={styles.helper}
-              containerStyle={styles.section}
-            >
-              You will give {this.state.amount.toString()} Raha to{" "}
-              {this.state.toMember.get("fullName")} for "
-              {this.state.memo ? `${this.state.memo}` : ""}
-              ".
-            </FormValidationMessage>
-          ) : (
-            <React.Fragment />
-          )}
-          <View style={styles.section}>
-            <Button
-              title="Give"
-              onPress={this.giveRaha}
-              disabled={
-                !this.validateForm() ||
-                (this.props.apiCallStatus &&
-                  this.props.apiCallStatus.status === ApiCallStatusType.STARTED)
-              }
-            />
-          </View>
-        </ScrollView>
+        </View>
+        {this.state.toMember ? (
+          <FormValidationMessage
+            labelStyle={styles.helper}
+            containerStyle={styles.section}
+          >
+            {this.state.toMember.get("fullName")} is currently donating{" "}
+            {DONATION_RATE}% of all Raha they receive back to the Raha basic
+            income pool. This donation will be used to fund future basic income
+            distributions for everyone in the Raha network.
+          </FormValidationMessage>
+        ) : (
+          <React.Fragment />
+        )}
+        <View>
+          <FormLabel>Amount</FormLabel>
+          <FormInput
+            keyboardType="numeric"
+            value={this.state.amount && this.state.amount.toString()}
+            onChangeText={this.onChangeAmount}
+            placeholder="0.00"
+          />
+          <FormValidationMessage labelStyle={styles.helper}>
+            Your balance:{" "}
+            {this.props.loggedInMember
+              ? this.props.loggedInMember.get("balance").toString()
+              : 0}{" "}
+            Raha
+          </FormValidationMessage>
+        </View>
+        <View>
+          <FormLabel>Given for...</FormLabel>
+          <FormInput
+            value={this.state.memo}
+            onChangeText={this.onChangeMemo}
+            multiline={true}
+            placeholder="...being so amazing!"
+            autoCapitalize="none"
+          />
+          <FormValidationMessage labelStyle={styles.helper}>
+            {MAX_MEMO_LENGTH - this.state.memo.length} characters remaining
+          </FormValidationMessage>
+        </View>
+        {this.state.toMember && this.state.amount ? (
+          <FormValidationMessage
+            labelStyle={styles.helper}
+            containerStyle={styles.section}
+          >
+            You will give {this.state.amount.toString()} Raha to{" "}
+            {this.state.toMember.get("fullName")} for "
+            {this.state.memo ? `${this.state.memo}` : ""}
+            ".
+          </FormValidationMessage>
+        ) : (
+          <React.Fragment />
+        )}
+        <View style={styles.section}>
+          <Button
+            title="Give"
+            onPress={this.giveRaha}
+            disabled={
+              !this.validateForm() ||
+              (this.props.apiCallStatus &&
+                this.props.apiCallStatus.status === ApiCallStatusType.STARTED)
+            }
+          />
+        </View>
+        <View style={styles.bottomFiller} />
       </KeyboardAvoidingView>
     );
   }
@@ -340,7 +304,19 @@ export const GiveForm = connect(
   mergeProps
 )(GiveFormView);
 
+const containerStyle: ViewStyle = {
+  backgroundColor: colors.pageBackground,
+  flex: 1,
+  flexDirection: "column",
+  justifyContent: "flex-end"
+};
+
+const bottomFillerStyle: ViewStyle = {
+  flex: 1
+};
+
 const styles = StyleSheet.create({
+  container: containerStyle,
   section: {
     marginTop: 16
   },
@@ -362,5 +338,6 @@ const styles = StyleSheet.create({
 
   helper: {
     color: "gray"
-  }
+  },
+  bottomFiller: bottomFillerStyle
 });
