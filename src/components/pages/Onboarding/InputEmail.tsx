@@ -44,7 +44,6 @@ export class InputEmail extends React.Component<
                 Please enter your email address:
               </Text>
               <TextInput
-                placeholder="What's your email address?"
                 onChangeText={text => this.setState({ emailAddress: text })}
                 value={this.state.emailAddress}
               />
