@@ -10,7 +10,8 @@ import {
   Image,
   Dimensions,
   Platform,
-  ViewStyle
+  ViewStyle,
+  KeyboardAvoidingView
 } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
@@ -164,17 +165,12 @@ class PhoneNumberForm extends React.Component<
   };
 
   render() {
-    const phoneValid = phoneNumberIsValid(this.state.phoneNumber, this.state.country);
+    const phoneValid = phoneNumberIsValid(
+      this.state.phoneNumber,
+      this.state.country
+    );
     return (
       <React.Fragment>
-        <Text style={fonts.Lato.Bold as TextStyle} />
-        <Button
-          title={
-            this.props.waitingForCode ? "Requesting..." : (phoneValid ? "Request SMS Code" : "Log In With Phone:")
-          }
-          onPress={this._handleSubmit}
-          disabled={this.props.waitingForCode || !phoneValid}
-        />
         <View style={styles.phoneInput}>
           <TouchableOpacity
             onPress={() => {
@@ -213,6 +209,17 @@ class PhoneNumberForm extends React.Component<
             Google Play Services.
           </Text>
         )}
+        <Button
+          title={
+            this.props.waitingForCode
+              ? "Requesting..."
+              : phoneValid
+                ? "Request SMS Code"
+                : "Log In With Phone:"
+          }
+          onPress={this._handleSubmit}
+          disabled={this.props.waitingForCode || !phoneValid}
+        />
       </React.Fragment>
     );
   }
@@ -499,7 +506,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
     const loginMessage =
       this.props.loginMessage || this.props.navigation.getParam("loginMessage");
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView behavior="padding" style={styles.container}>
         <Image
           resizeMode="contain"
           style={styles.image}
@@ -516,7 +523,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
           {this._renderContents()}
         </View>
         <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
