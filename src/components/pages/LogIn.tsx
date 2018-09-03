@@ -17,8 +17,7 @@ import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
 import {
   NavigationEventSubscription,
-  NavigationScreenProps,
-  NavigationParams
+  NavigationScreenProps
 } from "react-navigation";
 import CountryPicker, {
   getAllCountries,
@@ -215,7 +214,7 @@ class PhoneNumberForm extends React.Component<
               ? "Requesting..."
               : phoneValid
                 ? "Request SMS Code"
-                : "Log In With Phone:"
+                : "Log In With Phone"
           }
           onPress={this._handleSubmit}
           disabled={this.props.waitingForCode || !phoneValid}
@@ -331,33 +330,33 @@ class ConfirmationCodeForm extends React.Component<
           <Button
             style={styles.resendButton}
             title={
-              this.state.timeLeft
-                ? this.state.timeLeft === 0
-                  ? "Resend code"
-                  : `Resend in ${this.state.timeLeft}s`
-                : "Loading..."
+              this.state.timeLeft !== 0
+                ? `Resend in ${this.state.timeLeft}s`
+                : "Resend code"
             }
             onPress={this.props.onTriggerResend}
             disabled={this.state.timeLeft !== 0}
           />
         </View>
-        <Button
-          title="Cancel"
-          onPress={this.props.onCancel}
-          disabled={this.props.waitingForConfirmation}
-        />
-        <Button
-          title={
-            this.props.waitingForConfirmation
-              ? "Submitting..."
-              : "Submit verification code"
-          }
-          onPress={this._handleSubmit}
-          disabled={
-            this.props.waitingForConfirmation ||
-            !confirmationCodeIsValid(this.state.confirmationCode)
-          }
-        />
+        <View style={styles.buttonRow}>
+          <Button
+            title="Cancel"
+            onPress={this.props.onCancel}
+            disabled={this.props.waitingForConfirmation}
+          />
+          <Button
+            title={
+              this.props.waitingForConfirmation
+                ? "Submitting..."
+                : "Submit code"
+            }
+            onPress={this._handleSubmit}
+            disabled={
+              this.props.waitingForConfirmation ||
+              !confirmationCodeIsValid(this.state.confirmationCode)
+            }
+          />
+        </View>
       </React.Fragment>
     );
   }
@@ -541,6 +540,12 @@ const countryPickerStyle: ViewStyle = {
   flexWrap: "nowrap"
 };
 
+const buttonRowStyle: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-evenly"
+};
+
 const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
@@ -598,7 +603,8 @@ const styles = StyleSheet.create({
   },
   resendButton: {
     marginLeft: 15
-  }
+  },
+  buttonRow: buttonRowStyle
 });
 
 const mapStateToProps: MapStateToProps<
