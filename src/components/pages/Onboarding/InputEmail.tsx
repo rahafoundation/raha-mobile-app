@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Member } from "../../../store/reducers/members";
 import { View } from "react-native";
+import * as validator from "validator";
 
 import {
   Button,
@@ -11,29 +11,25 @@ import {
 import { styles } from "./styles";
 
 /**
- * Page that confirms user's full name
+ * Page that requests user's email address
  */
 
 type OwnProps = {
-  initialDisplayName?: string;
-  onVerifiedName: (verifiedName: string) => any;
+  onInputEmail: (emailAddress: string) => any;
   onBack: () => any;
 };
 
-type VerifyNameProps = OwnProps;
+type InputEmailProps = OwnProps;
 
-type VerifyNameState = {
-  invitingMember?: Member;
-  verifiedName?: string;
+type InputEmailState = {
+  emailAddress?: string;
 };
 
-export class VerifyName extends React.Component<
-  VerifyNameProps,
-  VerifyNameState
+export class InputEmail extends React.Component<
+  InputEmailProps,
+  InputEmailState
 > {
-  state = {
-    verifiedName: this.props.initialDisplayName
-  };
+  state: InputEmailState = {};
 
   render() {
     return (
@@ -45,23 +41,26 @@ export class VerifyName extends React.Component<
           <View style={styles.body}>
             <View style={styles.card}>
               <Text style={{ fontSize: 18 }}>
-                Please confirm your full name:
+                Please enter your email address:
               </Text>
               <TextInput
-                placeholder="What's your full name?"
-                onChangeText={text => this.setState({ verifiedName: text })}
-                value={this.state.verifiedName}
+                onChangeText={text => this.setState({ emailAddress: text })}
+                value={this.state.emailAddress}
               />
               <Button
                 title={`Confirm`}
                 disabled={
-                  this.state.verifiedName === undefined ||
-                  this.state.verifiedName.length === 0
+                  this.state.emailAddress === undefined ||
+                  !validator.isEmail(this.state.emailAddress)
                 }
                 onPress={() => {
-                  const verifiedName = this.state.verifiedName;
-                  if (verifiedName) {
-                    this.props.onVerifiedName(verifiedName.trim());
+                  if (this.state.emailAddress) {
+                    const normalizedEmailAddress = validator.normalizeEmail(
+                      this.state.emailAddress
+                    );
+                    if (normalizedEmailAddress) {
+                      this.props.onInputEmail(normalizedEmailAddress);
+                    }
                   }
                 }}
               />
