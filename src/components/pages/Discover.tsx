@@ -83,7 +83,7 @@ function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
 // TODO below JSON should be available from website.
 const DISCOVER_INFO = convertCardArr([
   {
-    header: "Check out Raha Services",
+    header: "Check out Raha Marketplace",
     bodyChoices: [
       "Find a personal trainer, get your resume reviewed, and more!"
     ],
