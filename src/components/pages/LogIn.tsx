@@ -10,14 +10,14 @@ import {
   Image,
   Dimensions,
   Platform,
-  ViewStyle
+  ViewStyle,
+  KeyboardAvoidingView
 } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
 import {
   NavigationEventSubscription,
-  NavigationScreenProps,
-  NavigationParams
+  NavigationScreenProps
 } from "react-navigation";
 import CountryPicker, {
   getAllCountries,
@@ -33,7 +33,7 @@ import {
   cancelPhoneLogIn
 } from "../../store/actions/authentication";
 import { RahaState, RahaThunkDispatch } from "../../store";
-import { RouteName } from "../shared/Navigation";
+import { RouteName, HEADER_HEIGHT } from "../shared/Navigation";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { getMemberById } from "../../store/selectors/members";
 import { Button, Text } from "../shared/elements";
@@ -164,17 +164,12 @@ class PhoneNumberForm extends React.Component<
   };
 
   render() {
-    const phoneValid = phoneNumberIsValid(this.state.phoneNumber, this.state.country);
+    const phoneValid = phoneNumberIsValid(
+      this.state.phoneNumber,
+      this.state.country
+    );
     return (
       <React.Fragment>
-        <Text style={fonts.Lato.Bold as TextStyle} />
-        <Button
-          title={
-            this.props.waitingForCode ? "Requesting..." : (phoneValid ? "Request SMS Code" : "Log In With Phone:")
-          }
-          onPress={this._handleSubmit}
-          disabled={this.props.waitingForCode || !phoneValid}
-        />
         <View style={styles.phoneInput}>
           <TouchableOpacity
             onPress={() => {
@@ -213,6 +208,17 @@ class PhoneNumberForm extends React.Component<
             Google Play Services.
           </Text>
         )}
+        <Button
+          title={
+            this.props.waitingForCode
+              ? "Requesting..."
+              : phoneValid
+                ? "Request SMS Code"
+                : "Log In With Phone"
+          }
+          onPress={this._handleSubmit}
+          disabled={this.props.waitingForCode || !phoneValid}
+        />
       </React.Fragment>
     );
   }
@@ -324,33 +330,33 @@ class ConfirmationCodeForm extends React.Component<
           <Button
             style={styles.resendButton}
             title={
-              this.state.timeLeft
-                ? this.state.timeLeft === 0
-                  ? "Resend code"
-                  : `Resend in ${this.state.timeLeft}s`
-                : "Loading..."
+              this.state.timeLeft !== 0
+                ? `Resend in ${this.state.timeLeft}s`
+                : "Resend code"
             }
             onPress={this.props.onTriggerResend}
             disabled={this.state.timeLeft !== 0}
           />
         </View>
-        <Button
-          title="Cancel"
-          onPress={this.props.onCancel}
-          disabled={this.props.waitingForConfirmation}
-        />
-        <Button
-          title={
-            this.props.waitingForConfirmation
-              ? "Submitting..."
-              : "Submit verification code"
-          }
-          onPress={this._handleSubmit}
-          disabled={
-            this.props.waitingForConfirmation ||
-            !confirmationCodeIsValid(this.state.confirmationCode)
-          }
-        />
+        <View style={styles.buttonRow}>
+          <Button
+            title="Cancel"
+            onPress={this.props.onCancel}
+            disabled={this.props.waitingForConfirmation}
+          />
+          <Button
+            title={
+              this.props.waitingForConfirmation
+                ? "Submitting..."
+                : "Submit code"
+            }
+            onPress={this._handleSubmit}
+            disabled={
+              this.props.waitingForConfirmation ||
+              !confirmationCodeIsValid(this.state.confirmationCode)
+            }
+          />
+        </View>
       </React.Fragment>
     );
   }
@@ -499,7 +505,11 @@ class LogInView extends React.Component<LogInProps, LogInState> {
     const loginMessage =
       this.props.loginMessage || this.props.navigation.getParam("loginMessage");
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        style={styles.container}
+        keyboardVerticalOffset={HEADER_HEIGHT}
+      >
         <Image
           resizeMode="contain"
           style={styles.image}
@@ -516,7 +526,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
           {this._renderContents()}
         </View>
         <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -532,6 +542,12 @@ const countryPickerStyle: ViewStyle = {
   // inconsistent display behavior on ios and android
   alignItems: Platform.OS === "android" ? "center" : "baseline",
   flexWrap: "nowrap"
+};
+
+const buttonRowStyle: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-evenly"
 };
 
 const styles = StyleSheet.create({
@@ -591,7 +607,8 @@ const styles = StyleSheet.create({
   },
   resendButton: {
     marginLeft: 15
-  }
+  },
+  buttonRow: buttonRowStyle
 });
 
 const mapStateToProps: MapStateToProps<

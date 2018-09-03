@@ -5,7 +5,12 @@ import { Member } from "../../../store/reducers/members";
 import { GiveForm } from "./GiveForm";
 import { Success } from "./Success";
 import { NavigationScreenProp } from "react-navigation";
-import { View, StyleSheet, ViewStyle } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ViewStyle,
+  KeyboardAvoidingView
+} from "react-native";
 import { colors } from "../../../helpers/colors";
 
 type Props = {
@@ -77,8 +82,9 @@ export class Give extends React.Component<Props, State> {
 
 const pageStyle: ViewStyle = {
   backgroundColor: colors.pageBackground,
-  minHeight: "100%"
+  height: "100%"
 };
+
 const styles = StyleSheet.create({
   page: pageStyle
 });
