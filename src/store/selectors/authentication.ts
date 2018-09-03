@@ -43,10 +43,27 @@ export function getLoggedInMember(state: RahaState) {
  * TODO we should eventually just use this everywhere instead of type-specific video urls.
  * @param token A unique string (UUID) by which to identify the uploaded video.
  */
-export function getAuthRestrictedVideoRef(token: string) {
+function getAuthRestrictedVideoBucketRef(token: string) {
   return storage
     .ref()
     .child("private-video")
-    .child(token)
-    .child("video.mp4");
+    .child(token);
+}
+
+/**
+ * Gets ref to video in the Raha video bucket restricted to logged-in users
+ * only.
+ * @param token A unique string (UUID) by which to identify the uploaded video.
+ */
+export function getAuthRestrictedVideoRef(token: string) {
+  return getAuthRestrictedVideoBucketRef(token).child("video.mp4");
+}
+
+/**
+ * Gets ref to thumbnail of a video in the Raha video bucket restricted to
+ * logged-in users only.
+ * @param token A unique string (UUID) by which to identify the uploaded video.
+ */
+export function getAuthRestrictedVideoThumbnailRef(token: string) {
+  return getAuthRestrictedVideoBucketRef(token).child("thumbnail.jpg");
 }

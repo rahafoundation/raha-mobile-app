@@ -3,7 +3,10 @@ import { View, StyleSheet } from "react-native";
 
 import { Text, Button, IndependentPageContainer } from "../../shared/elements";
 import { VideoWithPlaceholder } from "../../shared/VideoWithPlaceholder";
-import { getAuthRestrictedVideoRef } from "../../../store/selectors/authentication";
+import {
+  getAuthRestrictedVideoRef,
+  getAuthRestrictedVideoThumbnailRef
+} from "../../../store/selectors/authentication";
 import { Loading } from "../../shared/Loading";
 
 interface Props {
@@ -23,6 +26,7 @@ enum ConfirmSteps {
 interface State {
   step: ConfirmSteps;
   videoUrl?: string;
+  thumbnailUrl?: string;
 }
 
 export class ConfirmExistingVerificationVideo extends React.Component<
@@ -39,8 +43,12 @@ export class ConfirmExistingVerificationVideo extends React.Component<
     const videoUrl = await getAuthRestrictedVideoRef(
       this.props.inviteVideoToken
     ).getDownloadURL();
+    const thumbnailUrl = await getAuthRestrictedVideoThumbnailRef(
+      this.props.inviteVideoToken
+    ).getDownloadURL();
     this.setState({
-      videoUrl
+      videoUrl,
+      thumbnailUrl
     });
   }
 
@@ -132,7 +140,10 @@ export class ConfirmExistingVerificationVideo extends React.Component<
         <View style={styles.videoRow}>
           <View style={styles.video}>
             {this.state.videoUrl ? (
-              <VideoWithPlaceholder uri={this.state.videoUrl} />
+              <VideoWithPlaceholder
+                videoUri={this.state.videoUrl}
+                placeholderUri={this.state.thumbnailUrl}
+              />
             ) : (
               <Loading />
             )}

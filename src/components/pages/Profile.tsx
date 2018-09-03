@@ -57,7 +57,8 @@ const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
   <View style={styles.thumbnail}>
     <VideoWithPlaceholder
       style={styles.profileVideo}
-      uri={props.member.videoUri}
+      videoUri={props.member.videoUri}
+      placeholderUri={`${props.member.videoUri}.thumb.jpg`}
     />
   </View>
 );

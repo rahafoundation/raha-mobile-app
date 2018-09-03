@@ -7,10 +7,11 @@ import DropdownAlert from "react-native-dropdownalert";
 
 import { IndependentPageContainer } from "../../shared/elements";
 import { InviteCamera } from "./InviteCamera";
-import { VideoPreview } from "../Camera/VideoPreview";
+import { VideoUploader } from "../../shared/VideoUploader";
 import {
   getLoggedInMember,
-  getAuthRestrictedVideoRef
+  getAuthRestrictedVideoRef,
+  getAuthRestrictedVideoThumbnailRef
 } from "../../../store/selectors/authentication";
 import { Member } from "../../../store/reducers/members";
 import { RahaState } from "../../../store";
@@ -47,12 +48,16 @@ type InviteState = {
 class InviteView extends React.Component<InviteProps, InviteState> {
   inviteToken: string;
   videoUploadRef: RNFirebase.storage.Reference;
+  thumbnailUploadRef: RNFirebase.storage.Reference;
   dropdown: any;
 
   constructor(props: InviteProps) {
     super(props);
     this.inviteToken = generateToken();
     this.videoUploadRef = getAuthRestrictedVideoRef(this.inviteToken);
+    this.thumbnailUploadRef = getAuthRestrictedVideoThumbnailRef(
+      this.inviteToken
+    );
     this.state = {
       step: InviteStep.SPLASH,
       isJointVideo: false
@@ -171,12 +176,13 @@ class InviteView extends React.Component<InviteProps, InviteState> {
           return <React.Fragment />;
         }
         return (
-          <VideoPreview
+          <VideoUploader
             videoUri={videoUri}
             videoUploadRef={this.videoUploadRef}
+            thumbnailUploadRef={this.thumbnailUploadRef}
             onVideoUploaded={(videoDownloadUrl: string) =>
               this.setState({
-                videoDownloadUrl: videoDownloadUrl,
+                videoDownloadUrl,
                 step: InviteStep.SEND_INVITE
               })
             }
