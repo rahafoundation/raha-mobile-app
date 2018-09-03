@@ -16,6 +16,7 @@ import {
   Platform
 } from "react-native";
 import { RNCamera, CameraType } from "react-native-camera";
+import { ProcessingManager } from "react-native-video-processing";
 
 import { Text, Button } from "./elements";
 
@@ -80,8 +81,22 @@ export class Camera extends React.Component<CameraProps, CameraState> {
       maxDuration: 10 // seconds
     });
 
+    var uri = recordResponse.uri;
+    try {
+      const cropOptions = {
+        cropWidth: 480,
+        cropHeight: 480,
+        cropOffsetX: 0,
+        cropOffsetY: 80 // TODO: Hack - chose a small offset that looked good. Make preview show exactly what's recorded to remove
+      };
+      uri = await ProcessingManager.crop(recordResponse.uri, cropOptions);
+    } catch (error) {
+      // If crop fails, just use the original video.
+      console.error(error);
+    }
+
     this.setState({ isVideoRecording: false });
-    this.props.onVideoRecorded(recordResponse.uri);
+    this.props.onVideoRecorded(uri);
   };
 
   render() {
