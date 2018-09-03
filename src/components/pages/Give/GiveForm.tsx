@@ -29,6 +29,7 @@ import { getMemberById } from "../../../store/selectors/members";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
 import { Button, Text } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
+import { HEADER_HEIGHT } from "../../shared/Navigation";
 
 const MAX_MEMO_LENGTH = 140;
 // Donation rate is currently constant.
@@ -163,12 +164,12 @@ class GiveFormView extends React.Component<Props, State> {
   public render() {
     return (
       <KeyboardAvoidingView
-        // this technically could work with height, but because of this issue,
-        // padding also works as a workaround.
+        // this technically could work with behavior  height, but because of
+        // this issue, padding is a valid workaround.
         // https://github.com/facebook/react-native/issues/13754
         behavior="padding"
         style={styles.container}
-        keyboardVerticalOffset={64}
+        keyboardVerticalOffset={HEADER_HEIGHT}
       >
         <View style={styles.toRow}>
           {this.state.toMember ? (
@@ -249,7 +250,7 @@ class GiveFormView extends React.Component<Props, State> {
         ) : (
           <React.Fragment />
         )}
-        <View style={styles.section}>
+        <View style={[styles.section, styles.giveButtonRow]}>
           <Button
             title="Give"
             onPress={this.giveRaha}
@@ -327,6 +328,12 @@ const bottomFillerStyle: ViewStyle = {
   flex: 1
 };
 
+const giveButtonRowStyle: ViewStyle = {
+  flexDirection: "row",
+  justifyContent: "space-around",
+  marginBottom: 16
+};
+
 const styles = StyleSheet.create({
   container: containerStyle,
   section: {
@@ -351,5 +358,6 @@ const styles = StyleSheet.create({
   helper: {
     color: "gray"
   },
+  giveButtonRow: giveButtonRowStyle,
   bottomFiller: bottomFillerStyle
 });

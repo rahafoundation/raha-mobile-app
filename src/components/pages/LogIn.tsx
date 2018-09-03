@@ -33,7 +33,7 @@ import {
   cancelPhoneLogIn
 } from "../../store/actions/authentication";
 import { RahaState, RahaThunkDispatch } from "../../store";
-import { RouteName } from "../shared/Navigation";
+import { RouteName, HEADER_HEIGHT } from "../shared/Navigation";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { getMemberById } from "../../store/selectors/members";
 import { Button, Text } from "../shared/elements";
@@ -505,7 +505,11 @@ class LogInView extends React.Component<LogInProps, LogInState> {
     const loginMessage =
       this.props.loginMessage || this.props.navigation.getParam("loginMessage");
     return (
-      <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        style={styles.container}
+        keyboardVerticalOffset={HEADER_HEIGHT}
+      >
         <Image
           resizeMode="contain"
           style={styles.image}

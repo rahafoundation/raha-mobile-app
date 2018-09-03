@@ -4,7 +4,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextStyle,
-  ViewStyle
+  ViewStyle,
+  Platform
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { createBottomTabNavigator } from "react-navigation-tabs";
@@ -46,6 +47,13 @@ import { fonts, fontSizes } from "../../helpers/fonts";
 import { InitializationRouter } from "../pages/InitializationRouter";
 import { Member } from "../../store/reducers/members";
 import { Verify } from "../pages/Verify";
+
+// testing on Rahul's phone, a little bit larger padding on Android prevents
+// some overlap with the keyboard over the button; but the true header height in
+// Android is actually 56, it seems.
+// TODO: figure out how to properly work with KeyboardAvoidingView... why does
+// header height even matter?
+export const HEADER_HEIGHT = Platform.OS === "ios" ? 64 : 80;
 
 /**
  * Gets the current screen from navigation state.
