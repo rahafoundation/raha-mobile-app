@@ -11,7 +11,6 @@ export function processDeeplink(link: string, navigation: any) {
     "/",
     ""
   ) as keyof typeof DEEPLINK_ROUTES;
-  debugger;
   navigation.navigate(
     "App",
     {},

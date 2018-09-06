@@ -221,7 +221,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   };
 
   _renderOnboardingStep() {
-    if (this.props.hasValidInviteToken) {
+    if (!this.props.isLoggedIn) {
       this.props.navigation.replace(RouteName.LogInPage, {
         redirectTo: RouteName.OnboardingPage,
         loginMessage:
