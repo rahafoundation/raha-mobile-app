@@ -49,6 +49,7 @@ export const trustMember: AsyncActionCreator = (memberId: MemberId) => {
 
 export const createMember: AsyncActionCreator = (
   fullName: string,
+  emailAddress: string,
   username: string,
   videoToken: string,
   inviteToken?: string
@@ -64,6 +65,7 @@ export const createMember: AsyncActionCreator = (
         config.apiBase,
         authToken,
         fullName,
+        emailAddress,
         username,
         videoToken,
         inviteToken
