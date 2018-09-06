@@ -432,6 +432,7 @@ const SignedOutNavigator = createSwitchNavigator(
         [RouteName.ProfilePage]: Profile
       },
       {
+        initialRouteName: RouteName.LogInPage,
         headerMode: "screen",
         navigationOptions: {
           headerTitle: <HeaderTitle title="Raha" subtitle="Identity Network" />,
