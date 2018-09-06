@@ -220,14 +220,6 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
   if (operation.op_code === OperationType.VERIFY) {
     return !!operation.data.to_uid;
   }
-  if (operation.op_code === OperationType.REQUEST_INVITE) {
-    // Force to boolean
-    // TODO: consider how else this could be messed up
-    if (!!operation.data.to_uid) {
-      return true;
-    }
-    return false;
-  }
 
   if (operation.op_code === OperationType.TRUST) {
     return !!operation.data.to_uid;
@@ -432,32 +424,6 @@ function applyOperation(
         ) as Member).beVerifiedByMember(creator_uid);
         return addMembersToState(newState, [verifier, verified]);
       }
-      case OperationType.REQUEST_INVITE: {
-        const { full_name, to_uid, username } = operation.data;
-
-        const memberData = {
-          memberId: creator_uid,
-          username: username,
-          fullName: full_name,
-          createdAt: createdAt,
-          lastMintedBasicIncomeAt: createdAt,
-          lastOpCreatedAt: createdAt
-        };
-
-        assertMemberIdPresentInState(newState, to_uid, operation);
-        assertMemberIdNotPresentInState(newState, creator_uid, operation);
-
-        const inviter = (newState.byMemberId.get(
-          to_uid
-        ) as Member).inviteMember(creator_uid);
-        const inviteRequester = new Member({
-          ...memberData,
-          invitedBy: to_uid,
-          inviteConfirmed: false,
-          isVerified: false
-        }).trustMember(to_uid);
-        return addMembersToState(newState, [inviter, inviteRequester]);
-      }
       case OperationType.TRUST: {
         const { to_uid } = operation.data;
 
@@ -491,7 +457,7 @@ function applyOperation(
         assertMemberIdPresentInState(newState, creator_uid, operation);
         assertMemberIdPresentInState(newState, to_uid, operation);
         // TODO: Update donationRecipient state.
-        // Currently we don't do this as RAHA isn't a normal member created via a REQUEST_INVITE operation.
+        // Currently we don't do this as RAHA isn't a normal member created via a CREATE_MEMBER operation.
         // Thus RAHA doesn't get added to the members state in the current paradigm.
 
         const giver = (newState.byMemberId.get(creator_uid) as Member).giveRaha(
@@ -523,7 +489,6 @@ function applyOperation(
  */
 const OP_CODE_ORDERING = [
   OperationType.CREATE_MEMBER,
-  OperationType.REQUEST_INVITE,
   OperationType.REQUEST_VERIFICATION,
   OperationType.VERIFY,
   OperationType.TRUST,
