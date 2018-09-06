@@ -221,11 +221,9 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   };
 
   _renderOnboardingStep() {
-    if (!this.props.isLoggedIn) {
+    if (this.props.hasValidInviteToken) {
       this.props.navigation.replace(RouteName.LogInPage, {
         redirectTo: RouteName.OnboardingPage,
-        // We will only get to the Onboarding page while not logged-in if the user
-        // was directed here by a deeplink invitation.
         loginMessage:
           "Welcome to Raha! Please sign up with your\nmobile number to accept your invite.",
         redirectParams: this.props.navigation.state.params
