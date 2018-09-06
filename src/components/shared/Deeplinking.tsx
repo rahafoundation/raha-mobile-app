@@ -11,12 +11,15 @@ export function processDeeplink(link: string, navigation: any) {
     "/",
     ""
   ) as keyof typeof DEEPLINK_ROUTES;
-  navigation.navigate(
-    "App",
-    {},
-    NavigationActions.navigate({
-      routeName: DEEPLINK_ROUTES[pathname],
-      params: deeplinkUrl.query
-    })
-  );
+  const newRoute = DEEPLINK_ROUTES[pathname];
+  if (newRoute) {
+    navigation.navigate(
+      "App",
+      {},
+      NavigationActions.navigate({
+        routeName: newRoute,
+        params: deeplinkUrl.query
+      })
+    );
+  }
 }

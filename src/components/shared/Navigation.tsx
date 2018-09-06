@@ -119,6 +119,8 @@ export enum RouteName {
   Verify = "Verify"
 }
 
+// TODO: Move this to Deeplinking. Need to also move RouteName out to avoid
+// circular dependency loading.
 export const DEEPLINK_ROUTES = {
   invite: RouteName.OnboardingPage
 };
