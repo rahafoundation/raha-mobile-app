@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TextStyle,
   ViewStyle,
-  Platform
+  Platform,
+  Linking
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { createBottomTabNavigator } from "react-navigation-tabs";
@@ -47,6 +48,7 @@ import { fonts, fontSizes } from "../../helpers/fonts";
 import { InitializationRouter } from "../pages/InitializationRouter";
 import { Member } from "../../store/reducers/members";
 import { Verify } from "../pages/Verify";
+import { processDeeplink } from "./Deeplinking";
 
 // testing on Rahul's phone, a little bit larger padding on Android prevents
 // some overlap with the keyboard over the button; but the true header height in
@@ -454,13 +456,45 @@ type StateProps = {
 type Props = OwnProps & StateProps;
 
 class NavigationView extends React.Component<Props> {
+  navigation: any;
+
+  _handleUrl = (event: any) => {
+    processDeeplink(event.url, this.navigation);
+  };
+
+  componentWillUnmount() {
+    Linking.removeEventListener("url", this._handleUrl);
+  }
+
+  componentDidMount() {
+    Linking.addEventListener("url", this._handleUrl);
+  }
+
+  _setNavigationRef = (ref: any) => {
+    // Check ref exists -- on Android, if Activity is popping off via backspace,
+    // ref still gets called with an undefined ref.
+    if (ref) {
+      this.navigation = ref._navigation;
+    }
+  };
+
   render() {
     const { hasAccount } = this.props;
 
     if (hasAccount) {
-      return <SignedInNavigator onNavigationStateChange={trackPageChanges} />;
+      return (
+        <SignedInNavigator
+          ref={this._setNavigationRef}
+          onNavigationStateChange={trackPageChanges}
+        />
+      );
     } else {
-      return <SignedOutNavigator onNavigationStateChange={trackPageChanges} />;
+      return (
+        <SignedOutNavigator
+          ref={this._setNavigationRef}
+          onNavigationStateChange={trackPageChanges}
+        />
+      );
     }
   }
 }
