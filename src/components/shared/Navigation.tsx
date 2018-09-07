@@ -24,7 +24,7 @@ import {
 } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
 
-import { app } from "../../firebaseInit";
+import { analytics } from "../../firebaseInit";
 import { Give as GiveScreen } from "../pages/Give";
 import { Feed } from "../pages/Feed";
 import { Mint } from "../pages/Mint";
@@ -85,7 +85,7 @@ function trackPageChanges(
   const prevScreen = getActiveRouteName(prevState);
 
   if (currentScreen && prevScreen !== currentScreen) {
-    app.analytics().setCurrentScreen(currentScreen);
+    analytics.setCurrentScreen(currentScreen);
   }
 }
 
