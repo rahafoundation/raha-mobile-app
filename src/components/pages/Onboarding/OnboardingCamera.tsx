@@ -22,7 +22,7 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
       <IndependentPageContainer>
         <View style={sharedStyles.page}>
           <Text style={sharedStyles.paragraph}>
-            Please record a video of yourself stating your identity.
+            Please record a public video of yourself stating your identity.
           </Text>
           <Camera
             onVideoRecorded={uri => {

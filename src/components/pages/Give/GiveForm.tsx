@@ -242,7 +242,7 @@ class GiveFormView extends React.Component<Props, State> {
             labelStyle={styles.helper}
             containerStyle={styles.section}
           >
-            You will give {this.state.amount.toString()} Raha to{" "}
+            You will publicly give {this.state.amount.toString()} Raha to{" "}
             {this.state.toMember.get("fullName")} for "
             {this.state.memo ? `${this.state.memo}` : ""}
             ".
