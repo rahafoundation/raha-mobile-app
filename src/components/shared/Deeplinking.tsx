@@ -7,19 +7,27 @@ export function processDeeplink(link: string, navigation: any) {
   if (!deeplinkUrl.pathname) {
     return;
   }
-  const pathname = deeplinkUrl.pathname.replace(
-    "/",
-    ""
-  ) as keyof typeof DEEPLINK_ROUTES;
-  const newRoute = DEEPLINK_ROUTES[pathname];
-  if (newRoute) {
-    navigation.navigate(
-      "App",
-      {},
-      NavigationActions.navigate({
-        routeName: newRoute,
-        params: deeplinkUrl.query
-      })
-    );
+
+  // remove any empty strings in the path, for instance from trailing slashes
+  const pathname = deeplinkUrl.pathname
+    .split("/") // get each component of the path
+    .filter(p => !!p) // remove the empty parts
+    .join("/"); // recombine into a path
+
+  if (!(pathname in DEEPLINK_ROUTES)) {
+    return;
   }
+
+  // unfortunately, TypeScript not inferring the type of pathname from the above
+  // check, so type suggestion is necessary
+  const newRoute = DEEPLINK_ROUTES[pathname as keyof typeof DEEPLINK_ROUTES];
+
+  navigation.navigate(
+    "App",
+    {},
+    NavigationActions.navigate({
+      routeName: newRoute,
+      params: deeplinkUrl.query
+    })
+  );
 }
