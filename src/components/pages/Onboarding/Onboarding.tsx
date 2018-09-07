@@ -159,6 +159,9 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
 
     this.initializeDeeplinkingState();
 
+    // If the video download URL has been validated for the first time and the
+    // user can be advanced to CAMERA or CREATE_ACCOUNT, do so. This will happen
+    // if the user manually entered an invite token.
     if (
       !prevState.inviteVideoIsValid &&
       this.state.inviteVideoIsValid &&
