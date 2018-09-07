@@ -83,7 +83,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
     this.steps = [];
     this.videoToken = generateToken();
     this.state = {
-      step: OnboardingStep.VERIFY_NAME
+      step: OnboardingStep.SPLASH
     };
     this.initializeDeeplinkingState();
   }
