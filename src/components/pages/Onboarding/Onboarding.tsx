@@ -159,7 +159,12 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
 
     this.initializeDeeplinkingState();
 
-    if (!prevState.inviteVideoIsValid && this.state.inviteVideoIsValid) {
+    if (
+      !prevState.inviteVideoIsValid &&
+      this.state.inviteVideoIsValid &&
+      this.state.verifiedName &&
+      this.state.emailAddress
+    ) {
       this._goToStep(this._validatedCameraStep());
     }
   }
