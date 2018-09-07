@@ -45,7 +45,9 @@ export class InputEmail extends React.Component<
               </Text>
               <TextInput
                 placeholder="you@gmail.com"
-                onChangeText={text => this.setState({ emailAddress: text })}
+                onChangeText={text =>
+                  this.setState({ emailAddress: text ? text.trim() : text })
+                }
                 value={this.state.emailAddress}
               />
               <Button
