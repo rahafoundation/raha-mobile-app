@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Member } from "../../../store/reducers/members";
-import { View, StyleSheet, BackHandler } from "react-native";
+import { View, BackHandler, TouchableHighlight } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import DropdownAlert from "react-native-dropdownalert";
 import { NavigationScreenProps } from "react-navigation";
@@ -20,8 +20,11 @@ import { getMemberById } from "../../../store/selectors/members";
 import { RouteName } from "../../shared/Navigation";
 import { Loading } from "../../shared/Loading";
 import { generateToken } from "../../../helpers/token";
-import { IndependentPageContainer } from "../../shared/elements";
+import { IndependentPageContainer, Text } from "../../shared/elements";
 import { InputEmail } from "./InputEmail";
+import { InputInviteToken } from "./InputInviteToken";
+import { fontSizes } from "../../../helpers/fonts";
+import { colors } from "../../../helpers/colors";
 
 /**
  * Parent component for Onboarding flow.
@@ -32,6 +35,7 @@ enum OnboardingStep {
   INPUT_EMAIL,
 
   CAMERA,
+  INPUT_INVITE_TOKEN,
   VIDEO_PREVIEW,
 
   CREATE_ACCOUNT
@@ -58,6 +62,9 @@ type OnboardingProps = ReduxStateProps & OwnProps;
 
 type OnboardingState = {
   step: OnboardingStep;
+} & OnboardingStateParams;
+
+type OnboardingStateParams = {
   verifiedName?: string;
   emailAddress?: string;
   inviteVideoIsValid?: boolean;
@@ -68,35 +75,35 @@ type OnboardingState = {
 class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   dropdown: any;
   steps: OnboardingStep[];
-  deeplinkInitialized: boolean;
   videoToken: string;
+  lastInviteVideoToken?: string;
 
   constructor(props: OnboardingProps) {
     super(props);
     this.steps = [];
-    this.deeplinkInitialized = false;
     this.videoToken = generateToken();
     this.state = {
-      step: OnboardingStep.SPLASH
+      step: OnboardingStep.VERIFY_NAME
     };
-
-    if (this.props.hasValidInviteToken) {
-      this.initializeDeeplinkingState();
-    }
+    this.initializeDeeplinkingState();
   }
 
   /**
-   * If deeplinking params are present, makes sure they are valid, and fills in
-   * the associated video download url into state.
+   * Idempotently initializes deeplinking state. If deeplinking params are present,
+   * makes sure they are valid, and fills in the associated video download url into state.
    */
   initializeDeeplinkingState = async () => {
     if (!this.props.isLoggedIn) {
       return;
     }
 
-    this.deeplinkInitialized = true;
+    if (this.lastInviteVideoToken === this.props.inviteToken) {
+      // We already processed this invite token; don't do anything.
+      return;
+    }
 
-    // We ask the user to sign up via the regular invite flow if the specified token is invalid for any reason.
+    // We ask the user to sign up via the regular invite flow if the specified
+    // token is invalid for any reason.
     if (this.props.inviteToken && !this.props.hasValidInviteToken) {
       this.dropdown.alertWithType(
         "error",
@@ -105,6 +112,14 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       );
       return;
     }
+
+    // Don't pull parameters from invalid invite tokens. Note that this should
+    // be after giving user feedback of invite token rejection.
+    if (!this.props.hasValidInviteToken) {
+      return;
+    }
+
+    this.lastInviteVideoToken = this.props.inviteToken;
 
     const videoDownloadUrl = await extractDeeplinkVideoUrl(
       this.props.invitingMember,
@@ -142,9 +157,42 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       this.steps.push(prevState.step);
     }
 
-    if (this.props.hasValidInviteToken && !this.deeplinkInitialized) {
-      this.initializeDeeplinkingState();
+    this.initializeDeeplinkingState();
+
+    if (!prevState.inviteVideoIsValid && this.state.inviteVideoIsValid) {
+      this._goToStep(this._validatedCameraStep());
     }
+  }
+
+  /**
+   * User is about to navigate to the given step. Clear any variables necessary
+   * and returns state parameters to be set.
+   */
+  _initForStep(step: OnboardingStep) {
+    switch (step) {
+      case OnboardingStep.INPUT_INVITE_TOKEN:
+        this.lastInviteVideoToken = undefined;
+        this.props.navigation.setParams({
+          t: undefined
+        });
+        return {
+          inviteVideoIsValid: undefined
+        };
+      default:
+        return {};
+    }
+  }
+
+  /**
+   * Takes the user to the given OnboardingStep with additional state
+   * parameters after clearing any existing state related to that step.
+   */
+  _goToStep(step: OnboardingStep, additionalParams?: OnboardingStateParams) {
+    this.setState({
+      step,
+      ...this._initForStep(step),
+      ...(additionalParams ? additionalParams : undefined)
+    });
   }
 
   _handleBackPress = () => {
@@ -153,9 +201,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       // Exit out of Onboarding flow.
       return false;
     } else {
-      this.setState({
-        step: previousStep
-      });
+      this._goToStep(previousStep);
       return true;
     }
   };
@@ -168,9 +214,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
         "Error: Missing full name",
         "Need to verify full name before this step."
       );
-      this.setState({
-        step: OnboardingStep.VERIFY_NAME
-      });
+      this._goToStep(OnboardingStep.VERIFY_NAME);
     }
     return verifiedFullName;
   };
@@ -183,9 +227,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
         "Error: Missing email address",
         "Need to specify email address before this step."
       );
-      this.setState({
-        step: OnboardingStep.INPUT_EMAIL
-      });
+      this._goToStep(OnboardingStep.INPUT_EMAIL);
     }
     return verifiedEmailAddress;
   };
@@ -198,9 +240,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
         "Error: Can't show video",
         "Invalid video. Please retake your video."
       );
-      this.setState({
-        step: OnboardingStep.CAMERA
-      });
+      this._goToStep(OnboardingStep.CAMERA);
     }
     return videoUri;
   };
@@ -213,12 +253,24 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
         "Error: Could not verify video uploaded",
         "Invalid video. Please retry."
       );
-      this.setState({
-        step: OnboardingStep.VIDEO_PREVIEW
-      });
+      this._goToStep(OnboardingStep.VIDEO_PREVIEW);
     }
     return videoDownloadUrl;
   };
+
+  /**
+   * Checks whether the user needs to record a video and returns the CAMERA
+   * OnboardingStep. Otherwise, returns CREATE_ACCOUNT to skip the step.
+   */
+  _validatedCameraStep() {
+    return this.props.hasValidInviteToken &&
+      this.props.inviteVideoIsJoint &&
+      this.state.inviteVideoIsValid
+      ? // The new member does not need to take a verification video
+        // if they have a valid joint invite video.
+        OnboardingStep.CREATE_ACCOUNT
+      : OnboardingStep.CAMERA;
+  }
 
   _renderOnboardingStep() {
     if (!this.props.isLoggedIn) {
@@ -238,9 +290,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
         return (
           <OnboardingSplash
             onSplashCompleted={() => {
-              this.setState({
-                step: OnboardingStep.VERIFY_NAME
-              });
+              this._goToStep(OnboardingStep.VERIFY_NAME);
             }}
           />
         );
@@ -256,9 +306,8 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
                   : undefined
             }
             onVerifiedName={(verifiedName: string) => {
-              this.setState({
-                verifiedName: verifiedName,
-                step: OnboardingStep.INPUT_EMAIL
+              this._goToStep(OnboardingStep.INPUT_EMAIL, {
+                verifiedName: verifiedName
               });
             }}
             onBack={this._handleBackPress}
@@ -269,16 +318,20 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
         return (
           <InputEmail
             onInputEmail={(email: string) => {
-              this.setState({
-                emailAddress: email,
-                step:
-                  this.props.hasValidInviteToken &&
-                  this.props.inviteVideoIsJoint &&
-                  this.state.inviteVideoIsValid
-                    ? // The new member does not need to take a verification video
-                      // if they have a valid joint invite video.
-                      OnboardingStep.CREATE_ACCOUNT
-                    : OnboardingStep.CAMERA
+              this._goToStep(this._validatedCameraStep(), {
+                emailAddress: email
+              });
+            }}
+            onBack={this._handleBackPress}
+          />
+        );
+      }
+      case OnboardingStep.INPUT_INVITE_TOKEN: {
+        return (
+          <InputInviteToken
+            onInputInviteToken={(token: string) => {
+              this.props.navigation.setParams({
+                t: token
               });
             }}
             onBack={this._handleBackPress}
@@ -297,15 +350,39 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
           return <React.Fragment />;
         }
         return (
-          <OnboardingCamera
-            verifiedFullName={verifiedFullName}
-            onVideoRecorded={(videoUri: string) => {
-              this.setState({
-                videoUri: videoUri,
-                step: OnboardingStep.VIDEO_PREVIEW
-              });
-            }}
-          />
+          <IndependentPageContainer>
+            <OnboardingCamera
+              verifiedFullName={verifiedFullName}
+              inviterFullName={
+                this.props.invitingMember &&
+                this.props.invitingMember.get("fullName")
+                  ? this.props.invitingMember.get("fullName")
+                  : undefined
+              }
+              onVideoRecorded={(videoUri: string) => {
+                this._goToStep(OnboardingStep.VIDEO_PREVIEW, { videoUri });
+              }}
+            />
+            {
+              <TouchableHighlight
+                onPress={() => {
+                  this._goToStep(OnboardingStep.INPUT_INVITE_TOKEN);
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: colors.link,
+                    ...fontSizes.small
+                  }}
+                >
+                  {!this.props.hasValidInviteToken
+                    ? "Use invite code"
+                    : "Use different invite code"}
+                </Text>
+              </TouchableHighlight>
+            }
+          </IndependentPageContainer>
         );
       }
       case OnboardingStep.VIDEO_PREVIEW: {
@@ -324,19 +401,16 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
               videoUploadRef={videoUploadRef}
               thumbnailUploadRef={thumbnailUploadRef}
               onVideoUploaded={(videoDownloadUrl: string) =>
-                this.setState({
-                  videoDownloadUrl: videoDownloadUrl,
-                  step: OnboardingStep.CREATE_ACCOUNT
+                this._goToStep(OnboardingStep.CREATE_ACCOUNT, {
+                  videoDownloadUrl
                 })
               }
               onRetakeClicked={() => {
-                this.setState({ step: OnboardingStep.CAMERA });
+                this._goToStep(OnboardingStep.CAMERA);
               }}
               onError={(errorType: string, errorMessage: string) => {
                 this.dropdown.alertWithType("error", errorType, errorMessage);
-                this.setState({
-                  step: OnboardingStep.CAMERA
-                });
+                this._goToStep(OnboardingStep.CAMERA);
               }}
             />
           </IndependentPageContainer>
@@ -420,7 +494,7 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
     : undefined;
 
   // We have a valid invite token only if all these things are true. If not,
-  // then we will throw an error in `initializeDeeplinkParams` and go through the
+  // then we will throw an error in `initializeDeeplinkingState` and go through the
   // default uninvited onboarding flow.
   const hasValidInviteToken =
     !!deeplinkInviteToken &&
