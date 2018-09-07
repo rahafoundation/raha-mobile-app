@@ -12,7 +12,7 @@ import { activities } from "../../store/selectors/activities";
 import { Activity } from "../../store/selectors/activities/types";
 import { colors } from "../../helpers/colors";
 import { View } from "react-native";
-import { OperationType } from '@raha/api-shared/dist/models/Operation';
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 type StateProps = {
   activities: Activity[];
@@ -30,7 +30,6 @@ const FeedView: React.StatelessComponent<StateProps> = ({ activities }) => {
 const INVALID_FEED_OPS = new Set([
   OperationType.MINT,
   OperationType.TRUST,
-  OperationType.REQUEST_INVITE,
   OperationType.REQUEST_VERIFICATION,
   OperationType.CREATE_MEMBER
 ]);

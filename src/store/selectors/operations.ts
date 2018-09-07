@@ -25,17 +25,6 @@ export function getOperationsForCreator(
   return operations.filter(op => op.creator_uid === creatorMemberId);
 }
 
-// TODO currently dead code, delete?
-export function isUnconfirmedRequestInvite(
-  state: RahaState,
-  operation: Operation
-): boolean {
-  if (operation.op_code !== OperationType.REQUEST_INVITE) {
-    return false;
-  }
-  return !isInviteConfirmed(state, operation.creator_uid);
-}
-
 export function getRequestVerificationOperation(
   operations: List<Operation>,
   creatorMemberId: MemberId,
