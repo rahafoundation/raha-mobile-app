@@ -24,7 +24,7 @@ type OwnProps = {
 };
 
 type ReduxStateProps = {
-  invitationsState: InvitationsState;
+  doesInviteTokenExist: (t: string) => boolean;
 };
 
 type InputInviteTokenProps = OwnProps & ReduxStateProps;
@@ -40,7 +40,8 @@ const mapStateToProps: MapStateToProps<
   RahaState
 > = state => {
   return {
-    invitationsState: state.invitations
+    doesInviteTokenExist: (token: string) =>
+      state.invitations.byInviteToken.has(token)
   };
 };
 
@@ -56,7 +57,7 @@ class InputInviteTokenView extends React.Component<
       return;
     }
 
-    if (!this.props.invitationsState.byInviteToken.get(token)) {
+    if (!this.props.doesInviteTokenExist(token)) {
       this.setState({
         errorMessage: "This code is invalid or has expired."
       });

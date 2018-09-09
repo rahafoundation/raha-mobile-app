@@ -76,7 +76,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   dropdown: any;
   steps: OnboardingStep[];
   videoToken: string;
-  lastInviteVideoToken?: string;
+  lastInviteToken?: string;
 
   constructor(props: OnboardingProps) {
     super(props);
@@ -85,19 +85,20 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
     this.state = {
       step: OnboardingStep.SPLASH
     };
-    this.initializeDeeplinkingState();
+    this.extractVideoUrlForLatestInviteToken();
   }
 
   /**
-   * Idempotently initializes deeplinking state. If deeplinking params are present,
+   * Idempotently extracts the video download URL for latest invite token.
+   *  If deeplinking params are present,
    * makes sure they are valid, and fills in the associated video download url into state.
    */
-  initializeDeeplinkingState = async () => {
+  extractVideoUrlForLatestInviteToken = async () => {
     if (!this.props.isLoggedIn) {
       return;
     }
 
-    if (this.lastInviteVideoToken === this.props.inviteToken) {
+    if (this.lastInviteToken === this.props.inviteToken) {
       // We already processed this invite token; don't do anything.
       return;
     }
@@ -119,7 +120,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       return;
     }
 
-    this.lastInviteVideoToken = this.props.inviteToken;
+    this.lastInviteToken = this.props.inviteToken;
 
     const videoDownloadUrl = await extractDeeplinkVideoUrl(
       this.props.invitingMember,
@@ -157,7 +158,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       this.steps.push(prevState.step);
     }
 
-    this.initializeDeeplinkingState();
+    this.extractVideoUrlForLatestInviteToken();
 
     // If the video download URL has been validated for the first time and the
     // user can be advanced to CAMERA or CREATE_ACCOUNT, do so. This will happen
@@ -179,7 +180,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   _initForStep(step: OnboardingStep) {
     switch (step) {
       case OnboardingStep.INPUT_INVITE_TOKEN:
-        this.lastInviteVideoToken = undefined;
+        this.lastInviteToken = undefined;
         this.props.navigation.setParams({
           t: undefined
         });
