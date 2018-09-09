@@ -102,7 +102,10 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
         </Text>
         <View style={sharedStyles.body}>
           <View style={styles.card}>
+            {/*TODO: Unify email input InputEmail/SendInvite*/}
             <TextInput
+              autoFocus={true}
+              keyboardType="email-address"
               placeholder="What's your friend's email?"
               onChangeText={text => {
                 this.setState({

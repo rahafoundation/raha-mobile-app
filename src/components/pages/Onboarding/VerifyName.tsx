@@ -44,11 +44,10 @@ export class VerifyName extends React.Component<
           </Text>
           <View style={styles.body}>
             <View style={styles.card}>
-              <Text style={{ fontSize: 18 }}>
-                Please confirm your full name:
-              </Text>
+              <Text style={{ fontSize: 18 }}>Please enter your full name:</Text>
               <TextInput
-                placeholder="What's your full name?"
+                autoCapitalize="words"
+                autoFocus={true}
                 onChangeText={text => this.setState({ verifiedName: text })}
                 value={this.state.verifiedName}
               />

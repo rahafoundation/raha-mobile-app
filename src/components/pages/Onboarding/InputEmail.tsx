@@ -43,7 +43,10 @@ export class InputEmail extends React.Component<
               <Text style={{ fontSize: 18 }}>
                 Please enter your email address:
               </Text>
+              {/*TODO: Unify email input InputEmail/SendInvite*/}
               <TextInput
+                keyboardType="email-address"
+                autoFocus={true}
                 placeholder="you@gmail.com"
                 onChangeText={text =>
                   this.setState({ emailAddress: text ? text.trim() : text })

@@ -80,6 +80,7 @@ class InputInviteTokenView extends React.Component<
                 Please enter your invite token:
               </Text>
               <TextInput
+                autoFocus={true}
                 placeholder={"abcxyz123"}
                 onChangeText={text =>
                   this.setState({
