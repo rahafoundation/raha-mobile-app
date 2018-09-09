@@ -5,31 +5,19 @@ pod 'Firebase/Auth', '~>5.3.0'
 pod 'Firebase/Storage', '~> 5.3.0'
 pod 'Firebase/Messaging', '~> 5.3.0'
 
-target 'mobile' do
+target 'Raha' do
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
   # use_frameworks!
 
-  # Pods for mobile
+  # Pods for Raha
   pod 'AppCenterReactNativeShared', '~> 1.7.1'
 
   pod 'CodePush', :path => '../node_modules/react-native-code-push'
 
-  target 'mobileTests' do
+  target 'RahaTests' do
     inherit! :search_paths
     # Pods for testing
   end
 
 end
 
-# target 'mobile-tvOS' do
-#   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
-#   # use_frameworks!
-
-#   # Pods for mobile-tvOS
-
-#   target 'mobile-tvOSTests' do
-#     inherit! :search_paths
-#     # Pods for testing
-#   end
-
-# end
