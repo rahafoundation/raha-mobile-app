@@ -4,6 +4,6 @@
 //
 // USAGE: Rename to release.xcconfig and copy api key into value below.
 
-#include "Pods/Target Support Files/Pods-mobile/Pods-mobile.release.xcconfig"
+#include "Pods/Target Support Files/Pods-Raha/Pods-Raha.release.xcconfig"
 
 APPCENTER_CODEPUSH_DEPLOYMENT_KEY = <COPY_REAL_KEY_HERE>
