@@ -23,9 +23,8 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
       <React.Fragment>
         <Text style={sharedStyles.paragraph}>
           {this.props.inviterFullName
-            ? "Please record a video of yourself stating your identity to accept your invite from " +
-              this.props.inviterFullName
-            : "Please record a video of yourself stating your identity."}
+            ? `Create your public profile's identity video to accept your invite from ${this.props.inviterFullName}!`
+            : "Create your public profile's identity video!"}
         </Text>
         <Camera
           onVideoRecorded={uri => {
