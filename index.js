@@ -9,4 +9,4 @@ import { App } from "./src/components/App";
 // https://github.com/facebook/react-native/issues/18868#issuecomment-382671739
 YellowBox.ignoreWarnings(["Warning: isMounted(...) is deprecated"]);
 
-AppRegistry.registerComponent("mobile", () => App);
+AppRegistry.registerComponent("Raha", () => App);
