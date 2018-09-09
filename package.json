@@ -18,7 +18,8 @@
     "codepush:ios:release": "yarn config:prod && appcenter codepush release-react --app rahafoundation/iOS-Raha-App -d Staging --plist-file ios/mobile/Info.plist",
     "codepush:ios:promote": "appcenter codepush promote --app rahafoundation/iOS-Raha-App -s Staging -d Production",
     "codepush:ios:history:staging": "appcenter codepush deployment history Staging --app rahafoundation/iOS-Raha-App",
-    "codepush:ios:history:production": "appcenter codepush deployment history Production --app rahafoundation/iOS-Raha-App"
+    "codepush:ios:history:production": "appcenter codepush deployment history Production --app rahafoundation/iOS-Raha-App",
+    "postinstall":  "./ios/fix-rncamera-search-paths.sh ./node_modules/react-native-camera/ios/RNCamera.xcodeproj/project.pbxproj"
   },
   "dependencies": {
     "@raha/api": "^0.2.7",
