@@ -77,7 +77,7 @@ export class Camera extends React.Component<CameraProps, CameraState> {
 
     const recordResponse = await camera.recordAsync({
       quality: RNCamera.Constants.VideoQuality["4:3"],
-      maxDuration: 10 // seconds
+      maxDuration: 15 // seconds
     });
 
     this.setState({ isVideoRecording: false });

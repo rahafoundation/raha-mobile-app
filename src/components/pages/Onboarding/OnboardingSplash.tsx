@@ -59,7 +59,7 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
           </Text>
           <Text style={[sharedStyles.paragraph, styles.paragraph]}>
             As a new member, you must verify your identity by recording a short
-            selfie-video of yourself stating your name and intent to join Raha.
+            public selfie-video of yourself stating your name and intent to join Raha.
           </Text>
           <Text style={[sharedStyles.paragraph, styles.paragraph]}>
             An existing member must also record a video vouching for your identity.

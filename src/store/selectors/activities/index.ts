@@ -317,43 +317,6 @@ export function convertOperationsToActivities(
               return memo;
           }
         }
-
-        case OperationType.REQUEST_INVITE: {
-          // genesis member case
-          const requestedMember = getMemberById(state, operation.data.to_uid);
-
-          if (!requestedMember) {
-            console.error(
-              `RequestInvite operation with missing inviter (id: ${
-                operation.creator_uid
-              }), invalid.`
-            );
-            return memo;
-          }
-
-          const newActivity: Activity = {
-            id: operation.id,
-            timestamp: operation.created_at,
-            content: {
-              // type suggestions since GENESIS_MEMBER is only possible for
-              // VERIFY operations
-              actor: creatorMember as Member,
-              description: ["just requested a friend to join Raha!"],
-              body: {
-                type: BodyType.MEDIA,
-                media: [videoReferenceForMember(creatorMember as Member)]
-              },
-              nextInChain: {
-                direction: ActivityDirection.NonDirectional,
-                content: {
-                  actor: requestedMember
-                }
-              }
-            }
-          };
-
-          return [...memo, newActivity];
-        }
         case OperationType.TRUST: {
           const trustedMember = getMemberById(state, operation.data.to_uid);
           if (!trustedMember) {

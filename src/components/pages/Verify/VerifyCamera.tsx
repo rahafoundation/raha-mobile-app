@@ -19,7 +19,7 @@ export class VerifyCamera extends React.Component<OwnProps> {
     return (
       <IndependentPageContainer>
         <Text style={styles.headerText}>
-          Record a video of yourself verifying your friend's identity.
+          Record a public video of yourself verifying your friend's identity.
         </Text>
         <Camera
           onVideoRecorded={uri => {
