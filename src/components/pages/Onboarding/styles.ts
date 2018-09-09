@@ -16,8 +16,8 @@ const page: ViewStyle = {
 const body: ViewStyle = {
   flex: 1,
   flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center"
+  alignItems: "flex-start",
+  justifyContent: "flex-start"
 };
 
 const card: ViewStyle = {
