@@ -1,6 +1,6 @@
 import "./src/setup";
 import { AppRegistry } from "react-native";
-import { YellowBox } from "react-native";
+import { Platform, YellowBox } from "react-native";
 
 import { App } from "./src/components/App";
 
@@ -9,4 +9,7 @@ import { App } from "./src/components/App";
 // https://github.com/facebook/react-native/issues/18868#issuecomment-382671739
 YellowBox.ignoreWarnings(["Warning: isMounted(...) is deprecated"]);
 
-AppRegistry.registerComponent("Raha", () => App);
+// We renamed the iOS app to "Raha" but since we initialized the app using
+// react-native init, we have to keep Android as "mobile".
+const appName = Platform.OS === "android" ? "mobile" : "Raha";
+AppRegistry.registerComponent(appName, () => App);
