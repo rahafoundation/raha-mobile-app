@@ -10,8 +10,7 @@ import {
   Image,
   Dimensions,
   Platform,
-  ViewStyle,
-  KeyboardAvoidingView
+  ViewStyle
 } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 
@@ -33,7 +32,7 @@ import {
   cancelPhoneLogIn
 } from "../../store/actions/authentication";
 import { RahaState, RahaThunkDispatch } from "../../store";
-import { RouteName, HEADER_HEIGHT } from "../shared/Navigation";
+import { RouteName } from "../shared/Navigation";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { getMemberById } from "../../store/selectors/members";
 import { Button, Text } from "../shared/elements";
@@ -48,6 +47,7 @@ import { Map } from "immutable";
 import { TextInput } from "../shared/elements/TextInput";
 import { fonts, fontSizes } from "../../helpers/fonts";
 import { colors } from "../../helpers/colors";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 const countries = getAllCountries().reduce<Map<string, Country>>(
@@ -505,28 +505,28 @@ class LogInView extends React.Component<LogInProps, LogInState> {
     const loginMessage =
       this.props.loginMessage || this.props.navigation.getParam("loginMessage");
     return (
-      <KeyboardAvoidingView
-        behavior="padding"
-        style={styles.container}
-        keyboardVerticalOffset={HEADER_HEIGHT}
-      >
-        <Image
-          resizeMode="contain"
-          style={styles.image}
-          source={require("../../assets/img/Welcome.png")}
-        />
-        <View style={styles.body}>
-          {loginMessage ? (
-            <Text style={styles.message}>{loginMessage}</Text>
-          ) : (
-            <Text style={styles.message}>
-              {"Help create an economy where\nevery life has value!"}
-            </Text>
-          )}
-          {this._renderContents()}
-        </View>
+      <View style={styles.container}>
+        <KeyboardAwareScrollView enableAutomaticScroll>
+          <View style={styles.content}>
+            <Image
+              resizeMode="contain"
+              style={styles.image}
+              source={require("../../assets/img/Welcome.png")}
+            />
+            <View style={styles.body}>
+              {loginMessage ? (
+                <Text style={styles.message}>{loginMessage}</Text>
+              ) : (
+                <Text style={styles.message}>
+                  {"Help create an economy where\nevery life has value!"}
+                </Text>
+              )}
+              {this._renderContents()}
+            </View>
+          </View>
+        </KeyboardAwareScrollView>
         <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
-      </KeyboardAvoidingView>
+      </View>
     );
   }
 }
@@ -552,14 +552,17 @@ const buttonRowStyle: ViewStyle = {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "column",
-    height: "100%",
-    width: "100%",
-    alignItems: "center",
+    flex: 1,
     backgroundColor: colors.darkBackground
   },
+  content: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    minHeight: "100%"
+  },
   body: {
-    flex: 3,
+    flex: 1,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     width: Dimensions.get("window").width - 24,
@@ -567,7 +570,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   image: {
-    flex: 1
+    flex: 0,
+    height: 200
   },
   androidMessage: {
     textAlign: "center",
