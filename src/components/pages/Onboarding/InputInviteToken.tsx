@@ -10,7 +10,6 @@ import {
 import { styles } from "./styles";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../store";
-import { InvitationsState } from "../../../store/reducers/invitations";
 import { styles as sharedStyles } from "./styles";
 import { colors } from "react-native-elements";
 

@@ -13,7 +13,7 @@ import { RahaState } from "..";
 import { getMemberById } from "./members";
 import { getOperationsForCreator, getOperationsForType } from "./operations";
 
-const RAHA_UBI_WEEKLY_RATE = 10;
+export const RAHA_UBI_WEEKLY_RATE = 10;
 const MILLISECONDS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
 
 export function getMintableAmount(
