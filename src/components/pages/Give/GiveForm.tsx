@@ -158,7 +158,12 @@ class GiveFormView extends React.Component<Props, State> {
 
   public render() {
     return (
-      <KeyboardAwareScrollView enableAutomaticScroll bounces={false}>
+      <KeyboardAwareScrollView
+        enableAutomaticScroll
+        bounces={false}
+        enableOnAndroid
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
         <View style={styles.toRow}>
           {this.state.toMember ? (
             <React.Fragment>
