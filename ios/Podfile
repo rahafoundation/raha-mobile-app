@@ -28,7 +28,9 @@ target 'Raha' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
   # CodePush plugin dependency
-  pod 'CodePush', :path => '../node_modules/react-native-code-push'
+  # Don't install via CocoaPods, getting linker issues until I installed it manually. Thread here:
+  # https://github.com/Microsoft/react-native-code-push/issues/1378
+  # pod 'CodePush', :path => '../node_modules/react-native-code-push'
 
   # React Native App Center
   pod 'AppCenterReactNativeShared', '~> 1.7.1'
