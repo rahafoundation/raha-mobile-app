@@ -1,5 +1,6 @@
 import { Big } from "big.js";
 import * as React from "react";
+import { StyleProp, ViewStyle } from "react-native";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
@@ -7,17 +8,20 @@ import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { RahaState } from "../../store";
 import { mintBasicIncome } from "../../store/actions/wallet";
 import { getLoggedInMember } from "../../store/selectors/authentication";
-import { getMintableAmount } from "../../store/selectors/me";
+import {
+  getMintableAmount,
+  RAHA_UBI_WEEKLY_RATE
+} from "../../store/selectors/me";
 import {
   ApiCallStatus,
   ApiCallStatusType
 } from "../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
 import { Member } from "../../store/reducers/members";
-
-import { Button } from "./elements";
+import { Button, Text } from "./elements";
 import { CurrencyRole, CurrencyType, CurrencyValue } from "./elements/Currency";
-import { StyleProp, ViewStyle } from "react-native";
+import { fontSizes } from "../../helpers/fonts";
+import { MixedText } from "./elements/MixedText";
 
 interface OwnProps {
   style?: StyleProp<ViewStyle>;
@@ -56,12 +60,28 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
       }
     : undefined;
   return (
-    <Button
-      style={props.style}
-      title={["Mint", ...(mintValue ? [mintValue] : [])]}
-      onPress={mint}
-      disabled={!canMint}
-    />
+    <React.Fragment>
+      <Button
+        style={props.style}
+        title={["Mint", ...(mintValue ? [mintValue] : [])]}
+        onPress={mint}
+        disabled={!canMint}
+      />
+      <Text style={{ marginTop: 4 }}>
+        <MixedText
+          style={[fontSizes.small]}
+          content={[
+            "The current mint rate is",
+            {
+              currencyType: CurrencyType.Raha,
+              value: new Big(RAHA_UBI_WEEKLY_RATE),
+              role: CurrencyRole.None
+            },
+            "per week."
+          ]}
+        />
+      </Text>
+    </React.Fragment>
   );
 };
 
