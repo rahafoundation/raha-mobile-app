@@ -506,7 +506,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
       this.props.loginMessage || this.props.navigation.getParam("loginMessage");
     return (
       <View style={styles.container}>
-        <KeyboardAwareScrollView enableAutomaticScroll>
+        <KeyboardAwareScrollView enableAutomaticScroll bounces={false}>
           <View style={styles.content}>
             <Image
               resizeMode="contain"
