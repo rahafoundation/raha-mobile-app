@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -13,6 +14,8 @@
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* RahaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* RahaTests.m */; };
 		0758A0FC20E6247100B8CC54 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0758A0D020E6247100B8CC54 /* GoogleService-Info.plist */; };
+		0783394D214666C00080C1EE /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0783391A214666B10080C1EE /* libCodePush.a */; };
+		0783394F214666CC0080C1EE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0783394E214666CC0080C1EE /* libz.tbd */; };
 		07A98AF7214111BA002489E4 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07A98AF6214111BA002489E4 /* Launch Screen.storyboard */; };
 		08D43AB83465477EA405F98E /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E02A99F159E74A1B9AC7BD58 /* Entypo.ttf */; };
 		08F9D322440949ABB6103BC7 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F50E1DF36B446ACB212C86D /* libRNSVG.a */; };
@@ -120,6 +123,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = Raha;
+		};
+		07833919214666B10080C1EE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 07833913214666B10080C1EE /* CodePush.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = CodePush;
+		};
+		0783391B214666B10080C1EE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 07833913214666B10080C1EE /* CodePush.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F886647B1F4ADB500036D01B;
+			remoteInfo = "CodePush-tvOS";
 		};
 		0793A86F20DCBCBD003A4A54 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -464,6 +481,8 @@
 		00E356F21AD99517003FC87E /* RahaTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RahaTests.m; sourceTree = "<group>"; };
 		0705B39020DD82B90006A5D7 /* libFirebaseStorage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFirebaseStorage.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0758A0D020E6247100B8CC54 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Raha/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		07833913214666B10080C1EE /* CodePush.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CodePush.xcodeproj; path = "../node_modules/react-native-code-push/ios/CodePush.xcodeproj"; sourceTree = "<group>"; };
+		0783394E214666CC0080C1EE /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		07A9878221252570002489E4 /* Raha.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Raha.entitlements; path = Raha/Raha.entitlements; sourceTree = "<group>"; };
 		07A98AF6214111BA002489E4 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
@@ -579,6 +598,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0783394F214666CC0080C1EE /* libz.tbd in Frameworks */,
+				0783394D214666C00080C1EE /* libCodePush.a in Frameworks */,
 				EADDAA432113CAA5003D75CE /* GPUImage.framework in Frameworks */,
 				EA659DFD20FED527008AFD2A /* MobileCoreServices.framework in Frameworks */,
 				EA659DFB20FED51C008AFD2A /* QuartzCore.framework in Frameworks */,
@@ -671,6 +692,15 @@
 				00E356F11AD99517003FC87E /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		07833914214666B10080C1EE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0783391A214666B10080C1EE /* libCodePush.a */,
+				0783391C214666B10080C1EE /* libCodePush.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		0793A83F20DCBCB7003A4A54 /* Recovered References */ = {
@@ -811,6 +841,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0783394E214666CC0080C1EE /* libz.tbd */,
 				EA659DFC20FED527008AFD2A /* MobileCoreServices.framework */,
 				EA659DFA20FED51C008AFD2A /* QuartzCore.framework */,
 				EA659DF820FED513008AFD2A /* AVFoundation.framework */,
@@ -846,6 +877,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				07833913214666B10080C1EE /* CodePush.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
@@ -1120,6 +1152,10 @@
 					ProjectRef = 3FCA7802A08D48BE80A57B8A /* AppCenterReactNative.xcodeproj */;
 				},
 				{
+					ProductGroup = 07833914214666B10080C1EE /* Products */;
+					ProjectRef = 07833913214666B10080C1EE /* CodePush.xcodeproj */;
+				},
+				{
 					ProductGroup = EADDAA3A2113CA40003D75CE /* Products */;
 					ProjectRef = EADDAA392113CA40003D75CE /* GPUImage.xcodeproj */;
 				},
@@ -1238,6 +1274,20 @@
 			fileType = archive.ar;
 			path = libRCTVibration.a;
 			remoteRef = 00C302E31ABCB9EE00DB3ED1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0783391A214666B10080C1EE /* libCodePush.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCodePush.a;
+			remoteRef = 07833919214666B10080C1EE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0783391C214666B10080C1EE /* libCodePush.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCodePush.a;
+			remoteRef = 0783391B214666B10080C1EE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		0793A87020DCBCBD003A4A54 /* libRCTVideo.a */ = {
@@ -1715,9 +1765,7 @@
 				INFOPLIST_FILE = RahaTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -1749,9 +1797,7 @@
 				INFOPLIST_FILE = RahaTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
