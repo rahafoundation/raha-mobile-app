@@ -58,7 +58,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>CodePushDeploymentKey</key>
 	<string>$(APPCENTER_CODEPUSH_DEPLOYMENT_KEY)</string>
 	<key>LSRequiresIPhoneOS</key>
