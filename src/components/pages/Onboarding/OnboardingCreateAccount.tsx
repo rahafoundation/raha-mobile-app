@@ -1,5 +1,11 @@
 import * as React from "react";
-import { View, StyleSheet, Linking, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Linking,
+  Dimensions,
+  ScrollView
+} from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
@@ -76,7 +82,7 @@ class OnboardingCreateAccountView extends React.Component<
   render() {
     return (
       <IndependentPageContainer containerStyle={styles.cardPageContainer}>
-        <View style={styles.page}>
+        <ScrollView style={styles.page}>
           <View style={styles.body}>
             <View style={styles.card}>
               <Text style={styles.paragraph}>
@@ -127,7 +133,7 @@ class OnboardingCreateAccountView extends React.Component<
               {this._renderRequestingStatus()}
             </View>
           </View>
-        </View>
+        </ScrollView>
       </IndependentPageContainer>
     );
   }
