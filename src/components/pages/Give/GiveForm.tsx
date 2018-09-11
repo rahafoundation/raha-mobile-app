@@ -24,7 +24,7 @@ import { getMemberById } from "../../../store/selectors/members";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
 import { Button, Text } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { KeyboardAwareScrollView } from "../../shared/elements/KeyboardAwareScrollView";
 
 const MAX_MEMO_LENGTH = 140;
 // Donation rate is currently constant.
@@ -158,12 +158,7 @@ class GiveFormView extends React.Component<Props, State> {
 
   public render() {
     return (
-      <KeyboardAwareScrollView
-        enableAutomaticScroll
-        bounces={false}
-        enableOnAndroid
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
+      <KeyboardAwareScrollView>
         <View style={styles.toRow}>
           {this.state.toMember ? (
             <React.Fragment>

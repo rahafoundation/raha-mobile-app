@@ -47,7 +47,7 @@ import { Map } from "immutable";
 import { TextInput } from "../shared/elements/TextInput";
 import { fonts, fontSizes } from "../../helpers/fonts";
 import { colors } from "../../helpers/colors";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { KeyboardAwareScrollView } from "../shared/elements/KeyboardAwareScrollView";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 const countries = getAllCountries().reduce<Map<string, Country>>(
@@ -506,12 +506,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
       this.props.loginMessage || this.props.navigation.getParam("loginMessage");
     return (
       <View style={styles.container}>
-        <KeyboardAwareScrollView
-          enableAutomaticScroll
-          bounces={false}
-          enableOnAndroid
-          contentContainerStyle={{ flexGrow: 1 }}
-        >
+        <KeyboardAwareScrollView>
           <View style={styles.content}>
             <Image
               resizeMode="contain"
@@ -555,6 +550,9 @@ const buttonRowStyle: ViewStyle = {
   justifyContent: "space-evenly"
 };
 
+const CARD_WIDTH = Dimensions.get("window").width - 24;
+const WELCOME_IMAGE_WIDTH = 517;
+const WELCOME_IMAGE_HEIGHT = 272;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -570,13 +568,13 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
-    width: Dimensions.get("window").width - 24,
+    width: CARD_WIDTH,
     backgroundColor: colors.pageBackground,
     paddingHorizontal: 20
   },
   image: {
-    flex: 0,
-    height: 200
+    width: CARD_WIDTH - 24,
+    height: ((CARD_WIDTH - 24) * WELCOME_IMAGE_HEIGHT) / WELCOME_IMAGE_WIDTH
   },
   androidMessage: {
     textAlign: "center",
