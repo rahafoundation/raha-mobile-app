@@ -7,13 +7,14 @@ import { Platform } from "react-native";
 
 /**
  * KeyboardAwareScrollView that passes through all provided properties like the
- * original component, but also sets sensible defaults for our project.
+ * original component, but also sets sensible defaults for our project. Named
+ * differently to avoid confusion with the original library.
  *
  * On Android, behavior is different than iOS regarding how the container
  * scales; Hence, there are platform differences in the props provided by
  * default.
  */
-export const KeyboardAwareScrollView: React.StatelessComponent<
+export const KeyboardAwareScrollContainer: React.StatelessComponent<
   KeyboardAwareScrollViewProps
 > = props => {
   const platformProps: Partial<KeyboardAwareScrollViewProps> =

@@ -47,7 +47,7 @@ import { Map } from "immutable";
 import { TextInput } from "../shared/elements/TextInput";
 import { fonts, fontSizes } from "../../helpers/fonts";
 import { colors } from "../../helpers/colors";
-import { KeyboardAwareScrollView } from "../shared/elements/KeyboardAwareScrollView";
+import { KeyboardAwareScrollContainer } from "../shared/elements/KeyboardAwareScrollContainer";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 const countries = getAllCountries().reduce<Map<string, Country>>(
@@ -506,7 +506,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
       this.props.loginMessage || this.props.navigation.getParam("loginMessage");
     return (
       <View style={styles.container}>
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollContainer>
           <View style={styles.content}>
             <Image
               resizeMode="contain"
@@ -524,7 +524,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
               {this._renderContents()}
             </View>
           </View>
-        </KeyboardAwareScrollView>
+        </KeyboardAwareScrollContainer>
         <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
       </View>
     );

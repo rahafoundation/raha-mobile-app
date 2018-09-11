@@ -24,7 +24,7 @@ import { getMemberById } from "../../../store/selectors/members";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
 import { Button, Text } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
-import { KeyboardAwareScrollView } from "../../shared/elements/KeyboardAwareScrollView";
+import { KeyboardAwareScrollContainer } from "../../shared/elements/KeyboardAwareScrollContainer";
 
 const MAX_MEMO_LENGTH = 140;
 // Donation rate is currently constant.
@@ -158,7 +158,7 @@ class GiveFormView extends React.Component<Props, State> {
 
   public render() {
     return (
-      <KeyboardAwareScrollView>
+      <KeyboardAwareScrollContainer>
         <View style={styles.toRow}>
           {this.state.toMember ? (
             <React.Fragment>
@@ -249,7 +249,7 @@ class GiveFormView extends React.Component<Props, State> {
             }
           />
         </View>
-      </KeyboardAwareScrollView>
+      </KeyboardAwareScrollContainer>
     );
   }
 }
