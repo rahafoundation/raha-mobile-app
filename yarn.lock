@@ -5939,6 +5939,17 @@ react-native-firebase@^5.0.0-rc1:
     postinstall-build "^5.0.1"
     prop-types "^15.6.2"
 
+react-native-iphone-x-helper@^1.0.3:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.1.0.tgz#3a881720900bd8d1c67de2c465ea9aa9296180a7"
+
+react-native-keyboard-aware-scroll-view@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.npmjs.org/react-native-keyboard-aware-scroll-view/-/react-native-keyboard-aware-scroll-view-0.7.2.tgz#3c758dea21bfe1d292ad907b89b74fcbd9d13a73"
+  dependencies:
+    prop-types "^15.6.2"
+    react-native-iphone-x-helper "^1.0.3"
+
 react-native-mock-render@^0.0.25:
   version "0.0.25"
   resolved "https://registry.npmjs.org/react-native-mock-render/-/react-native-mock-render-0.0.25.tgz#a0d5478ff429c9c394146bb503bf21f451323f73"

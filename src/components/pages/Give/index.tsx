@@ -5,12 +5,7 @@ import { Member } from "../../../store/reducers/members";
 import { GiveForm } from "./GiveForm";
 import { Success } from "./Success";
 import { NavigationScreenProp } from "react-navigation";
-import {
-  View,
-  StyleSheet,
-  ViewStyle,
-  KeyboardAvoidingView
-} from "react-native";
+import { View, StyleSheet, ViewStyle } from "react-native";
 import { colors } from "../../../helpers/colors";
 
 type Props = {

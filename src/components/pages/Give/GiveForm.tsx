@@ -1,11 +1,6 @@
 import { Big } from "big.js";
 import * as React from "react";
-import {
-  View,
-  StyleSheet,
-  KeyboardAvoidingView,
-  ViewStyle
-} from "react-native";
+import { View, StyleSheet, ViewStyle } from "react-native";
 import {
   FormLabel,
   FormInput,
@@ -29,7 +24,7 @@ import { getMemberById } from "../../../store/selectors/members";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
 import { Button, Text } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
-import { HEADER_HEIGHT } from "../../shared/Navigation";
+import { KeyboardAwareScrollContainer } from "../../shared/elements/KeyboardAwareScrollContainer";
 
 const MAX_MEMO_LENGTH = 140;
 // Donation rate is currently constant.
@@ -163,14 +158,7 @@ class GiveFormView extends React.Component<Props, State> {
 
   public render() {
     return (
-      <KeyboardAvoidingView
-        // this technically could work with behavior  height, but because of
-        // this issue, padding is a valid workaround.
-        // https://github.com/facebook/react-native/issues/13754
-        behavior="padding"
-        style={styles.container}
-        keyboardVerticalOffset={HEADER_HEIGHT}
-      >
+      <KeyboardAwareScrollContainer>
         <View style={styles.toRow}>
           {this.state.toMember ? (
             <React.Fragment>
@@ -261,11 +249,7 @@ class GiveFormView extends React.Component<Props, State> {
             }
           />
         </View>
-
-        {/* Necessary for keyboard behavior; see the container and bottomFiller
-          * styles below. */}
-        <View style={styles.bottomFiller} />
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollContainer>
     );
   }
 }
@@ -311,21 +295,7 @@ export const GiveForm = connect(
 )(GiveFormView);
 
 const containerStyle: ViewStyle = {
-  // grow to maximum size
-  flex: 1,
-
-  // have children align to the bottom of the page
-  flexDirection: "column",
-  justifyContent: "flex-end"
-};
-
-/*
- * Push all content to the top by having this element fill up all remaining
- * space. This way, when the keyboard comes up and pads the bottom, the
- * focused text input remains on screen.
- */
-const bottomFillerStyle: ViewStyle = {
-  flex: 1
+  flex: 1 // grow to maximum size
 };
 
 const giveButtonRowStyle: ViewStyle = {
@@ -358,6 +328,5 @@ const styles = StyleSheet.create({
   helper: {
     color: "gray"
   },
-  giveButtonRow: giveButtonRowStyle,
-  bottomFiller: bottomFillerStyle
+  giveButtonRow: giveButtonRowStyle
 });

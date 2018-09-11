@@ -50,13 +50,6 @@ import { Member } from "../../store/reducers/members";
 import { Verify } from "../pages/Verify";
 import { processDeeplink } from "./Deeplinking";
 
-// testing on Rahul's phone, a little bit larger padding on Android prevents
-// some overlap with the keyboard over the button; but the true header height in
-// Android is actually 56, it seems.
-// TODO: figure out how to properly work with KeyboardAvoidingView... why does
-// header height even matter?
-export const HEADER_HEIGHT = Platform.OS === "ios" ? 64 : 80;
-
 /**
  * Gets the current screen from navigation state.
  * Adapted from: https://reactnavigation.org/docs/en/screen-tracking.html
