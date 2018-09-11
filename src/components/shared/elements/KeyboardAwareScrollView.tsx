@@ -16,7 +16,8 @@ import { Platform } from "react-native";
 export const KeyboardAwareScrollView: React.StatelessComponent<
   KeyboardAwareScrollViewProps
 > = props => {
-  const platformProps = Platform.OS === "android" ? { flexGrow: 1 } : {};
+  const platformProps: Partial<KeyboardAwareScrollViewProps> =
+    Platform.OS === "android" ? { contentContainerStyle: { flexGrow: 1 } } : {};
   return (
     <KeyboardAwareScrollViewLibrary
       enableAutomaticScroll
