@@ -1,20 +1,20 @@
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { setFcmToken as callSetFcmToken } from "@raha/api/dist/me/setFcmToken";
 import { clearFcmToken as callClearFcmToken } from "@raha/api/dist/me/clearFcmToken";
+import { UnauthenticatedError } from "@raha/api/dist/errors/UnauthenticatedError";
 
 import { wrapApiCallAction } from "./apiCalls";
 import { getAuthToken } from "../selectors/authentication";
 import { config } from "../../data/config";
-import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
-import { UnauthenticatedError } from "@raha/api/dist/errors/UnauthenticatedError";
+import { generateRandomIdentifier } from "../reducers/apiCalls";
 
 export function clearFcmToken(fcmToken: string) {
   return wrapApiCallAction(
-    async (_, getState) => {
+    async () => {
       callClearFcmToken(config.apiBase, fcmToken);
     },
     ApiEndpointName.CLEAR_FCM_TOKEN,
-    // Arbitrary, we don't track these calls anywhere
-    "CLEAR_FCM_TOKEN_CALL"
+    generateRandomIdentifier()
   );
 }
 
@@ -29,7 +29,6 @@ export function setFcmToken(fcmToken: string) {
       callSetFcmToken(config.apiBase, authToken, fcmToken);
     },
     ApiEndpointName.SET_FCM_TOKEN,
-    // Arbitrary, we don't track these calls anywhere
-    "SET_FCM_TOKEN_CALL"
+    generateRandomIdentifier()
   );
 }
