@@ -77,15 +77,18 @@ const mapStateToProps: MapStateToProps<
   RahaState
 > = state => {
   const loggedInUid = getLoggedInFirebaseUserId(state);
-  if (loggedInUid) {
-    const loggedInMember = getMemberById(state, loggedInUid);
-    if (loggedInMember) {
-      return {
-        loggedInMemberId: loggedInMember.get("memberId")
-      };
-    }
+  if (!loggedInUid) {
+    return {};
   }
-  return {};
+
+  const loggedInMember = getMemberById(state, loggedInUid);
+  if (!loggedInMember) {
+    return {};
+  }
+
+  return {
+    loggedInMemberId: loggedInMember.get("memberId")
+  };
 };
 
 export const MessagingManager = connect(
