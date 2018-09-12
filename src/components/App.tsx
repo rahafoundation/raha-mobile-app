@@ -7,6 +7,7 @@ import { AuthManager } from "./AuthManager";
 import { Navigation } from "./shared/Navigation";
 import { store, persistor } from "../store";
 import { refreshMembers } from "../store/actions/members";
+import { MessagingManager } from "./MessagingManager";
 
 // refresh the members/operations on app start
 const onBeforeLift = async () => {
@@ -25,7 +26,9 @@ const AppRoot: React.StatelessComponent = () => {
         onBeforeLift={onBeforeLift}
       >
         <AuthManager>
-          <Navigation />
+          <MessagingManager>
+            <Navigation />
+          </MessagingManager>
         </AuthManager>
       </PersistGate>
     </Provider>
