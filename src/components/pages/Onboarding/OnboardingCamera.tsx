@@ -23,8 +23,8 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
       <React.Fragment>
         <Text style={sharedStyles.paragraph}>
           {this.props.inviterFullName
-            ? `Create your public profile's identity video to accept your invite from ${this.props.inviterFullName}!`
-            : "Create your public profile's identity video!"}
+            ? `Accept your invite from ${this.props.inviterFullName} by taking a video of yourself for your public profile!`
+            : "Take a video of yourself for your public profile!"}
         </Text>
         <Camera
           onVideoRecorded={uri => {
@@ -32,7 +32,7 @@ export class OnboardingCamera extends React.Component<OnboardingCameraProps> {
           }}
         />
         <View>
-          <Text style={sharedStyles.paragraph}>Example of what to say:</Text>
+          <Text style={sharedStyles.paragraph}>Let other people know your full name and why Raha interests you! Example:</Text>
           <Text style={sharedStyles.paragraph}>
             "My name is{" "}
             <Text style={[sharedStyles.paragraphText, styles.name]}>
