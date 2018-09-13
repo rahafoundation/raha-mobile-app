@@ -170,8 +170,6 @@ export const confirmPhoneLogIn: AsyncActionCreator = (
       type: PhoneLogInActionType.PHONE_LOGIN_SENDING_CONFIRMATION
     });
     await _logInWithCredential(verificationId, confirmationCode);
-    dispatch({ type: FirebaseAuthActionType.LOG_IN });
-    // await confirmResult.confirm(confirmationCode);
     // no need to dispatch success since firebase auth is listening for changes,
     // it will get triggered automatically
   } catch (err) {
