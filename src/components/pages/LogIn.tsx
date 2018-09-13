@@ -257,7 +257,7 @@ class ConfirmationCodeForm extends React.Component<
   };
 
   componentDidMount() {
-    this.timerInterval = setInterval(this._calculateTimeLeft, 1000);
+    this.timerInterval = setInterval(this._updateTimeLeft, 1000);
     BackHandler.addEventListener("hardwareBackPress", this._handleBackPress);
   }
 
@@ -275,13 +275,17 @@ class ConfirmationCodeForm extends React.Component<
       this.setState({
         timeLeft: this._calculateTimeLeft()
       });
-      this.timerInterval = setInterval(this._calculateTimeLeft, 1000);
+      clearInterval(this.timerInterval);
+      this.timerInterval = setInterval(this._updateTimeLeft, 1000);
     }
   }
 
+  _updateTimeLeft = () => {
+    this.setState({ timeLeft: this._calculateTimeLeft() });
+  };
+
   _calculateTimeLeft = () => {
     if (!this.props.sentTime) {
-      this.setState({ timeLeft: undefined });
       return undefined;
     }
 
@@ -294,7 +298,6 @@ class ConfirmationCodeForm extends React.Component<
       clearInterval(this.timerInterval);
       this.timerInterval = undefined;
     }
-    this.setState({ timeLeft });
     return timeLeft;
   };
 
