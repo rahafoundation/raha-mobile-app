@@ -19,8 +19,8 @@ type DispatchProps = {
 type AuthManagerProps = OwnProps & DispatchProps & ReduxStateProps;
 
 /**
- * Component that manages login state when the user is logged in automatically
- * by Firebase and notifies the user that happened.
+ * Component that manages login state when the user is logged in by Firebase and
+ * notifies the user if auto-login happened (Android only).
  */
 class AuthManagerComponent extends React.Component<AuthManagerProps> {
   private unsubscribe?: () => void;
