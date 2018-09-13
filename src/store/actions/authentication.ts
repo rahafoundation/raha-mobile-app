@@ -95,7 +95,7 @@ const _logInWithCredential = async (
     verificationId,
     verificationCode
   );
-  await firebase.auth().signInAndRetrieveDataWithCredential(credential);
+  await auth.signInAndRetrieveDataWithCredential(credential);
 };
 
 let verificationId: string;
