@@ -28,9 +28,6 @@ const FeedView: React.StatelessComponent<StateProps> = ({ activities }) => {
 
 // TODO this logic should probably get pushed into conversion from ops to activities.
 const INVALID_FEED_OPS = new Set([
-  OperationType.MINT,
-  OperationType.TRUST,
-  OperationType.REQUEST_VERIFICATION,
   OperationType.CREATE_MEMBER
 ]);
 
