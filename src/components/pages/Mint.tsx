@@ -1,12 +1,10 @@
 import * as React from "react";
-import { Big } from "big.js";
 import {
   StyleSheet,
   View,
   Image,
   TextStyle,
-  ViewStyle,
-  Dimensions
+  ViewStyle
 } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
