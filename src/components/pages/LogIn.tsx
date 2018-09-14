@@ -201,13 +201,6 @@ class PhoneNumberForm extends React.Component<
             onSubmitEditing={this._handleSubmit}
           />
         </View>
-
-        {Platform.OS === "android" && (
-          <Text style={styles.androidMessage}>
-            On some Android devices, you will be logged in automatically by
-            Google Play Services.
-          </Text>
-        )}
         <Button
           title={
             this.props.waitingForCode
