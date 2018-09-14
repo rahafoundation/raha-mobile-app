@@ -3,6 +3,7 @@ package app.raha.mobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.branch.rnbranch.RNBranchPackage;
 import com.microsoft.codepush.react.CodePush;
 import com.microsoft.appcenter.reactnative.appcenter.AppCenterReactNativePackage;
 import com.horcrux.svg.SvgPackage;
@@ -42,6 +43,7 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(new MainReactPackage(),
+            new RNBranchPackage(),
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
             new AppCenterReactNativePackage(MainApplication.this),
             new SvgPackage(), new RNDeviceInfo(), new RNFirebasePackage(),
