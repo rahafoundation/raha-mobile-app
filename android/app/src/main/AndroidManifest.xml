@@ -58,6 +58,9 @@
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="https" android:host="getraha.app.link" />
+            <data android:scheme="https" android:host="getraha-alternate.app.link" />
+            <data android:scheme="https" android:host="getraha.test-app.link" />
+            <data android:scheme="https" android:host="getraha-alternate.test-app.link" />
         </intent-filter>
       </activity>
 
