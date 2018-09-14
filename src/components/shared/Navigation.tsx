@@ -341,11 +341,12 @@ const MintTab = createNavigatorForTab(
 
 const ProfileTab = createNavigatorForTab(
   {
+    [RouteName.ProfileTab]: Profile,
     [RouteName.AccountPage]: Account,
     [RouteName.PendingInvitesPage]: PendingInvites
   },
   {
-    initialRouteName: RouteName.ProfilePage
+    initialRouteName: RouteName.ProfileTab
   }
 );
 
