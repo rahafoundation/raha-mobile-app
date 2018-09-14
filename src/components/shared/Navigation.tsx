@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TextStyle,
   ViewStyle,
-  Platform,
   Linking
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
@@ -359,7 +358,7 @@ const tabRoutes = {
 const tabIcons: { [k in keyof typeof tabRoutes]: string } = {
   [RouteName.ProfileTab]: "user",
   [RouteName.FeedTab]: "list-alt",
-  [RouteName.DiscoverTab]: "newspaper",
+  [RouteName.DiscoverTab]: "search",
   [RouteName.MintTab]: "parachute-box"
 };
 
