@@ -19,3 +19,4 @@ function getApp() {
 export const app = getApp();
 export const auth = app.auth();
 export const storage = app.storage();
+export const messaging = app.messaging();
