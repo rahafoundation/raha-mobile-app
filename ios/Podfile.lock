@@ -3,6 +3,9 @@ PODS:
   - AppCenterReactNativeShared (1.7.1):
     - AppCenter/Core (= 1.8.0)
   - boost-for-react-native (1.63.0)
+  - Branch-SDK (0.25.1):
+    - Branch-SDK/Core (= 0.25.1)
+  - Branch-SDK/Core (0.25.1)
   - DoubleConversion (1.1.5)
   - Firebase/Auth (5.3.0):
     - Firebase/CoreOnly
@@ -55,6 +58,11 @@ PODS:
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
   - Protobuf (3.6.1)
+  - React (0.56.0):
+    - React/Core (= 0.56.0)
+  - react-native-branch (2.3.3):
+    - Branch-SDK
+    - React
   - React/Core (0.56.0):
     - yoga (= 0.56.0.React)
   - React/CxxBridge (0.56.0):
@@ -91,6 +99,7 @@ PODS:
 
 DEPENDENCIES:
   - AppCenterReactNativeShared (~> 1.7.1)
+  - Branch-SDK (from `../node_modules/react-native-branch/ios`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - Firebase/Auth (~> 5.3.0)
   - Firebase/Core (~> 5.3.0)
@@ -98,6 +107,7 @@ DEPENDENCIES:
   - Firebase/Storage (~> 5.3.0)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - react-native-branch (from `../node_modules/react-native-branch`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
   - React/DevSupport (from `../node_modules/react-native`)
@@ -125,6 +135,8 @@ SPEC REPOS:
     - Protobuf
 
 EXTERNAL SOURCES:
+  Branch-SDK:
+    :path: "../node_modules/react-native-branch/ios"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   Folly:
@@ -133,6 +145,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   React:
     :path: "../node_modules/react-native"
+  react-native-branch:
+    :path: "../node_modules/react-native-branch"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -140,6 +154,7 @@ SPEC CHECKSUMS:
   AppCenter: 7e7b42e94b70294d1de3d747f164f0c1668a28e1
   AppCenterReactNativeShared: 713c4b8da168d517297061d4168f7e2f4d2df9c5
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
+  Branch-SDK: 8a0fa24e01a68cc3f98f184900e5adf0328c7f02
   DoubleConversion: a9706f16e388b53ff12cca34473428ee29746a26
   Firebase: 68afeeb05461db02d7c9e3215cda28068670f4aa
   FirebaseAnalytics: b3628aea54c50464c32c393fb2ea032566e7ecc2
@@ -155,8 +170,9 @@ SPEC CHECKSUMS:
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
   React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
+  react-native-branch: 8988998ef912c6373dc39a24e4638f02a1268265
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: 3aab360e28c92a23eb1408594250ee458466ce46
+PODFILE CHECKSUM: a0f2d8efeb5dc9cc08262f184e45e64c0dfddccc
 
 COCOAPODS: 1.5.3

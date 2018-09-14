@@ -36,6 +36,7 @@ target 'Raha' do
   pod 'AppCenterReactNativeShared', '~> 1.7.1'
 
   pod 'react-native-branch', :path => '../node_modules/react-native-branch'
+  pod "Branch-SDK", path: '../node_modules/react-native-branch/ios'
 
   target 'RahaTests' do
     inherit! :search_paths
