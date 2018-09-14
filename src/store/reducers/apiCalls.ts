@@ -43,6 +43,9 @@ export const reducer: Reducer<ApiCallsState> = (
   );
 };
 
+/**
+ * NOT SAFE FOR CRYPTO USAGE.
+ */
 function getRandomInt(max: number) {
   return Math.floor(Math.random() * Math.floor(max));
 }

@@ -15,6 +15,7 @@ import { RahaState } from "../store";
 import { getLoggedInFirebaseUserId } from "../store/selectors/authentication";
 import { getMemberById } from "../store/selectors/members";
 import { clearFcmToken, setFcmToken } from "../store/actions/messaging";
+import { messaging } from "../firebaseInit";
 
 interface OwnProps {
   children: React.ReactNode;
@@ -50,7 +51,7 @@ class MessagingManagerComponent extends React.Component<Props> {
   }
 
   updateMemberFcmToken = async (newToken?: string) => {
-    const fcmToken = newToken || (await firebase.messaging().getToken());
+    const fcmToken = newToken || (await messaging.getToken());
     if (fcmToken) {
       if (this.props.loggedInMemberId) {
         this.props.setFcmToken(fcmToken);

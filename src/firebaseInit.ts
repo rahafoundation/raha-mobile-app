@@ -20,3 +20,4 @@ export const app = getApp();
 export const analytics = app.analytics();
 export const auth = app.auth();
 export const storage = app.storage();
+export const messaging = app.messaging();
