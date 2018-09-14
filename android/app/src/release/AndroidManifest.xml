@@ -4,5 +4,9 @@
 
     <!-- React Native needs this permission for debug, but we don't need it in
     the bundled prod -->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" tools:node="remove"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"
+    tools:node="remove"/>
+    
+    <!-- Branch testing (TestMode "true" to simulate fresh installs on dev environment) -->
+    <meta-data android:name="io.branch.sdk.TestMode" android:value="false" />
 </manifest>

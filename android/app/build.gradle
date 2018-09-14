@@ -172,7 +172,7 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-branch')
+    implementation project(':react-native-branch')
     implementation project(':react-native-code-push')
     implementation project(':appcenter')
     implementation project(':react-native-svg')

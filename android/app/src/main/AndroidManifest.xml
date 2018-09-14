@@ -43,7 +43,35 @@
           <category android:name="android.intent.category.BROWSABLE" />
           <data android:scheme="https" android:host="d.raha.app" />
         </intent-filter>
+
+        <!-- Branch URI scheme -->
+        <intent-filter>
+            <data android:scheme="raha" android:host="open" />
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+        </intent-filter>
+
+        <!-- Branch App Links -->
+        <intent-filter android:autoVerify="true">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" android:host="getraha.app.link" />
+        </intent-filter>
       </activity>
+
+      <!-- Branch init -->
+      <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_gjF60Tfeu3A3ZH18DlslZfdarwiLqHr0" />
+      <meta-data android:name="io.branch.sdk.BranchKey.test" android:value="key_test_nhs15RkcF5s4ZVW6FozcZimaFzdNqVDM" />
+
+      <!-- Branch install referrer tracking -->
+      <receiver android:name="io.branch.referral.InstallListener" android:exported="true">
+          <intent-filter>
+            <action android:name="com.android.vending.INSTALL_REFERRER" />
+          </intent-filter>
+      </receiver>
+
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"
       />
 
