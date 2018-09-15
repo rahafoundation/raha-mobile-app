@@ -7,6 +7,7 @@ import { reducer as apiCalls } from "./reducers/apiCalls";
 import { reducer as members } from "./reducers/members";
 import { reducer as operations } from "./reducers/operations";
 import { reducer as invitations } from "./reducers/invitations";
+import { reducer as dropdown } from "./reducers/dropdown";
 
 import { reducer as authentication } from "./reducers/authentication";
 import { RahaState } from ".";
@@ -28,7 +29,8 @@ export const rootReducer: Reducer<
     members,
     operations,
     authentication,
-    invitations
+    invitations,
+    dropdown
   })
 );
 export { RahaState } from "./reducers";

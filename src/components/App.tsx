@@ -8,6 +8,7 @@ import { Navigation } from "./shared/Navigation";
 import { store, persistor } from "../store";
 import { refreshMembers } from "../store/actions/members";
 import { MessagingManager } from "./MessagingManager";
+import { DropdownWrapper } from "./DropdownWrapper";
 
 // refresh the members/operations on app start
 const onBeforeLift = async () => {
@@ -27,7 +28,9 @@ const AppRoot: React.StatelessComponent = () => {
       >
         <AuthManager>
           <MessagingManager>
-            <Navigation />
+            <DropdownWrapper>
+              <Navigation />
+            </DropdownWrapper>
           </MessagingManager>
         </AuthManager>
       </PersistGate>

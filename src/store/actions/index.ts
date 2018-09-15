@@ -7,6 +7,7 @@ import { MembersAction } from "./members";
 import { OperationsAction } from "./operations";
 
 import { RahaState } from "../reducers";
+import { DropdownAction } from "./dropdown";
 
 export type AsyncAction = ThunkAction<void, RahaState, void, RahaAction>;
 export type AsyncActionCreator = ActionCreator<AsyncAction>;
@@ -15,4 +16,5 @@ export type RahaAction =
   | ApiCallsAction
   | AuthenticationAction
   | MembersAction
-  | OperationsAction;
+  | OperationsAction
+  | DropdownAction;
