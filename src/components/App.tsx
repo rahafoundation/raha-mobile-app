@@ -36,5 +36,6 @@ const AppRoot: React.StatelessComponent = () => {
 };
 
 export const App = codePush({
-  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME
+  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+  installMode: codePush.InstallMode.ON_NEXT_RESUME
 })(AppRoot);
