@@ -21,7 +21,7 @@ export const rootReducer: Reducer<
     storage: AsyncStorage,
     transforms: [immutableTransform()],
     // members uses immutable config, apiCalls doesn't need to be persisted
-    blacklist: ["apiCalls"],
+    blacklist: ["apiCalls", "dropdown"],
     key: "main"
   },
   combineReducers({

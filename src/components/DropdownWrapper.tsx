@@ -35,22 +35,19 @@ class DropdownWrapperComponent extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-    if (this.props.latestMessage) {
-      this._displayMessage;
-    }
   }
 
-  _displayMessage(latestMessage: DropdownMessage) {
-    const { id, type, title, message } = latestMessage;
-    this.dropdown.alertWithType(type, title, message);
-    this.setState({ displayedMessageId: id });
+  _displayMessage() {
+    const { latestMessage } = this.props;
+    if (latestMessage && !this.state.displayedMessageId) {
+      const { id, type, title, message } = latestMessage;
+      this.dropdown.alertWithType(type, title, message);
+      this.setState({ displayedMessageId: id });
+    }
   }
 
   componentDidUpdate() {
-    const { latestMessage } = this.props;
-    if (latestMessage && !this.state.displayedMessageId) {
-      this._displayMessage(latestMessage);
-    }
+    this._displayMessage();
   }
 
   onClose = () => {
@@ -67,7 +64,10 @@ class DropdownWrapperComponent extends React.Component<Props, State> {
       <View style={{ flex: 1 }}>
         {this.props.children}
         <DropdownAlert
-          ref={(ref: any) => (this.dropdown = ref)}
+          ref={(ref: any) => {
+            this.dropdown = ref;
+            this._displayMessage();
+          }}
           onClose={this.onClose}
           closeInterval={10000}
         />
