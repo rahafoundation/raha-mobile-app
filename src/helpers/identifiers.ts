@@ -6,7 +6,7 @@ function getRandomInt(max: number) {
 }
 
 /**
- * Returns a randomly generated identifier for an API call.
+ * Returns a randomly generated identifier.
  */
 export function generateRandomIdentifier() {
   return getRandomInt(Number.MAX_SAFE_INTEGER).toString();

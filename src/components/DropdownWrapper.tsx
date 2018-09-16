@@ -11,7 +11,7 @@ import { View } from "react-native";
 import { dismissDropdownMessage } from "../store/actions/dropdown";
 import { DropdownMessage } from "../store/reducers/dropdown";
 
-const AUTOMATICALLY_CLOSE_DROPDOWN_AFTER = 10000; // milliseconds
+const AUTOMATICALLY_CLOSE_DROPDOWN_AFTER = 6000; // milliseconds
 
 interface OwnProps {
   children: React.ReactNode;
