@@ -3,7 +3,6 @@ import url from "url";
 import { DEEPLINK_ROUTES } from "./Navigation";
 
 export function processDeeplink(link: string, navigation: any) {
-  console.log("YOLO", "Processing full deeplink " + link);
   const deeplinkUrl = url.parse(link, true, true);
   if (!deeplinkUrl.pathname) {
     return;
@@ -17,13 +16,6 @@ export function routeToPath(
   navigation: any,
   params?: NavigationParams
 ) {
-  console.log(
-    "YOLO",
-    "Routing to pathname " +
-      pathname +
-      " with param " +
-      (params ? params["t"] : undefined)
-  );
   const newRoute = DEEPLINK_ROUTES[pathname as keyof typeof DEEPLINK_ROUTES];
   if (newRoute) {
     navigation.navigate(
