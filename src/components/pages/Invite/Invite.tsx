@@ -3,7 +3,6 @@ import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
 import { MapStateToProps, connect } from "react-redux";
 import { RNFirebase } from "react-native-firebase";
-import DropdownAlert from "react-native-dropdownalert";
 
 import { IndependentPageContainer } from "../../shared/elements";
 import { InviteCamera } from "./InviteCamera";
@@ -20,6 +19,8 @@ import { SendInvite } from "./SendInvite";
 import { SpecifyJointVideo } from "./SpecifyJointVideo";
 import { InviteSplash } from "./InviteSplash";
 import { Instructions } from "./Instructions";
+import { displayDropdownMessage } from "../../../store/actions/dropdown";
+import { DropdownType } from "../../../store/reducers/dropdown";
 
 enum InviteStep {
   SPLASH,
@@ -33,10 +34,18 @@ enum InviteStep {
 type ReduxStateProps = {
   loggedInMember?: Member;
 };
-
-type OwnProps = {};
-
-type InviteProps = ReduxStateProps & OwnProps & NavigationScreenProps<{}>;
+interface DispatchProps {
+  displayDropdownMessage: (
+    type: DropdownType,
+    title: string,
+    message: string
+  ) => void;
+}
+interface OwnProps {}
+type InviteProps = ReduxStateProps &
+  OwnProps &
+  NavigationScreenProps<{}> &
+  DispatchProps;
 
 type InviteState = {
   step: InviteStep;
@@ -49,7 +58,6 @@ class InviteView extends React.Component<InviteProps, InviteState> {
   inviteToken: string;
   videoUploadRef: RNFirebase.storage.Reference;
   thumbnailUploadRef: RNFirebase.storage.Reference;
-  dropdown: any;
 
   constructor(props: InviteProps) {
     super(props);
@@ -102,8 +110,8 @@ class InviteView extends React.Component<InviteProps, InviteState> {
   _verifyVideoUri = () => {
     const videoUri = this.state.videoUri;
     if (!videoUri) {
-      this.dropdown.alertWithType(
-        "error",
+      this.props.displayDropdownMessage(
+        DropdownType.ERROR,
         "Error: Can't show video",
         "Invalid video. Please retake your video."
       );
@@ -190,7 +198,11 @@ class InviteView extends React.Component<InviteProps, InviteState> {
               this.setState({ step: InviteStep.CAMERA });
             }}
             onError={(errorType: string, errorMessage: string) => {
-              this.dropdown.alertWithType("error", errorType, errorMessage);
+              this.props.displayDropdownMessage(
+                DropdownType.ERROR,
+                errorType,
+                errorMessage
+              );
               this.setState({
                 step: InviteStep.CAMERA
               });
@@ -217,10 +229,7 @@ class InviteView extends React.Component<InviteProps, InviteState> {
 
   render() {
     return (
-      <IndependentPageContainer>
-        {this._renderStep()}
-        <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
-      </IndependentPageContainer>
+      <IndependentPageContainer>{this._renderStep()}</IndependentPageContainer>
     );
   }
 }
@@ -235,4 +244,7 @@ const mapStateToProps: MapStateToProps<
     loggedInMember: member
   };
 };
-export const Invite = connect(mapStateToProps)(InviteView);
+export const Invite = connect(
+  mapStateToProps,
+  { displayDropdownMessage }
+)(InviteView);

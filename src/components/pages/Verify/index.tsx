@@ -2,7 +2,6 @@ import { BackHandler } from "react-native";
 import * as React from "react";
 import { NavigationScreenProps } from "react-navigation";
 import { MapStateToProps, connect } from "react-redux";
-import DropdownAlert from "react-native-dropdownalert";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
@@ -22,6 +21,8 @@ import { VerifySplash } from "./VerifySplash";
 import { getMemberById } from "../../../store/selectors/members";
 import { getRequestVerificationOperation } from "../../../store/selectors/operations";
 import { ConfirmExistingVerificationVideo } from "./ConfirmExistingVerificationVideo";
+import { displayDropdownMessage } from "../../../store/actions/dropdown";
+import { DropdownType } from "../../../store/reducers/dropdown";
 
 enum VerifyStep {
   SPLASH,
@@ -37,9 +38,17 @@ type ReduxStateProps = {
   inviteVideoToken?: string;
 };
 
+interface DispatchProps {
+  displayDropdownMessage: (
+    type: DropdownType,
+    title: string,
+    message: string
+  ) => void;
+}
+
 type OwnProps = NavigationScreenProps<{ toMemberId: MemberId }>;
 
-type VerifyProps = OwnProps & ReduxStateProps;
+type VerifyProps = OwnProps & ReduxStateProps & DispatchProps;
 
 /**
  * Current state of the verification flow.
@@ -94,8 +103,6 @@ interface VerifyState {
 }
 
 class VerifyView extends React.Component<VerifyProps, VerifyState> {
-  dropdown: any;
-
   constructor(props: VerifyProps) {
     super(props);
     const initialStep = props.inviteVideoToken
@@ -256,7 +263,11 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
               this._handlePreviousStep();
             }}
             onError={(errorType: string, errorMessage: string) => {
-              this.dropdown.alertWithType("error", errorType, errorMessage);
+              this.props.displayDropdownMessage(
+                DropdownType.ERROR,
+                errorType,
+                errorMessage
+              );
             }}
           />
         );
@@ -284,10 +295,7 @@ class VerifyView extends React.Component<VerifyProps, VerifyState> {
 
   render() {
     return (
-      <IndependentPageContainer>
-        {this._renderStep()}
-        <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
-      </IndependentPageContainer>
+      <IndependentPageContainer>{this._renderStep()}</IndependentPageContainer>
     );
   }
 }
@@ -356,4 +364,7 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
     inviteVideoToken
   };
 };
-export const Verify = connect(mapStateToProps)(VerifyView);
+export const Verify = connect(
+  mapStateToProps,
+  { displayDropdownMessage }
+)(VerifyView);

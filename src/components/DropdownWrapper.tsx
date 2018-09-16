@@ -8,10 +8,10 @@ import DropdownAlert from "react-native-dropdownalert";
 
 import { RahaState } from "../store";
 import { View } from "react-native";
-import {
-  DropdownMessage,
-  dismissDropdownMessage
-} from "../store/actions/dropdown";
+import { dismissDropdownMessage } from "../store/actions/dropdown";
+import { DropdownMessage } from "../store/reducers/dropdown";
+
+const AUTOMATICALLY_CLOSE_DROPDOWN_AFTER = 10000; // milliseconds
 
 interface OwnProps {
   children: React.ReactNode;
@@ -39,11 +39,15 @@ class DropdownWrapperComponent extends React.Component<Props, State> {
 
   _displayMessage() {
     const { latestMessage } = this.props;
-    if (latestMessage && !this.state.displayedMessageId) {
+    if (this.dropdown && latestMessage && !this.state.displayedMessageId) {
       const { id, type, title, message } = latestMessage;
       this.dropdown.alertWithType(type, title, message);
       this.setState({ displayedMessageId: id });
     }
+  }
+
+  componentDidMount() {
+    this._displayMessage();
   }
 
   componentDidUpdate() {
@@ -66,10 +70,9 @@ class DropdownWrapperComponent extends React.Component<Props, State> {
         <DropdownAlert
           ref={(ref: any) => {
             this.dropdown = ref;
-            this._displayMessage();
           }}
           onClose={this.onClose}
-          closeInterval={10000}
+          closeInterval={AUTOMATICALLY_CLOSE_DROPDOWN_AFTER}
         />
       </View>
     );

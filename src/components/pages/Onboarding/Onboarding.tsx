@@ -2,7 +2,6 @@ import * as React from "react";
 import { Member } from "../../../store/reducers/members";
 import { View, BackHandler, TouchableHighlight } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
-import DropdownAlert from "react-native-dropdownalert";
 import { NavigationScreenProps } from "react-navigation";
 
 import { RahaState } from "../../../store";
@@ -25,6 +24,8 @@ import { InputEmail } from "./InputEmail";
 import { InputInviteToken } from "./InputInviteToken";
 import { fontSizes } from "../../../helpers/fonts";
 import { colors } from "../../../helpers/colors";
+import { displayDropdownMessage } from "../../../store/actions/dropdown";
+import { DropdownType } from "../../../store/reducers/dropdown";
 
 /**
  * Parent component for Onboarding flow.
@@ -56,9 +57,17 @@ type ReduxStateProps = {
   hasValidInviteToken: boolean;
 };
 
+interface DispatchProps {
+  displayDropdownMessage: (
+    type: DropdownType,
+    title: string,
+    message: string
+  ) => void;
+}
+
 type OwnProps = NavigationScreenProps<OnboardingParams>;
 
-type OnboardingProps = ReduxStateProps & OwnProps;
+type OnboardingProps = ReduxStateProps & OwnProps & DispatchProps;
 
 type OnboardingState = {
   step: OnboardingStep;
@@ -73,7 +82,6 @@ type OnboardingStateParams = {
 };
 
 class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
-  dropdown: any;
   steps: OnboardingStep[];
   videoToken: string;
   lastInviteToken?: string;
@@ -87,6 +95,10 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
     };
     this.extractVideoUrlForLatestInviteToken();
   }
+
+  _displayDropdownError = (title: string, message: string) => {
+    this.props.displayDropdownMessage(DropdownType.ERROR, title, message);
+  };
 
   /**
    * Idempotently extracts the video download URL for latest invite token.
@@ -106,8 +118,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
     // We ask the user to sign up via the regular invite flow if the specified
     // token is invalid for any reason.
     if (this.props.inviteToken && !this.props.hasValidInviteToken) {
-      this.dropdown.alertWithType(
-        "error",
+      this._displayDropdownError(
         "Error: Invalid Deeplink",
         "Unable to process deeplink invitation. Please sign up using the regular onboarding flow."
       );
@@ -128,8 +139,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
     );
     // We must be able to access the video specified by the invite.
     if (!videoDownloadUrl) {
-      this.dropdown.alertWithType(
-        "error",
+      this._displayDropdownError(
         "Error: Invalid Deeplink",
         "Invite video doesn't exist or has expired. Please try signing up directly from your phone."
       );
@@ -218,8 +228,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   _verifyFullName = () => {
     const verifiedFullName = this.state.verifiedName;
     if (!verifiedFullName) {
-      this.dropdown.alertWithType(
-        "error",
+      this._displayDropdownError(
         "Error: Missing full name",
         "Need to verify full name before this step."
       );
@@ -231,8 +240,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   _verifyEmailAddress = () => {
     const verifiedEmailAddress = this.state.emailAddress;
     if (!verifiedEmailAddress) {
-      this.dropdown.alertWithType(
-        "error",
+      this._displayDropdownError(
         "Error: Missing email address",
         "Need to specify email address before this step."
       );
@@ -244,8 +252,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   _verifyVideoUri = () => {
     const videoUri = this.state.videoUri;
     if (!videoUri) {
-      this.dropdown.alertWithType(
-        "error",
+      this._displayDropdownError(
         "Error: Can't show video",
         "Invalid video. Please retake your video."
       );
@@ -257,8 +264,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   _verifyVideoDownloadUrl = () => {
     const videoDownloadUrl = this.state.videoDownloadUrl;
     if (!videoDownloadUrl) {
-      this.dropdown.alertWithType(
-        "error",
+      this._displayDropdownError(
         "Error: Could not verify video uploaded",
         "Invalid video. Please retry."
       );
@@ -416,7 +422,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
                 this._goToStep(OnboardingStep.CAMERA);
               }}
               onError={(errorType: string, errorMessage: string) => {
-                this.dropdown.alertWithType("error", errorType, errorMessage);
+                this._displayDropdownError(errorType, errorMessage);
                 this._goToStep(OnboardingStep.CAMERA);
               }}
             />
@@ -460,12 +466,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   }
 
   render() {
-    return (
-      <View>
-        {this._renderOnboardingStep()}
-        <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
-      </View>
-    );
+    return <View>{this._renderOnboardingStep()}</View>;
   }
 }
 
@@ -521,4 +522,7 @@ const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
     inviteVideoIsJoint
   };
 };
-export const Onboarding = connect(mapStateToProps)(OnboardingView);
+export const Onboarding = connect(
+  mapStateToProps,
+  { displayDropdownMessage }
+)(OnboardingView);
