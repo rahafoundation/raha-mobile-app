@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="app.raha.mobile">
+
+    <!-- React Native needs this permission for debug, but we don't need it in
+    the bundled prod -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"
+    tools:node="remove"/>
+    
+    <!-- Branch testing (TestMode "true" to simulate fresh installs on dev environment) -->
+    <meta-data android:name="io.branch.sdk.TestMode" android:value="true" />
+</manifest>

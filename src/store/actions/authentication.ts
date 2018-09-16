@@ -8,6 +8,7 @@ import { ERROR_CODE as DISALLOWED_TYPE_ERROR_CODE } from "@raha/api-shared/dist/
 import { AsyncActionCreator } from ".";
 import { auth } from "../../firebaseInit";
 import { config } from "../../data/config";
+import branch from "react-native-branch";
 
 export const enum PhoneLogInActionType {
   PHONE_LOGIN_SENDING_PHONE_NUMBER = "AUTHENTICATION.PHONE_LOGIN_SENDING_PHONE_NUMBER",
@@ -191,5 +192,7 @@ export const initiateEmailLogIn: AsyncActionCreator = (
 
 export const signOut: AsyncActionCreator = () => async dispatch => {
   await auth.signOut(); // TODO handle error
+  // Clear deeplinking state
+  await branch.logout();
   dispatch(signOutAction());
 };

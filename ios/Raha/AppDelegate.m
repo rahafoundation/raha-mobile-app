@@ -15,21 +15,28 @@
 #import <React/RCTLinkingManager.h>
 #import "RNFirebaseNotifications.h"
 #import "RNFirebaseMessaging.h"
+#import <react-native-branch/RNBranch.h>
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  // Uncomment this line to use the test key instead of the live one.
+  #ifdef DEBUG
+    [RNBranch useTestInstance];
+  #endif
+  [RNBranch initSessionWithLaunchOptions:launchOptions isReferrable:YES];
+
   NSURL *jsCodeLocation;
 
   [AppCenterReactNative register];  // Initialize AppCenter
 
 
-    #ifdef DEBUG
-        jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-    #else
-        jsCodeLocation = [CodePush bundleURL];
-    #endif
+  #ifdef DEBUG
+    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  #else
+    jsCodeLocation = [CodePush bundleURL];
+  #endif
 
   // Initialize Firebase
   [FIRApp configure];
@@ -63,9 +70,20 @@
   [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
 }
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-  return [RCTLinkingManager application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    if (![RNBranch.branch application:application openURL:url sourceApplication:sourceApplication annotation:annotation]) {
+        // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+    }
+    return YES;
 }
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
+    return [RNBranch continueUserActivity:userActivity];
+}
+
+// - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+//   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+//   return [RCTLinkingManager application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
+// }
 
 @end

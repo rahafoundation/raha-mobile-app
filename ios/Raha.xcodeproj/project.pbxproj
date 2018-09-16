@@ -13,6 +13,7 @@
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* RahaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* RahaTests.m */; };
+		0743EC76214CFF50009425F6 /* Raha.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 07A9878221252570002489E4 /* Raha.entitlements */; };
 		0758A0FC20E6247100B8CC54 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0758A0D020E6247100B8CC54 /* GoogleService-Info.plist */; };
 		0783394D214666C00080C1EE /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0783391A214666B10080C1EE /* libCodePush.a */; };
 		0783394F214666CC0080C1EE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0783394E214666CC0080C1EE /* libz.tbd */; };
@@ -31,6 +32,7 @@
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		1692C23E2EAC40DE85BD1D32 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E51157920B340E4BFBB729F /* libRNDeviceInfo.a */; };
 		190C45AB88154F4CAB5AD0D3 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CB7169CB8438694B854E5 /* Lato-Italic.ttf */; };
+		25FA15C16B6D45A0B079339A /* branch.debug.json in Resources */ = {isa = PBXBuildFile; fileRef = 08379F6A784A449690E4D7EA /* branch.debug.json */; };
 		2C321963D5E64BE1B8BFC832 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 943331A2CD13454ABF698608 /* Feather.ttf */; };
 		36FE06F6541F455EA9BD3D34 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 90FB7A8D9CC84096AB863525 /* EvilIcons.ttf */; };
 		418E7A2EB5C548E1BC99ECDA /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78BB7FD3F84B4601A891AB45 /* FontAwesome5_Regular.ttf */; };
@@ -485,6 +487,7 @@
 		0783394E214666CC0080C1EE /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		07A9878221252570002489E4 /* Raha.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Raha.entitlements; path = Raha/Raha.entitlements; sourceTree = "<group>"; };
 		07A98AF6214111BA002489E4 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		08379F6A784A449690E4D7EA /* branch.debug.json */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = branch.debug.json; path = ../branch.debug.json; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Raha.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Raha.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -811,6 +814,7 @@
 				07A98AF6214111BA002489E4 /* Launch Screen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				EADDAA482113CAE9003D75CE /* Raha-Bridging-Header.h */,
+				08379F6A784A449690E4D7EA /* branch.debug.json */,
 			);
 			name = Raha;
 			sourceTree = "<group>";
@@ -1129,6 +1133,9 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.SafariKeychain = {
 								enabled = 1;
 							};
 						};
@@ -1612,6 +1619,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0743EC76214CFF50009425F6 /* Raha.entitlements in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				0758A0FC20E6247100B8CC54 /* GoogleService-Info.plist in Resources */,
 				08D43AB83465477EA405F98E /* Entypo.ttf in Resources */,
@@ -1634,6 +1642,7 @@
 				48471DC7523D47CBA77CFE71 /* FontAwesome5_Solid.ttf in Resources */,
 				07A98AF7214111BA002489E4 /* Launch Screen.storyboard in Resources */,
 				9892B13B2AE84EC1B5258244 /* AppCenter-Config.plist in Resources */,
+				25FA15C16B6D45A0B079339A /* branch.debug.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1971,7 +1980,7 @@
 				00E356F71AD99517003FC87E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Raha" */ = {
 			isa = XCConfigurationList;
@@ -1980,7 +1989,7 @@
 				13B07F951A680F5B00A75B9A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Raha" */ = {
 			isa = XCConfigurationList;
@@ -1989,7 +1998,7 @@
 				83CBBA211A601CBA00E9B192 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

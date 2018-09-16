@@ -47,7 +47,8 @@ import { fonts, fontSizes } from "../../helpers/fonts";
 import { InitializationRouter } from "../pages/InitializationRouter";
 import { Member } from "../../store/reducers/members";
 import { Verify } from "../pages/Verify";
-import { processDeeplink } from "./Deeplinking";
+import { processDeeplink, routeToPath } from "./Deeplinking";
+import branch from "react-native-branch";
 
 /**
  * Gets the current screen from navigation state.
@@ -451,19 +452,58 @@ type StateProps = {
 
 type Props = OwnProps & StateProps;
 
+type BranchParams = {
+  error?: string;
+  params?: any;
+};
+
 class NavigationView extends React.Component<Props> {
   navigation: any;
-
-  _handleUrl = (event: any) => {
-    processDeeplink(event.url, this.navigation);
-  };
+  _unsubscribeFromBranch: any;
 
   componentWillUnmount() {
-    Linking.removeEventListener("url", this._handleUrl);
+    this._unsubscribeFromBranch();
+    this._unsubscribeFromBranch = null;
   }
 
+  _processBranchDeeplink = (branchParams: BranchParams) => {
+    const { error, params } = branchParams;
+    // ({ error, params }) => {
+    if (error) {
+      console.error("Error from Branch: " + error);
+      return;
+    }
+
+    if (!params) {
+      // params will never be null if error is null, but satisfy Typescript
+      return;
+    }
+
+    if (params["+non_branch_link"]) {
+      const nonBranchUrl = params["+non_branch_link"];
+      // Route non-Branch URL if appropriate.
+      processDeeplink(nonBranchUrl, this.navigation);
+      return;
+    }
+
+    if (!params["+clicked_branch_link"]) {
+      // Indicates initialization success and some other conditions.
+      // No link was opened.
+      return;
+    }
+
+    if (!params["path"]) {
+      console.error("No path was found in Branch deeplink.");
+      return;
+    }
+
+    // A Branch link was opened.
+    // Route link based on data in params.
+    routeToPath(params["path"], this.navigation, params);
+  };
+
   componentDidMount() {
-    Linking.addEventListener("url", this._handleUrl);
+    this._unsubscribeFromBranch = branch.subscribe(this._processBranchDeeplink);
   }
 
   _setNavigationRef = (ref: any) => {

@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>branch_app_domain</key>
+	<string>getraha.app.link</string>
+	<key>branch_key</key>
+	<dict>
+		<key>test</key>
+		<string>key_test_nhs15RkcF5s4ZVW6FozcZimaFzdNqVDM</string>
+		<key>live</key>
+		<string>key_live_gjF60Tfeu3A3ZH18DlslZfdarwiLqHr0</string>
+	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -25,6 +34,16 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>app.raha.mobile</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>raha</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.677137485282-hei8t5jm6c67kpqk4objefcrlk4bhuqd</string>
@@ -44,16 +63,6 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>app.raha.mobile</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLName</key>
-			<string>app.raha.mobile</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>raha</string>
 			</array>
 		</dict>
 	</array>
