@@ -61,6 +61,8 @@
             <data android:scheme="https" android:host="getraha-alternate.app.link" />
             <data android:scheme="https" android:host="getraha.test-app.link" />
             <data android:scheme="https" android:host="getraha-alternate.test-app.link" />
+            <data android:scheme="https" android:host="link.raha.app" />
+            <data android:scheme="https" android:host="link.test.raha.app" />
         </intent-filter>
       </activity>
 
