@@ -71,7 +71,7 @@ class MessagingManagerComponent extends React.Component<Props> {
     }
   }
 
-  _check_permissions = async () => {
+  _checkPermissions = async () => {
     const enabled = await firebase.messaging().hasPermission();
     if (enabled) {
       return true;
@@ -125,7 +125,7 @@ class MessagingManagerComponent extends React.Component<Props> {
    */
   _setNotificationsListener = async () => {
     if (this.props.loggedInMemberId && !this.unsubscribeNotificationListener) {
-      if (await this._check_permissions()) {
+      if (await this._checkPermissions()) {
         // Triggered when a notification is received and the app is in the foreground.
         // TODO: Bug in RNFirebase 5.0rc that required downgrading to ^4.3, when that bug
         // gets fixed we can re-up. https://github.com/invertase/react-native-firebase/issues/1481
