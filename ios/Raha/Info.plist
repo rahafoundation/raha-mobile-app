@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>branch_app_domain</key>
-	<string>link.raha.app</string>
+	<string>to.raha.app</string>
 	<key>branch_key</key>
 	<dict>
 		<key>test</key>
@@ -123,7 +123,7 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>branch_universal_link_domains</key>
-	<string>link.raha.app</string>
+	<string>to.raha.app</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

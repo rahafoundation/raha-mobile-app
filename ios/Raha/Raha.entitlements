@@ -10,8 +10,8 @@
 		<string>applinks:getraha-alternate.app.link</string>
 		<string>applinks:getraha.test-app.link</string>
 		<string>applinks:getraha-alternate.test-app.link</string>
-		<string>applinks:link.raha.app</string>
-		<string>applinks:link.test.raha.app</string>
+		<string>applinks:to.raha.app</string>
+		<string>applinks:to.test.raha.app</string>
 	</array>
 </dict>
 </plist>
