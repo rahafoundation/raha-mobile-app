@@ -15,6 +15,7 @@
 #import <React/RCTLinkingManager.h>
 #import "RNFirebaseNotifications.h"
 #import "RNFirebaseMessaging.h"
+@import UserNotifications;
 
 @implementation AppDelegate
 
