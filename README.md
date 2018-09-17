@@ -109,7 +109,7 @@ public places.
 
 #### ... on iOS:
 
-1.  Open `ios/Raha.xcworkspace` (not `mobile.xcodeproj`!) in XCode, or by
+1.  Open `ios/Raha.xcworkspace` (not `Raha.xcodeproj`!) in XCode, or by
     running `open path/to/ios/Raha.xcworkspace`.
 1.  Set the build target to your phone in the upper left hand corner, next to
     the play and stop buttons.
