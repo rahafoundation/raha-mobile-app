@@ -1,5 +1,4 @@
 import * as React from "react";
-import DropdownAlert from "react-native-dropdownalert";
 import {
   BackHandler,
   StyleSheet,
@@ -48,6 +47,8 @@ import { TextInput } from "../shared/elements/TextInput";
 import { fonts, fontSizes } from "../../helpers/fonts";
 import { colors } from "../../helpers/colors";
 import { KeyboardAwareScrollContainer } from "../shared/elements/KeyboardAwareScrollContainer";
+import { displayDropdownMessage } from "../../store/actions/dropdown";
+import { DropdownType } from "../../store/reducers/dropdown";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 const countries = getAllCountries().reduce<Map<string, Country>>(
@@ -66,6 +67,11 @@ type StateProps = {
 };
 
 interface DispatchProps {
+  displayDropdownMessage: (
+    type: DropdownType,
+    title: string,
+    message: string
+  ) => void;
   cancelPhoneLogIn: () => void;
   initiatePhoneLogIn: (phoneNumber: string) => void;
   confirmPhoneLogIn: (confirmationCode: string) => void;
@@ -361,7 +367,6 @@ class ConfirmationCodeForm extends React.Component<
 class LogInView extends React.Component<LogInProps, LogInState> {
   componentFocusedListener?: NavigationEventSubscription;
   state: LogInState = {};
-  dropdown?: any;
 
   componentDidMount() {
     // If this LoginView becomes focused, the user was determined to be logged out. Verify that the
@@ -390,8 +395,8 @@ class LogInView extends React.Component<LogInProps, LogInState> {
       "errorMessage" in this.props.phoneLogInStatus &&
       !("errorMessage" in prevProps.phoneLogInStatus)
     ) {
-      this.dropdown.alertWithType(
-        "error",
+      this.props.displayDropdownMessage(
+        DropdownType.ERROR,
         "Error: Log In Failed",
         this.props.phoneLogInStatus.errorMessage
       );
@@ -521,7 +526,6 @@ class LogInView extends React.Component<LogInProps, LogInState> {
             </View>
           </View>
         </KeyboardAwareScrollContainer>
-        <DropdownAlert ref={(ref: any) => (this.dropdown = ref)} />
       </View>
     );
   }
@@ -636,6 +640,11 @@ const mapStateToProps: MapStateToProps<
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   dispatch: RahaThunkDispatch
 ) => ({
+  displayDropdownMessage: (
+    type: DropdownType,
+    title: string,
+    message: string
+  ) => dispatch(displayDropdownMessage(type, title, message)),
   cancelPhoneLogIn: () => dispatch(cancelPhoneLogIn()),
   initiatePhoneLogIn: (phoneNumber: string) =>
     dispatch(initiatePhoneLogIn(phoneNumber)),

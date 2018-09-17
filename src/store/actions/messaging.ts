@@ -6,7 +6,7 @@ import { UnauthenticatedError } from "@raha/api/dist/errors/UnauthenticatedError
 import { wrapApiCallAction } from "./apiCalls";
 import { getAuthToken } from "../selectors/authentication";
 import { config } from "../../data/config";
-import { generateRandomIdentifier } from "../reducers/apiCalls";
+import { generateRandomIdentifier } from "../../helpers/identifiers";
 
 export function clearFcmToken(fcmToken: string) {
   return wrapApiCallAction(
