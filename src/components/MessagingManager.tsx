@@ -127,11 +127,12 @@ class MessagingManagerComponent extends React.Component<Props> {
     if (this.props.loggedInMemberId && !this.unsubscribeNotificationListener) {
       if (await this._checkPermissions()) {
         // Triggered when a notification is received and the app is in the foreground.
-        // TODO: Bug in RNFirebase 5.0rc that required downgrading to ^4.3, when that bug
-        // gets fixed we can re-up. https://github.com/invertase/react-native-firebase/issues/1481
-        this.unsubscribeNotificationListener = firebase
-          .notifications()
-          .onNotification(this._displayPushNotification);
+        // TODO: Uncomment out the below once the linked bug is fixed. The alternative was to downgrade
+        // to RNFirebase 4.3, which we'd prefer not to do.
+        // https://github.com/invertase/react-native-firebase/issues/1481
+        // this.unsubscribeNotificationListener = firebase
+        //   .notifications()
+        //   .onNotification(this._displayPushNotification);
       }
     } else if (this.unsubscribeNotificationListener) {
       this.unsubscribeNotificationListener();
