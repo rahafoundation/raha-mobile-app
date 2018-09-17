@@ -1818,7 +1818,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B7028C18212FE9C600A9C3A7 /* debug.xcconfig */;
+			baseConfigurationReference = 1E42D71B7DF4631FC8F75DF6 /* Pods-Raha.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1858,7 +1858,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B7028C19212FE9D000A9C3A7 /* release.xcconfig */;
+			baseConfigurationReference = DD25A1AA57839E9F612DDDC2 /* Pods-Raha.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
