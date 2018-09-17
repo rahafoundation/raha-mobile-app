@@ -5935,13 +5935,13 @@ react-native-elements@^0.19.1:
     opencollective "^1.0.3"
     prop-types "^15.5.8"
 
-react-native-firebase@^5.0.0-rc1:
-  version "5.0.0-rc1"
-  resolved "https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-5.0.0-rc1.tgz#300eda8cd82085f687a08d0fa795e1cef27eacf8"
+react-native-firebase@^4.3.8:
+  version "4.3.8"
+  resolved "https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-4.3.8.tgz#a425b260aca0b97cde023dd2556fc18d16a3b7b3"
   dependencies:
     opencollective "^1.0.3"
     postinstall-build "^5.0.1"
-    prop-types "^15.6.2"
+    prop-types "^15.6.1"
 
 react-native-iphone-x-helper@^1.0.3:
   version "1.1.0"
