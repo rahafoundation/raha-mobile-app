@@ -16,6 +16,8 @@ import { getLoggedInFirebaseUserId } from "../store/selectors/authentication";
 import { getMemberById } from "../store/selectors/members";
 import { clearFcmToken, setFcmToken } from "../store/actions/messaging";
 import { messaging } from "../firebaseInit";
+import { displayDropdownMessage } from "../store/actions/dropdown";
+import { DropdownType } from "../store/reducers/dropdown";
 
 interface OwnProps {
   children: React.ReactNode;
@@ -26,31 +28,67 @@ interface ReduxStateProps {
 interface DispatchProps {
   clearFcmToken: (fcmToken: string) => void;
   setFcmToken: (fcmToken: string) => void;
+  displayDropdownMessage: (
+    type: DropdownType,
+    title: string,
+    message: string
+  ) => void;
 }
 
 type Props = OwnProps & ReduxStateProps & DispatchProps;
 
 class MessagingManagerComponent extends React.Component<Props> {
-  unsubscribe?: () => void;
+  unsubscribeTokenRefreshListener?: () => void;
+  unsubscribeNotificationListener?: () => void;
 
   constructor(props: Props) {
     super(props);
-    this.updateMemberFcmToken();
+    this._updateMemberFcmToken();
   }
 
   componentWillMount() {
-    this.unsubscribe = firebase
+    this.unsubscribeTokenRefreshListener = firebase
       .messaging()
-      .onTokenRefresh(this.updateMemberFcmToken);
+      .onTokenRefresh(this._updateMemberFcmToken);
+    this._setNotificationsListener();
   }
 
   componentWillUnmount() {
-    if (this.unsubscribe) {
-      this.unsubscribe();
+    if (this.unsubscribeTokenRefreshListener) {
+      this.unsubscribeTokenRefreshListener();
+      this.unsubscribeTokenRefreshListener = undefined;
+    }
+    if (this.unsubscribeNotificationListener) {
+      this.unsubscribeNotificationListener();
+      this.unsubscribeNotificationListener = undefined;
     }
   }
 
-  updateMemberFcmToken = async (newToken?: string) => {
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.loggedInMemberId != this.props.loggedInMemberId) {
+      this._updateMemberFcmToken();
+      this._setNotificationsListener();
+    }
+  }
+
+  _check_permissions = async () => {
+    const enabled = await firebase.messaging().hasPermission();
+    if (enabled) {
+      return true;
+    } else {
+      try {
+        // This promise resolves if the permission is granted, otherwise throws an error.
+        // https://rnfirebase.io/docs/v4.3.x/messaging/reference/Messaging#requestPermission.
+        await firebase.messaging().requestPermission();
+        return true;
+      } catch (exception) {
+        // User rejected permissions.
+        return false;
+      }
+    }
+  };
+
+  _updateMemberFcmToken = async (newToken?: string) => {
     const fcmToken = newToken || (await messaging.getToken());
     if (fcmToken) {
       if (this.props.loggedInMemberId) {
@@ -61,11 +99,45 @@ class MessagingManagerComponent extends React.Component<Props> {
     }
   };
 
-  async componentDidUpdate(prevProps: Props) {
-    if (prevProps.loggedInMemberId != this.props.loggedInMemberId) {
-      this.updateMemberFcmToken();
+  /**
+   * Displays an in-app dropdown message in response to a
+   * received remote push notification. Remote notifications are
+   * not displayed automatically when the app is in the foreground.
+   *
+   * Opted for this instead of building and displaying a standard OS
+   * notification since I couldn't figure out how to get the standard
+   * OS notification to work on Android after a couple hours of trying,
+   * and at I don't think the in-app dropdown is a bad experience.
+   */
+  _displayPushNotification = async (remoteNotification: any) => {
+    this.props.displayDropdownMessage(
+      DropdownType.INFO,
+      remoteNotification.title,
+      remoteNotification.body
+    );
+  };
+
+  /**
+   * Register for push notifications if the user is logged in. This will also trigger
+   * a permissions check.
+   *
+   * Unregister for push notifications if the user is not logged in.
+   */
+  _setNotificationsListener = async () => {
+    if (this.props.loggedInMemberId && !this.unsubscribeNotificationListener) {
+      if (await this._check_permissions()) {
+        // Triggered when a notification is received and the app is in the foreground.
+        // TODO: Bug in RNFirebase 5.0rc that required downgrading to ^4.3, when that bug
+        // gets fixed we can re-up. https://github.com/invertase/react-native-firebase/issues/1481
+        this.unsubscribeNotificationListener = firebase
+          .notifications()
+          .onNotification(this._displayPushNotification);
+      }
+    } else if (this.unsubscribeNotificationListener) {
+      this.unsubscribeNotificationListener();
+      this.unsubscribeNotificationListener = undefined;
     }
-  }
+  };
 
   render() {
     return this.props.children;
@@ -94,5 +166,5 @@ const mapStateToProps: MapStateToProps<
 
 export const MessagingManager = connect(
   mapStateToProps,
-  { clearFcmToken, setFcmToken }
+  { clearFcmToken, setFcmToken, displayDropdownMessage }
 )(MessagingManagerComponent);
