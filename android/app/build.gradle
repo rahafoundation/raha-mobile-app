@@ -102,8 +102,8 @@ android {
         applicationId "app.raha.mobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10
-        versionName "0.0.9"
+        versionCode 11
+        versionName "0.0.11"
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a", "x86"
