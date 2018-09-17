@@ -17,19 +17,13 @@ const onBeforeLift = async () => {
   await refreshMembers()(store.dispatch, store.getState, undefined);
 };
 
-type AppRootProps = {};
-
-type AppRootState = {
+class AppRoot extends React.Component {
   shouldRefreshOnNextForeground: boolean;
-};
 
-class AppRoot extends React.Component<AppRootProps, AppRootState> {
-  constructor(props: AppRootProps) {
-    super(props);
-    this.state = {
-      // First refresh is from PersistGate#onBeforeLift
-      shouldRefreshOnNextForeground: false
-    };
+  constructor() {
+    super();
+    // First refresh is from PersistGate#onBeforeLift
+    this.shouldRefreshOnNextForeground = false;
   }
 
   componentDidMount() {
@@ -42,12 +36,12 @@ class AppRoot extends React.Component<AppRootProps, AppRootState> {
 
   _handleAppStateChange = (nextAppState: string) => {
     if (nextAppState === "background") {
-      this.setState({ shouldRefreshOnNextForeground: true });
+      this.shouldRefreshOnNextForeground = true;
     } else if (
       nextAppState === "active" &&
-      this.state.shouldRefreshOnNextForeground
+      this.shouldRefreshOnNextForeground
     ) {
-      this.setState({ shouldRefreshOnNextForeground: false });
+      this.shouldRefreshOnNextForeground = false;
       // Refresh every time the app comes into foreground after a background.
       // There's an "inactive" state that we don't want to refresh after, but on
       // Android it doesn't seem to be called...
