@@ -73,5 +73,7 @@ class AppRoot extends React.Component {
 }
 
 export const App = codePush({
-  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME
+  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+  installMode: codePush.InstallMode.ON_NEXT_RESUME,
+  minimumBackgroundDuration: 10 * 60 // Install updates on next resume after 10 minutes of app inactivity
 })(AppRoot);
