@@ -94,6 +94,9 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 
+def versionProps = new Properties()
+file("version.gradle").withInputStream { versionProps.load(it) }
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -102,8 +105,8 @@ android {
         applicationId "app.raha.mobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 12
-        versionName "0.0.12"
+        versionCode versionProps.getProperty("versionCode").toInteger()
+        versionName versionProps.getProperty("versionName")
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a", "x86"
