@@ -79,6 +79,9 @@ class AccountView extends React.Component<Props, State> {
           </Text>
         </View>
         <View style={styles.row}>
+          <Text>You currently donate 3% of all Raha you receive.</Text>
+        </View>
+        <View style={styles.row}>
           <Text>Your Raha Parliament vote goes to:</Text>
         </View>
         <View style={styles.memberRow}>
