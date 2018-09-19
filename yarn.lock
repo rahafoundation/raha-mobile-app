@@ -5333,6 +5333,10 @@ onetime@^2.0.0:
   dependencies:
     mimic-fn "^1.0.0"
 
+opencollective-postinstall@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/opencollective-postinstall/-/opencollective-postinstall-2.0.0.tgz#5fe062f2706bb84150f7fb1af9f1277e46ec1388"
+
 opencollective@^1.0.3:
   version "1.0.3"
   resolved "https://registry.npmjs.org/opencollective/-/opencollective-1.0.3.tgz#aee6372bc28144583690c3ca8daecfc120dd0ef1"
@@ -5648,10 +5652,6 @@ posix-character-classes@^0.1.0:
   version "0.1.1"
   resolved "https://registry.npmjs.org/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
 
-postinstall-build@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.npmjs.org/postinstall-build/-/postinstall-build-5.0.1.tgz#b917a9079b26178d9a24af5a5cd8cb4a991d11b9"
-
 prelude-ls@~1.1.2:
   version "1.1.2"
   resolved "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
@@ -5935,12 +5935,11 @@ react-native-elements@^0.19.1:
     opencollective "^1.0.3"
     prop-types "^15.5.8"
 
-react-native-firebase@^5.0.0-rc1:
-  version "5.0.0-rc1"
-  resolved "https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-5.0.0-rc1.tgz#300eda8cd82085f687a08d0fa795e1cef27eacf8"
+react-native-firebase@^5.0.0-rc2:
+  version "5.0.0-rc2"
+  resolved "https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-5.0.0-rc2.tgz#74c80a53584f5db29ad4edc7f2776f5199e24c1a"
   dependencies:
-    opencollective "^1.0.3"
-    postinstall-build "^5.0.1"
+    opencollective-postinstall "^2.0.0"
     prop-types "^15.6.2"
 
 react-native-iphone-x-helper@^1.0.3:
