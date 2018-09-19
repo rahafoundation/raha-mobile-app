@@ -1,14 +1,50 @@
 # Deploying the app
 
-Currently, we are only publishing the app on the Android marketplace. Publishing for iOS is
-pending App Store approval.
+There are multiple ways to push updates:
 
-However, we have two mechansims for pushing updates to our apps - one is via App Store updates,
-and the other is via AppCenter Codepush, which allows us to push updates to certain app resources,
-namely Javascript code and some image assets, outside of the app store update process. Codepush should
-be used largely for small changes like bugfixes.
+1. Android Play Store/iOS App Store updates
 
-## Building the app for publishing
+- Relatively slow, especially for iOS, which requires App Store approval.
+- Necessary for changes to native dependencies, permissions, etc.
+- Should be used for significant code changes.
+
+1. AppCenter Codepush
+
+- Much faster.
+- Push updates to certain resources, namely Javascript code and some image
+  assets, without the App Store process.
+- Should be used largely for small changes like bugfixes.
+
+## Publishing apps on the App Store
+
+We're keeping the versions of Android, iOS, and package.json equal.
+So, first, bump the app version:
+
+```bash
+# can also do major or minor version bumps
+yarn bumpVersion -r patch --apply
+```
+
+This will increment the version for the iOS app, Android app, and package.json.
+Add all the version bump changes to `git`, and then commit it:
+
+```bash
+git commit -m "v0.1.2" # or whatever it is
+git tag v0.1.2
+git push
+git push --tags
+```
+
+### iOS
+
+1. Go to XCode
+1. Next to the Play and Stop buttons at the top, choose a device for the Raha
+   target that allows for publication. If you need to register a device, let me
+   know; but I think `Generic iOS Device` should work.
+1. Click `Product -> Archive`.
+1. Once archiving is done, click `Upload to App Store...`.
+1. Once the upload is complete, wait for Apple to finish processing the app.
+1. Then submit the app for review through appstoreconnect.apple.com.
 
 ### Android
 
@@ -30,7 +66,7 @@ Note, to build dev versions of the app - you can use the following commands:
 1. `./gradlew assemble[DevProd|DevTest|Prod]Release`
 1. adb install as described above.
 
-## Deploying JS updates via codepush
+## Deploying updates via AppCenter CodePush
 
 Minor JS updates can be deployed to the app without having to go through the App Store
 approval process by using codepush.

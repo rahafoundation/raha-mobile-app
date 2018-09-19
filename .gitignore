@@ -1,3 +1,7 @@
+# version bump script
+
+*.tmp
+
 # OSX
 #
 .DS_Store
