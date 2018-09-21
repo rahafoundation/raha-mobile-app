@@ -77,8 +77,7 @@ Once you've done so, then plug in your device via USB and then do the following:
     running `open path/to/ios/Raha.xcworkspace`.
 1.  Set the build target to your phone in the upper left hand corner, next to
     the play and stop buttons.
-1.  Build and run the project by pressing the play button, or going to `Product >
-    Run`.
+1.  Build and run the project by pressing the play button, or going to `Product > Run`.
 
 ### ... on an Android physical device:
 
@@ -89,7 +88,7 @@ If you aren't set up yet for Android development yet, install Android Studio,
 be sure to set `ANDROID_HOME` (eg `export ANDROID_HOME=~/Library/Android/sdk/`)
 and accept all licenses (run `$ANDROID_HOME/tools/bin/sdkmanager --licenses`).
 
-Plug in your device via USB, then run `yarn start:android:test` or 
+Plug in your device via USB, then run `yarn start:android:test` or
 `yarn start:android:prod` depending on the environment you want to run.
 
 #### Adding your Android debug signature to Firebase
@@ -139,39 +138,47 @@ public places.
   updated. The new build system errors when trying to build React Native. Hopefully
   Facebook resolves this soon, but in the meantime use the Legacy Builder [as explained
   in this comment](https://github.com/facebook/react-native/issues/20774#issuecomment-422607019).
-  
-### Deep/Universal Linking
+
+### Deep/Universal/App Linking
 
 We use the Branch service to create and respond to deep links to accept invites.
 You can send an invite from an existing member, and from a logged out state,
 accept the invite by activating the deep link.
 
-Deep links (called universal links in iOS when referring to ones without a custom 
-protocol, like `raha://`) are of the following format:
+We accept the custom protocol (`raha://`) deep links of the following format:
+
+```
+raha://open/invite?t=<token_string>
+```
+
+We also accept HTTPS links from `https://to.raha.app` by implementing universal
+links on iOS and app links on Android. This allows us to link from the web and
+handle uninstalled cases.
 
 ```
 https://to.raha.app/invite?t=<token_string>
 ```
 
-The custom protocol deep links are of the following format:
-
-```
-raha://link/invite?t=<token_string>
-```
-
 #### Testing on iOS:
 
-Haven't explored a way yet to test Universal Links without actually just clicking on
-a url that matches the expected deep and universal link formats above.
+- Clicking on a recognized HTTPS or custom protocol link: e.g.
+  [https://to.raha.app/invite?t=0bzeq0zyfrbe](https://to.raha.app/invite?t=0bzeq0zyfrbe)
+  - Universal Links won't work from
+    [certain apps and browsers](https://docs.branch.io/pages/deep-linking/universal-links/#appsbrowsers-that-support-universal-links)
+- via simulator:
+
+```bash
+xcrun simctl openurl booted https://to.raha.app/invite?t=0bzeq0zyfrbe
+```
 
 #### Testing on Android:
 
-- Clicking on a recognized HTTPS link (typing the URL manually
-  into Chrome doesn't work): [https://to.raha.app/invite?t=0bzeq0zyfrbe](https://to.raha.app/i?t=0bzeq0zyfrbe)
+- Clicking on a recognized HTTPS link or custom protocol link (typing the URL manually
+  into Chrome doesn't work): e.g. [https://to.raha.app/invite?t=0bzeq0zyfrbe](https://to.raha.app/invite?t=0bzeq0zyfrbe)
 - via ADB:
 
 ```bash
-adb shell am start -W -a android.intent.action.VIEW -d "raha://link/invite?t=0bzeq0zyfrbe" app.raha.mobileTest
+adb shell am start -W -a android.intent.action.VIEW -d "raha://open/invite?t=0bzeq0zyfrbe" app.raha.mobileTest
 ```
 
 ## Debugger
