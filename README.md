@@ -61,7 +61,14 @@ Then, refer to [the instructions in the "Running On Device
 section"](https://facebook.github.io/react-native/docs/running-on-device.html).
 You will need a USB cable to connect your phone to your computer.
 
-Once you've done so, then plug in your device via USB and...
+Once you've done so, then plug in your device via USB and then do the following:
+
+1.  Open `ios/Raha.xcworkspace` (not `Raha.xcodeproj`!) in XCode, or by
+    running `open path/to/ios/Raha.xcworkspace`.
+1.  Set the build target to your phone in the upper left hand corner, next to
+    the play and stop buttons.
+1.  Build and run the project by pressing the play button, or going to `Product >
+    Run`.
 
 #### ... on Android:
 
