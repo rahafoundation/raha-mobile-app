@@ -21,8 +21,7 @@ We're keeping the versions of Android, iOS, and package.json equal.
 So, first, bump the app version:
 
 ```bash
-# can also do major or minor version bumps
-yarn bumpVersion -r patch --apply
+yarn bumpVersion -r [major|minor|patch] --apply
 ```
 
 This will increment the version for the iOS app, Android app, and package.json.
