@@ -43,11 +43,21 @@ in the native apps; so if the app is running already, you'll need to rebuild it.
 
 ## Running the app...
 
+### Disclaimer
+
+In either platform, building can take a long time, so bear with it. Once it's
+built, though, if all you change are JavaScript files, you don't need to
+re-build the project; the React Native packager should be running in a Terminal
+window, and so long as it can communicate to your phone, the JavaScript will be
+up to date.
+
+Now, as for how to do it...
+
 ### ...on an iPhone simulator:
 
 Run `yarn start:ios`, and it an iPhone simulator running the code should start.
 
-### ... on physical devices:
+### ... on physical iOS devices:
 
 You need to set up your environment.
 
@@ -61,18 +71,28 @@ Then, refer to [the instructions in the "Running On Device
 section"](https://facebook.github.io/react-native/docs/running-on-device.html).
 You will need a USB cable to connect your phone to your computer.
 
-Once you've done so, then plug in your device via USB and...
+Once you've done so, then plug in your device via USB and then do the following:
 
-#### ... on Android:
+1.  Open `ios/Raha.xcworkspace` (not `Raha.xcodeproj`!) in XCode, or by
+    running `open path/to/ios/Raha.xcworkspace`.
+1.  Set the build target to your phone in the upper left hand corner, next to
+    the play and stop buttons.
+1.  Build and run the project by pressing the play button, or going to `Product >
+    Run`.
+
+### ... on an Android physical device:
+
+We haven't touched Android simulators like the default one and Genymotion,
+so we have nothing to say about that just yet.
 
 If you aren't set up yet for Android development yet, install Android Studio,
 be sure to set `ANDROID_HOME` (eg `export ANDROID_HOME=~/Library/Android/sdk/`)
 and accept all licenses (run `$ANDROID_HOME/tools/bin/sdkmanager --licenses`).
 
-Run `yarn start:android:test` or `yarn start:android:prod` depending on the
-environment you want to run.
+Plug in your device via USB, then run `yarn start:android:test` or 
+`yarn start:android:prod` depending on the environment you want to run.
 
-##### Adding your Android debug signature to Firebase
+#### Adding your Android debug signature to Firebase
 
 It won't allow you authenticate with Google services until you register your
 computer's signature with Firebase's website. To do so, first run this command
@@ -100,48 +120,54 @@ Then download the `google-services.json` from the prod app and replace `android/
 
 Now Google Services should all work in development for you.
 
-##### Other tips
+#### Other tips
 
 It also helps to run `adb reverse tcp:8081 tcp:8081` so that the React Native
 packager can transfer the source code over USB instead of via Wi-Fi, especially
 in networks that block your computer from connecting to your phone, like in
 public places.
 
-#### ... on iOS:
+## Troubleshooting
 
-1.  Open `ios/Raha.xcworkspace` (not `Raha.xcodeproj`!) in XCode, or by
-    running `open path/to/ios/Raha.xcworkspace`.
-1.  Set the build target to your phone in the upper left hand corner, next to
-    the play and stop buttons.
-1.  Build and run the project by pressing the play button, or going to Product >
-    Run.
-
-In either platform, building can take a long time, so bear with it. Once it's
-built, though, if all you change are JavaScript files, you don't need to
-re-build the project; the React Native packager should be running in a Terminal
-window, and so long as it can communicate to your phone, the JavaScript will be
-up to date.
-
-#### Troubleshooting
-
-##### Android
+### Android build errors
 
 - Ensure you are using Java JDK 1.8, as that's the only version supported.
 
-## Deep Linking
+### iOS build errors
 
-We use deep links to accept invites. You can send an invite from an existing
-member, and from a logged out state, accept the invite by activating the deep
-link.
+- As of 2018/09/21, when iOS 12 and XCode 12 was released, the XCode build system got
+  updated. The new build system errors when trying to build React Native. Hopefully
+  Facebook resolves this soon, but in the meantime use the Legacy Builder [as explained
+  in this comment](https://github.com/facebook/react-native/issues/20774#issuecomment-422607019).
+  
+### Deep/Universal Linking
 
-### ... on iOS:
+We use the Branch service to create and respond to deep links to accept invites.
+You can send an invite from an existing member, and from a logged out state,
+accept the invite by activating the deep link.
 
-Not fully implemented yet
+Deep links (called universal links in iOS when referring to ones without a custom 
+protocol, like `raha://`) are of the following format:
 
-### ... on Android:
+```
+https://to.raha.app/invite?t=<token_string>
+```
+
+The custom protocol deep links are of the following format:
+
+```
+raha://link/invite?t=<token_string>
+```
+
+#### Testing on iOS:
+
+Haven't explored a way yet to test Universal Links without actually just clicking on
+a url that matches the expected deep and universal link formats above.
+
+#### Testing on Android:
 
 - Clicking on a recognized HTTPS link (typing the URL manually
-  into Chrome doesn't work): [https://d.raha.app/invite?t=0bzeq0zyfrbe](https://d.raha.app/i?t=0bzeq0zyfrbe)
+  into Chrome doesn't work): [https://to.raha.app/invite?t=0bzeq0zyfrbe](https://to.raha.app/i?t=0bzeq0zyfrbe)
 - via ADB:
 
 ```bash
@@ -168,8 +194,8 @@ yarn test  # run tests
 
 ### Testing Gotchas
 
-Tests still don't run. :( We're working on getting them to work... but
-`react-native` is proving difficult.
+Tests still don't run/exist. :( We're working on getting them to work... but
+`react-native` and prioritization are proving difficult.
 
 - If you add a library and tests break becuase of errors like `SyntaxError` for
   an `import` statement being present or other things that look like the
