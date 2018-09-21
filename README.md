@@ -141,7 +141,7 @@ public places.
 
 ### Deep/Universal/App Linking
 
-We use the Branch service to create and respond to deep links to accept invites.
+We use the [Branch](https://docs.branch.io/) service to create and respond to deep links to accept invites.
 You can send an invite from an existing member, and from a logged out state,
 accept the invite by activating the deep link.
 
