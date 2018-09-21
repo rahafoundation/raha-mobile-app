@@ -43,6 +43,16 @@ in the native apps; so if the app is running already, you'll need to rebuild it.
 
 ## Running the app...
 
+### Disclaimer
+
+In either platform, building can take a long time, so bear with it. Once it's
+built, though, if all you change are JavaScript files, you don't need to
+re-build the project; the React Native packager should be running in a Terminal
+window, and so long as it can communicate to your phone, the JavaScript will be
+up to date.
+
+Now, as for how to do it...
+
 ### ...on an iPhone simulator:
 
 Run `yarn start:ios`, and it an iPhone simulator running the code should start.
@@ -70,16 +80,19 @@ Once you've done so, then plug in your device via USB and then do the following:
 1.  Build and run the project by pressing the play button, or going to `Product >
     Run`.
 
-#### ... on Android:
+### ... on an Android physical device:
+
+We haven't touched Android simulators like the default one and Genymotion,
+so we have nothing to say about that just yet.
 
 If you aren't set up yet for Android development yet, install Android Studio,
 be sure to set `ANDROID_HOME` (eg `export ANDROID_HOME=~/Library/Android/sdk/`)
 and accept all licenses (run `$ANDROID_HOME/tools/bin/sdkmanager --licenses`).
 
-Run `yarn start:android:test` or `yarn start:android:prod` depending on the
-environment you want to run.
+Plug in your device via USB, then run `yarn start:android:test` or 
+`yarn start:android:prod` depending on the environment you want to run.
 
-##### Adding your Android debug signature to Firebase
+#### Adding your Android debug signature to Firebase
 
 It won't allow you authenticate with Google services until you register your
 computer's signature with Firebase's website. To do so, first run this command
@@ -107,7 +120,7 @@ Then download the `google-services.json` from the prod app and replace `android/
 
 Now Google Services should all work in development for you.
 
-##### Other tips
+#### Other tips
 
 It also helps to run `adb reverse tcp:8081 tcp:8081` so that the React Native
 packager can transfer the source code over USB instead of via Wi-Fi, especially
