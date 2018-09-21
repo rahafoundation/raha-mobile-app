@@ -33,6 +33,12 @@ import {
 import { styles } from "./Profile.styles";
 import { operationsForMember } from "../../store/selectors/operations";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
+import {
+  ApiCallStatusType,
+  ApiCallStatus
+} from "../../store/reducers/apiCalls";
+import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 interface NavParams {
   member: Member;
@@ -45,6 +51,8 @@ type StateProps = {
   isOwnProfile: boolean;
   activities: Activity[];
   verifiedActivities: Activity[];
+  trustApiCallStatus?: ApiCallStatus;
+  verifyApiCallStatus?: ApiCallStatus;
 };
 
 type DispatchProps = {
@@ -134,81 +142,124 @@ const Stats: React.StatelessComponent<StatsProps> = ({
   </View>
 );
 
-const ProfileView: React.StatelessComponent<ProfileProps> = ({
-  activities,
-  verifiedActivities,
-  navigation,
-  member,
-  loggedInMember,
-  isOwnProfile,
-  trust
-}) => {
-  const alreadyTrusted =
-    loggedInMember &&
-    member.get("trustedBy").includes(loggedInMember.get("memberId"));
-  const canVerify =
-    // member is logged in
-    loggedInMember &&
-    // member is verified
-    loggedInMember.get("isVerified") &&
-    // current member hasn't already verified the target member
-    !member.get("verifiedBy").includes(loggedInMember.get("memberId"));
-  return (
-    <View style={styles.body}>
-      <ActivityFeed
-        activities={activities}
-        header={
-          <View style={styles.header}>
-            <View style={styles.headerProfile}>
-              <Thumbnail member={member} />
-              <View style={styles.headerDetails}>
-                <Text style={styles.memberUsername}>
-                  @{member.get("username")}
-                </Text>
-                <Stats
-                  navigation={navigation}
-                  member={member}
-                  verifiedActivities={verifiedActivities}
-                />
-              </View>
-            </View>
-            {!!loggedInMember &&
-              !isOwnProfile && (
-                <View style={styles.memberActions}>
-                  <Button
-                    // TODO: Come up with a solution for indicating action completed
-                    // Changing the text on these buttons forces them off the side of small screens
-                    title="Trust"
-                    onPress={() => trust(member.get("memberId"))}
-                    disabled={alreadyTrusted}
-                  />
-                  <Button
-                    // TODO: Come up with a solution for indicating action completed
-                    // Changing the text on these buttons forces them off the side of small screens
-                    title="Verify"
-                    onPress={() =>
-                      navigation.navigate(RouteName.Verify, {
-                        toMemberId: member.get("memberId")
-                      })
-                    }
-                    disabled={!canVerify}
-                  />
-                  <Button
-                    title={currencySymbol(CurrencyType.Raha)}
-                    onPress={() =>
-                      navigation.navigate(RouteName.GivePage, {
-                        toMember: member
-                      })
-                    }
+class ProfileView extends React.PureComponent<ProfileProps> {
+  trustButton() {
+    const { loggedInMember, member, trust, trustApiCallStatus } = this.props;
+
+    const alreadyTrusted =
+      loggedInMember &&
+      member.get("trustedBy").includes(loggedInMember.get("memberId"));
+    const inProgressOrFinished =
+      trustApiCallStatus &&
+      trustApiCallStatus.status !== ApiCallStatusType.FAILURE;
+
+    const trustTitle = alreadyTrusted
+      ? "Trusted"
+      : !inProgressOrFinished
+        ? "Trust"
+        : "Trusting";
+    const disableTrustButton = alreadyTrusted || inProgressOrFinished;
+
+    return (
+      <Button
+        title={trustTitle}
+        onPress={() => trust(member.get("memberId"))}
+        disabled={disableTrustButton}
+      />
+    );
+  }
+
+  verifyButton() {
+    const {
+      navigation,
+      loggedInMember,
+      member,
+      verifyApiCallStatus
+    } = this.props;
+
+    const alreadyVerified =
+      loggedInMember &&
+      member.get("verifiedBy").includes(loggedInMember.get("memberId"));
+    const loggedInMemberCanVerify =
+      loggedInMember && loggedInMember.get("isVerified");
+    const inProgressOrFinished =
+      verifyApiCallStatus &&
+      verifyApiCallStatus.status !== ApiCallStatusType.FAILURE;
+
+    const verifyTitle = alreadyVerified
+      ? "Verified"
+      : inProgressOrFinished
+        ? "Verifying"
+        : "Verify";
+    const disableVerify =
+      alreadyVerified || !loggedInMemberCanVerify || inProgressOrFinished;
+
+    return (
+      <Button
+        // TODO: Come up with a solution for indicating action completed
+        // Changing the text on these buttons forces them off the side of small screens
+        title={verifyTitle}
+        onPress={() =>
+          navigation.navigate(RouteName.Verify, {
+            toMemberId: member.get("memberId")
+          })
+        }
+        disabled={disableVerify}
+      />
+    );
+  }
+
+  render() {
+    const {
+      activities,
+      verifiedActivities,
+      navigation,
+      member,
+      loggedInMember,
+      isOwnProfile
+    } = this.props;
+
+    return (
+      <View style={styles.body}>
+        <ActivityFeed
+          activities={activities}
+          header={
+            <View style={styles.header}>
+              <View style={styles.headerProfile}>
+                <Thumbnail member={member} />
+                <View style={styles.headerDetails}>
+                  <Text style={styles.memberUsername}>
+                    @{member.get("username")}
+                  </Text>
+                  <Stats
+                    navigation={navigation}
+                    member={member}
+                    verifiedActivities={verifiedActivities}
                   />
                 </View>
-              )}
-          </View>
-        }
-      />
-    </View>
-  );
-};
+              </View>
+              {!!loggedInMember &&
+                !isOwnProfile && (
+                  <View style={styles.memberActions}>
+                    {this.trustButton()}
+                    {this.verifyButton()}
+                    <Button
+                      title={currencySymbol(CurrencyType.Raha)}
+                      onPress={() =>
+                        navigation.navigate(RouteName.GivePage, {
+                          toMember: member
+                        })
+                      }
+                    />
+                  </View>
+                )}
+            </View>
+          }
+        />
+      </View>
+    );
+  }
+}
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
   dispatch: RahaThunkDispatch
@@ -227,11 +278,16 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   const loggedInMemberId = getLoggedInFirebaseUserId(state) as MemberId;
   // TODO: provide loading state if logged in member isn't present
   const loggedInMember = getMemberById(state, loggedInMemberId);
+  // Get the fresh state for the member - the member that was passed as a navigation
+  // parameter may no longer be fresh.
   const member: Member = props.navigation.getParam("member", loggedInMember);
-  const activities = activitiesForMember(state, member.get("memberId"));
+  const memberId = member.get("memberId");
+  const freshMember = getMemberById(state, memberId) as Member;
+
+  const activities = activitiesForMember(state, memberId);
   const verifiedActivities: Activity[] = convertOperationsToActivities(
     state,
-    operationsForMember(state.operations, member.get("memberId")).filter(
+    operationsForMember(state.operations, memberId).filter(
       op =>
         op.op_code === OperationType.VERIFY &&
         op.data.to_uid === member.get("memberId")
@@ -240,11 +296,21 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   return {
     activities,
     verifiedActivities,
-    member,
+    member: freshMember,
     loggedInMember,
     isOwnProfile:
       !!loggedInMember &&
-      loggedInMember.get("memberId") === member.get("memberId")
+      loggedInMember.get("memberId") === member.get("memberId"),
+    trustApiCallStatus: getStatusOfApiCall(
+      state,
+      ApiEndpointName.TRUST_MEMBER,
+      memberId
+    ),
+    verifyApiCallStatus: getStatusOfApiCall(
+      state,
+      ApiEndpointName.VERIFY_MEMBER,
+      memberId
+    )
   };
 };
 
