@@ -140,7 +140,7 @@ function writeIosVersion({ newPath, origPlist, versionName }) {
 }
 
 function writeAndroidVersion({ newPath, versionName, buildNumber }) {
-  const newContents = `versionName="${versionName}"
+  const newContents = `versionName=${versionName}
 versionCode=${buildNumber}`;
   console.info(
     "Writing Android version.gradle to temporary file:",
