@@ -31,9 +31,12 @@ export const reducer: Reducer<DropdownState> = (
   const action = untypedAction as DropdownAction;
   switch (action.type) {
     case DropdownActionsType.ADD_DROPDOWN_MESSAGE:
-      return {
-        messages: prevState.messages.push(action.message)
-      };
+      // Don't push malformed messages.
+      if (action.message.title && action.message.message) {
+        return {
+          messages: prevState.messages.push(action.message)
+        };
+      }
     case DropdownActionsType.DISMISS_DROPDOWN_MESSAGE:
       return {
         messages: prevState.messages.filter(message => message.id !== action.id)
