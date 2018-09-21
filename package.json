@@ -41,7 +41,7 @@
     "react-native-device-info": "^0.21.5",
     "react-native-dropdownalert": "^3.4.0",
     "react-native-elements": "^0.19.1",
-    "react-native-firebase": "^5.0.0-rc2",
+    "react-native-firebase": "^5.0.0-rc4",
     "react-native-keyboard-aware-scroll-view": "^0.7.2",
     "react-native-svg": "^6.5.2",
     "react-native-vector-icons": "^5.0.0",
