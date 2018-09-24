@@ -9,6 +9,7 @@ import com.microsoft.appcenter.reactnative.appcenter.AppCenterReactNativePackage
 import com.horcrux.svg.SvgPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 import io.invertase.firebase.storage.RNFirebaseStoragePackage;
@@ -48,7 +49,7 @@ public class MainApplication extends Application implements ReactApplication {
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
             new AppCenterReactNativePackage(MainApplication.this),
             new SvgPackage(), new RNDeviceInfo(), new RNFirebasePackage(),
-          new RNFirebaseAnalyticsPackage(), new RNFirebaseAuthPackage(), new RNFirebaseStoragePackage(),
+          new RNFirebaseAnalyticsPackage(), new RNFirebaseCrashlyticsPackage(), new RNFirebaseAuthPackage(), new RNFirebaseStoragePackage(),
           new RNFirebaseMessagingPackage(), new RNFirebaseNotificationsPackage(), new RNCameraPackage(),
           new RNVideoProcessingPackage(), new ReactVideoPackage(), new VectorIconsPackage());
     }

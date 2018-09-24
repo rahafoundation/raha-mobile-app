@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: "io.fabric"
 
 import com.android.build.OutputFile
 
@@ -198,6 +199,11 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:17.3.2"
     implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
     // End cloud messaging
+    // Crashlytics
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
+        transitive = true
+    }
+    // End Crashlytics
     // End firebase
 
     implementation project(':react-native-camera')
