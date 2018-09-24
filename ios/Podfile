@@ -4,6 +4,8 @@ pod 'Firebase/Core', '~> 5.3.0'
 pod 'Firebase/Auth', '~>5.3.0'
 pod 'Firebase/Storage', '~> 5.3.0'
 pod 'Firebase/Messaging', '~> 5.3.0'
+pod 'Fabric', '~> 1.7.5'
+pod 'Crashlytics', '~> 3.10.4'
 
 target 'Raha' do
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
