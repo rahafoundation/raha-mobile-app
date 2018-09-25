@@ -9,17 +9,17 @@ import {
   Dimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
-  Platform,
   ScrollView,
   ScrollViewProps,
   StyleSheet,
-  View,
-  ViewPagerAndroidOnPageScrollEventData
+  View
 } from "react-native";
 import { range } from "../../helpers/math";
+import { Button } from "./elements";
+import { palette } from "../../helpers/colors";
 
-// Detect screen width and height
-const { width, height } = Dimensions.get("window");
+// Detect screen width
+const { width } = Dimensions.get("window");
 
 type SwiperProps = {
   // Arrange screens horizontally
@@ -42,6 +42,9 @@ type SwiperProps = {
   index?: number;
   // Sets the slides
   children: Element[];
+  // Sets button props
+  buttonOnPress?: () => void;
+  buttonTitle?: string;
 };
 
 interface SwiperState {
@@ -50,7 +53,6 @@ interface SwiperState {
   total: number;
   index: number;
   width: number;
-  height: number;
 }
 
 export class Swiper extends Component<SwiperProps, SwiperState> {
@@ -98,7 +100,6 @@ export class Swiper extends Component<SwiperProps, SwiperState> {
       index,
       offset,
       width,
-      height,
       isScrolling: false
     };
 
@@ -238,6 +239,7 @@ export class Swiper extends Component<SwiperProps, SwiperState> {
   renderScrollView = (pages: React.ReactNode[]) => {
     return (
       <ScrollView
+        style={styles.scrollView}
         ref={component => {
           this.scrollView = component;
         }}
@@ -248,8 +250,13 @@ export class Swiper extends Component<SwiperProps, SwiperState> {
       >
         {pages.map((page, i) => (
           // Render each slide inside a View
-          <View style={[styles.fullScreen, styles.slide]} key={i}>
-            {page}
+          <View style={styles.slide} key={i}>
+            <ScrollView
+              style={styles.slideScrollView}
+              contentContainerStyle={styles.slideScrollView}
+            >
+              {page}
+            </ScrollView>
           </View>
         ))}
       </ScrollView>
@@ -273,7 +280,7 @@ export class Swiper extends Component<SwiperProps, SwiperState> {
     });
 
     return (
-      <View pointerEvents="none" style={[styles.pagination, styles.fullScreen]}>
+      <View pointerEvents="none" style={styles.pagination}>
         {dots}
       </View>
     );
@@ -284,36 +291,48 @@ export class Swiper extends Component<SwiperProps, SwiperState> {
    */
   render() {
     return (
-      <View style={[styles.container, styles.fullScreen]}>
+      <View style={styles.container}>
         {this.renderScrollView(this.props.children)}
         {this.renderPagination()}
+        {this.props.buttonTitle &&
+          this.props.buttonOnPress && (
+            <Button
+              style={styles.button}
+              title={this.props.buttonTitle}
+              onPress={this.props.buttonOnPress}
+            />
+          )}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  fullScreen: {
-    width: width,
-    height: height
+  button: {
+    width: "100%"
+  },
+  scrollView: {
+    flex: 1
   },
   container: {
-    backgroundColor: "transparent",
-    position: "relative"
+    width: width,
+    height: "100%"
   },
   slide: {
-    backgroundColor: "transparent"
+    flex: 1,
+    width: width
+  },
+  slideScrollView: {
+    flexGrow: 1,
+    backgroundColor: "blue"
   },
   pagination: {
-    position: "absolute",
-    bottom: 110,
-    left: 0,
-    right: 0,
-    flex: 1,
+    height: 12,
+    width: "100%",
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "flex-end",
-    backgroundColor: "transparent"
+    alignItems: "center",
+    backgroundColor: palette.veryLightGray
   },
   dot: {
     backgroundColor: "rgba(0,0,0,.25)",
@@ -321,11 +340,9 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     marginLeft: 3,
-    marginRight: 3,
-    marginTop: 3,
-    marginBottom: 3
+    marginRight: 3
   },
   activeDot: {
-    backgroundColor: "#FFFFFF"
+    backgroundColor: palette.white
   }
 });

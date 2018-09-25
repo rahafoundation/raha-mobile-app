@@ -3,9 +3,9 @@ import { StyleSheet, View } from "react-native";
 
 import { styles as sharedStyles } from "./styles";
 import { Swiper } from "../../shared/Swiper";
-import { Button, Text } from "../../shared/elements";
+import { Text } from "../../shared/elements";
 import { fontSizes } from "../../../helpers/fonts";
-import { palette } from "../../../helpers/colors";
+import { palette, colors } from "../../../helpers/colors";
 
 type OnboardingProps = {
   onSplashCompleted: () => void;
@@ -14,9 +14,11 @@ type OnboardingProps = {
 export class OnboardingSplash extends React.Component<OnboardingProps> {
   render() {
     return (
-      <Swiper>
-        {/* TODO: move slide colors to colors.ts */}
-        <View style={[styles.slide, { backgroundColor: "#C04DEE" }]}>
+      <Swiper
+        buttonTitle={"Join Now"}
+        buttonOnPress={this.props.onSplashCompleted}
+      >
+        <View style={[styles.slide, { backgroundColor: colors.splash.purple }]}>
           <Text style={[sharedStyles.header, styles.header]}>
             SHARED PROSPERITY
           </Text>
@@ -49,7 +51,7 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
           </Text>
         </View>
 
-        <View style={[styles.slide, { backgroundColor: "#FC515B" }]}>
+        <View style={[styles.slide, { backgroundColor: colors.splash.red }]}>
           <Text style={[sharedStyles.header, styles.header]}>
             TRUSTED IDENTITY
           </Text>
@@ -59,14 +61,16 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
           </Text>
           <Text style={[sharedStyles.paragraph, styles.paragraph]}>
             As a new member, you must verify your identity by recording a short
-            public selfie-video of yourself stating your name and intent to join Raha.
+            public selfie-video of yourself stating your name and intent to join
+            Raha.
           </Text>
           <Text style={[sharedStyles.paragraph, styles.paragraph]}>
-            An existing member must also record a video vouching for your identity.
+            An existing member must also record a video vouching for your
+            identity.
           </Text>
         </View>
 
-        <View style={[styles.slide, { backgroundColor: "#4AAFEE" }]}>
+        <View style={[styles.slide, { backgroundColor: colors.splash.blue }]}>
           <Text style={[sharedStyles.header, styles.header]}>
             FIX OUR ECONOMY
           </Text>
@@ -81,7 +85,6 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
           <Text style={[sharedStyles.paragraph, styles.paragraph]}>
             We're starting a movement, and we'd like you to be a part of it.
           </Text>
-          <Button onPress={this.props.onSplashCompleted} title="Join Now" />
         </View>
       </Swiper>
     );
@@ -90,20 +93,16 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
 
 const styles = StyleSheet.create({
   slide: {
-    // each slide should fill screen
-    height: "100%",
-    width: "100%",
-
+    flex: 1,
     justifyContent: "center",
     alignItems: "center"
   },
-  // colored backgrounds, so light text; and larger fonts
   header: {
-    color: palette.offWhite,
+    color: palette.white,
     ...fontSizes.xlarge
   },
   paragraph: {
-    color: palette.offWhite,
+    color: palette.white,
     ...fontSizes.large
   }
 });
