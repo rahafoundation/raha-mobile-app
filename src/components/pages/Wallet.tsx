@@ -1,11 +1,5 @@
 import * as React from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  TextStyle,
-  ViewStyle
-} from "react-native";
+import { StyleSheet, View, Image, TextStyle, ViewStyle } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
@@ -128,7 +122,7 @@ const Actions: React.StatelessComponent<Props> = props => {
   );
 };
 
-const MintView: React.StatelessComponent<Props> = props => {
+const WalletView: React.StatelessComponent<Props> = props => {
   return (
     <View style={styles.page}>
       <MoneySection {...props} />
@@ -240,4 +234,4 @@ const mapStateToProps: MapStateToProps<
   };
 };
 
-export const Mint = connect(mapStateToProps)(MintView);
+export const Wallet = connect(mapStateToProps)(WalletView);
