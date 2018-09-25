@@ -323,8 +323,7 @@ const styles = StyleSheet.create({
     width: width
   },
   slideScrollView: {
-    flexGrow: 1,
-    backgroundColor: "blue"
+    flexGrow: 1
   },
   pagination: {
     height: 12,
