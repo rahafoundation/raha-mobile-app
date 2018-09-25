@@ -4,8 +4,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextStyle,
-  ViewStyle,
-  Linking
+  ViewStyle
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { createBottomTabNavigator } from "react-navigation-tabs";
@@ -26,7 +25,7 @@ import { connect, MapStateToProps } from "react-redux";
 import { analytics } from "../../firebaseInit";
 import { Give as GiveScreen } from "../pages/Give";
 import { Feed } from "../pages/Feed";
-import { Mint } from "../pages/Mint";
+import { Wallet } from "../pages/Wallet";
 import { LogIn } from "../pages/LogIn";
 import { PendingInvites } from "../pages/PendingInvites";
 import { Profile as ProfileScreen } from "../pages/Profile";
@@ -105,8 +104,8 @@ export enum RouteName {
   DiscoverPage = "DiscoverPage",
   DiscoverTab = "Discover",
   LeaderboardPage = "Leaderboard",
-  MintPage = "MintPage",
-  MintTab = "Mint",
+  WalletPage = "WalletPage",
+  WalletTab = "Wallet",
   ReferralBonusPage = "Referral Bonus",
   PendingInvitesPage = "Pending Invites",
   Verify = "Verify"
@@ -317,7 +316,7 @@ const DiscoverTab = createNavigatorForTab(
   }
 );
 
-const MintTab = createNavigatorForTab(
+const WalletTab = createNavigatorForTab(
   {
     [RouteName.InvitePage]: {
       screen: Invite,
@@ -325,9 +324,9 @@ const MintTab = createNavigatorForTab(
         header: null
       }
     },
-    [RouteName.MintPage]: {
-      screen: Mint,
-      navigationOptions: createHeaderNavigationOptions("Mint Raha")
+    [RouteName.WalletPage]: {
+      screen: Wallet,
+      navigationOptions: createHeaderNavigationOptions("Raha Wallet")
     },
     [RouteName.ReferralBonusPage]: {
       screen: ReferralBonus,
@@ -335,7 +334,7 @@ const MintTab = createNavigatorForTab(
     }
   },
   {
-    initialRouteName: RouteName.MintPage,
+    initialRouteName: RouteName.WalletPage,
     navigationOptions: createHeaderNavigationOptions("Discover")
   }
 );
@@ -354,14 +353,14 @@ const ProfileTab = createNavigatorForTab(
 const tabRoutes = {
   [RouteName.FeedTab]: FeedTab,
   [RouteName.DiscoverTab]: DiscoverTab,
-  [RouteName.MintTab]: MintTab,
+  [RouteName.WalletTab]: WalletTab,
   [RouteName.ProfileTab]: ProfileTab
 };
 const tabIcons: { [k in keyof typeof tabRoutes]: string } = {
   [RouteName.ProfileTab]: "user",
   [RouteName.FeedTab]: "list-alt",
   [RouteName.DiscoverTab]: "search",
-  [RouteName.MintTab]: "parachute-box"
+  [RouteName.WalletTab]: "coins"
 };
 
 const SignedInNavigator = createSwitchNavigator(
