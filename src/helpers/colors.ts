@@ -1,5 +1,5 @@
 export const palette = {
-  offWhite: "#ffffff",
+  white: "#ffffff",
   veryLightGray: "#dadada",
   lightGray: "#aeaeae",
   mediumGray: "#7b7b7b",
@@ -53,5 +53,12 @@ export const colors = {
     positive: palette.darkMint,
     negative: palette.red,
     donation: palette.lavender
+  },
+
+  // Splash
+  splash: {
+    purple: "#C04DEE",
+    blue: "#4AAFEE",
+    red: "#FC515B"
   }
 };
