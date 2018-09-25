@@ -27,7 +27,7 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
             value.
           </Text>
           <Text style={[sharedStyles.paragraph, styles.paragraph]}>
-            It's free to join, and each person can mint Raha every week as a
+            It's free to join, and each person can mint 10 Raha every week as a
             basic income.
           </Text>
           <Text style={[sharedStyles.paragraph, styles.paragraph]}>
@@ -36,13 +36,13 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
           </Text>
         </View>
 
-        <View style={[styles.slide, { backgroundColor: "#4AAFEE" }]}>
+        <View style={[styles.slide, { backgroundColor: colors.splash.blue }]}>
           <Text style={[sharedStyles.header, styles.header]}>GIVE</Text>
           <Text style={[sharedStyles.paragraph, styles.paragraph]}>
             You can tip others in Raha or trade it for goods and services.
           </Text>
           <Text style={[sharedStyles.paragraph, styles.paragraph]}>
-            By default, some of each transaction is donated towards the basic
+            By default, 3% of each transaction is donated towards the basic
             income.
           </Text>
           <Text style={[sharedStyles.paragraph, styles.paragraph]}>
