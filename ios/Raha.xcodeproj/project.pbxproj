@@ -1103,6 +1103,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				EA659E0320FED53E008AFD2A /* Embed Frameworks */,
 				B74A0559215926E30064B3E1 /* ShellScript */,
+				B766F585215A2F3000E182A4 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1716,6 +1717,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Fabric/run\"\n";
+		};
+		B766F585215A2F3000E182A4 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Upload *.dysm files to Crashlytics\n# https://firebase.google.com/docs/crashlytics/get-deobfuscated-reports\n\n\"${PODS_ROOT}/Fabric/upload-symbols\" -gsp \"${PROJECT_DIR}/Raha/GoogleService-Info.plist\" -p ios \"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\"\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
