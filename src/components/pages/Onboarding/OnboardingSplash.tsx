@@ -67,6 +67,7 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
         </View>
 
         <View style={[styles.slide, { backgroundColor: "#4AAFEE" }]}>
+          <Button onPress={this.props.onSplashCompleted} title="Join Now" />
           <Text style={[sharedStyles.header, styles.header]}>
             FIX OUR ECONOMY
           </Text>
@@ -81,7 +82,6 @@ export class OnboardingSplash extends React.Component<OnboardingProps> {
           <Text style={[sharedStyles.paragraph, styles.paragraph]}>
             We're starting a movement, and we'd like you to be a part of it.
           </Text>
-          <Button onPress={this.props.onSplashCompleted} title="Join Now" />
         </View>
       </Swiper>
     );
