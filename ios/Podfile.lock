@@ -6,7 +6,10 @@ PODS:
   - Branch-SDK (0.25.1):
     - Branch-SDK/Core (= 0.25.1)
   - Branch-SDK/Core (0.25.1)
+  - Crashlytics (3.10.7):
+    - Fabric (~> 1.7.11)
   - DoubleConversion (1.1.5)
+  - Fabric (1.7.11)
   - Firebase/Auth (5.3.0):
     - Firebase/CoreOnly
     - FirebaseAuth (= 5.0.1)
@@ -100,7 +103,9 @@ PODS:
 DEPENDENCIES:
   - AppCenterReactNativeShared (~> 1.7.1)
   - Branch-SDK (from `../node_modules/react-native-branch/ios`)
+  - Crashlytics (~> 3.10.4)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - Fabric (~> 1.7.5)
   - Firebase/Auth (~> 5.3.0)
   - Firebase/Core (~> 5.3.0)
   - Firebase/Messaging (~> 5.3.0)
@@ -122,6 +127,8 @@ SPEC REPOS:
     - AppCenter
     - AppCenterReactNativeShared
     - boost-for-react-native
+    - Crashlytics
+    - Fabric
     - Firebase
     - FirebaseAnalytics
     - FirebaseAuth
@@ -155,7 +162,9 @@ SPEC CHECKSUMS:
   AppCenterReactNativeShared: 713c4b8da168d517297061d4168f7e2f4d2df9c5
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   Branch-SDK: 8a0fa24e01a68cc3f98f184900e5adf0328c7f02
+  Crashlytics: ccaac42660eb9351b9960c0d66106b0bcf99f4fa
   DoubleConversion: a9706f16e388b53ff12cca34473428ee29746a26
+  Fabric: f233c9492b3bbc1f04e3882986740f7988a58edb
   Firebase: 68afeeb05461db02d7c9e3215cda28068670f4aa
   FirebaseAnalytics: b3628aea54c50464c32c393fb2ea032566e7ecc2
   FirebaseAuth: 463b8ce33bd5d05f706dcd4615499e3212b4132b
@@ -173,6 +182,6 @@ SPEC CHECKSUMS:
   react-native-branch: 8988998ef912c6373dc39a24e4638f02a1268265
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: 5b99fd77a7187ee9df464eebdbe179a960684fbd
+PODFILE CHECKSUM: d7edf20b8a5d3c05ab27464b2638a05c10e5b4de
 
 COCOAPODS: 1.5.3
