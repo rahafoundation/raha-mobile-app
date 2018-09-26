@@ -15,7 +15,7 @@ yarn config:prod
 
 if [ "$(uname)" == "Darwin" ]; then
     # Compiling for iOS on Darwin
-    sed -i '' "s/\$APPCENTER_SECRET/$APPCENTER_SECRET/g" ios/mobile/AppCenter-Config.plist
+    sed -i '' "s/\$APPCENTER_SECRET/$APPCENTER_SECRET/g" ios/Raha/AppCenter-Config.plist
 else
     # Compiling for Android on Linux
     sed -i "s/\$APPCENTER_SECRET/$APPCENTER_SECRET/g" android/app/src/main/assets/appcenter-config.json
