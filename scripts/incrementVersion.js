@@ -151,7 +151,11 @@ versionCode=${buildNumber}`;
 }
 
 function writePackageJson({ newPath, origPackageJSON, versionName }) {
-  const newConfig = { ...origPackageJSON, version: versionName };
+  const newConfig = {
+    ...origPackageJSON,
+    version: versionName,
+    config: { version: versionName }
+  };
   console.info("Writing package.json to temporary file:", chalk.bold(newPath));
   fs.writeFileSync(newPath, JSON.stringify(newConfig, null, 2) + os.EOL);
   console.info(chalk.green("Wrote package.json.tmp!"));
