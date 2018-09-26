@@ -14,7 +14,7 @@
     "config:prod": "cp ./src/data/prod.config.ts ./src/data/config.ts && cp ./ios/data/config/firebase/GoogleService-Info.prod.plist ./ios/Raha/GoogleService-Info.plist && cp ./android/data/config/firebase/google-services.prod.json ./android/app/google-services.json",
     "config:test": "cp ./src/data/test.config.ts ./src/data/config.ts && cp ./ios/data/config/firebase/GoogleService-Info.test.plist ./ios/Raha/GoogleService-Info.plist && cp ./android/data/config/firebase/google-services.test.json ./android/app/google-services.json",
     "bundle:android": "yarn config:prod && cd android && ./gradlew assembleProdRelease && cd ..",
-    "codepush:android:release": "yarn config:prod && appcenter codepush release-react --app rahafoundation/Raha-App -d Staging",
+    "codepush:android:release": "yarn config:prod && appcenter codepush release-react --app rahafoundation/Raha-App -d Staging --target-binary-version \"$npm_package_config_version\"",
     "codepush:android:promote": "appcenter codepush promote --app rahafoundation/Raha-App -s Staging -d Production",
     "codepush:android:history:staging": "appcenter codepush deployment history Staging --app rahafoundation/Raha-App",
     "codepush:android:history:production": "appcenter codepush deployment history Production --app rahafoundation/Raha-App",
