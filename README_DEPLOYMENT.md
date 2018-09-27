@@ -36,13 +36,21 @@ git push --tags
 
 ### iOS
 
+1. If you have not already, create and install on your local machine a
+   distribution certificate by following the instructions at: https://developer.apple.com/account/ios/certificate/
+   (NOTE: MAKE SURE YOU SECURE THIS CERTIFICATE, AS IT CAN BE USED TO PUSH UPDATES
+   TO ALL OUR USERS. I saved mine in 1password and deleted the original file.)
 1. Go to XCode
 1. Next to the Play and Stop buttons at the top, choose a device for the Raha
    target that allows for publication. If you need to register a device, let me
    know; but I think `Generic iOS Device` should work.
 1. Click `Product -> Archive`.
-1. Once archiving is done, click `Upload to App Store...`.
+1. Once archiving is done, click `Distribute App`
+1. If you have a distribution certificate installed as described in the first step, you
+   should be able to let Apple automatically manage signing when presented with that
+   option.
 1. Once the upload is complete, wait for Apple to finish processing the app.
+   (You can monitor this from the "Activity" tab of appstoreconnect.apple.com.)
 1. Then submit the app for review through appstoreconnect.apple.com.
 
 ### Android
