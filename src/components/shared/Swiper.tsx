@@ -326,15 +326,15 @@ const styles = StyleSheet.create({
     flexGrow: 1
   },
   pagination: {
-    height: 12,
+    height: 20,
     width: "100%",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: palette.veryLightGray
+    backgroundColor: palette.black
   },
   dot: {
-    backgroundColor: "rgba(0,0,0,.25)",
+    backgroundColor: palette.mediumGray,
     width: 8,
     height: 8,
     borderRadius: 4,
