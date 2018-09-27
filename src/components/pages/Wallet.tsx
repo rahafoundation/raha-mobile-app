@@ -19,6 +19,7 @@ import {
   CurrencyType
 } from "../shared/elements/Currency";
 import { fontSizes } from "../../helpers/fonts";
+import { TextLink, LinkType } from "../shared/elements/TextLink";
 
 type OwnProps = NavigationScreenProps<{}>;
 
@@ -80,9 +81,28 @@ const Actions: React.StatelessComponent<Props> = props => {
     : false;
   if (!loggedInMember.get("isVerified")) {
     return (
-      <Text style={{ textAlign: "center", margin: 12 }}>
-        You must be verified before you can mint Raha or invite new people.
-      </Text>
+      <View style={[styles.actionsSection, { justifyContent: "center" }]}>
+        <Text style={styles.actionsSectionGetVerifiedTextBlock}>
+          You must be verified before you can mint Raha or invite new people.
+        </Text>
+        <Text style={styles.actionsSectionGetVerifiedTextBlock}>
+          If you already know someone else in the Raha network, ask them to
+          verify your account.
+        </Text>
+        <Text style={styles.actionsSectionGetVerifiedTextBlock}>
+          Otherwise, the Raha team is currently helping those who aren't
+          connected to other people in the network get verified. Email us at{" "}
+          <TextLink
+            destination={{
+              type: LinkType.Website,
+              url: "mailto:hello@raha.app"
+            }}
+          >
+            hello@raha.app
+          </TextLink>
+          !
+        </Text>
+      </View>
     );
   }
 
@@ -192,6 +212,11 @@ const actionsSectionStyle: ViewStyle = {
   justifyContent: "space-between"
 };
 
+const actionsSectionGetVerifiedTextBlockStyle: TextStyle = {
+  textAlign: "center",
+  margin: 12
+};
+
 const actionImageStyle: ViewStyle = {
   // shrink images to ensure screen doesn't overflow
   flex: -1,
@@ -209,6 +234,7 @@ const styles = StyleSheet.create({
   moneyElement: moneyElementStyle,
   actionImage: actionImageStyle,
   actionsSection: actionsSectionStyle,
+  actionsSectionGetVerifiedTextBlock: actionsSectionGetVerifiedTextBlockStyle,
   inviteSectionButtons: inviteSectionButtonsStyle,
   currencyValue: currencyValueStyle,
   numberLabel: numberLabelStyle
