@@ -39,6 +39,22 @@
           }
         },
         {
+          "client_id": "148482003030-1413e37njkqqkjdh85odmf3l9k44h6vk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobileTest",
+            "certificate_hash": "ca68a4ae3eabc2402b7a58c7d30a626a63652fc5"
+          }
+        },
+        {
+          "client_id": "148482003030-9ck40pp8qj0hrf2ik6pj98v3f9tlkp0k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobileTest",
+            "certificate_hash": "b3962b8b801fed329f29cc02971cf51380762ce2"
+          }
+        },
+        {
           "client_id": "148482003030-ncmledf9fbsog8ie5s66rmf7ko2ljjjm.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -60,10 +76,10 @@
               "client_type": 3
             },
             {
-              "client_id": "148482003030-485q62hqnch3m2mnue1ps0jdl35ikg7a.apps.googleusercontent.com",
+              "client_id": "148482003030-7anom7nbfkqlmk9oicnsmds7lsq3hbvc.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "app.raha.mobile"
+                "bundle_id": "app.raha.mobile.ios"
               }
             }
           ]

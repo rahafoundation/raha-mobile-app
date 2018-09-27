@@ -63,6 +63,14 @@
           }
         },
         {
+          "client_id": "677137485282-nhdfdrtn6qd8hmsvb1he7ntdn8t9k0qv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobile",
+            "certificate_hash": "b3962b8b801fed329f29cc02971cf51380762ce2"
+          }
+        },
+        {
           "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -84,10 +92,11 @@
               "client_type": 3
             },
             {
-              "client_id": "677137485282-hei8t5jm6c67kpqk4objefcrlk4bhuqd.apps.googleusercontent.com",
+              "client_id": "677137485282-rho8hjdm4q04ld6lb0a3c8aor6hnrs7c.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "app.raha.mobile"
+                "bundle_id": "app.raha.mobile.ios",
+                "app_store_id": "1434224783"
               }
             }
           ]
@@ -146,6 +155,14 @@
           }
         },
         {
+          "client_id": "677137485282-p2viqohpkn18oese2nmuc44gj77fu9fn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.raha.mobileProd",
+            "certificate_hash": "b47c6db555018c56d601236899448ef11e2ccfa9"
+          }
+        },
+        {
           "client_id": "677137485282-o8enpde66k4rdppkmemh9k7l8gu71sbi.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -167,10 +184,11 @@
               "client_type": 3
             },
             {
-              "client_id": "677137485282-hei8t5jm6c67kpqk4objefcrlk4bhuqd.apps.googleusercontent.com",
+              "client_id": "677137485282-rho8hjdm4q04ld6lb0a3c8aor6hnrs7c.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "app.raha.mobile"
+                "bundle_id": "app.raha.mobile.ios",
+                "app_store_id": "1434224783"
               }
             }
           ]
