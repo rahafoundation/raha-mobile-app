@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, TextStyle, TextProps, StyleProp } from "react-native";
+import { StyleSheet, TextStyle, StyleProp } from "react-native";
 
 import {
   Member as MemberData,
@@ -9,16 +9,21 @@ import { Text } from "./elements";
 import { RouteName } from "./Navigation";
 import { TextLink, LinkType } from "./elements/TextLink";
 import { fonts, fontSizes } from "../../helpers/fonts";
+import { palette } from "../../helpers/colors";
 
 interface OwnProps {
   member: MemberData | typeof RAHA_BASIC_INCOME_MEMBER;
   style?: StyleProp<TextStyle>;
+  hideVerifiedStatus?: boolean;
+  unverifiedLabelStyle?: StyleProp<TextStyle>;
 }
 type MemberNameProps = OwnProps;
 
 export const MemberName: React.StatelessComponent<MemberNameProps> = ({
   member,
-  style
+  style,
+  hideVerifiedStatus,
+  unverifiedLabelStyle
 }) => {
   // TODO: probably make this a real member
   // TODO: make it navigate somewhere meaningful, maybe info about the basic
@@ -29,19 +34,27 @@ export const MemberName: React.StatelessComponent<MemberNameProps> = ({
 
   // TODO: make this touchable to navigate to member
   return (
-    <TextLink
-      style={[styles.memberName, style]}
-      colored={false}
-      destination={{
-        type: LinkType.InApp,
-        route: {
-          name: RouteName.ProfilePage,
-          params: { member }
-        }
-      }}
-    >
-      {member.get("fullName")}
-    </TextLink>
+    <Text>
+      <TextLink
+        style={[styles.memberName, style]}
+        colored={false}
+        destination={{
+          type: LinkType.InApp,
+          route: {
+            name: RouteName.ProfilePage,
+            params: { member }
+          }
+        }}
+      >
+        {member.get("fullName")}
+      </TextLink>
+      {hideVerifiedStatus || member.get("isVerified") ? null : (
+        <Text style={[styles.unverifiedLabel, unverifiedLabelStyle]}>
+          {" "}
+          (Unverified)
+        </Text>
+      )}
+    </Text>
   );
 };
 
@@ -50,6 +63,13 @@ const memberName: TextStyle = {
   ...fontSizes.medium
 };
 
+const unverifiedLabel: TextStyle = {
+  ...fonts.Lato.Normal,
+  ...fontSizes.medium,
+  color: palette.red
+};
+
 const styles = StyleSheet.create({
-  memberName
+  memberName,
+  unverifiedLabel
 });

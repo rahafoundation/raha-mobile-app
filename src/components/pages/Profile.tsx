@@ -39,6 +39,7 @@ import {
 } from "../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
+import { MemberName } from "../shared/MemberName";
 
 interface NavParams {
   member: Member;
@@ -228,6 +229,9 @@ class ProfileView extends React.PureComponent<ProfileProps> {
               <View style={styles.headerProfile}>
                 <Thumbnail member={member} />
                 <View style={styles.headerDetails}>
+                  <Text style={styles.memberName}>
+                    <MemberName member={member} />
+                  </Text>
                   <Text style={styles.memberUsername}>
                     @{member.get("username")}
                   </Text>

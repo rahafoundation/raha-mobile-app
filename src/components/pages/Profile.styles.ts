@@ -31,9 +31,14 @@ const statLabelStyle: TextStyle = {
   ...fontSizes.small
 };
 
-const memberUsernameStyle: TextStyle = {
+const memberNameStyle: TextStyle = {
   ...fonts.Lato.Semibold,
   ...fontSizes.medium
+};
+
+const memberUsernameStyle: TextStyle = {
+  ...fonts.Lato.Semibold,
+  ...fontSizes.small
 };
 
 const thumbnailStyle: ViewStyle = {
@@ -79,6 +84,7 @@ export const styles = StyleSheet.create({
   header: headerStyle,
   headerProfile: headerProfileStyle,
   thumbnail: thumbnailStyle,
+  memberName: memberNameStyle,
   memberUsername: memberUsernameStyle,
   headerDetails: headerDetailsStyle,
   memberActions: memberActionsStyle,
