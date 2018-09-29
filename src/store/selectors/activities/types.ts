@@ -77,11 +77,7 @@ export type ActivityBody =
   | { type: BodyType.MINT_BASIC_INCOME }
   | { type: BodyType.TRUST_MEMBER };
 
-/**
- * The content of an Activity. Missing some metadata that makes a complete,
- * renderable Activity.
- */
-export type ActivityContent = {
+export type UnchainedActivityContent = {
   /**
    * What member took action.
    *
@@ -94,26 +90,32 @@ export type ActivityContent = {
    * display name in the format of a complete sentence.
    */
   description?: (string | CurrencyValue)[];
-} & (
-  | {}
-  // This union type enforces that if a body is present, there must be a next
-  // activity in the chain. If this turns out to be too restrictive, we can
-  // loosen the requirement.
-  | {
-      /**
-       * A larger, detailed body describing (in text) or representing (visually) the
-       * action.
-       */
-      body: ActivityBody;
-      /**
-       * If this is a chained activity, the next piece of content that has occurred
-       * in the chain.
-       */
-      nextInChain: {
-        direction: ActivityDirection;
-        content: ActivityContent;
-      };
-    });
+};
+
+export type ChainedActivityContent = UnchainedActivityContent & {
+  /**
+   * A larger, detailed body describing (in text) or representing (visually) the
+   * action.
+   */
+  body: ActivityBody;
+  /**
+   * If this is a chained activity, the next piece of content that has occurred
+   * in the chain.
+   */
+  nextInChain: {
+    direction: ActivityDirection;
+    content: ActivityContent;
+  };
+};
+/**
+ * The content of an Activity. Missing some metadata that makes a complete,
+ * renderable Activity.
+ *
+ * This union type enforces that if a body is present, there must be a next
+ * activity in the chain. If this turns out to be too restrictive, we can loosen
+ * the requirement.
+ */
+export type ActivityContent = ChainedActivityContent | UnchainedActivityContent;
 
 /**
  * A renderable link that directs a user to an action they can take.
@@ -151,5 +153,10 @@ export interface Activity {
   timestamp: Date;
   content: ActivityContent;
   callToAction?: ActivityCallToAction;
+  /**
+   * Operations involved in this activity, ordered by how they were ingested to
+   * create this activity (should generally be chronological, since that's how
+   * we receive operations; but this may change).
+   */
   operations: OrderedMap<Operation["id"], Operation>;
 }
