@@ -16,8 +16,9 @@ export const palette = {
   paleMint: "#d2fbe1",
   darkMint: "#509f6d",
 
-  lavender: "#cb6ddf",
-  paleLavender: "#f1b4ff",
+  purple: "#6558f5",
+  palePurple: "#b0a6ed",
+
   red: "#da3e52"
 };
 
@@ -25,7 +26,7 @@ export const colors = {
   brandColor: palette.mint,
 
   // Main
-  pageBackground: "#fff",
+  pageBackground: palette.white,
   primaryBorder: palette.mint,
   darkBackground: palette.mint,
 
@@ -36,8 +37,8 @@ export const colors = {
 
   // Components
   divider: palette.lightGray,
-  button: palette.lavender,
-  disabledButton: palette.paleLavender,
+  button: palette.purple,
+  disabledButton: palette.palePurple,
   lightAccent: palette.blueWhite,
   darkAccent: palette.mint,
 
@@ -53,7 +54,7 @@ export const colors = {
   currency: {
     positive: palette.darkMint,
     negative: palette.red,
-    donation: palette.lavender
+    donation: palette.purple
   },
 
   // Splash
