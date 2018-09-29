@@ -3,9 +3,10 @@ import {
   RAHA_BASIC_INCOME_MEMBER
 } from "../../../store/reducers/members";
 import { CurrencyValue } from "../../../components/shared/elements/Currency";
-import { RouteName } from "../../../components/shared/Navigation";
 import { Omit } from "../../../../types/omit";
 import { LinkDestination } from "../../../components/shared/elements/TextLink";
+import { Operation } from "@raha/api-shared/dist/models/Operation";
+import { OrderedMap } from "immutable";
 
 /**
  * Represents the direction of the relationship between actors in an activity.
@@ -130,4 +131,5 @@ export interface Activity {
   content: Required<Pick<ActivityContent, "body">> &
     Omit<ActivityContent, "body">;
   callToAction?: ActivityCallToAction;
+  operations: OrderedMap<Operation["id"], Operation>;
 }
