@@ -33,7 +33,7 @@ import {
   CurrencyType
 } from "../../../components/shared/elements/Currency";
 import { getCreateMemberOperationFor } from "../operations";
-import { List } from "immutable";
+import { List, OrderedMap } from "immutable";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 function videoReferenceForUri(videoUri: string): VideoReference {
@@ -101,7 +101,8 @@ function addCreateMemberOperationToActivites(
         type: BodyType.MEDIA,
         media: [videoReferenceForMember(creatorMember as Member)]
       }
-    }
+    },
+    operations: OrderedMap({ [operation.id]: operation })
   };
 
   return [...activities, newActivity];
@@ -140,7 +141,8 @@ function addRequestVerificationOperationToActivites(
           actor: requestedMember
         }
       }
-    }
+    },
+    operations: OrderedMap({ [operation.id]: operation })
   };
   return [...activities, newActivity];
 }
@@ -181,7 +183,8 @@ function addVerifyOperationToActivities(
           actor: verifiedMember
         }
       }
-    }
+    },
+    operations: OrderedMap({ [operation.id]: operation })
   };
   return [...activities, newActivity];
 }
@@ -239,7 +242,8 @@ function addGiveOperationToActivities(
           }
         }
       }
-    }
+    },
+    operations: OrderedMap({ [operation.id]: operation })
   };
   return [...activities, newActivity];
 }
@@ -276,7 +280,8 @@ function addMintOperationToActivities(
               actor: RAHA_BASIC_INCOME_MEMBER
             }
           }
-        }
+        },
+        operations: OrderedMap({ [operation.id]: operation })
       };
       return [...activities, newActivity];
     }
@@ -315,7 +320,8 @@ function addMintOperationToActivities(
               actor: invitedMember
             }
           }
-        }
+        },
+        operations: OrderedMap({ [operation.id]: operation })
       };
       return [...activities, newActivity];
     }
@@ -367,7 +373,8 @@ function addTrustOperationToActivities(
           actor: trustedMember
         }
       }
-    }
+    },
+    operations: OrderedMap({ [operation.id]: operation })
   };
   return [...activities, newActivity];
 }
