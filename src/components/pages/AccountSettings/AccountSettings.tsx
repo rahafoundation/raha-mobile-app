@@ -14,6 +14,11 @@ interface NavigationListItem {
 
 const SETTINGS_ITEMS: NavigationListItem[] = [
   {
+    title: "Edit profile",
+    icon: "account-circle",
+    getTarget: () => RouteName.EditMemberPage
+  },
+  {
     title: "Account recovery",
     icon: "help",
     getTarget: () => RouteName.AccountRecovery
