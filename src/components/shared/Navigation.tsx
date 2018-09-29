@@ -48,7 +48,6 @@ import { Verify } from "../pages/Verify";
 import { processDeeplink, routeToPath } from "./Deeplinking";
 import branch from "react-native-branch";
 import { AccountSettingsPage } from "../pages/AccountSettings/AccountSettings";
-import { IdentitySettingsPage } from "../pages/AccountSettings/IdentitySettings";
 import { GovernancePage } from "../pages/AccountSettings/Governance";
 import { AccountRecoveryPage } from "../pages/AccountSettings/AccountRecovery";
 import { CurrencySettingsPage } from "../pages/AccountSettings/CurrencySettings";
@@ -145,7 +144,7 @@ const navIconStyle: TextStyle = {
 };
 
 const navIconFocusedStyle: TextStyle = {
-  color: palette.mint
+  color: colors.navFocusTint
 };
 
 const labelStyle: TextStyle = {
@@ -236,10 +235,7 @@ const Profile: NavigationRouteConfig = {
 
 const Give = {
   screen: GiveScreen,
-  navigationOptions: {
-    headerTitle: <HeaderTitle title="Give Raha" />,
-    headerStyle: styles.header
-  }
+  navigationOptions: createHeaderNavigationOptions("Give Raha", true)
 };
 
 type HeaderProps = {
@@ -314,12 +310,18 @@ export function createNavigatorForTab(
   );
 }
 
-function createHeaderNavigationOptions(excludeGiveButton?: boolean) {
+function createHeaderNavigationOptions(
+  title?: string,
+  excludeActionButtons?: boolean
+) {
   return ({ navigation }: any) => ({
+    headerTitle: title ? <HeaderTitle title={title} /> : undefined,
     headerStyle: styles.header,
-    // only show give button if not on give page
-    ...(navigation.state.routeName === RouteName.GivePage || excludeGiveButton
-      ? {}
+    ...(excludeActionButtons
+      ? {
+          headerRight: undefined,
+          headerLeft: undefined
+        }
       : {
           headerRight: giveButton(navigation),
           headerLeft: inviteButton(navigation)
@@ -380,11 +382,14 @@ const ProfileTab = createNavigatorForTab(
     [RouteName.ProfileTab]: Profile,
     [RouteName.AccountPage]: {
       screen: AccountSettingsPage,
-      navigationOptions: createHeaderNavigationOptions(true)
+      navigationOptions: createHeaderNavigationOptions("Account", true)
     },
     [RouteName.Governance]: {
       screen: GovernancePage,
-      navigationOptions: createHeaderNavigationOptions(true)
+      navigationOptions: createHeaderNavigationOptions(
+        "Governance settings",
+        true
+      )
     },
     [RouteName.AccountRecovery]: {
       screen: AccountRecoveryPage,
@@ -452,7 +457,7 @@ const SignedInNavigator = createSwitchNavigator(
           }
         ],
         tabBarOptions: {
-          activeTintColor: palette.mint,
+          activeTintColor: colors.navFocusTint,
           labelStyle: styles.label
         },
         tabBarColor: palette.lightGray
