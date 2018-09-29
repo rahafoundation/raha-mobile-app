@@ -413,6 +413,9 @@ function addOperationToActivitiesList(
     case OperationType.CREATE_MEMBER: {
       return addCreateMemberOperationToActivites(state, activities, operation);
     }
+    case OperationType.EDIT_MEMBER: {
+      return addEditMemberOperationToActivities(state, activities, operation);
+    }
     case OperationType.REQUEST_VERIFICATION: {
       return addRequestVerificationOperationToActivites(
         state,

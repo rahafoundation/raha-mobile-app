@@ -1,25 +1,27 @@
 import * as React from "react";
 import { MapStateToProps, connect } from "react-redux";
+import { View, TextStyle, ViewStyle } from "react-native";
+import { withNavigation, NavigationInjectedProps } from "react-navigation";
+
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
+
 import { RahaState } from "../../../store";
 import { Member } from "../../../store/reducers/members";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { KeyboardAwareScrollContainer } from "../../shared/elements/KeyboardAwareScrollContainer";
 import { Text, Button, TextInput } from "../../shared/elements";
 import { Loading } from "../../shared/Loading";
-import { styles } from "./styles";
-import { View, TextStyle, ViewStyle } from "react-native";
+import { styles as commonStyles } from "./styles";
 import { getUsername } from "../../../helpers/username";
 import { fonts } from "../../../helpers/fonts";
-import { withNavigation, NavigationInjectedProps } from "react-navigation";
-import { palette } from "../../../helpers/colors";
+import { colors } from "../../../helpers/colors";
 import { editMember } from "../../../store/actions/me";
 import {
   ApiCallStatus,
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 interface OwnProps {}
 
@@ -56,7 +58,7 @@ class EditMemberPageView extends React.Component<Props, State> {
   canUpdate() {
     const { loggedInMember } = this.props;
     const currentFullName = loggedInMember.get("fullName");
-    const { username, fullName } = this.state;
+    const { fullName } = this.state;
     if (!fullName || currentFullName === fullName) {
       return false;
     }
@@ -115,33 +117,37 @@ class EditMemberPageView extends React.Component<Props, State> {
     const updateButtonTitle = `${updateButtonPrefix} profile details`;
 
     return (
-      <KeyboardAwareScrollContainer style={styles.page}>
-        <Text style={[styles.row, headerStyle]}>Full name</Text>
-        <View style={styles.row}>
-          <TextInput
-            value={this.state.fullName}
-            onChangeText={this.onChangeFullName}
-            style={textBoxStyle}
-          />
+      <KeyboardAwareScrollContainer style={commonStyles.page}>
+        <Text style={[commonStyles.row, styles.header]}>Full name</Text>
+        <View style={commonStyles.row}>
+          {apiCallStatus === ApiCallStatusType.SUCCESS ? (
+            <Text>{this.state.fullName}</Text>
+          ) : (
+            <TextInput
+              value={this.state.fullName}
+              onChangeText={this.onChangeFullName}
+              style={styles.textBox}
+            />
+          )}
         </View>
-        <Text style={[styles.row, headerStyle]}>
+        <Text style={[commonStyles.row, styles.header]}>
           Username (auto-generated from name)
         </Text>
-        <View style={styles.row}>
+        <View style={commonStyles.row}>
           <Text>{this.state.username}</Text>
         </View>
-        <View style={styles.row}>
+        <View style={commonStyles.row}>
           <Button
             title={goBackButtonTitle}
             disabled={disableGoBackButton}
             onPress={() => navigation.goBack()}
-            style={buttonStyle}
+            style={styles.button}
           />
           <Button
             title={updateButtonTitle}
             disabled={disableUpdateButton}
             onPress={this.onSubmitUpdate}
-            style={buttonStyle}
+            style={styles.button}
           />
         </View>
       </KeyboardAwareScrollContainer>
@@ -174,7 +180,7 @@ export const EditMemberPage = connect(
 )(withNavigation<Props>(EditMemberPageView));
 
 const textBoxStyle: TextStyle = {
-  borderColor: palette.darkGray,
+  borderColor: colors.navFocusTint,
   borderWidth: 1,
   borderRadius: 3,
   flex: 1
@@ -187,4 +193,10 @@ const headerStyle: TextStyle = {
 const buttonStyle: ViewStyle = {
   flexGrow: 1,
   margin: 4
+};
+
+const styles = {
+  textBox: textBoxStyle,
+  header: headerStyle,
+  button: buttonStyle
 };
