@@ -494,7 +494,7 @@ function activityContentContainsMember(
     return true;
   }
 
-  if (content.nextInChain) {
+  if ("nextInChain" in content && !!content.nextInChain) {
     return activityContentContainsMember(content.nextInChain.content, memberId);
   }
 
