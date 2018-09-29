@@ -6382,9 +6382,9 @@ react-native-elements@^0.19.1:
     opencollective "^1.0.3"
     prop-types "^15.5.8"
 
-react-native-firebase@^5.0.0-rc5:
-  version "5.0.0-rc5"
-  resolved "https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-5.0.0-rc5.tgz#b8a2c7ee5517b8548ddeb4c3d6acb875eb391a06"
+react-native-firebase@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-5.0.0.tgz#8cdc24e5f705146f5d031ca319f9310e0b4ce5f4"
   dependencies:
     opencollective-postinstall "^2.0.0"
     prop-types "^15.6.2"
