@@ -115,6 +115,9 @@ function addEditMemberOperationToActivities(
   operation: EditMemberOperation
 ): Activity[] {
   const creatorMember = getOperationCreator(state, operation);
+  const description = operation.data.full_name
+    ? "edited their name."
+    : "edited their profile.";
   const newActivity: Activity = {
     id: operation.id,
     timestamp: operation.created_at,
@@ -122,7 +125,7 @@ function addEditMemberOperationToActivities(
       // type suggestions since GENESIS_MEMBER is only possible for
       // VERIFY operations
       actor: creatorMember as Member,
-      description: ["edited their profile information."]
+      description: [description]
     },
     operations: OrderedMap({ [operation.id]: operation })
   };

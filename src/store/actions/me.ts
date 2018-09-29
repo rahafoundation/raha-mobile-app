@@ -5,7 +5,6 @@ import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 import { config } from "../../data/config";
 import { OperationsAction, OperationsActionType } from "./operations";
-import { generateRandomIdentifier } from "../../helpers/identifiers";
 import { wrapApiCallAction } from "./apiCalls";
 import { AsyncActionCreator } from ".";
 import { getAuthToken } from "../selectors/authentication";
