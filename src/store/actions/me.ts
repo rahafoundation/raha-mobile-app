@@ -10,7 +10,7 @@ import { AsyncActionCreator } from ".";
 import { getAuthToken } from "../selectors/authentication";
 
 export const editMember: AsyncActionCreator = (
-  loggedInMemberId: MemberId,
+  apiCallId: string,
   fullName?: string,
   username?: string
 ) => {
@@ -33,6 +33,6 @@ export const editMember: AsyncActionCreator = (
       dispatch(action);
     },
     ApiEndpointName.EDIT_MEMBER,
-    loggedInMemberId
+    apiCallId
   );
 };

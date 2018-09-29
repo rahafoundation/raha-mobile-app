@@ -1,7 +1,7 @@
 import * as React from "react";
 import { MapStateToProps, connect } from "react-redux";
 import { View, TextStyle, ViewStyle } from "react-native";
-import { withNavigation, NavigationInjectedProps } from "react-navigation";
+import { NavigationScreenProp } from "react-navigation";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
@@ -23,10 +23,15 @@ import {
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 
-interface OwnProps {}
+interface OwnProps {
+  navigation: NavigationScreenProp<{
+    editMemberApiCallId: string;
+  }>;
+}
 
 interface StateProps {
   loggedInMember: Member;
+  editMemberApiCallId: string;
   editMemberApiCallStatus?: ApiCallStatus;
 }
 
@@ -38,7 +43,7 @@ interface DispatchProps {
   ) => void;
 }
 
-type Props = OwnProps & StateProps & DispatchProps & NavigationInjectedProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 interface State {
   username: string;
@@ -85,9 +90,9 @@ class EditMemberPageView extends React.Component<Props, State> {
 
   onSubmitUpdate = () => {
     if (this.canUpdate()) {
-      const { loggedInMember, editMember } = this.props;
+      const { editMember } = this.props;
       const { fullName, username } = this.state;
-      editMember(loggedInMember.get("memberId"), fullName, username);
+      editMember(this.props.editMemberApiCallId, fullName, username);
     }
   };
 
@@ -155,21 +160,27 @@ class EditMemberPageView extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps: MapStateToProps<
-  StateProps,
-  OwnProps,
-  RahaState
-> = state => {
+const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
+  state,
+  ownProps
+) => {
   const loggedInMember = getLoggedInMember(state);
   if (!loggedInMember) {
-    throw Error("Attempting to edit member with no logged-in member.");
+    throw new Error("Attempting to edit member with no logged-in member.");
+  }
+  const editMemberApiCallId = ownProps.navigation.getParam(
+    "editMemberApiCallId"
+  );
+  if (!editMemberApiCallId) {
+    throw new Error("No API call identifier passed during navigation.");
   }
   return {
     loggedInMember,
+    editMemberApiCallId,
     editMemberApiCallStatus: getStatusOfApiCall(
       state,
       ApiEndpointName.EDIT_MEMBER,
-      loggedInMember.get("memberId")
+      editMemberApiCallId
     )
   };
 };
@@ -177,7 +188,7 @@ const mapStateToProps: MapStateToProps<
 export const EditMemberPage = connect(
   mapStateToProps,
   { editMember }
-)(withNavigation<Props>(EditMemberPageView));
+)(EditMemberPageView);
 
 const textBoxStyle: TextStyle = {
   borderColor: colors.navFocusTint,
