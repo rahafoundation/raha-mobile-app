@@ -40,7 +40,6 @@ import { Text } from "./elements";
 import { Discover } from "../pages/Discover";
 import { LeaderBoard } from "../pages/LeaderBoard";
 import { Invite } from "../pages/Invite/Invite";
-import { Account } from "../pages/Account";
 import { colors, palette } from "../../helpers/colors";
 import { fonts, fontSizes } from "../../helpers/fonts";
 import { InitializationRouter } from "../pages/InitializationRouter";
@@ -48,6 +47,12 @@ import { Member } from "../../store/reducers/members";
 import { Verify } from "../pages/Verify";
 import { processDeeplink, routeToPath } from "./Deeplinking";
 import branch from "react-native-branch";
+import { AccountSettingsPage } from "../pages/AccountSettings/AccountSettings";
+import { IdentitySettingsPage } from "../pages/AccountSettings/IdentitySettings";
+import { GovernancePage } from "../pages/AccountSettings/Governance";
+import { AccountRecoveryPage } from "../pages/AccountSettings/AccountRecovery";
+import { CurrencySettingsPage } from "../pages/AccountSettings/CurrencySettings";
+import { SignOutPage } from "../pages/AccountSettings/SignOut";
 
 /**
  * Gets the current screen from navigation state.
@@ -108,7 +113,11 @@ export enum RouteName {
   WalletTab = "Wallet",
   ReferralBonusPage = "Referral Bonus",
   PendingInvitesPage = "Pending Invites",
-  Verify = "Verify"
+  Verify = "Verify",
+  Governance = "Governance",
+  AccountRecovery = "Account Recovery",
+  SignOut = "Sign Out",
+  CurrencySettings = "Currency Settings"
 }
 
 // TODO: Move this to Deeplinking. Need to also move RouteName out to avoid
@@ -278,12 +287,15 @@ export function createNavigatorForTab(
   );
 }
 
-function createHeaderNavigationOptions(title: string) {
+function createHeaderNavigationOptions(
+  title: string,
+  excludeGiveButton?: boolean
+) {
   return ({ navigation }: any) => ({
     headerTitle: <HeaderTitle title={title} />,
     headerStyle: styles.header,
     // only show give button if not on give page
-    ...(navigation.state.routeName === RouteName.GivePage
+    ...(navigation.state.routeName === RouteName.GivePage || excludeGiveButton
       ? {}
       : {
           headerRight: giveButton(navigation)
@@ -342,7 +354,29 @@ const WalletTab = createNavigatorForTab(
 const ProfileTab = createNavigatorForTab(
   {
     [RouteName.ProfileTab]: Profile,
-    [RouteName.AccountPage]: Account,
+    [RouteName.AccountPage]: {
+      screen: AccountSettingsPage,
+      navigationOptions: createHeaderNavigationOptions("Account", true)
+    },
+    [RouteName.Governance]: {
+      screen: GovernancePage,
+      navigationOptions: createHeaderNavigationOptions(
+        "Governance settings",
+        true
+      )
+    },
+    [RouteName.AccountRecovery]: {
+      screen: AccountRecoveryPage,
+      navigationOptions: createHeaderNavigationOptions("Account recovery", true)
+    },
+    [RouteName.CurrencySettings]: {
+      screen: CurrencySettingsPage,
+      navigationOptions: createHeaderNavigationOptions("Currency", true)
+    },
+    [RouteName.SignOut]: {
+      screen: SignOutPage,
+      navigationOptions: createHeaderNavigationOptions("Sign out", true)
+    },
     [RouteName.PendingInvitesPage]: PendingInvites
   },
   {
