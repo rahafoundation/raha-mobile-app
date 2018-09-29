@@ -81,17 +81,39 @@ export type ActivityBody =
  * The content of an Activity. Missing some metadata that makes a complete,
  * renderable Activity.
  */
-export interface ActivityContent {
-  // TODO: potentially support other special members than basic income, treat it
-  // as an actual member/variation of it rather than a singleton
+export type ActivityContent = {
+  /**
+   * What member took action.
+   *
+   * TODO: potentially support other special members than basic income, treat it
+   * as an actual member/variation of it rather than a singleton
+   */
   actor: Member | typeof RAHA_BASIC_INCOME_MEMBER;
+  /**
+   * Description of the action they took. Currently rendered after the actor's
+   * display name in the format of a complete sentence.
+   */
   description?: (string | CurrencyValue)[];
-  body?: ActivityBody;
-  nextInChain?: {
-    direction: ActivityDirection;
-    content: ActivityContent;
-  };
-}
+} & (
+  | {}
+  // This union type enforces that if a body is present, there must be a next
+  // activity in the chain. If this turns out to be too restrictive, we can
+  // loosen the requirement.
+  | {
+      /**
+       * A larger, detailed body describing (in text) or representing (visually) the
+       * action.
+       */
+      body: ActivityBody;
+      /**
+       * If this is a chained activity, the next piece of content that has occurred
+       * in the chain.
+       */
+      nextInChain: {
+        direction: ActivityDirection;
+        content: ActivityContent;
+      };
+    });
 
 /**
  * A renderable link that directs a user to an action they can take.
@@ -127,9 +149,7 @@ export interface ActivityCallToAction {
 export interface Activity {
   id: string;
   timestamp: Date;
-  // make body required for top-level activity, but not for children
-  content: Required<Pick<ActivityContent, "body">> &
-    Omit<ActivityContent, "body">;
+  content: ActivityContent;
   callToAction?: ActivityCallToAction;
   operations: OrderedMap<Operation["id"], Operation>;
 }
