@@ -37,6 +37,7 @@ export const reducer: Reducer<DropdownState> = (
           messages: prevState.messages.push(action.message)
         };
       }
+      return prevState;
     case DropdownActionsType.DISMISS_DROPDOWN_MESSAGE:
       return {
         messages: prevState.messages.filter(message => message.id !== action.id)
