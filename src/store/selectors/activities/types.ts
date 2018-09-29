@@ -77,7 +77,16 @@ export type ActivityBody =
   | { type: BodyType.MINT_BASIC_INCOME }
   | { type: BodyType.TRUST_MEMBER };
 
-export type UnchainedActivityContent = {
+export interface NextInChain {
+  direction: ActivityDirection;
+  nextActivityContent: ActivityContent;
+}
+
+/**
+ * The content of an Activity. Missing some metadata that makes a complete,
+ * renderable Activity.
+ */
+export interface ActivityContent {
   /**
    * What member took action.
    *
@@ -90,32 +99,22 @@ export type UnchainedActivityContent = {
    * display name in the format of a complete sentence.
    */
   description?: (string | CurrencyValue)[];
-};
-
-export type ChainedActivityContent = UnchainedActivityContent & {
   /**
    * A larger, detailed body describing (in text) or representing (visually) the
    * action.
+   *
+   * Currently, a body is required if there is to be further chained content. If
+   * that is too restrictive, we can relax that restriction, but it will likely
+   * require a visual redesign as well.
    */
-  body: ActivityBody;
-  /**
-   * If this is a chained activity, the next piece of content that has occurred
-   * in the chain.
-   */
-  nextInChain: {
-    direction: ActivityDirection;
-    content: ActivityContent;
+  body?: {
+    bodyContent: ActivityBody;
+    /**
+     * The next piece of content in the chain of activities.
+     */
+    nextInChain?: NextInChain;
   };
-};
-/**
- * The content of an Activity. Missing some metadata that makes a complete,
- * renderable Activity.
- *
- * This union type enforces that if a body is present, there must be a next
- * activity in the chain. If this turns out to be too restrictive, we can loosen
- * the requirement.
- */
-export type ActivityContent = ChainedActivityContent | UnchainedActivityContent;
+}
 
 /**
  * A renderable link that directs a user to an action they can take.
