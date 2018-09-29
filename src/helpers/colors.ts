@@ -30,6 +30,9 @@ export const colors = {
   primaryBorder: palette.mint,
   darkBackground: palette.mint,
 
+  // Bottom Navigation Bar
+  navFocusTint: palette.purple,
+
   // Text
   bodyText: palette.darkGray,
   secondaryText: palette.lightGray,
