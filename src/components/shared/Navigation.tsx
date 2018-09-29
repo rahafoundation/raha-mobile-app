@@ -136,7 +136,7 @@ const headerStyle: ViewStyle = {
 };
 
 const headerTextStyle: TextStyle = {
-  ...fontSizes.large,
+  ...fontSizes.medium,
   ...fonts.Lato.Bold
 };
 
@@ -153,9 +153,18 @@ const labelStyle: TextStyle = {
   ...fontSizes.small
 };
 
-const giveButtonStyle: TextStyle = {
+const headerButtonLabelStyle: TextStyle = {
+  color: palette.purple,
+  paddingLeft: 3,
+  paddingRight: 3,
   ...fonts.Lato.Bold,
-  ...fontSizes.large
+  ...fontSizes.medium
+};
+
+const headerButtonStyle: TextStyle = {
+  backgroundColor: palette.mint,
+  paddingHorizontal: 0,
+  paddingVertical: 5
 };
 
 const styles = StyleSheet.create({
@@ -165,7 +174,8 @@ const styles = StyleSheet.create({
   navIcon: navIconStyle,
   navIconFocused: navIconFocusedStyle,
   label: labelStyle,
-  giveButton: giveButtonStyle
+  headerButton: headerButtonStyle,
+  headerButtonLabel: headerButtonLabelStyle
 });
 
 const HeaderTitle: React.StatelessComponent<HeaderProps> = props => {
@@ -238,16 +248,33 @@ type HeaderProps = {
   style?: TextStyle;
 };
 
+function inviteButton(navigation: any) {
+  return (
+    <React.Fragment>
+      <Icon style={styles.headerButtonLabel} name="envelope" solid />
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate(RouteName.InvitePage);
+        }}
+      >
+        <Text style={styles.headerButtonLabel}>Invite</Text>
+      </TouchableOpacity>
+    </React.Fragment>
+  );
+}
+
 function giveButton(navigation: any) {
   return (
-    <Text
-      onPress={() => {
-        navigation.navigate(RouteName.GivePage);
-      }}
-      style={styles.giveButton}
-    >
-      Give
-    </Text>
+    <React.Fragment>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate(RouteName.GivePage);
+        }}
+      >
+        <Text style={styles.headerButtonLabel}>Give</Text>
+      </TouchableOpacity>
+      <Icon style={styles.headerButtonLabel} name="paper-plane" solid />
+    </React.Fragment>
   );
 }
 
@@ -287,18 +314,15 @@ export function createNavigatorForTab(
   );
 }
 
-function createHeaderNavigationOptions(
-  title: string,
-  excludeGiveButton?: boolean
-) {
+function createHeaderNavigationOptions(excludeGiveButton?: boolean) {
   return ({ navigation }: any) => ({
-    headerTitle: <HeaderTitle title={title} />,
     headerStyle: styles.header,
     // only show give button if not on give page
     ...(navigation.state.routeName === RouteName.GivePage || excludeGiveButton
       ? {}
       : {
-          headerRight: giveButton(navigation)
+          headerRight: giveButton(navigation),
+          headerLeft: inviteButton(navigation)
         })
   });
 }
@@ -307,7 +331,7 @@ const FeedTab = createNavigatorForTab(
   {
     [RouteName.FeedPage]: {
       screen: Feed,
-      navigationOptions: createHeaderNavigationOptions("Raha")
+      navigationOptions: createHeaderNavigationOptions()
     }
   },
   {
@@ -319,7 +343,7 @@ const DiscoverTab = createNavigatorForTab(
   {
     [RouteName.DiscoverPage]: {
       screen: Discover,
-      navigationOptions: createHeaderNavigationOptions("Discover")
+      navigationOptions: createHeaderNavigationOptions()
     },
     LeaderBoard
   },
@@ -338,16 +362,16 @@ const WalletTab = createNavigatorForTab(
     },
     [RouteName.WalletPage]: {
       screen: Wallet,
-      navigationOptions: createHeaderNavigationOptions("Raha Wallet")
+      navigationOptions: createHeaderNavigationOptions()
     },
     [RouteName.ReferralBonusPage]: {
       screen: ReferralBonus,
-      navigationOptions: createHeaderNavigationOptions("Bonus Mint")
+      navigationOptions: createHeaderNavigationOptions()
     }
   },
   {
     initialRouteName: RouteName.WalletPage,
-    navigationOptions: createHeaderNavigationOptions("Discover")
+    navigationOptions: createHeaderNavigationOptions()
   }
 );
 
@@ -356,14 +380,11 @@ const ProfileTab = createNavigatorForTab(
     [RouteName.ProfileTab]: Profile,
     [RouteName.AccountPage]: {
       screen: AccountSettingsPage,
-      navigationOptions: createHeaderNavigationOptions("Account", true)
+      navigationOptions: createHeaderNavigationOptions(true)
     },
     [RouteName.Governance]: {
       screen: GovernancePage,
-      navigationOptions: createHeaderNavigationOptions(
-        "Governance settings",
-        true
-      )
+      navigationOptions: createHeaderNavigationOptions(true)
     },
     [RouteName.AccountRecovery]: {
       screen: AccountRecoveryPage,
