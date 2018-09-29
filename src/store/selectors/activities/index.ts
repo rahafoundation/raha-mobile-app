@@ -62,6 +62,296 @@ export function activities(
   return convertOperationsToActivities(state, operations).reverse();
 }
 
+function addOperationToActivitiesList(
+  state: RahaState,
+  activities: Activity[],
+  operation: Operation
+): Activity[] {
+  const creatorMember = GENESIS_VERIFY_OPS.includes(operation.id)
+    ? GENESIS_MEMBER
+    : getMemberById(state, operation.creator_uid);
+  if (!creatorMember) {
+    console.error(
+      `Operation with missing creator (id: ${operation.creator_uid}), invalid.`,
+      JSON.stringify(operation)
+    );
+    return activities;
+  }
+
+  switch (operation.op_code) {
+    case OperationType.CREATE_MEMBER: {
+      const newActivity: Activity = {
+        id: operation.id,
+        timestamp: operation.created_at,
+        content: {
+          // type suggestions since GENESIS_MEMBER is only possible for
+          // VERIFY operations
+          actor: creatorMember as Member,
+          description: ["just joined Raha!"],
+          body: {
+            type: BodyType.MEDIA,
+            media: [videoReferenceForMember(creatorMember as Member)]
+          }
+        }
+      };
+
+      return [...activities, newActivity];
+    }
+    case OperationType.REQUEST_VERIFICATION: {
+      const requestedMember = getMemberById(state, operation.data.to_uid);
+      if (!requestedMember) {
+        console.error(
+          `Request Verification operation with target member (id: ${
+            operation.data.to_uid
+          }) missing, invalid.`
+        );
+        return activities;
+      }
+
+      const newActivity: Activity = {
+        id: operation.id,
+        timestamp: operation.created_at,
+        content: {
+          // type suggestions since GENESIS_MEMBER is only possible for
+          // VERIFY operations
+          actor: creatorMember as Member,
+          description: ["requested a friend to verify their account."],
+          body: {
+            type: BodyType.MEDIA,
+            media: [videoReferenceForMember(creatorMember as Member)]
+          },
+          nextInChain: {
+            direction: ActivityDirection.NonDirectional,
+            content: {
+              actor: requestedMember
+            }
+          }
+        }
+      };
+      return [...activities, newActivity];
+    }
+    case OperationType.VERIFY: {
+      const verifiedMember = getMemberById(state, operation.data.to_uid);
+      if (!verifiedMember) {
+        console.error(
+          `Verify operation with target member (id: ${
+            operation.data.to_uid
+          } missing, invalid.`
+        );
+        return activities;
+      }
+
+      if (creatorMember === GENESIS_MEMBER) {
+        // don't display the genesis verify ops
+        return activities;
+      }
+
+      const newActivity: Activity = {
+        id: operation.id,
+        timestamp: operation.created_at,
+        content: {
+          actor: creatorMember,
+          description: ["verified their friend's account!"],
+          body: {
+            type: BodyType.MEDIA,
+            media: [videoReferenceForUri(operation.data.video_url)]
+          },
+          nextInChain: {
+            direction: ActivityDirection.Forward,
+            content: {
+              actor: verifiedMember
+            }
+          }
+        }
+      };
+      return [...activities, newActivity];
+    }
+    case OperationType.GIVE: {
+      const givenToMember = getMemberById(state, operation.data.to_uid);
+      if (!givenToMember) {
+        console.error(
+          `Give operation with target member (id: ${
+            operation.data.to_uid
+          }) missing, invalid.`
+        );
+        return activities;
+      }
+
+      const amountDonated: CurrencyValue = {
+        value: new Big(operation.data.donation_amount),
+        role: CurrencyRole.Donation,
+        currencyType: CurrencyType.Raha
+      };
+      const amountGiven: CurrencyValue = {
+        value: amountDonated.value.plus(new Big(operation.data.amount)),
+        role: CurrencyRole.Transaction,
+        currencyType: CurrencyType.Raha
+      };
+      const newActivity: Activity = {
+        id: operation.id,
+        timestamp: operation.created_at,
+        content: {
+          // type suggestions since GENESIS_MEMBER is only possible for
+          // VERIFY operations
+          actor: creatorMember as Member,
+          description: ["gave", amountGiven, "for"],
+          body: { type: BodyType.TEXT, text: operation.data.memo },
+          nextInChain: {
+            direction: ActivityDirection.Forward,
+            content: {
+              actor: givenToMember,
+              description: ["donated", amountDonated],
+              // TODO: make this configurable
+              body: {
+                type: BodyType.TEXT,
+                text: "Because every life has value"
+              },
+              nextInChain: {
+                direction: ActivityDirection.Forward,
+                content: {
+                  actor: RAHA_BASIC_INCOME_MEMBER
+                }
+              }
+            }
+          }
+        }
+      };
+      return [...activities, newActivity];
+    }
+    case OperationType.MINT: {
+      const amountMinted: CurrencyValue = {
+        value: new Big(operation.data.amount),
+        currencyType: CurrencyType.Raha,
+        role: CurrencyRole.Transaction
+      };
+
+      switch (operation.data.type) {
+        case MintType.BASIC_INCOME: {
+          const newActivity: Activity = {
+            id: operation.id,
+            timestamp: operation.created_at,
+            content: {
+              // type suggestions since GENESIS_MEMBER is only possible for
+              // VERIFY operations
+              actor: creatorMember as Member,
+              description: ["minted", amountMinted, "of basic income."],
+              body: {
+                type: BodyType.MINT_BASIC_INCOME
+              },
+              nextInChain: {
+                direction: ActivityDirection.NonDirectional,
+                content: {
+                  actor: RAHA_BASIC_INCOME_MEMBER
+                }
+              }
+            }
+          };
+          return [...activities, newActivity];
+        }
+        case MintType.REFERRAL_BONUS: {
+          const invitedMember = getMemberById(
+            state,
+            operation.data.invited_member_id
+          );
+          if (!invitedMember) {
+            console.error(
+              `Mint operation with invited member (id: ${
+                operation.data.invited_member_id
+              }) missing, invalid.`
+            );
+            return activities;
+          }
+          const newActivity: Activity = {
+            id: operation.id,
+            timestamp: operation.created_at,
+            content: {
+              // type suggestions since GENESIS_MEMBER is only possible for
+              // VERIFY operations
+              actor: creatorMember as Member,
+              description: [
+                "minted",
+                amountMinted,
+                "for inviting a friend to Raha!"
+              ],
+              body: {
+                type: BodyType.MEDIA,
+                media: [videoReferenceForMember(invitedMember)]
+              },
+              nextInChain: {
+                direction: ActivityDirection.Bidirectional,
+                content: {
+                  actor: invitedMember
+                }
+              }
+            }
+          };
+          return [...activities, newActivity];
+        }
+        default:
+          // Shouldn't happen. Type assertion is because TypeScript also thinks
+          // this should never happen.
+          // TODO: ensure this error gets sent somewhere
+          console.error(
+            new Error(
+              `Invalid operation: Unrecognized Mint type "${(operation as MintOperation)
+                .data.type as MintType}". Operation: ${JSON.stringify(
+                operation
+              )}`
+            )
+          );
+          return activities;
+      }
+    }
+    case OperationType.TRUST: {
+      const trustedMember = getMemberById(state, operation.data.to_uid);
+      if (!trustedMember) {
+        console.error(
+          `Trust operation with target member (id: ${
+            operation.data.to_uid
+          }) missing, invalid.`
+        );
+        return activities;
+      }
+
+      const newActivity: Activity = {
+        id: operation.id,
+        timestamp: operation.created_at,
+        content: {
+          // type suggestions since GENESIS_MEMBER is only possible for
+          // VERIFY operations
+          actor: creatorMember as Member,
+          description: ["trusted a new friend"],
+          body: {
+            type: BodyType.TRUST_MEMBER
+          },
+          nextInChain: {
+            direction: ActivityDirection.Forward,
+            content: {
+              actor: trustedMember
+            }
+          }
+        }
+      };
+      return [...activities, newActivity];
+    }
+    case OperationType.INVITE:
+      // We do not display any activity for Invite operations.
+      return activities;
+    default:
+      // Shouldn't happen. Type assertion is because TypeScript also thinks
+      // this should never happen.
+      // TODO: ensure this error gets sent somewhere
+      console.error(
+        new Error(
+          `Invalid operation: Unrecognized opcode "${
+            (operation as Operation).op_code
+          }". Operation: ${JSON.stringify(operation)}`
+        )
+      );
+      return activities;
+  }
+}
+
 /**
  * Interpret a list of operations as a list of activities.
  * TODO: make this more sophisticated, so that it's not just a one-to-one
@@ -79,293 +369,7 @@ export function convertOperationsToActivities(
   operations: List<Operation>
 ): Activity[] {
   return operations.reduce(
-    (memo, operation) => {
-      const creatorMember = GENESIS_VERIFY_OPS.includes(operation.id)
-        ? GENESIS_MEMBER
-        : getMemberById(state, operation.creator_uid);
-      if (!creatorMember) {
-        console.error(
-          `Operation with missing creator (id: ${
-            operation.creator_uid
-          }), invalid.`,
-          JSON.stringify(operation)
-        );
-        return memo;
-      }
-
-      switch (operation.op_code) {
-        case OperationType.CREATE_MEMBER: {
-          const newActivity: Activity = {
-            id: operation.id,
-            timestamp: operation.created_at,
-            content: {
-              // type suggestions since GENESIS_MEMBER is only possible for
-              // VERIFY operations
-              actor: creatorMember as Member,
-              description: ["just joined Raha!"],
-              body: {
-                type: BodyType.MEDIA,
-                media: [videoReferenceForMember(creatorMember as Member)]
-              }
-            }
-          };
-
-          return [...memo, newActivity];
-        }
-        case OperationType.REQUEST_VERIFICATION: {
-          const requestedMember = getMemberById(state, operation.data.to_uid);
-          if (!requestedMember) {
-            console.error(
-              `Request Verification operation with target member (id: ${
-                operation.data.to_uid
-              }) missing, invalid.`
-            );
-            return memo;
-          }
-
-          const newActivity: Activity = {
-            id: operation.id,
-            timestamp: operation.created_at,
-            content: {
-              // type suggestions since GENESIS_MEMBER is only possible for
-              // VERIFY operations
-              actor: creatorMember as Member,
-              description: ["requested a friend to verify their account."],
-              body: {
-                type: BodyType.MEDIA,
-                media: [videoReferenceForMember(creatorMember as Member)]
-              },
-              nextInChain: {
-                direction: ActivityDirection.NonDirectional,
-                content: {
-                  actor: requestedMember
-                }
-              }
-            }
-          };
-          return [...memo, newActivity];
-        }
-        case OperationType.VERIFY: {
-          const verifiedMember = getMemberById(state, operation.data.to_uid);
-          if (!verifiedMember) {
-            console.error(
-              `Verify operation with target member (id: ${
-                operation.data.to_uid
-              } missing, invalid.`
-            );
-            return memo;
-          }
-
-          if (creatorMember === GENESIS_MEMBER) {
-            // don't display the genesis verify ops
-            return memo;
-          }
-
-          const newActivity: Activity = {
-            id: operation.id,
-            timestamp: operation.created_at,
-            content: {
-              actor: creatorMember,
-              description: ["verified their friend's account!"],
-              body: {
-                type: BodyType.MEDIA,
-                media: [videoReferenceForUri(operation.data.video_url)]
-              },
-              nextInChain: {
-                direction: ActivityDirection.Forward,
-                content: {
-                  actor: verifiedMember
-                }
-              }
-            }
-          };
-          return [...memo, newActivity];
-        }
-        case OperationType.GIVE: {
-          const givenToMember = getMemberById(state, operation.data.to_uid);
-          if (!givenToMember) {
-            console.error(
-              `Give operation with target member (id: ${
-                operation.data.to_uid
-              }) missing, invalid.`
-            );
-            return memo;
-          }
-
-          const amountDonated: CurrencyValue = {
-            value: new Big(operation.data.donation_amount),
-            role: CurrencyRole.Donation,
-            currencyType: CurrencyType.Raha
-          };
-          const amountGiven: CurrencyValue = {
-            value: amountDonated.value.plus(new Big(operation.data.amount)),
-            role: CurrencyRole.Transaction,
-            currencyType: CurrencyType.Raha
-          };
-          const newActivity: Activity = {
-            id: operation.id,
-            timestamp: operation.created_at,
-            content: {
-              // type suggestions since GENESIS_MEMBER is only possible for
-              // VERIFY operations
-              actor: creatorMember as Member,
-              description: ["gave", amountGiven, "for"],
-              body: { type: BodyType.TEXT, text: operation.data.memo },
-              nextInChain: {
-                direction: ActivityDirection.Forward,
-                content: {
-                  actor: givenToMember,
-                  description: ["donated", amountDonated],
-                  // TODO: make this configurable
-                  body: {
-                    type: BodyType.TEXT,
-                    text: "Because every life has value"
-                  },
-                  nextInChain: {
-                    direction: ActivityDirection.Forward,
-                    content: {
-                      actor: RAHA_BASIC_INCOME_MEMBER
-                    }
-                  }
-                }
-              }
-            }
-          };
-          return [...memo, newActivity];
-        }
-        case OperationType.MINT: {
-          const amountMinted: CurrencyValue = {
-            value: new Big(operation.data.amount),
-            currencyType: CurrencyType.Raha,
-            role: CurrencyRole.Transaction
-          };
-
-          switch (operation.data.type) {
-            case MintType.BASIC_INCOME: {
-              const newActivity: Activity = {
-                id: operation.id,
-                timestamp: operation.created_at,
-                content: {
-                  // type suggestions since GENESIS_MEMBER is only possible for
-                  // VERIFY operations
-                  actor: creatorMember as Member,
-                  description: ["minted", amountMinted, "of basic income."],
-                  body: {
-                    type: BodyType.MINT_BASIC_INCOME
-                  },
-                  nextInChain: {
-                    direction: ActivityDirection.NonDirectional,
-                    content: {
-                      actor: RAHA_BASIC_INCOME_MEMBER
-                    }
-                  }
-                }
-              };
-              return [...memo, newActivity];
-            }
-            case MintType.REFERRAL_BONUS: {
-              const invitedMember = getMemberById(
-                state,
-                operation.data.invited_member_id
-              );
-              if (!invitedMember) {
-                console.error(
-                  `Mint operation with invited member (id: ${
-                    operation.data.invited_member_id
-                  }) missing, invalid.`
-                );
-                return memo;
-              }
-              const newActivity: Activity = {
-                id: operation.id,
-                timestamp: operation.created_at,
-                content: {
-                  // type suggestions since GENESIS_MEMBER is only possible for
-                  // VERIFY operations
-                  actor: creatorMember as Member,
-                  description: [
-                    "minted",
-                    amountMinted,
-                    "for inviting a friend to Raha!"
-                  ],
-                  body: {
-                    type: BodyType.MEDIA,
-                    media: [videoReferenceForMember(invitedMember)]
-                  },
-                  nextInChain: {
-                    direction: ActivityDirection.Bidirectional,
-                    content: {
-                      actor: invitedMember
-                    }
-                  }
-                }
-              };
-              return [...memo, newActivity];
-            }
-            default:
-              // Shouldn't happen. Type assertion is because TypeScript also thinks
-              // this should never happen.
-              // TODO: ensure this error gets sent somewhere
-              console.error(
-                new Error(
-                  `Invalid operation: Unrecognized Mint type "${(operation as MintOperation)
-                    .data.type as MintType}". Operation: ${JSON.stringify(
-                    operation
-                  )}`
-                )
-              );
-              return memo;
-          }
-        }
-        case OperationType.TRUST: {
-          const trustedMember = getMemberById(state, operation.data.to_uid);
-          if (!trustedMember) {
-            console.error(
-              `Trust operation with target member (id: ${
-                operation.data.to_uid
-              }) missing, invalid.`
-            );
-            return memo;
-          }
-
-          const newActivity: Activity = {
-            id: operation.id,
-            timestamp: operation.created_at,
-            content: {
-              // type suggestions since GENESIS_MEMBER is only possible for
-              // VERIFY operations
-              actor: creatorMember as Member,
-              description: ["trusted a new friend"],
-              body: {
-                type: BodyType.TRUST_MEMBER
-              },
-              nextInChain: {
-                direction: ActivityDirection.Forward,
-                content: {
-                  actor: trustedMember
-                }
-              }
-            }
-          };
-          return [...memo, newActivity];
-        }
-        case OperationType.INVITE:
-          // We do not display any activity for Invite operations.
-          return memo;
-        default:
-          // Shouldn't happen. Type assertion is because TypeScript also thinks
-          // this should never happen.
-          // TODO: ensure this error gets sent somewhere
-          console.error(
-            new Error(
-              `Invalid operation: Unrecognized opcode "${
-                (operation as Operation).op_code
-              }". Operation: ${JSON.stringify(operation)}`
-            )
-          );
-          return memo;
-      }
-    },
+    (memo, operation) => addOperationToActivitiesList(state, memo, operation),
     [] as Activity[]
   );
 }
