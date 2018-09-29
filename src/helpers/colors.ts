@@ -17,7 +17,7 @@ export const palette = {
   darkMint: "#509f6d",
 
   purple: "#6558f5",
-  palePurple: "#b0a6ed",
+  palePurple: "#c4bded",
 
   red: "#da3e52"
 };
