@@ -34,8 +34,6 @@ allprojects {
         // did this since react-native-camera wants an old version of google
         // play services for vision, which doesn't matter to this project
         resolutionStrategy.force "com.google.android.gms:play-services-base:15.0.1"
-        // TODO This otherwise resolves to 17.0.0. Why is that?
-        resolutionStrategy.force "com.google.firebase:firebase-iid:17.0.2"
     }
 }
 
