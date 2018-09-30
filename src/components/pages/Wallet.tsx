@@ -39,7 +39,7 @@ const MoneySection: React.StatelessComponent<Props> = ({ loggedInMember }) => {
   return (
     <React.Fragment>
       <View style={styles.financesSection}>
-        <View style={styles.moneyElement}>
+        <View>
           <Currency
             style={styles.balanceValue}
             currencyValue={{
@@ -51,7 +51,7 @@ const MoneySection: React.StatelessComponent<Props> = ({ loggedInMember }) => {
           <Text style={styles.numberLabel}>balance</Text>
         </View>
         <View style={styles.donationSection}>
-          <View style={styles.moneyElement}>
+          <View>
             <Currency
               style={styles.donationValue}
               currencyValue={{
@@ -210,8 +210,6 @@ const donationSectionStyle: ViewStyle = {
   flexDirection: "row",
   alignItems: "center"
 };
-const balanceSectionStyle: ViewStyle = {};
-const moneyElementStyle: ViewStyle = {};
 const mintButtonStyle: ViewStyle = { ...sectionSpacer };
 
 const pageStyle: ViewStyle = {
@@ -250,9 +248,7 @@ const styles = StyleSheet.create({
   sectionSpacer,
   mintButton: mintButtonStyle,
   financesSection: financesSectionStyle,
-  balanceSection: balanceSectionStyle,
   donationSection: donationSectionStyle,
-  moneyElement: moneyElementStyle,
   actionImage: actionImageStyle,
   actionsSection: actionsSectionStyle,
   actionsSectionGetVerifiedTextBlock: actionsSectionGetVerifiedTextBlockStyle,

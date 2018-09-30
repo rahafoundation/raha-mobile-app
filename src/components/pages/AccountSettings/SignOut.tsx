@@ -28,7 +28,7 @@ const SignOutPageView: React.StatelessComponent<Props> = (props: Props) => {
   );
 };
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     padding: 12
   },
