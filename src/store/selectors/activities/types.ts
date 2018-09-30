@@ -89,7 +89,9 @@ export interface NextInChain {
  */
 export interface ActivityContent {
   /**
-   * What member took action.
+   * What members took action. Stored as an OrderedMap in order to not keep
+   * duplicates. Would use an OrderedSet, but Immutable.JS doesn't support
+   * custom equality functions, so Map simulates equality by id.
    *
    * TODO: potentially support other special members than basic income, treat it
    * as an actual member/variation of it rather than a singleton
@@ -156,7 +158,8 @@ export interface Activity {
   /**
    * Operations involved in this activity, ordered by how they were ingested to
    * create this activity (should generally be chronological, since that's how
-   * we receive operations; but this may change).
+   * we receive operations; but this may change). Stored as a Map to allow quick
+   * retrieval of relevant operations.
    */
   operations: OrderedMap<Operation["id"], Operation>;
 }
