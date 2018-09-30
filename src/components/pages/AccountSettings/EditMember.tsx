@@ -1,7 +1,7 @@
 import * as React from "react";
 import { MapStateToProps, connect } from "react-redux";
 import { View, TextStyle, ViewStyle } from "react-native";
-import { NavigationScreenProp } from "react-navigation";
+import { NavigationScreenProps } from "react-navigation";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
@@ -23,11 +23,15 @@ import {
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 
-interface OwnProps {
-  navigation: NavigationScreenProp<{
-    editMemberApiCallId: string;
-  }>;
-}
+/**
+ * I'm not sure if there's a better way to do this.. but essentially I want to
+ * reset the apiCallStatus every time the user navigates to this page. The
+ * best way I could think to do this was to take the apiCallId as a navigation
+ * argument, so it gets reset every time navigate gets called to this page.
+ */
+type NavProps = NavigationScreenProps<{ editMemberApiCallId: string }>;
+
+type OwnProps = NavProps;
 
 interface StateProps {
   loggedInMember: Member;
