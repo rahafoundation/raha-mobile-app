@@ -117,6 +117,7 @@ const Actions: React.StatelessComponent<Props> = props => {
       )}
       {hasUnclaimedReferrals && (
         <Button
+          style={styles.button}
           title={"Claim invite bonuses!"}
           onPress={() => {
             navigation.navigate(RouteName.ReferralBonusPage, {
@@ -138,21 +139,23 @@ const Invite: React.StatelessComponent<Props> = props => {
   const { navigation } = props;
 
   return (
-    <View style={styles.inviteSection}>
-      <Text style={[styles.inviteSectionText, { ...fontSizes.large }]}>
+    <React.Fragment>
+      <Text style={[styles.inviteSectionText]}>
         You have nothing to mint at this time.
       </Text>
-      <Text style={styles.inviteSectionText}>
-        Invite a friend to earn 60 Raha:
-      </Text>
-      <Button
-        style={styles.inviteButton}
-        title="Invite"
-        onPress={() => {
-          navigation.navigate(RouteName.InvitePage);
-        }}
-      />
-    </View>
+      <View>
+        <Text style={styles.inviteSectionText}>
+          Invite a friend to earn 60 Raha:
+        </Text>
+        <Button
+          style={styles.button}
+          title="Invite"
+          onPress={() => {
+            navigation.navigate(RouteName.InvitePage);
+          }}
+        />
+      </View>
+    </React.Fragment>
   );
 };
 
@@ -178,16 +181,12 @@ const numberLabelStyle: TextStyle = {
   ...fontSizes.small
 };
 
-const inviteSectionStyle: TextStyle = {
-  textAlign: "center"
-};
-
 const inviteSectionTextStyle: TextStyle = {
   marginVertical: 12,
   textAlign: "center"
 };
 
-const inviteButtonStyle: ViewStyle = {
+const buttonStyle: ViewStyle = {
   marginVertical: 8
 };
 
@@ -239,6 +238,7 @@ const actionsSectionGetVerifiedTextBlockStyle: TextStyle = {
 };
 
 const actionImageStyle: ViewStyle = {
+  marginTop: 8,
   // shrink images to ensure screen doesn't overflow
   flex: -1,
   flexBasis: 200,
@@ -259,9 +259,8 @@ const styles = StyleSheet.create({
   balanceValue: balanceTextStyle,
   donationValue: donationTextStyle,
   numberLabel: numberLabelStyle,
-  inviteSection: inviteSectionStyle,
   inviteSectionText: inviteSectionTextStyle,
-  inviteButton: inviteButtonStyle
+  button: buttonStyle
 });
 
 const mapStateToProps: MapStateToProps<
