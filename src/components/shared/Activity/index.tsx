@@ -202,7 +202,10 @@ class ActivityContent extends React.Component<{
             * flows correctly in descriptions.
             */}
           <Text style={styles.description}>
-            {actors.map((actor, index) => {
+            {/* 
+              * Name at most the first three actors, and just summarize the rest
+              */}
+            {actors.slice(0, 3).map((actor, index) => {
               <MemberName member={actor} />;
               {
                 actors.length > 2 &&
@@ -217,6 +220,12 @@ class ActivityContent extends React.Component<{
                 );
               }
             })}
+            {actors.length > 3 && (
+              <Text>
+                and {actors.length - 3} other
+                {actors.length > 4 && "s"}
+              </Text>
+            )}
             {description && <MixedText content={description} />}
           </Text>
         </View>
