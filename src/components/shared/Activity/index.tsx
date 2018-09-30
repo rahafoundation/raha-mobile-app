@@ -186,14 +186,15 @@ class ActivityContent extends React.Component<{
   ownVideoElems: VideoWithPlaceholderView[] = [];
 
   public render() {
-    const { actor, description, body } = this.props.content;
+    const { actors, description, body } = this.props.content;
     return (
       <View>
         <View style={styles.actorRow}>
+          {/* TODO: don't just represent member by the first actor; support multiple actors. */}
           <MemberThumbnail
             style={styles.actorThumbnail}
             diameter={leftColumnWidth}
-            member={actor}
+            member={actors[0]}
           />
           {/*
             * Everything in the description must ultimately be Text elements, or
@@ -201,7 +202,21 @@ class ActivityContent extends React.Component<{
             * flows correctly in descriptions.
             */}
           <Text style={styles.description}>
-            <MemberName member={actor} />
+            {actors.map((actor, index) => {
+              <MemberName member={actor} />;
+              {
+                actors.length > 2 &&
+                  index < actors.length - 2 && <Text>, </Text>;
+              }
+              {
+                index === actors.length - 2 && (
+                  <Text>
+                    {actors.length === 2 && " "}
+                    and{" "}
+                  </Text>
+                );
+              }
+            })}
             {description && <MixedText content={description} />}
           </Text>
         </View>
