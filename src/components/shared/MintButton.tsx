@@ -1,6 +1,6 @@
 import { Big } from "big.js";
 import * as React from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import { StyleProp, ViewStyle, View } from "react-native";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
@@ -65,7 +65,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
       }
     : undefined;
   return (
-    <React.Fragment>
+    <View>
       <Button
         style={props.style}
         title={[mintText, ...(mintValue ? [mintValue] : [])]}
@@ -86,7 +86,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
           ]}
         />
       </Text>
-    </React.Fragment>
+    </View>
   );
 };
 

@@ -1,10 +1,11 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { ScrollView } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 
 import { signOut } from "../../../store/actions/authentication";
 import { Button, Text } from "../../shared/elements";
-import { styles } from "./styles";
+import { styles as sharedStyles } from "./styles";
+import { fontSizes } from "../../../helpers/fonts";
 
 interface OwnProps {}
 
@@ -17,15 +18,28 @@ type Props = DispatchProps & OwnProps;
 const SignOutPageView: React.StatelessComponent<Props> = (props: Props) => {
   const { signOut } = props;
   return (
-    <ScrollView style={styles.page}>
-      <Text style={styles.row}>
-        Sign out? You will have to receive an SMS one-time-password to sign in
-        to Raha again.
+    <ScrollView style={[sharedStyles.page, styles.container]}>
+      <Text style={styles.header}>Sign Out?</Text>
+      <Text style={styles.body}>
+        You will have to receive an SMS one-time-password to sign in again.
       </Text>
-      <Button style={styles.row} title="Sign Out" onPress={signOut} />
+      <Button title="Sign Out" onPress={signOut} />
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 12
+  },
+  header: {
+    marginVertical: 8,
+    ...fontSizes.large
+  },
+  body: {
+    marginBottom: 14
+  }
+});
 
 export const SignOutPage = connect(
   undefined,
