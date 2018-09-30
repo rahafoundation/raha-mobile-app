@@ -26,8 +26,8 @@
     "bumpVersion": "node scripts/incrementVersion.js"
   },
   "dependencies": {
-    "@raha/api": "^0.2.8",
-    "@raha/api-shared": "^0.1.11",
+    "@raha/api": "^0.2.9",
+    "@raha/api-shared": "^0.1.12",
     "appcenter": "^1.7.1",
     "big.js": "^5.1.2",
     "core-js": "^2.5.7",
