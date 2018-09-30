@@ -7,6 +7,7 @@ import { Omit } from "../../../../types/omit";
 import { LinkDestination } from "../../../components/shared/elements/TextLink";
 import { Operation } from "@raha/api-shared/dist/models/Operation";
 import { OrderedMap } from "immutable";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 /**
  * Represents the direction of the relationship between actors in an activity.
@@ -93,7 +94,7 @@ export interface ActivityContent {
    * TODO: potentially support other special members than basic income, treat it
    * as an actual member/variation of it rather than a singleton
    */
-  actors: (Member | typeof RAHA_BASIC_INCOME_MEMBER)[];
+  actors: OrderedMap<MemberId, Member> | typeof RAHA_BASIC_INCOME_MEMBER;
   /**
    * Description of the action they took. Currently rendered after the actor's
    * display name in the format of a complete sentence.
