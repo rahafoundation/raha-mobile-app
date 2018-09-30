@@ -12,13 +12,14 @@ const pageStyle: ViewStyle = {
 
 const rowStyle: ViewStyle = {
   marginTop: 12,
-  marginHorizontal: 12
+  marginHorizontal: 12,
+
+  flexDirection: "row"
 };
 
 const memberRowStyle: ViewStyle = {
   ...rowStyle,
 
-  flexDirection: "row",
   alignItems: "center",
   justifyContent: "flex-start"
 };

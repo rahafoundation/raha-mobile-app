@@ -48,6 +48,7 @@ import { Verify } from "../pages/Verify";
 import { processDeeplink, routeToPath } from "./Deeplinking";
 import branch from "react-native-branch";
 import { AccountSettingsPage } from "../pages/AccountSettings/AccountSettings";
+import { EditMemberPage } from "../pages/AccountSettings/EditMember";
 import { GovernancePage } from "../pages/AccountSettings/Governance";
 import { AccountRecoveryPage } from "../pages/AccountSettings/AccountRecovery";
 import { CurrencySettingsPage } from "../pages/AccountSettings/CurrencySettings";
@@ -113,6 +114,7 @@ export enum RouteName {
   ReferralBonusPage = "Referral Bonus",
   PendingInvitesPage = "Pending Invites",
   Verify = "Verify",
+  EditMemberPage = "Edit Member Page",
   Governance = "Governance",
   AccountRecovery = "Account Recovery",
   SignOut = "Sign Out",
@@ -380,6 +382,10 @@ const WalletTab = createNavigatorForTab(
 const ProfileTab = createNavigatorForTab(
   {
     [RouteName.ProfileTab]: Profile,
+    [RouteName.EditMemberPage]: {
+      screen: EditMemberPage,
+      navigationOptions: createHeaderNavigationOptions("Edit profile", true)
+    },
     [RouteName.AccountPage]: {
       screen: AccountSettingsPage,
       navigationOptions: createHeaderNavigationOptions("Account", true)

@@ -97,6 +97,14 @@ export class Member {
     return this.withFields({ lastOpCreatedAt });
   }
 
+  public editMember(fullName?: string, username?: string) {
+    const editFields = {
+      ...(fullName ? { fullName } : {}),
+      ...(username ? { username } : {})
+    };
+    return this.withFields(editFields);
+  }
+
   /* =======================
    * ACCOUNT BALANCE METHODS
    * =======================
@@ -212,6 +220,9 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
     );
   }
   if (operation.op_code === OperationType.CREATE_MEMBER) {
+    return true;
+  }
+  if (operation.op_code === OperationType.EDIT_MEMBER) {
     return true;
   }
   if (operation.op_code === OperationType.REQUEST_VERIFICATION) {
@@ -388,6 +399,15 @@ function applyOperation(
           newMember,
           ...(updatedInviter ? [updatedInviter] : [])
         ]);
+      }
+      case OperationType.EDIT_MEMBER: {
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        const { full_name, username } = operation.data;
+        const creator = newState.byMemberId.get(creator_uid) as Member;
+        return addMemberToState(
+          newState,
+          creator.editMember(full_name, username)
+        );
       }
       case OperationType.REQUEST_VERIFICATION: {
         const { to_uid } = operation.data;

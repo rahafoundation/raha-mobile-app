@@ -9,7 +9,8 @@ import {
   RequestVerificationOperation,
   VerifyOperation,
   GiveOperation,
-  TrustOperation
+  TrustOperation,
+  EditMemberOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 import {
@@ -103,6 +104,30 @@ function addCreateMemberOperationToActivites(
           media: [videoReferenceForMember(creatorMember as Member)]
         }
       }
+    },
+    operations: OrderedMap({ [operation.id]: operation })
+  };
+
+  return [...activities, newActivity];
+}
+
+function addEditMemberOperationToActivities(
+  state: RahaState,
+  activities: Activity[],
+  operation: EditMemberOperation
+): Activity[] {
+  const creatorMember = getOperationCreator(state, operation);
+  const description = operation.data.full_name
+    ? "edited their name."
+    : "edited their profile.";
+  const newActivity: Activity = {
+    id: operation.id,
+    timestamp: operation.created_at,
+    content: {
+      // type suggestions since GENESIS_MEMBER is only possible for
+      // VERIFY operations
+      actor: creatorMember as Member,
+      description: [description]
     },
     operations: OrderedMap({ [operation.id]: operation })
   };
@@ -407,6 +432,9 @@ function addOperationToActivitiesList(
   switch (operation.op_code) {
     case OperationType.CREATE_MEMBER: {
       return addCreateMemberOperationToActivites(state, activities, operation);
+    }
+    case OperationType.EDIT_MEMBER: {
+      return addEditMemberOperationToActivities(state, activities, operation);
     }
     case OperationType.REQUEST_VERIFICATION: {
       return addRequestVerificationOperationToActivites(

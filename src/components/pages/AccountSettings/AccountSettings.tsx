@@ -4,15 +4,27 @@ import { RouteName } from "../../shared/Navigation";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import { ScrollView } from "react-native";
 import { styles } from "./styles";
+import { generateRandomIdentifier } from "../../../helpers/identifiers";
 
 interface NavigationListItem {
   title: string;
   icon: string;
   // This is a method since RouteName enum is undefined on module load -- seems like a bug with babel or RN JS interpreter?
   getTarget: () => RouteName;
+  getParams?: () => any;
 }
 
 const SETTINGS_ITEMS: NavigationListItem[] = [
+  {
+    title: "Edit profile",
+    icon: "account-circle",
+    getTarget: () => RouteName.EditMemberPage,
+    getParams: () => {
+      return {
+        editMemberApiCallId: generateRandomIdentifier()
+      };
+    }
+  },
   {
     title: "Account recovery",
     icon: "help",
@@ -55,7 +67,12 @@ const AccountSettingsPageView: React.StatelessComponent<Props> = (
             key={item.title}
             title={item.title}
             leftIcon={{ name: item.icon }}
-            onPress={() => props.navigation.navigate(item.getTarget())}
+            onPress={() =>
+              props.navigation.navigate(
+                item.getTarget(),
+                item.getParams && item.getParams()
+              )
+            }
           />
         ))}
       </List>
