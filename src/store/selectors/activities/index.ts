@@ -1,4 +1,5 @@
 import { Big } from "big.js";
+import differenceInSeconds from "date-fns/differenceInSeconds";
 
 import {
   Operation,
@@ -281,11 +282,71 @@ function addGiveOperationToActivities(
   return activities.set(newActivity.id, newActivity);
 }
 
+function combineOperationWithMintActivity(
+  basicIncomeCache: Required<CombineActivitiesCache>["aggregateBasicIncome"],
+  existingActivity: Activity,
+  operation: MintOperation,
+  creatorMember: Member
+): {
+  combinedActivity: Activity;
+  newBasicIncomeCache: typeof basicIncomeCache;
+} {
+  if (existingActivity.content.actors === RAHA_BASIC_INCOME_MEMBER) {
+    throw new Error(
+      "Unexpected: RAHA_BASIC_INCOME_MEMBER was minting a basic income?"
+    );
+  }
+  const { runningTotal, operations } = basicIncomeCache;
+  const newTotal = runningTotal.add(operation.data.amount);
+  const newBasicIncomeCache: typeof basicIncomeCache = {
+    ...basicIncomeCache,
+    operations: operations.push(operation),
+    runningTotal: newTotal
+  };
+
+  const totalMinted: CurrencyValue = {
+    value: newTotal,
+    currencyType: CurrencyType.Raha,
+    role: CurrencyRole.Transaction
+  };
+
+  const combinedActivity: Activity = {
+    ...existingActivity,
+    // use the newest operation's timestamp
+    timestamp:
+      existingActivity.timestamp > operation.created_at
+        ? existingActivity.timestamp
+        : operation.created_at,
+    content: {
+      ...existingActivity.content,
+      // TODO: display "in the last x minutes/hours" as well
+      description: ["minted a total of", totalMinted, "of basic income."],
+      // TODO: show the most relevant members to the logged in member first, not
+      // just in the order they're found
+      // Only add the actor if they aren't already in the list, to prevent
+      // duplicates
+      actors: existingActivity.content.actors.set(
+        creatorMember.get("memberId"),
+        creatorMember
+      )
+    },
+    operations: existingActivity.operations.set(operation.id, operation)
+  };
+  return {
+    combinedActivity,
+    newBasicIncomeCache
+  };
+}
+
 function addMintOperationToActivities(
   state: RahaState,
+  combineActivitiesCache: CombineActivitiesCache,
   activities: OrderedMap<Activity["id"], Activity>,
   operation: MintOperation
-): OrderedMap<Activity["id"], Activity> {
+): {
+  activities: OrderedMap<Activity["id"], Activity>;
+  combineActivitiesCache: CombineActivitiesCache;
+} {
   // type suggestion since GENESIS_MEMBER is only possible for
   // VERIFY operations
   const creatorMember = getOperationCreator(state, operation) as Member;
@@ -298,6 +359,51 @@ function addMintOperationToActivities(
 
   switch (operation.data.type) {
     case MintType.BASIC_INCOME: {
+      // if cache is present, consider combining this basic income mint
+      // operation with existing activity
+      if (combineActivitiesCache.aggregateBasicIncome) {
+        // check if difference in time is too long before merging
+        const existingActivityId =
+          combineActivitiesCache.aggregateBasicIncome.aggregatedActivityId;
+        const existingActivity = activities.get(existingActivityId);
+        if (!existingActivity) {
+          // TODO: error handling that doesn't just kill the current mint operation?
+          throw new Error("Aggregation failed; existing activity missing");
+        }
+
+        if (
+          differenceInSeconds(
+            operation.created_at,
+            existingActivity.timestamp
+          ) < MAX_MINT_SECONDS
+        ) {
+          // difference short enough—merge it
+          const newData = combineOperationWithMintActivity(
+            combineActivitiesCache.aggregateBasicIncome,
+            existingActivity,
+            operation,
+            creatorMember
+          );
+          return {
+            activities: activities.set(
+              existingActivityId,
+              newData.combinedActivity
+            ),
+            combineActivitiesCache: {
+              ...combineActivitiesCache,
+              aggregateBasicIncome: newData.newBasicIncomeCache
+            }
+          };
+        }
+      }
+
+      // either nothing to merge since cache was empty, or difference was too
+      // long. Reset the cache and create a new activity
+      const newBasicIncomeCache: typeof combineActivitiesCache.aggregateBasicIncome = {
+        aggregatedActivityId: operation.id,
+        runningTotal: amountMinted.value,
+        operations: List([operation])
+      };
       const newActivity: Activity = {
         id: operation.id,
         timestamp: operation.created_at,
@@ -313,14 +419,20 @@ function addMintOperationToActivities(
             nextInChain: {
               direction: ActivityDirection.NonDirectional,
               nextActivityContent: {
-                actors: [RAHA_BASIC_INCOME_MEMBER]
+                actors: RAHA_BASIC_INCOME_MEMBER
               }
             }
           }
         },
         operations: OrderedMap({ [operation.id]: operation })
       };
-      return activities.set(newActivity.id, newActivity);
+      return {
+        activities: activities.set(newActivity.id, newActivity),
+        combineActivitiesCache: {
+          ...combineActivitiesCache,
+          aggregateBasicIncome: newBasicIncomeCache
+        }
+      };
     }
     case MintType.REFERRAL_BONUS: {
       const invitedMember = getMemberById(
@@ -333,7 +445,10 @@ function addMintOperationToActivities(
             operation.data.invited_member_id
           }) missing, invalid.`
         );
-        return activities;
+        return {
+          activities,
+          combineActivitiesCache
+        };
       }
       const newActivity: Activity = {
         id: operation.id,
@@ -364,7 +479,10 @@ function addMintOperationToActivities(
         },
         operations: OrderedMap({ [operation.id]: operation })
       };
-      return activities.set(newActivity.id, newActivity);
+      return {
+        activities: activities.set(newActivity.id, newActivity),
+        combineActivitiesCache
+      };
     }
     default:
       // Shouldn't happen. Type assertion is because TypeScript also thinks
@@ -376,7 +494,10 @@ function addMintOperationToActivities(
             .data.type as MintType}". Operation: ${JSON.stringify(operation)}`
         )
       );
-      return activities;
+      return {
+        activities,
+        combineActivitiesCache
+      };
   }
 }
 
@@ -470,10 +591,12 @@ function addOperationToActivitiesList(
       };
     }
     case OperationType.MINT: {
-      return {
-        activities: addMintOperationToActivities(state, activities, operation),
-        combineActivitiesCache
-      };
+      return addMintOperationToActivities(
+        state,
+        combineActivitiesCache,
+        activities,
+        operation
+      );
     }
     case OperationType.TRUST: {
       return {
