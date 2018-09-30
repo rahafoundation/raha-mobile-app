@@ -585,14 +585,12 @@ function activityContentContainsMember(
   memberId: MemberId | typeof RAHA_BASIC_INCOME_MEMBER
 ): boolean {
   if (memberId === RAHA_BASIC_INCOME_MEMBER) {
-    if (content.actors.includes(RAHA_BASIC_INCOME_MEMBER)) {
+    if (content.actors === RAHA_BASIC_INCOME_MEMBER) {
       return true;
     }
   } else if (
-    content.actors
-      .filter(a => a !== RAHA_BASIC_INCOME_MEMBER)
-      .map(a => (a as Member).get("memberId"))
-      .includes(memberId)
+    content.actors !== RAHA_BASIC_INCOME_MEMBER &&
+    content.actors.map(a => (a as Member).get("memberId")).includes(memberId)
   ) {
     return true;
   }
