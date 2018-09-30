@@ -488,7 +488,8 @@ const MAX_MINT_SECONDS = 3 * 60 * 60; // 3 hours
 interface CombineActivitiesCache {
   // aggregation policy: combine all mint operations whose timestamps are
   // between the first collected one, to the MAX_MINT_SECONDS later.
-  aggregateBasicIncome: {
+  aggregateBasicIncome?: {
+    aggregatedActivityId: Activity["id"];
     operations: List<MintOperation>;
     runningTotal: Big;
   };
@@ -510,10 +511,6 @@ export function convertOperationsToActivities(
   state: RahaState,
   operations: List<Operation>
 ): Activity[] {
-  const initialCombineActivitiesCache: CombineActivitiesCache = {
-    aggregateBasicIncome: { operations: List(), runningTotal: new Big(0) }
-  };
-
   return operations
     .reduce(
       (memo, operation) => {
@@ -535,7 +532,7 @@ export function convertOperationsToActivities(
       },
       {
         activities: OrderedMap<Activity["id"], Activity>(),
-        combineActivitiesCache: initialCombineActivitiesCache
+        combineActivitiesCache: {} as CombineActivitiesCache
       }
     )
     .activities.valueSeq()
