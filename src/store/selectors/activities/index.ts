@@ -90,6 +90,9 @@ function addCreateMemberOperationToActivites(
   // type suggestion since GENESIS_MEMBER is only possible for
   // VERIFY operations
   const creatorMember = getOperationCreator(state, operation) as Member;
+  const inviterId = operation.data.request_invite_from_member_id;
+  const inviter = inviterId ? getMemberById(state, inviterId) : undefined;
+
   const newActivity: Activity = {
     id: operation.id,
     timestamp: operation.created_at,
@@ -100,7 +103,18 @@ function addCreateMemberOperationToActivites(
         bodyContent: {
           type: BodyType.MEDIA,
           media: [videoReferenceForMember(creatorMember)]
-        }
+        },
+        ...(inviter
+          ? {
+              nextInChain: {
+                direction: ActivityDirection.Bidirectional,
+                nextActivityContent: {
+                  actor: inviter,
+                  description: ["invited them to join Raha."]
+                }
+              }
+            }
+          : {})
       }
     },
     operations: OrderedMap({ [operation.id]: operation })
@@ -424,7 +438,9 @@ function addOperationToActivitiesList(
       return addTrustOperationToActivities(state, activities, operation);
     }
     case OperationType.INVITE:
-      // We do not display any activity for Invite operations.
+      // We do not display any activity for Invite operations. Whether or not
+      // a newly joined member was invited, is retrieved from the
+      // `request_invite_from_member_id` field on the `CREATE_MEMBER` operation.
       return activities;
     default:
       // Shouldn't happen. Type assertion is because TypeScript also thinks
