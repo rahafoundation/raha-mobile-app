@@ -319,7 +319,6 @@ function combineOperationWithMintActivity(
         : operation.created_at,
     content: {
       ...existingActivity.content,
-      // TODO: display "in the last x minutes/hours" as well
       description: ["minted a total of", totalMinted, "of basic income."],
       // TODO: show the most relevant members to the logged in member first, not
       // just in the order they're found
