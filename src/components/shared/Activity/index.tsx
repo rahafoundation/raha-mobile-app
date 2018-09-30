@@ -28,6 +28,11 @@ import { TextLink } from "../elements/TextLink";
 import { ArrowHeadDirection, ArrowHead } from "./ArrowHead";
 import { MixedText } from "../elements/MixedText";
 import { styles, leftColumnWidth, chainIndicatorColor } from "./styles";
+import {
+  RAHA_BASIC_INCOME_MEMBER,
+  Member
+} from "../../../store/reducers/members";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 type Props = {
   activity: ActivityData;
@@ -187,6 +192,11 @@ class ActivityContent extends React.Component<{
 
   public render() {
     const { actors, description, body } = this.props.content;
+    const actorsArray: [typeof RAHA_BASIC_INCOME_MEMBER] | Member[] =
+      actors === RAHA_BASIC_INCOME_MEMBER
+        ? [actors]
+        : actors.valueSeq().toArray();
+    const numActors = actorsArray.length;
     return (
       <View>
         <View style={styles.actorRow}>
@@ -194,7 +204,7 @@ class ActivityContent extends React.Component<{
           <MemberThumbnail
             style={styles.actorThumbnail}
             diameter={leftColumnWidth}
-            member={actors[0]}
+            member={actorsArray[0]}
           />
           {/*
             * Everything in the description must ultimately be Text elements, or
@@ -205,25 +215,33 @@ class ActivityContent extends React.Component<{
             {/* 
               * Name at most the first three actors, and just summarize the rest
               */}
-            {actors.slice(0, 3).map((actor, index) => {
-              <MemberName member={actor} />;
-              {
-                actors.length > 2 &&
-                  index < actors.length - 2 && <Text>, </Text>;
-              }
-              {
-                index === actors.length - 2 && (
-                  <Text>
-                    {actors.length === 2 && " "}
-                    and{" "}
-                  </Text>
+            {actorsArray[0] === RAHA_BASIC_INCOME_MEMBER ? (
+              <MemberName member={RAHA_BASIC_INCOME_MEMBER} />
+            ) : (
+              (actorsArray as Member[]).slice(0, 3).map((actor, index) => {
+                const insertComma =
+                  numActors > 2 && index < Math.min(numActors, 4) - 2;
+                const insertAnd =
+                  numActors > 1 && index === Math.min(numActors, 4) - 2;
+                return (
+                  <React.Fragment key={index}>
+                    <MemberName member={actor} />
+                    {insertComma && <Text>, </Text>}
+                    {insertAnd && (
+                      <Text>
+                        {!insertComma && " "}
+                        and{" "}
+                      </Text>
+                    )}
+                  </React.Fragment>
                 );
-              }
-            })}
-            {actors.length > 3 && (
+              })
+            )}
+            {/* TODO: make this clickable to see the list */}
+            {numActors > 3 && (
               <Text>
-                and {actors.length - 3} other
-                {actors.length > 4 && "s"}
+                {numActors - 3} other
+                {numActors > 4 ? "s" : " person"}
               </Text>
             )}
             {description && <MixedText content={description} />}
