@@ -84,9 +84,9 @@ function getOperationCreator(
 
 function addCreateMemberOperationToActivites(
   state: RahaState,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: CreateMemberOperation
-): Activity[] {
+): OrderedMap<Activity["id"], Activity> {
   // type suggestion since GENESIS_MEMBER is only possible for
   // VERIFY operations
   const creatorMember = getOperationCreator(state, operation) as Member;
@@ -120,14 +120,14 @@ function addCreateMemberOperationToActivites(
     operations: OrderedMap({ [operation.id]: operation })
   };
 
-  return [...activities, newActivity];
+  return activities.set(newActivity.id, newActivity);
 }
 
 function addRequestVerificationOperationToActivites(
   state: RahaState,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: RequestVerificationOperation
-): Activity[] {
+): OrderedMap<Activity["id"], Activity> {
   // type suggestion since GENESIS_MEMBER is only possible for
   // VERIFY operations
   const creatorMember = getOperationCreator(state, operation) as Member;
@@ -161,14 +161,14 @@ function addRequestVerificationOperationToActivites(
     },
     operations: OrderedMap({ [operation.id]: operation })
   };
-  return [...activities, newActivity];
+  return activities.set(newActivity.id, newActivity);
 }
 
 function addVerifyOperationToActivities(
   state: RahaState,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: VerifyOperation
-): Activity[] {
+): OrderedMap<Activity["id"], Activity> {
   const creatorMember = getOperationCreator(state, operation);
   const verifiedMember = getMemberById(state, operation.data.to_uid);
   if (!verifiedMember) {
@@ -206,14 +206,14 @@ function addVerifyOperationToActivities(
     },
     operations: OrderedMap({ [operation.id]: operation })
   };
-  return [...activities, newActivity];
+  return activities.set(newActivity.id, newActivity);
 }
 
 function addGiveOperationToActivities(
   state: RahaState,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: GiveOperation
-): Activity[] {
+): OrderedMap<Activity["id"], Activity> {
   // type suggestion since GENESIS_MEMBER is only possible for
   // VERIFY operations
   const creatorMember = getOperationCreator(state, operation) as Member;
@@ -272,14 +272,14 @@ function addGiveOperationToActivities(
     },
     operations: OrderedMap({ [operation.id]: operation })
   };
-  return [...activities, newActivity];
+  return activities.set(newActivity.id, newActivity);
 }
 
 function addMintOperationToActivities(
   state: RahaState,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: MintOperation
-): Activity[] {
+): OrderedMap<Activity["id"], Activity> {
   // type suggestion since GENESIS_MEMBER is only possible for
   // VERIFY operations
   const creatorMember = getOperationCreator(state, operation) as Member;
@@ -312,7 +312,7 @@ function addMintOperationToActivities(
         },
         operations: OrderedMap({ [operation.id]: operation })
       };
-      return [...activities, newActivity];
+      return activities.set(newActivity.id, newActivity);
     }
     case MintType.REFERRAL_BONUS: {
       const invitedMember = getMemberById(
@@ -352,7 +352,7 @@ function addMintOperationToActivities(
         },
         operations: OrderedMap({ [operation.id]: operation })
       };
-      return [...activities, newActivity];
+      return activities.set(newActivity.id, newActivity);
     }
     default:
       // Shouldn't happen. Type assertion is because TypeScript also thinks
@@ -370,9 +370,9 @@ function addMintOperationToActivities(
 
 function addTrustOperationToActivities(
   state: RahaState,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: TrustOperation
-): Activity[] {
+): OrderedMap<Activity["id"], Activity> {
   // type suggestion since GENESIS_MEMBER is only possible for
   // VERIFY operations
   const creatorMember = getOperationCreator(state, operation) as Member;
@@ -406,16 +406,16 @@ function addTrustOperationToActivities(
     },
     operations: OrderedMap({ [operation.id]: operation })
   };
-  return [...activities, newActivity];
+  return activities.set(newActivity.id, newActivity);
 }
 
 function addOperationToActivitiesList(
   state: RahaState,
   combineActivitiesCache: CombineActivitiesCache,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: Operation
 ): {
-  activities: Activity[];
+  activities: OrderedMap<Activity["id"], Activity>;
   combineActivitiesCache: CombineActivitiesCache;
 } {
   switch (operation.op_code) {
@@ -537,12 +537,9 @@ export function convertOperationsToActivities(
         activities: OrderedMap<Activity["id"], Activity>(),
         combineActivitiesCache: initialCombineActivitiesCache
       }
-    },
-    {
-      activities: [] as Activity[],
-      combineActivitiesCache: initialCombineActivitiesCache
-    }
-  ).activities;
+    )
+    .activities.valueSeq()
+    .toArray();
 }
 
 /**
