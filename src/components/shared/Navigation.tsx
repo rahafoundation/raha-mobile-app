@@ -4,7 +4,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextStyle,
-  ViewStyle
+  ViewStyle,
+  View
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { createBottomTabNavigator } from "react-navigation-tabs";
@@ -163,9 +164,8 @@ const headerButtonLabelStyle: TextStyle = {
 };
 
 const headerButtonStyle: TextStyle = {
-  backgroundColor: palette.mint,
-  paddingHorizontal: 0,
-  paddingVertical: 5
+  flexDirection: "row",
+  alignItems: "center"
 };
 
 const styles = StyleSheet.create({
@@ -249,12 +249,13 @@ type HeaderProps = {
 function inviteButton(navigation: any) {
   return (
     <React.Fragment>
-      <Icon style={styles.headerButtonLabel} name="envelope" solid />
       <TouchableOpacity
+        style={styles.headerButton}
         onPress={() => {
           navigation.navigate(RouteName.InvitePage);
         }}
       >
+        <Icon style={styles.headerButtonLabel} name="envelope" solid />
         <Text style={styles.headerButtonLabel}>Invite</Text>
       </TouchableOpacity>
     </React.Fragment>
@@ -265,13 +266,14 @@ function giveButton(navigation: any) {
   return (
     <React.Fragment>
       <TouchableOpacity
+        style={styles.headerButton}
         onPress={() => {
           navigation.navigate(RouteName.GivePage);
         }}
       >
         <Text style={styles.headerButtonLabel}>Give</Text>
+        <Icon style={styles.headerButtonLabel} name="paper-plane" solid />
       </TouchableOpacity>
-      <Icon style={styles.headerButtonLabel} name="paper-plane" solid />
     </React.Fragment>
   );
 }
