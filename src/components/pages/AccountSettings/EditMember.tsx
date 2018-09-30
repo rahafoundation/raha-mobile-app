@@ -75,17 +75,11 @@ class EditMemberPageView extends React.Component<Props, State> {
     const currentUsername = loggedInMember.get("username");
     const currentFullName = loggedInMember.get("fullName");
 
-    if (newName === currentFullName) {
-      this.setState({
-        fullName: newName,
-        username: currentUsername
-      });
-    } else {
-      this.setState({
-        fullName: newName,
-        username: getUsername(newName)
-      });
-    }
+    this.setState({
+      fullName: newName,
+      username:
+        newName === currentFullName ? currentUsername : getUsername(newName)
+    });
   };
 
   onSubmitUpdate = () => {
