@@ -98,7 +98,7 @@ export const LeaderBoardView: React.StatelessComponent<Props> = ({
                 {index + 1}
               </Text>
               <MemberThumbnail member={member} />
-              <Text style={{ margin: 8, flex: 6, alignSelf: "stretch" }}>
+              <Text style={{ margin: 8, flex: 5, alignSelf: "stretch" }}>
                 {member.get("fullName")}
               </Text>
               <Text style={{ flex: 1, alignSelf: "stretch" }}>{item[1]}</Text>
