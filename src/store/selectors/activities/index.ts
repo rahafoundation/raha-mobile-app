@@ -97,7 +97,7 @@ function addCreateMemberOperationToActivites(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      actor: creatorMember,
+      actors: [creatorMember],
       description: ["just joined Raha!"],
       body: {
         bodyContent: {
@@ -109,7 +109,7 @@ function addCreateMemberOperationToActivites(
               nextInChain: {
                 direction: ActivityDirection.Bidirectional,
                 nextActivityContent: {
-                  actor: inviter,
+                  actors: [inviter],
                   description: ["invited them to join Raha."]
                 }
               }
@@ -144,7 +144,7 @@ function addRequestVerificationOperationToActivites(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      actor: creatorMember,
+      actors: [creatorMember],
       description: ["requested a friend to verify their account."],
       body: {
         bodyContent: {
@@ -154,7 +154,7 @@ function addRequestVerificationOperationToActivites(
         nextInChain: {
           direction: ActivityDirection.NonDirectional,
           nextActivityContent: {
-            actor: requestedMember
+            actors: [requestedMember]
           }
         }
       }
@@ -188,7 +188,7 @@ function addVerifyOperationToActivities(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      actor: creatorMember,
+      actors: [creatorMember],
       description: ["verified their friend's account!"],
       body: {
         bodyContent: {
@@ -199,7 +199,7 @@ function addVerifyOperationToActivities(
         nextInChain: {
           direction: ActivityDirection.Forward,
           nextActivityContent: {
-            actor: verifiedMember
+            actors: [verifiedMember]
           }
         }
       }
@@ -241,7 +241,7 @@ function addGiveOperationToActivities(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      actor: creatorMember,
+      actors: [creatorMember],
       description: ["gave", amountGiven, "for"],
       body: {
         bodyContent: {
@@ -251,7 +251,7 @@ function addGiveOperationToActivities(
         nextInChain: {
           direction: ActivityDirection.Forward,
           nextActivityContent: {
-            actor: givenToMember,
+            actors: [givenToMember],
             description: ["donated", amountDonated],
             // TODO: make this configurable
             body: {
@@ -262,7 +262,7 @@ function addGiveOperationToActivities(
               nextInChain: {
                 direction: ActivityDirection.Forward,
                 nextActivityContent: {
-                  actor: RAHA_BASIC_INCOME_MEMBER
+                  actors: [RAHA_BASIC_INCOME_MEMBER]
                 }
               }
             }
@@ -296,7 +296,7 @@ function addMintOperationToActivities(
         id: operation.id,
         timestamp: operation.created_at,
         content: {
-          actor: creatorMember,
+          actors: [creatorMember],
           description: ["minted", amountMinted, "of basic income."],
           body: {
             bodyContent: {
@@ -305,7 +305,7 @@ function addMintOperationToActivities(
             nextInChain: {
               direction: ActivityDirection.NonDirectional,
               nextActivityContent: {
-                actor: RAHA_BASIC_INCOME_MEMBER
+                actors: [RAHA_BASIC_INCOME_MEMBER]
               }
             }
           }
@@ -331,7 +331,7 @@ function addMintOperationToActivities(
         id: operation.id,
         timestamp: operation.created_at,
         content: {
-          actor: creatorMember,
+          actors: [creatorMember],
           description: [
             "minted",
             amountMinted,
@@ -345,7 +345,7 @@ function addMintOperationToActivities(
             nextInChain: {
               direction: ActivityDirection.Bidirectional,
               nextActivityContent: {
-                actor: invitedMember
+                actors: [invitedMember]
               }
             }
           }
@@ -390,7 +390,7 @@ function addTrustOperationToActivities(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      actor: creatorMember,
+      actors: [creatorMember],
       description: ["trusted a new friend"],
       body: {
         bodyContent: {
@@ -399,7 +399,7 @@ function addTrustOperationToActivities(
         nextInChain: {
           direction: ActivityDirection.Forward,
           nextActivityContent: {
-            actor: trustedMember
+            actors: [trustedMember]
           }
         }
       }
@@ -566,11 +566,16 @@ function activityContentContainsMember(
   content: ActivityContent,
   memberId: MemberId | typeof RAHA_BASIC_INCOME_MEMBER
 ): boolean {
-  if (content.actor === RAHA_BASIC_INCOME_MEMBER) {
-    if (memberId === RAHA_BASIC_INCOME_MEMBER) {
+  if (memberId === RAHA_BASIC_INCOME_MEMBER) {
+    if (content.actors.includes(RAHA_BASIC_INCOME_MEMBER)) {
       return true;
     }
-  } else if (content.actor.get("memberId") === memberId) {
+  } else if (
+    content.actors
+      .filter(a => a !== RAHA_BASIC_INCOME_MEMBER)
+      .map(a => (a as Member).get("memberId"))
+      .includes(memberId)
+  ) {
     return true;
   }
 
