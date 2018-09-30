@@ -60,7 +60,7 @@ export class InviteCameraView extends React.Component<InviteCameraProps> {
 const styles = StyleSheet.create({
   name: {
     ...fonts.Lato.Bold,
-    ...fontSizes.large
+    ...fontSizes.medium
   },
   promptHeader: {
     fontSize: 10,

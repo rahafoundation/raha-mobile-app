@@ -13,7 +13,7 @@ const body: ViewStyle = {
 };
 
 const paragraph: TextStyle = {
-  ...fontSizes.large,
+  ...fontSizes.medium,
   marginVertical: 4,
   marginHorizontal: 40,
   textAlign: "center"
@@ -30,7 +30,7 @@ const back: TextStyle = {
 };
 
 const header: TextStyle = {
-  ...fontSizes.xlarge,
+  ...fontSizes.large,
   ...fonts.Lato.Bold,
   marginVertical: 15,
   textAlign: "center"

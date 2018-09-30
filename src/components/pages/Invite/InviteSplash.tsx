@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View } from "react-native";
+import { View, Image } from "react-native";
 import { Text, Button } from "../../shared/elements";
 import { styles } from "./styles";
 
@@ -16,6 +16,16 @@ export const InviteSplash: React.StatelessComponent<Props> = props => {
       </Text>
       <View style={styles.body}>
         <Text style={styles.header}>Invite a friend</Text>
+        <Image
+          resizeMode="contain"
+          style={{
+            // shrink images to ensure screen doesn't overflow
+            flex: -1,
+            flexBasis: 200,
+            maxWidth: "100%"
+          }}
+          source={require("../../../assets/img/Invite.png")}
+        />
         <Text style={styles.paragraph}>
           Currently, the network referral bonus is 60 Raha - meaning you can
           mint an extra 60 Raha for every friend that joins!
