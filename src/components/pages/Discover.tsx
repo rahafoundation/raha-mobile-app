@@ -186,9 +186,13 @@ function getCard(
               source={info.image_source}
             />
           )}
-          <Text style={[styles.bodyText, { flex: 2 }]}>{info.body}</Text>
+          <View style={{ flex: 2 }}>
+            <Text style={[styles.bodyText]}>{info.body}</Text>
+            {info.action && (
+              <Text style={styles.actionText}>{info.action}</Text>
+            )}
+          </View>
         </View>
-        {info.action && <Text style={styles.actionText}>{info.action}</Text>}
       </View>
     </TouchableHighlight>
   );
