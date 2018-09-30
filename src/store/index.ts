@@ -6,31 +6,28 @@ import { Set as ImmutableSet, Map as ImmutableMap } from "immutable";
 
 import { rootReducer, RahaState } from "./persistedReducer";
 import { RahaAction } from "./actions";
-import { analytics } from '../firebaseInit';
-import { ApiCallsActionType } from './actions/apiCalls';
+import { analytics } from "../firebaseInit";
+import { ApiCallsActionType } from "./actions/apiCalls";
 
 const API_CALL_LOGGED_PROPS = ImmutableSet(["endpoint"]);
 
 const ACTION_TYPES_TO_LOGGED_PROPS = ImmutableMap([
   [ApiCallsActionType.STARTED, API_CALL_LOGGED_PROPS],
   [ApiCallsActionType.SUCCESS, API_CALL_LOGGED_PROPS],
-  [ApiCallsActionType.FAILURE, API_CALL_LOGGED_PROPS],
+  [ApiCallsActionType.FAILURE, API_CALL_LOGGED_PROPS]
 ]) as ImmutableMap<string, ImmutableSet<string>>;
 
 const logger: Middleware = store => next => action => {
   let logged_props = ACTION_TYPES_TO_LOGGED_PROPS.get(action.type);
-  if (logged_props) {
+  if (!!logged_props) {
     const to_log = Object.keys(action)
-      .filter(key => logged_props.has(key))
-      .reduce((obj, key) => {
-        obj[key] = action[key];
-        return obj;
-      }, {});
-    const event = action.type.replace('.', '_');
+      .filter(key => logged_props && logged_props.has(key))
+      .reduce((obj, key) => ({ ...obj, [key]: action[key] }), {});
+    const event = action.type.replace(".", "_");
     analytics.logEvent(event, to_log);
   }
   return next(action);
-}
+};
 
 export const store = createStore<
   RahaState & PersistPartial,

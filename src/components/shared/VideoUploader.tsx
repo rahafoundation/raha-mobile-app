@@ -105,7 +105,7 @@ export class VideoUploader extends React.Component<
     // TODO figure out why local fetch is broken.
     // const response = await fetch(videoUri);
     // const blob = await response.blob();
-    //@ts-ignore Blob does not have data type
+    // (@)ts-ignore Blob does not have data type
     // if (blob.data.size > MAX_VIDEO_SIZE) {
     //   this.props.onError(
     //     "Error: Video Upload",
@@ -117,14 +117,14 @@ export class VideoUploader extends React.Component<
     // }
 
     // const metadata = {
-    //   //@ts-ignore Expo Blob does not have data type
+    //   // (@)ts-ignore Expo Blob does not have data type
     //   contentType: blob.data.type
     // };
 
-    const videoUploadTask = videoUploadRef.put(videoUri, {
+    const videoUploadTask = videoUploadRef.putFile(videoUri, {
       contentType: "video/mp4"
     });
-    const thumbnailUploadTask = thumbnailUploadRef.put(thumbnailUri, {
+    const thumbnailUploadTask = thumbnailUploadRef.putFile(thumbnailUri, {
       contentType: "image/jpeg"
     });
     await Promise.all([videoUploadTask, thumbnailUploadTask]);

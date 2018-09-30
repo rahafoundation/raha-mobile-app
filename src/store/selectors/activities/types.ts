@@ -77,11 +77,16 @@ export type ActivityBody =
   | { type: BodyType.MINT_BASIC_INCOME }
   | { type: BodyType.TRUST_MEMBER };
 
+export interface NextInChain {
+  direction: ActivityDirection;
+  nextActivityContent: ActivityContent;
+}
+
 /**
  * The content of an Activity. Missing some metadata that makes a complete,
  * renderable Activity.
  */
-export type ActivityContent = {
+export interface ActivityContent {
   /**
    * What member took action.
    *
@@ -94,26 +99,22 @@ export type ActivityContent = {
    * display name in the format of a complete sentence.
    */
   description?: (string | CurrencyValue)[];
-} & (
-  | {}
-  // This union type enforces that if a body is present, there must be a next
-  // activity in the chain. If this turns out to be too restrictive, we can
-  // loosen the requirement.
-  | {
-      /**
-       * A larger, detailed body describing (in text) or representing (visually) the
-       * action.
-       */
-      body: ActivityBody;
-      /**
-       * If this is a chained activity, the next piece of content that has occurred
-       * in the chain.
-       */
-      nextInChain: {
-        direction: ActivityDirection;
-        content: ActivityContent;
-      };
-    });
+  /**
+   * A larger, detailed body describing (in text) or representing (visually) the
+   * action.
+   *
+   * Currently, a body is required if there is to be further chained content. If
+   * that is too restrictive, we can relax that restriction, but it will likely
+   * require a visual redesign as well.
+   */
+  body?: {
+    bodyContent: ActivityBody;
+    /**
+     * The next piece of content in the chain of activities.
+     */
+    nextInChain?: NextInChain;
+  };
+}
 
 /**
  * A renderable link that directs a user to an action they can take.
@@ -151,5 +152,10 @@ export interface Activity {
   timestamp: Date;
   content: ActivityContent;
   callToAction?: ActivityCallToAction;
+  /**
+   * Operations involved in this activity, ordered by how they were ingested to
+   * create this activity (should generally be chronological, since that's how
+   * we receive operations; but this may change).
+   */
   operations: OrderedMap<Operation["id"], Operation>;
 }

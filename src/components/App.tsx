@@ -17,11 +17,11 @@ const onBeforeLift = async () => {
   await refreshMembers()(store.dispatch, store.getState, undefined);
 };
 
-class AppRoot extends React.Component {
+class AppRoot extends React.Component<{}> {
   shouldRefreshOnNextForeground: boolean;
 
-  constructor() {
-    super();
+  constructor(props: {}) {
+    super(props);
     // First refresh is from PersistGate#onBeforeLift
     this.shouldRefreshOnNextForeground = false;
   }

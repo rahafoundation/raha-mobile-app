@@ -98,8 +98,10 @@ function addCreateMemberOperationToActivites(
       actor: creatorMember as Member,
       description: ["just joined Raha!"],
       body: {
-        type: BodyType.MEDIA,
-        media: [videoReferenceForMember(creatorMember as Member)]
+        bodyContent: {
+          type: BodyType.MEDIA,
+          media: [videoReferenceForMember(creatorMember as Member)]
+        }
       }
     },
     operations: OrderedMap({ [operation.id]: operation })
@@ -132,13 +134,15 @@ function addRequestVerificationOperationToActivites(
       actor: creatorMember as Member,
       description: ["requested a friend to verify their account."],
       body: {
-        type: BodyType.MEDIA,
-        media: [videoReferenceForMember(creatorMember as Member)]
-      },
-      nextInChain: {
-        direction: ActivityDirection.NonDirectional,
-        content: {
-          actor: requestedMember
+        bodyContent: {
+          type: BodyType.MEDIA,
+          media: [videoReferenceForMember(creatorMember as Member)]
+        },
+        nextInChain: {
+          direction: ActivityDirection.NonDirectional,
+          nextActivityContent: {
+            actor: requestedMember
+          }
         }
       }
     },
@@ -174,13 +178,16 @@ function addVerifyOperationToActivities(
       actor: creatorMember,
       description: ["verified their friend's account!"],
       body: {
-        type: BodyType.MEDIA,
-        media: [videoReferenceForUri(operation.data.video_url)]
-      },
-      nextInChain: {
-        direction: ActivityDirection.Forward,
-        content: {
-          actor: verifiedMember
+        bodyContent: {
+          type: BodyType.MEDIA,
+          media: [videoReferenceForUri(operation.data.video_url)]
+        },
+
+        nextInChain: {
+          direction: ActivityDirection.Forward,
+          nextActivityContent: {
+            actor: verifiedMember
+          }
         }
       }
     },
@@ -223,21 +230,28 @@ function addGiveOperationToActivities(
       // VERIFY operations
       actor: creatorMember as Member,
       description: ["gave", amountGiven, "for"],
-      body: { type: BodyType.TEXT, text: operation.data.memo },
-      nextInChain: {
-        direction: ActivityDirection.Forward,
-        content: {
-          actor: givenToMember,
-          description: ["donated", amountDonated],
-          // TODO: make this configurable
-          body: {
-            type: BodyType.TEXT,
-            text: "Because every life has value"
-          },
-          nextInChain: {
-            direction: ActivityDirection.Forward,
-            content: {
-              actor: RAHA_BASIC_INCOME_MEMBER
+      body: {
+        bodyContent: {
+          type: BodyType.TEXT,
+          text: operation.data.memo
+        },
+        nextInChain: {
+          direction: ActivityDirection.Forward,
+          nextActivityContent: {
+            actor: givenToMember,
+            description: ["donated", amountDonated],
+            // TODO: make this configurable
+            body: {
+              bodyContent: {
+                type: BodyType.TEXT,
+                text: "Because every life has value"
+              },
+              nextInChain: {
+                direction: ActivityDirection.Forward,
+                nextActivityContent: {
+                  actor: RAHA_BASIC_INCOME_MEMBER
+                }
+              }
             }
           }
         }
@@ -272,12 +286,14 @@ function addMintOperationToActivities(
           actor: creatorMember as Member,
           description: ["minted", amountMinted, "of basic income."],
           body: {
-            type: BodyType.MINT_BASIC_INCOME
-          },
-          nextInChain: {
-            direction: ActivityDirection.NonDirectional,
-            content: {
-              actor: RAHA_BASIC_INCOME_MEMBER
+            bodyContent: {
+              type: BodyType.MINT_BASIC_INCOME
+            },
+            nextInChain: {
+              direction: ActivityDirection.NonDirectional,
+              nextActivityContent: {
+                actor: RAHA_BASIC_INCOME_MEMBER
+              }
             }
           }
         },
@@ -311,13 +327,15 @@ function addMintOperationToActivities(
             "for inviting a friend to Raha!"
           ],
           body: {
-            type: BodyType.MEDIA,
-            media: [videoReferenceForMember(invitedMember)]
-          },
-          nextInChain: {
-            direction: ActivityDirection.Bidirectional,
-            content: {
-              actor: invitedMember
+            bodyContent: {
+              type: BodyType.MEDIA,
+              media: [videoReferenceForMember(invitedMember)]
+            },
+            nextInChain: {
+              direction: ActivityDirection.Bidirectional,
+              nextActivityContent: {
+                actor: invitedMember
+              }
             }
           }
         },
@@ -365,12 +383,14 @@ function addTrustOperationToActivities(
       actor: creatorMember as Member,
       description: ["trusted a new friend"],
       body: {
-        type: BodyType.TRUST_MEMBER
-      },
-      nextInChain: {
-        direction: ActivityDirection.Forward,
-        content: {
-          actor: trustedMember
+        bodyContent: {
+          type: BodyType.TRUST_MEMBER
+        },
+        nextInChain: {
+          direction: ActivityDirection.Forward,
+          nextActivityContent: {
+            actor: trustedMember
+          }
         }
       }
     },
@@ -494,8 +514,15 @@ function activityContentContainsMember(
     return true;
   }
 
-  if ("nextInChain" in content && !!content.nextInChain) {
-    return activityContentContainsMember(content.nextInChain.content, memberId);
+  if (
+    content.body &&
+    "nextInChain" in content.body &&
+    !!content.body.nextInChain
+  ) {
+    return activityContentContainsMember(
+      content.body.nextInChain.nextActivityContent,
+      memberId
+    );
   }
 
   return false;

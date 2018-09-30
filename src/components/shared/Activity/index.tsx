@@ -19,7 +19,8 @@ import {
   ActivityCallToAction as CallToActionData,
   ActivityDirection,
   BodyType,
-  MediaBody
+  MediaBody,
+  NextInChain
 } from "../../../store/selectors/activities/types";
 import { MemberName } from "../MemberName";
 import { MemberThumbnail } from "../MemberThumbnail";
@@ -112,17 +113,17 @@ class ActivityContentBody extends React.Component<{
     if (!body) {
       return undefined;
     }
-    switch (body.type) {
+    switch (body.bodyContent.type) {
       case BodyType.MINT_BASIC_INCOME:
         return <IconContentBody iconName="parachute-box" />;
       case BodyType.TRUST_MEMBER:
         return <IconContentBody iconName="handshake" />;
       case BodyType.TEXT:
-        return <Text>{body.text}</Text>;
+        return <Text>{body.bodyContent.text}</Text>;
       case BodyType.MEDIA:
         return (
           <MediaContentBody
-            media={body.media}
+            media={body.bodyContent.media}
             onFindVideoElems={onFindVideoElems}
           />
         );
@@ -143,7 +144,7 @@ class ActivityContentBody extends React.Component<{
 }
 
 const ChainIndicator: React.StatelessComponent<{
-  nextInChain: ActivityContentData["nextInChain"];
+  nextInChain?: NextInChain;
 }> = ({ nextInChain }) => {
   return (
     <View
@@ -185,7 +186,7 @@ class ActivityContent extends React.Component<{
   ownVideoElems: VideoWithPlaceholderView[] = [];
 
   public render() {
-    const { actor, description, body, nextInChain } = this.props.content;
+    const { actor, description, body } = this.props.content;
     return (
       <View>
         <View style={styles.actorRow}>
@@ -205,23 +206,25 @@ class ActivityContent extends React.Component<{
           </Text>
         </View>
         {body && (
-          <View style={styles.contentBodyRow}>
-            <ChainIndicator nextInChain={nextInChain} />
-            <ActivityContentBody
-              body={body}
-              onFindVideoElems={elems =>
-                this.props.onFindVideoElems([...this.ownVideoElems, ...elems])
-              }
-            />
-          </View>
-        )}
-        {nextInChain && (
-          <ActivityContent
-            content={nextInChain.content}
-            onFindVideoElems={elems =>
-              this.props.onFindVideoElems([...this.ownVideoElems, ...elems])
-            }
-          />
+          <React.Fragment>
+            <View style={styles.contentBodyRow}>
+              <ChainIndicator nextInChain={body.nextInChain} />
+              <ActivityContentBody
+                body={body}
+                onFindVideoElems={elems =>
+                  this.props.onFindVideoElems([...this.ownVideoElems, ...elems])
+                }
+              />
+            </View>
+            {body.nextInChain && (
+              <ActivityContent
+                content={body.nextInChain.nextActivityContent}
+                onFindVideoElems={elems =>
+                  this.props.onFindVideoElems([...this.ownVideoElems, ...elems])
+                }
+              />
+            )}
+          </React.Fragment>
         )}
       </View>
     );
