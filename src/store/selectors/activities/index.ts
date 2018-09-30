@@ -97,7 +97,7 @@ function addCreateMemberOperationToActivites(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      actors: [creatorMember],
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
       description: ["just joined Raha!"],
       body: {
         bodyContent: {
@@ -109,7 +109,7 @@ function addCreateMemberOperationToActivites(
               nextInChain: {
                 direction: ActivityDirection.Bidirectional,
                 nextActivityContent: {
-                  actors: [inviter],
+                  actors: OrderedMap({ [inviter.get("memberId")]: inviter }),
                   description: ["invited them to join Raha."]
                 }
               }
@@ -144,7 +144,7 @@ function addRequestVerificationOperationToActivites(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      actors: [creatorMember],
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
       description: ["requested a friend to verify their account."],
       body: {
         bodyContent: {
@@ -154,7 +154,9 @@ function addRequestVerificationOperationToActivites(
         nextInChain: {
           direction: ActivityDirection.NonDirectional,
           nextActivityContent: {
-            actors: [requestedMember]
+            actors: OrderedMap({
+              [requestedMember.get("memberId")]: requestedMember
+            })
           }
         }
       }
@@ -188,7 +190,7 @@ function addVerifyOperationToActivities(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      actors: [creatorMember],
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
       description: ["verified their friend's account!"],
       body: {
         bodyContent: {
@@ -199,7 +201,9 @@ function addVerifyOperationToActivities(
         nextInChain: {
           direction: ActivityDirection.Forward,
           nextActivityContent: {
-            actors: [verifiedMember]
+            actors: OrderedMap({
+              [verifiedMember.get("memberId")]: verifiedMember
+            })
           }
         }
       }
@@ -241,7 +245,7 @@ function addGiveOperationToActivities(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      actors: [creatorMember],
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
       description: ["gave", amountGiven, "for"],
       body: {
         bodyContent: {
@@ -251,7 +255,9 @@ function addGiveOperationToActivities(
         nextInChain: {
           direction: ActivityDirection.Forward,
           nextActivityContent: {
-            actors: [givenToMember],
+            actors: OrderedMap({
+              [givenToMember.get("memberId")]: givenToMember
+            }),
             description: ["donated", amountDonated],
             // TODO: make this configurable
             body: {
@@ -262,7 +268,7 @@ function addGiveOperationToActivities(
               nextInChain: {
                 direction: ActivityDirection.Forward,
                 nextActivityContent: {
-                  actors: [RAHA_BASIC_INCOME_MEMBER]
+                  actors: RAHA_BASIC_INCOME_MEMBER
                 }
               }
             }
@@ -296,7 +302,9 @@ function addMintOperationToActivities(
         id: operation.id,
         timestamp: operation.created_at,
         content: {
-          actors: [creatorMember],
+          actors: OrderedMap({
+            [creatorMember.get("memberId")]: creatorMember
+          }),
           description: ["minted", amountMinted, "of basic income."],
           body: {
             bodyContent: {
@@ -331,7 +339,9 @@ function addMintOperationToActivities(
         id: operation.id,
         timestamp: operation.created_at,
         content: {
-          actors: [creatorMember],
+          actors: OrderedMap({
+            [creatorMember.get("memberId")]: creatorMember
+          }),
           description: [
             "minted",
             amountMinted,
@@ -345,7 +355,9 @@ function addMintOperationToActivities(
             nextInChain: {
               direction: ActivityDirection.Bidirectional,
               nextActivityContent: {
-                actors: [invitedMember]
+                actors: OrderedMap({
+                  [invitedMember.get("memberId")]: invitedMember
+                })
               }
             }
           }
@@ -390,7 +402,7 @@ function addTrustOperationToActivities(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      actors: [creatorMember],
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
       description: ["trusted a new friend"],
       body: {
         bodyContent: {
@@ -399,7 +411,9 @@ function addTrustOperationToActivities(
         nextInChain: {
           direction: ActivityDirection.Forward,
           nextActivityContent: {
-            actors: [trustedMember]
+            actors: OrderedMap({
+              [trustedMember.get("memberId")]: trustedMember
+            })
           }
         }
       }
