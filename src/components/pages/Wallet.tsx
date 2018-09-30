@@ -139,13 +139,14 @@ const Invite: React.StatelessComponent<Props> = props => {
 
   return (
     <View style={styles.inviteSection}>
-      <Text style={styles.inviteSectionText}>
+      <Text style={[styles.inviteSectionText, { ...fontSizes.large }]}>
         You have nothing to mint at this time.
       </Text>
       <Text style={styles.inviteSectionText}>
         Invite a friend to earn 60 Raha:
       </Text>
       <Button
+        style={styles.inviteButton}
         title="Invite"
         onPress={() => {
           navigation.navigate(RouteName.InvitePage);
@@ -184,6 +185,10 @@ const inviteSectionStyle: TextStyle = {
 const inviteSectionTextStyle: TextStyle = {
   marginVertical: 12,
   textAlign: "center"
+};
+
+const inviteButtonStyle: ViewStyle = {
+  marginVertical: 8
 };
 
 // shared to create consistent spacing
@@ -255,7 +260,8 @@ const styles = StyleSheet.create({
   donationValue: donationTextStyle,
   numberLabel: numberLabelStyle,
   inviteSection: inviteSectionStyle,
-  inviteSectionText: inviteSectionTextStyle
+  inviteSectionText: inviteSectionTextStyle,
+  inviteButton: inviteButtonStyle
 });
 
 const mapStateToProps: MapStateToProps<
