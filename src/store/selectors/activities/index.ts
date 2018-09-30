@@ -411,37 +411,67 @@ function addTrustOperationToActivities(
 
 function addOperationToActivitiesList(
   state: RahaState,
+  combineActivitiesCache: CombineActivitiesCache,
   activities: Activity[],
   operation: Operation
-): Activity[] {
+): {
+  activities: Activity[];
+  combineActivitiesCache: CombineActivitiesCache;
+} {
   switch (operation.op_code) {
     case OperationType.CREATE_MEMBER: {
-      return addCreateMemberOperationToActivites(state, activities, operation);
+      return {
+        activities: addCreateMemberOperationToActivites(
+          state,
+          activities,
+          operation
+        ),
+        combineActivitiesCache
+      };
     }
     case OperationType.REQUEST_VERIFICATION: {
-      return addRequestVerificationOperationToActivites(
-        state,
-        activities,
-        operation
-      );
+      return {
+        activities: addRequestVerificationOperationToActivites(
+          state,
+          activities,
+          operation
+        ),
+        combineActivitiesCache
+      };
     }
     case OperationType.VERIFY: {
-      return addVerifyOperationToActivities(state, activities, operation);
+      return {
+        activities: addVerifyOperationToActivities(
+          state,
+          activities,
+          operation
+        ),
+        combineActivitiesCache
+      };
     }
     case OperationType.GIVE: {
-      return addGiveOperationToActivities(state, activities, operation);
+      return {
+        activities: addGiveOperationToActivities(state, activities, operation),
+        combineActivitiesCache
+      };
     }
     case OperationType.MINT: {
-      return addMintOperationToActivities(state, activities, operation);
+      return {
+        activities: addMintOperationToActivities(state, activities, operation),
+        combineActivitiesCache
+      };
     }
     case OperationType.TRUST: {
-      return addTrustOperationToActivities(state, activities, operation);
+      return {
+        activities: addTrustOperationToActivities(state, activities, operation),
+        combineActivitiesCache
+      };
     }
     case OperationType.INVITE:
       // We do not display any activity for Invite operations. Whether or not
       // a newly joined member was invited, is retrieved from the
       // `request_invite_from_member_id` field on the `CREATE_MEMBER` operation.
-      return activities;
+      return { activities, combineActivitiesCache };
     default:
       // Shouldn't happen. Type assertion is because TypeScript also thinks
       // this should never happen.
@@ -452,6 +482,12 @@ function addOperationToActivitiesList(
         }". Operation: ${JSON.stringify(operation)}`
       );
   }
+}
+
+interface CombineActivitiesCache {
+  // aggregation policy: combine all mint operations whose timestamps are
+  // between the first collected one, to the MAX_MINT_SECONDS later.
+  aggregateMint: List<MintOperation>;
 }
 
 /**
@@ -470,10 +506,19 @@ export function convertOperationsToActivities(
   state: RahaState,
   operations: List<Operation>
 ): Activity[] {
+  const initialCombineActivitiesCache: CombineActivitiesCache = {
+    aggregateMint: List()
+  };
+
   return operations.reduce(
     (memo, operation) => {
       try {
-        return addOperationToActivitiesList(state, memo, operation);
+        return addOperationToActivitiesList(
+          state,
+          memo.combineActivitiesCache,
+          memo.activities,
+          operation
+        );
       } catch (err) {
         console.error(
           err.message,
@@ -483,8 +528,11 @@ export function convertOperationsToActivities(
         return memo;
       }
     },
-    [] as Activity[]
-  );
+    {
+      activities: [] as Activity[],
+      combineActivitiesCache: initialCombineActivitiesCache
+    }
+  ).activities;
 }
 
 /**
