@@ -59,10 +59,9 @@ export function activities(
   state: RahaState,
   opFilter?: (operation: Operation) => boolean
 ): Activity[] {
-  let operations = state.operations;
-  if (opFilter) {
-    operations = operations.filter(opFilter);
-  }
+  const operations = opFilter
+    ? state.operations.filter(opFilter)
+    : state.operations;
   return convertOperationsToActivities(state, operations).reverse();
 }
 
