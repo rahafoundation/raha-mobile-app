@@ -135,47 +135,6 @@ function addEditMemberOperationToActivities(
   return [...activities, newActivity];
 }
 
-function addRequestVerificationOperationToActivites(
-  state: RahaState,
-  activities: Activity[],
-  operation: RequestVerificationOperation
-): Activity[] {
-  const creatorMember = getOperationCreator(state, operation);
-  const requestedMember = getMemberById(state, operation.data.to_uid);
-  if (!requestedMember) {
-    throw new Error(
-      `Request Verification operation with target member (id: ${
-        operation.data.to_uid
-      }) missing, invalid.`
-    );
-  }
-
-  const newActivity: Activity = {
-    id: operation.id,
-    timestamp: operation.created_at,
-    content: {
-      // type suggestions since GENESIS_MEMBER is only possible for
-      // VERIFY operations
-      actor: creatorMember as Member,
-      description: ["requested a friend to verify their account."],
-      body: {
-        bodyContent: {
-          type: BodyType.MEDIA,
-          media: [videoReferenceForMember(creatorMember as Member)]
-        },
-        nextInChain: {
-          direction: ActivityDirection.NonDirectional,
-          nextActivityContent: {
-            actor: requestedMember
-          }
-        }
-      }
-    },
-    operations: OrderedMap({ [operation.id]: operation })
-  };
-  return [...activities, newActivity];
-}
-
 function addVerifyOperationToActivities(
   state: RahaState,
   activities: Activity[],
@@ -436,13 +395,6 @@ function addOperationToActivitiesList(
     case OperationType.EDIT_MEMBER: {
       return addEditMemberOperationToActivities(state, activities, operation);
     }
-    case OperationType.REQUEST_VERIFICATION: {
-      return addRequestVerificationOperationToActivites(
-        state,
-        activities,
-        operation
-      );
-    }
     case OperationType.VERIFY: {
       return addVerifyOperationToActivities(state, activities, operation);
     }
@@ -455,8 +407,14 @@ function addOperationToActivitiesList(
     case OperationType.TRUST: {
       return addTrustOperationToActivities(state, activities, operation);
     }
+    case OperationType.REQUEST_VERIFICATION: {
+      // We do not display any activity for RequestVerification operations,
+      // since their stories are covered by CREATE_MEMBER/VERIFY combos.
+      return activities;
+    }
     case OperationType.INVITE:
-      // We do not display any activity for Invite operations.
+      // We do not display any activity for Invite operations, since their
+      // stories are covered by CREATE_MEMBER/VERIFY combos.
       return activities;
     default:
       // Shouldn't happen. Type assertion is because TypeScript also thinks
