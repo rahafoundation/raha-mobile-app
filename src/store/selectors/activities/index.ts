@@ -87,19 +87,19 @@ function addCreateMemberOperationToActivites(
   activities: Activity[],
   operation: CreateMemberOperation
 ): Activity[] {
-  const creatorMember = getOperationCreator(state, operation);
+  // type suggestion since GENESIS_MEMBER is only possible for
+  // VERIFY operations
+  const creatorMember = getOperationCreator(state, operation) as Member;
   const newActivity: Activity = {
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      // type suggestions since GENESIS_MEMBER is only possible for
-      // VERIFY operations
-      actor: creatorMember as Member,
+      actor: creatorMember,
       description: ["just joined Raha!"],
       body: {
         bodyContent: {
           type: BodyType.MEDIA,
-          media: [videoReferenceForMember(creatorMember as Member)]
+          media: [videoReferenceForMember(creatorMember)]
         }
       }
     },
@@ -114,7 +114,9 @@ function addRequestVerificationOperationToActivites(
   activities: Activity[],
   operation: RequestVerificationOperation
 ): Activity[] {
-  const creatorMember = getOperationCreator(state, operation);
+  // type suggestion since GENESIS_MEMBER is only possible for
+  // VERIFY operations
+  const creatorMember = getOperationCreator(state, operation) as Member;
   const requestedMember = getMemberById(state, operation.data.to_uid);
   if (!requestedMember) {
     throw new Error(
@@ -128,14 +130,12 @@ function addRequestVerificationOperationToActivites(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      // type suggestions since GENESIS_MEMBER is only possible for
-      // VERIFY operations
-      actor: creatorMember as Member,
+      actor: creatorMember,
       description: ["requested a friend to verify their account."],
       body: {
         bodyContent: {
           type: BodyType.MEDIA,
-          media: [videoReferenceForMember(creatorMember as Member)]
+          media: [videoReferenceForMember(creatorMember)]
         },
         nextInChain: {
           direction: ActivityDirection.NonDirectional,
@@ -200,7 +200,9 @@ function addGiveOperationToActivities(
   activities: Activity[],
   operation: GiveOperation
 ): Activity[] {
-  const creatorMember = getOperationCreator(state, operation);
+  // type suggestion since GENESIS_MEMBER is only possible for
+  // VERIFY operations
+  const creatorMember = getOperationCreator(state, operation) as Member;
   const givenToMember = getMemberById(state, operation.data.to_uid);
   if (!givenToMember) {
     console.error(
@@ -225,9 +227,7 @@ function addGiveOperationToActivities(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      // type suggestions since GENESIS_MEMBER is only possible for
-      // VERIFY operations
-      actor: creatorMember as Member,
+      actor: creatorMember,
       description: ["gave", amountGiven, "for"],
       body: {
         bodyContent: {
@@ -266,7 +266,9 @@ function addMintOperationToActivities(
   activities: Activity[],
   operation: MintOperation
 ): Activity[] {
-  const creatorMember = getOperationCreator(state, operation);
+  // type suggestion since GENESIS_MEMBER is only possible for
+  // VERIFY operations
+  const creatorMember = getOperationCreator(state, operation) as Member;
 
   const amountMinted: CurrencyValue = {
     value: new Big(operation.data.amount),
@@ -280,9 +282,7 @@ function addMintOperationToActivities(
         id: operation.id,
         timestamp: operation.created_at,
         content: {
-          // type suggestions since GENESIS_MEMBER is only possible for
-          // VERIFY operations
-          actor: creatorMember as Member,
+          actor: creatorMember,
           description: ["minted", amountMinted, "of basic income."],
           body: {
             bodyContent: {
@@ -317,9 +317,7 @@ function addMintOperationToActivities(
         id: operation.id,
         timestamp: operation.created_at,
         content: {
-          // type suggestions since GENESIS_MEMBER is only possible for
-          // VERIFY operations
-          actor: creatorMember as Member,
+          actor: creatorMember,
           description: [
             "minted",
             amountMinted,
@@ -361,8 +359,9 @@ function addTrustOperationToActivities(
   activities: Activity[],
   operation: TrustOperation
 ): Activity[] {
-  const creatorMember = getOperationCreator(state, operation);
-
+  // type suggestion since GENESIS_MEMBER is only possible for
+  // VERIFY operations
+  const creatorMember = getOperationCreator(state, operation) as Member;
   const trustedMember = getMemberById(state, operation.data.to_uid);
   if (!trustedMember) {
     console.error(
@@ -377,9 +376,7 @@ function addTrustOperationToActivities(
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      // type suggestions since GENESIS_MEMBER is only possible for
-      // VERIFY operations
-      actor: creatorMember as Member,
+      actor: creatorMember,
       description: ["trusted a new friend"],
       body: {
         bodyContent: {
