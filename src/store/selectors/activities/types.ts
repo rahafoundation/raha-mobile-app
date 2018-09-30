@@ -93,7 +93,7 @@ export interface ActivityContent {
    * TODO: potentially support other special members than basic income, treat it
    * as an actual member/variation of it rather than a singleton
    */
-  actor: Member | typeof RAHA_BASIC_INCOME_MEMBER;
+  actors: (Member | typeof RAHA_BASIC_INCOME_MEMBER)[];
   /**
    * Description of the action they took. Currently rendered after the actor's
    * display name in the format of a complete sentence.
