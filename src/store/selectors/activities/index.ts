@@ -484,10 +484,14 @@ function addOperationToActivitiesList(
   }
 }
 
+const MAX_MINT_SECONDS = 3 * 60 * 60; // 3 hours
 interface CombineActivitiesCache {
   // aggregation policy: combine all mint operations whose timestamps are
   // between the first collected one, to the MAX_MINT_SECONDS later.
-  aggregateMint: List<MintOperation>;
+  aggregateBasicIncome: {
+    operations: List<MintOperation>;
+    runningTotal: Big;
+  };
 }
 
 /**
@@ -507,25 +511,31 @@ export function convertOperationsToActivities(
   operations: List<Operation>
 ): Activity[] {
   const initialCombineActivitiesCache: CombineActivitiesCache = {
-    aggregateMint: List()
+    aggregateBasicIncome: { operations: List(), runningTotal: new Big(0) }
   };
 
-  return operations.reduce(
-    (memo, operation) => {
-      try {
-        return addOperationToActivitiesList(
-          state,
-          memo.combineActivitiesCache,
-          memo.activities,
-          operation
-        );
-      } catch (err) {
-        console.error(
-          err.message,
-          "| Operation:",
-          JSON.stringify(operation, null, 2)
-        );
-        return memo;
+  return operations
+    .reduce(
+      (memo, operation) => {
+        try {
+          return addOperationToActivitiesList(
+            state,
+            memo.combineActivitiesCache,
+            memo.activities,
+            operation
+          );
+        } catch (err) {
+          console.error(
+            err.message,
+            "| Operation:",
+            JSON.stringify(operation, null, 2)
+          );
+          return memo;
+        }
+      },
+      {
+        activities: OrderedMap<Activity["id"], Activity>(),
+        combineActivitiesCache: initialCombineActivitiesCache
       }
     },
     {
