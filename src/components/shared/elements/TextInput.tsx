@@ -18,6 +18,6 @@ export const TextInput: React.StatelessComponent<TextInputProps> = props => {
 
 const styles = StyleSheet.create({
   text: {
-    ...fonts.Lato.Normal
+    ...fonts.Lato.formInputStyle
   } as TextStyle
 });

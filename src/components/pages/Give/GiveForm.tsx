@@ -25,6 +25,7 @@ import { MemberSearchBar } from "../../shared/MemberSearchBar";
 import { Button, Text } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
 import { KeyboardAwareScrollContainer } from "../../shared/elements/KeyboardAwareScrollContainer";
+import { fontSizes, fonts } from "../../../helpers/fonts";
 
 const MAX_MEMO_LENGTH = 140;
 // Donation rate is currently constant.
@@ -162,7 +163,7 @@ class GiveFormView extends React.Component<Props, State> {
         <View style={styles.toRow}>
           {this.state.toMember ? (
             <React.Fragment>
-              <FormLabel>To:</FormLabel>
+              <FormLabel labelStyle={styles.formLabelStyle}>To:</FormLabel>
               <View style={styles.selectedMember}>
                 <Text onPress={this.clearTo}>
                   {this.state.toMember.get("fullName")} (
@@ -197,8 +198,9 @@ class GiveFormView extends React.Component<Props, State> {
           <React.Fragment />
         )}
         <View>
-          <FormLabel>Amount</FormLabel>
+          <FormLabel labelStyle={styles.formLabelStyle}>Amount</FormLabel>
           <FormInput
+            inputStyle={styles.formInputAmountStyle}
             keyboardType="numeric"
             value={this.state.amount && this.state.amount.toString()}
             onChangeText={this.onChangeAmount}
@@ -213,12 +215,13 @@ class GiveFormView extends React.Component<Props, State> {
           </FormValidationMessage>
         </View>
         <View>
-          <FormLabel>Given for...</FormLabel>
+          <FormLabel labelStyle={styles.formLabelStyle}>Given for</FormLabel>
           <FormInput
+            inputStyle={styles.formInputStyle}
             value={this.state.memo}
             onChangeText={this.onChangeMemo}
             multiline={true}
-            placeholder="...being so amazing!"
+            placeholder="being so amazing!"
             autoCapitalize="none"
           />
           <FormValidationMessage labelStyle={styles.helper}>
@@ -295,7 +298,7 @@ export const GiveForm = connect(
 )(GiveFormView);
 
 const containerStyle: ViewStyle = {
-  flex: 1 // grow to maximum size
+  flex: 1 // grow to maximum size,
 };
 
 const giveButtonRowStyle: ViewStyle = {
@@ -326,7 +329,21 @@ const styles = StyleSheet.create({
   },
 
   helper: {
-    color: "gray"
+    color: colors.secondaryText
   },
-  giveButtonRow: giveButtonRowStyle
+
+  giveButtonRow: giveButtonRowStyle,
+
+  formInputAmountStyle: {
+    color: colors.bodyText,
+    ...fontSizes.large
+  },
+  formInputStyle: {
+    color: colors.bodyText,
+    ...fontSizes.medium
+  },
+  formLabelStyle: {
+    color: colors.label,
+    ...fontSizes.medium
+  }
 });
