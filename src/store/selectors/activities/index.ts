@@ -282,13 +282,13 @@ function addGiveOperationToActivities(
   return activities.set(newActivity.id, newActivity);
 }
 
-function combineOperationWithMintActivity(
-  basicIncomeCache: Required<CombineActivitiesCache>["aggregateBasicIncome"],
+function addOperationToBundledBasicIncomeMintActivity(
+  basicIncomeCache: Required<BundledActivitiesCache>["bundledBasicIncome"],
   existingActivity: Activity,
   operation: MintOperation,
   creatorMember: Member
 ): {
-  combinedActivity: Activity;
+  bundledActivity: Activity;
   newBasicIncomeCache: typeof basicIncomeCache;
 } {
   if (existingActivity.content.actors === RAHA_BASIC_INCOME_MEMBER) {
@@ -314,7 +314,7 @@ function combineOperationWithMintActivity(
     creatorMember,
     operation
   );
-  const combinedActivity: Activity = {
+  const bundledActivity: Activity = {
     ...existingActivity,
     // use the newest operation's timestamp
     timestamp:
@@ -346,7 +346,7 @@ function combineOperationWithMintActivity(
   };
 
   return {
-    combinedActivity,
+    bundledActivity,
     newBasicIncomeCache
   };
 }
@@ -387,12 +387,12 @@ function createIndividualBasicIncomeMintActivity(
 
 function addMintOperationToActivities(
   state: RahaState,
-  combineActivitiesCache: CombineActivitiesCache,
+  bundledActivitiesCache: BundledActivitiesCache,
   activities: OrderedMap<Activity["id"], Activity>,
   operation: MintOperation
 ): {
   activities: OrderedMap<Activity["id"], Activity>;
-  combineActivitiesCache: CombineActivitiesCache;
+  bundledActivitiesCache: BundledActivitiesCache;
 } {
   // type suggestion since GENESIS_MEMBER is only possible for
   // VERIFY operations
@@ -408,37 +408,35 @@ function addMintOperationToActivities(
     case MintType.BASIC_INCOME: {
       // if cache is present, consider combining this basic income mint
       // operation with existing activity
-      if (combineActivitiesCache.aggregateBasicIncome) {
+      if (bundledActivitiesCache.bundledBasicIncome) {
         // check if difference in time is too long before merging
-        const existingActivityId =
-          combineActivitiesCache.aggregateBasicIncome.aggregatedActivityId;
-        const existingActivity = activities.get(existingActivityId);
-        if (!existingActivity) {
+        const bundledActivityId =
+          bundledActivitiesCache.bundledBasicIncome.bundledActivityId;
+        const bundledActivity = activities.get(bundledActivityId);
+        if (!bundledActivity) {
           // TODO: error handling that doesn't just kill the current mint operation?
-          throw new Error("Aggregation failed; existing activity missing");
+          throw new Error("Bundling failed; existing activity missing");
         }
 
         if (
-          differenceInSeconds(
-            operation.created_at,
-            existingActivity.timestamp
-          ) < MAX_MINT_SECONDS
+          differenceInSeconds(operation.created_at, bundledActivity.timestamp) <
+          MAX_MINT_SECONDS
         ) {
           // difference short enough—merge it
-          const newData = combineOperationWithMintActivity(
-            combineActivitiesCache.aggregateBasicIncome,
-            existingActivity,
+          const newData = addOperationToBundledBasicIncomeMintActivity(
+            bundledActivitiesCache.bundledBasicIncome,
+            bundledActivity,
             operation,
             creatorMember
           );
           return {
             activities: activities.set(
-              existingActivityId,
-              newData.combinedActivity
+              bundledActivityId,
+              newData.bundledActivity
             ),
-            combineActivitiesCache: {
-              ...combineActivitiesCache,
-              aggregateBasicIncome: newData.newBasicIncomeCache
+            bundledActivitiesCache: {
+              ...bundledActivitiesCache,
+              bundledBasicIncome: newData.newBasicIncomeCache
             }
           };
         }
@@ -450,17 +448,17 @@ function addMintOperationToActivities(
       );
       // either nothing to merge since cache was empty, or difference was too
       // long. Reset the cache and create a new activity
-      const newBasicIncomeCache: typeof combineActivitiesCache.aggregateBasicIncome = {
-        aggregatedActivityId: newActivity.id,
+      const newBasicIncomeCache: typeof bundledActivitiesCache.bundledBasicIncome = {
+        bundledActivityId: newActivity.id,
         runningTotal: amountMinted.value,
         operations: List([operation])
       };
 
       return {
         activities: activities.set(newActivity.id, newActivity),
-        combineActivitiesCache: {
-          ...combineActivitiesCache,
-          aggregateBasicIncome: newBasicIncomeCache
+        bundledActivitiesCache: {
+          ...bundledActivitiesCache,
+          bundledBasicIncome: newBasicIncomeCache
         }
       };
     }
@@ -477,7 +475,7 @@ function addMintOperationToActivities(
         );
         return {
           activities,
-          combineActivitiesCache
+          bundledActivitiesCache
         };
       }
       const newActivity: Activity = {
@@ -511,7 +509,7 @@ function addMintOperationToActivities(
       };
       return {
         activities: activities.set(newActivity.id, newActivity),
-        combineActivitiesCache
+        bundledActivitiesCache
       };
     }
     default:
@@ -526,7 +524,7 @@ function addMintOperationToActivities(
       );
       return {
         activities,
-        combineActivitiesCache
+        bundledActivitiesCache
       };
   }
 }
@@ -576,12 +574,12 @@ function addTrustOperationToActivities(
 
 function addOperationToActivitiesList(
   state: RahaState,
-  combineActivitiesCache: CombineActivitiesCache,
+  bundledActivitiesCache: BundledActivitiesCache,
   activities: OrderedMap<Activity["id"], Activity>,
   operation: Operation
 ): {
   activities: OrderedMap<Activity["id"], Activity>;
-  combineActivitiesCache: CombineActivitiesCache;
+  bundledActivitiesCache: BundledActivitiesCache;
 } {
   switch (operation.op_code) {
     case OperationType.CREATE_MEMBER: {
@@ -591,7 +589,7 @@ function addOperationToActivitiesList(
           activities,
           operation
         ),
-        combineActivitiesCache
+        bundledActivitiesCache
       };
     }
     case OperationType.REQUEST_VERIFICATION: {
@@ -601,7 +599,7 @@ function addOperationToActivitiesList(
           activities,
           operation
         ),
-        combineActivitiesCache
+        bundledActivitiesCache
       };
     }
     case OperationType.VERIFY: {
@@ -611,19 +609,19 @@ function addOperationToActivitiesList(
           activities,
           operation
         ),
-        combineActivitiesCache
+        bundledActivitiesCache
       };
     }
     case OperationType.GIVE: {
       return {
         activities: addGiveOperationToActivities(state, activities, operation),
-        combineActivitiesCache
+        bundledActivitiesCache
       };
     }
     case OperationType.MINT: {
       return addMintOperationToActivities(
         state,
-        combineActivitiesCache,
+        bundledActivitiesCache,
         activities,
         operation
       );
@@ -631,14 +629,14 @@ function addOperationToActivitiesList(
     case OperationType.TRUST: {
       return {
         activities: addTrustOperationToActivities(state, activities, operation),
-        combineActivitiesCache
+        bundledActivitiesCache
       };
     }
     case OperationType.INVITE:
       // We do not display any activity for Invite operations. Whether or not
       // a newly joined member was invited, is retrieved from the
       // `request_invite_from_member_id` field on the `CREATE_MEMBER` operation.
-      return { activities, combineActivitiesCache };
+      return { activities, bundledActivitiesCache };
     default:
       // Shouldn't happen. Type assertion is because TypeScript also thinks
       // this should never happen.
@@ -652,11 +650,11 @@ function addOperationToActivitiesList(
 }
 
 const MAX_MINT_SECONDS = 3 * 60 * 60; // 3 hours
-interface CombineActivitiesCache {
-  // aggregation policy: combine all mint operations whose timestamps are
+interface BundledActivitiesCache {
+  // bundling policy: bundle all mint operations whose timestamps are
   // between the first collected one, to the MAX_MINT_SECONDS later.
-  aggregateBasicIncome?: {
-    aggregatedActivityId: Activity["id"];
+  bundledBasicIncome?: {
+    bundledActivityId: Activity["id"];
     operations: List<MintOperation>;
     runningTotal: Big;
   };
@@ -684,7 +682,7 @@ export function convertOperationsToActivities(
         try {
           return addOperationToActivitiesList(
             state,
-            memo.combineActivitiesCache,
+            memo.bundledActivitiesCache,
             memo.activities,
             operation
           );
@@ -699,7 +697,7 @@ export function convertOperationsToActivities(
       },
       {
         activities: OrderedMap<Activity["id"], Activity>(),
-        combineActivitiesCache: {} as CombineActivitiesCache
+        bundledActivitiesCache: {} as BundledActivitiesCache
       }
     )
     .activities.valueSeq()
@@ -766,6 +764,11 @@ function activityContentContainsMember(
  * Get all activities relevant to a member.
  *
  * TODO: make this more efficient.
+ * @param options Details: {
+ *   unbundleActivities: if an activity is bundled, don't return the bundled
+ *   activity, but the unbundled ones that are relevant to that user. Useful for
+ *   things like bundled mint activities on the profile page.
+ * }
  */
 export const activitiesForMember = (
   state: RahaState,
@@ -792,12 +795,14 @@ export const activitiesForMember = (
   }
 
   return filteredActivities
-    .map(aggregateActivity => {
-      if (!aggregateActivity.unbundledActivities) {
-        // not aggregated, so just return it
-        return aggregateActivity;
+    .map(maybeBundledActivity => {
+      if (!maybeBundledActivity.unbundledActivities) {
+        // not bundled, so just return it
+        return maybeBundledActivity;
       }
-      return aggregateActivity.unbundledActivities
+
+      // definitely bundled
+      return maybeBundledActivity.unbundledActivities
         .valueSeq()
         .filter(activity =>
           activityContentContainsMember(activity.content, memberId)

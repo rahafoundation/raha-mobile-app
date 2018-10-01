@@ -169,7 +169,7 @@ export interface Activity {
    * on the semantics of the particular operation type.
    *
    * The presence of this key indicates that the Activity in question is
-   * an aggregated one.
+   * an bundled one.
    */
   unbundledActivities?: OrderedMap<Operation["id"], Activity>;
 }
