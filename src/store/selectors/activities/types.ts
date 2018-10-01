@@ -3,7 +3,6 @@ import {
   RAHA_BASIC_INCOME_MEMBER
 } from "../../../store/reducers/members";
 import { CurrencyValue } from "../../../components/shared/elements/Currency";
-import { Omit } from "../../../../types/omit";
 import { LinkDestination } from "../../../components/shared/elements/TextLink";
 import { Operation } from "@raha/api-shared/dist/models/Operation";
 import { OrderedMap } from "immutable";
@@ -146,11 +145,29 @@ export interface ActivityCallToAction {
 }
 
 /**
+ * Types of activities shown in the feed.
+ */
+export enum ActivityType {
+  // encompasses both individual mints, and bundled ones
+  MINT_BASIC_INCOME = "MINT_BASIC_INCOME",
+
+  MINT_REFERRAL_BONUS = "MINT_REFERRAL_BONUS",
+  VERIFY_MEMBER = "VERIFY_MEMBER",
+  TRUST_MEMBER = "TRUST_MEMBER",
+  GIVE_RAHA = "GIVE_RAHA",
+  REQUEST_VERIFICATION = "REQUEST_VERIFICATION",
+
+  // will encompass CREATE_MEMBER + VERIFY + MINT_REFERRAL_BONUS bundles
+  NEW_MEMBER = "NEW_MEMBER"
+}
+
+/**
  * A full description of any conceptually whole activity that happens on Raha.
  *
  * id just needs to be unique and deterministically derived from the content.
  */
 export interface Activity {
+  type: ActivityType;
   id: string;
   timestamp: Date;
   content: ActivityContent;
