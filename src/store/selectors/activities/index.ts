@@ -337,6 +337,40 @@ function combineOperationWithMintActivity(
   };
 }
 
+function createIndividualBasicIncomeMintActivity(
+  creatorMember: Member,
+  operation: MintOperation
+): Activity {
+  const amountMinted: CurrencyValue = {
+    value: new Big(operation.data.amount),
+    currencyType: CurrencyType.Raha,
+    role: CurrencyRole.Transaction
+  };
+
+  return {
+    id: operation.id,
+    timestamp: operation.created_at,
+    content: {
+      actors: OrderedMap({
+        [creatorMember.get("memberId")]: creatorMember
+      }),
+      description: ["minted", amountMinted, "of basic income."],
+      body: {
+        bodyContent: {
+          type: BodyType.MINT_BASIC_INCOME
+        },
+        nextInChain: {
+          direction: ActivityDirection.NonDirectional,
+          nextActivityContent: {
+            actors: RAHA_BASIC_INCOME_MEMBER
+          }
+        }
+      }
+    },
+    operations: OrderedMap({ [operation.id]: operation })
+  };
+}
+
 function addMintOperationToActivities(
   state: RahaState,
   combineActivitiesCache: CombineActivitiesCache,
@@ -396,35 +430,18 @@ function addMintOperationToActivities(
         }
       }
 
+      const newActivity = createIndividualBasicIncomeMintActivity(
+        creatorMember,
+        operation
+      );
       // either nothing to merge since cache was empty, or difference was too
       // long. Reset the cache and create a new activity
       const newBasicIncomeCache: typeof combineActivitiesCache.aggregateBasicIncome = {
-        aggregatedActivityId: operation.id,
+        aggregatedActivityId: newActivity.id,
         runningTotal: amountMinted.value,
         operations: List([operation])
       };
-      const newActivity: Activity = {
-        id: operation.id,
-        timestamp: operation.created_at,
-        content: {
-          actors: OrderedMap({
-            [creatorMember.get("memberId")]: creatorMember
-          }),
-          description: ["minted", amountMinted, "of basic income."],
-          body: {
-            bodyContent: {
-              type: BodyType.MINT_BASIC_INCOME
-            },
-            nextInChain: {
-              direction: ActivityDirection.NonDirectional,
-              nextActivityContent: {
-                actors: RAHA_BASIC_INCOME_MEMBER
-              }
-            }
-          }
-        },
-        operations: OrderedMap({ [operation.id]: operation })
-      };
+
       return {
         activities: activities.set(newActivity.id, newActivity),
         combineActivitiesCache: {
