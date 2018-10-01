@@ -309,11 +309,12 @@ function addOperationToBundledBasicIncomeMintActivity(
     runningTotal: newTotal
   };
 
-  const totalMinted: CurrencyValue = {
-    value: newTotal,
-    currencyType: CurrencyType.Raha,
-    role: CurrencyRole.Transaction
-  };
+  // TODO: consider if there's a clean way to display this information
+  // const totalMinted: CurrencyValue = {
+  //   value: newTotal,
+  //   currencyType: CurrencyType.Raha,
+  //   role: CurrencyRole.Transaction
+  // };
 
   const individualMintActivity = createIndividualBasicIncomeMintActivity(
     creatorMember,
@@ -328,7 +329,7 @@ function addOperationToBundledBasicIncomeMintActivity(
         : operation.created_at,
     content: {
       ...existingActivity.content,
-      description: ["minted a total of", totalMinted, "of basic income."],
+      description: ["minted their basic income."],
       // TODO: show the most relevant members to the logged in member first, not
       // just in the order they're found
       actors: existingActivity.content.actors.set(
