@@ -29,7 +29,7 @@ const INTERNAL_ROUTE_PROTOCOL = "route:";
 // require only allows string literals. Once we move everything to server, we
 // won't need this
 const CARD_IMAGE_IMPORTS = {
-  marketplace: require("../../assets/img/Marketplace.png"),
+  marketplace: require("../../assets/img/Market.png"),
   question: require("../../assets/img/Question.png"),
   community: require("../../assets/img/Community.png"),
   support: require("../../assets/img/Support.png"),
