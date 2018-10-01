@@ -25,7 +25,6 @@ type MemberThumbnailProps = {
   member: Member | typeof RAHA_BASIC_INCOME_MEMBER;
   diameter?: number;
   style?: StyleProp<ViewStyle>;
-  score?: number; // Currently not used
 };
 
 export const MemberThumbnailView: React.StatelessComponent<
@@ -62,7 +61,6 @@ const getStyles = (
   member: Member | typeof RAHA_BASIC_INCOME_MEMBER
 ) => {
   const touchableWrapperStyle: ViewStyle = {
-
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
