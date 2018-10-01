@@ -310,6 +310,10 @@ function combineOperationWithMintActivity(
     role: CurrencyRole.Transaction
   };
 
+  const individualMintActivity = createIndividualBasicIncomeMintActivity(
+    creatorMember,
+    operation
+  );
   const combinedActivity: Activity = {
     ...existingActivity,
     // use the newest operation's timestamp
@@ -329,8 +333,18 @@ function combineOperationWithMintActivity(
         creatorMember
       )
     },
-    operations: existingActivity.operations.set(operation.id, operation)
+    sourceOperations: existingActivity.sourceOperations.set(
+      operation.id,
+      operation
+    ),
+    unbundledActivities: existingActivity.unbundledActivities
+      ? existingActivity.unbundledActivities.set(
+          operation.id,
+          individualMintActivity
+        )
+      : OrderedMap({ [operation.id]: individualMintActivity })
   };
+
   return {
     combinedActivity,
     newBasicIncomeCache
