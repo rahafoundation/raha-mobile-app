@@ -774,19 +774,20 @@ function activityContentContainsMember(
  * TODO: make this more efficient.
  * @param options Details: {
  *   unbundleActivities: if an activity is bundled, don't return the bundled
- *     activity, but the unbundled ones that are relevant to that user. Useful for
- *     things like bundled mint activities on the profile page.
+ *     activity, but the unbundled ones that are relevant to that user. Only
+ *     unbundles the types of activities specified. Useful for
+ *     things like unbundling bundled mint activities on a user's profile page.
  * }
  */
 export const activitiesForMember = (
   state: RahaState,
   memberId: MemberId,
   options?: {
-    unbundleActivities?: boolean;
+    unbundleActivities?: ActivityType[];
   }
 ): Activity[] => {
   const defaultOptions = {
-    unbundleActivities: false
+    unbundleActivities: []
   };
   const resolvedOptions: typeof options = {
     ...defaultOptions,
@@ -804,8 +805,11 @@ export const activitiesForMember = (
 
   return filteredActivities
     .map(maybeBundledActivity => {
-      if (!maybeBundledActivity.unbundledActivities) {
-        // not bundled, so just return it
+      if (
+        !maybeBundledActivity.unbundledActivities ||
+        !unbundleActivities.includes(maybeBundledActivity.type)
+      ) {
+        // not bundled or not an activity type to unbundle, so just return it
         return maybeBundledActivity;
       }
 
