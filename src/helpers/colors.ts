@@ -19,7 +19,9 @@ export const palette = {
   purple: "#6558f5",
   palePurple: "#c4bded",
 
-  red: "#da3e52"
+  red: "#da3e52",
+
+  transparent: "transparent"
 };
 
 export const colors = {
@@ -38,6 +40,12 @@ export const colors = {
   secondaryText: palette.lightGray,
   label: palette.darkMint,
   link: palette.purple,
+
+  // Member Search Bar
+  searchBarPlaceholderColor: palette.mediumGray,
+  searchBarBackground: palette.veryLightGray,
+  searchBarResultBorder: palette.veryLightGray,
+  searchBarResultBackground: palette.white,
 
   // Components
   divider: palette.lightGray,

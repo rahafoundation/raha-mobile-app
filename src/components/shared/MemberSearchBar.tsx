@@ -2,13 +2,19 @@
  * Component that allows search through members and suggests autocompletions.
  */
 import * as React from "react";
-import { FlatList, View, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  FlatList,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ViewStyle
+} from "react-native";
 import { SearchBar } from "react-native-elements";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../store";
 import { Member } from "../../store/reducers/members";
 import { Text } from "./elements";
-import { colors } from "../../helpers/colors";
+import { colors, palette } from "../../helpers/colors";
 
 const NUM_AUTOCOMPLETION_SUGGESTIONS = 3;
 
@@ -93,12 +99,15 @@ class MemberSearchBarView extends React.Component<
       <View style={styles.container}>
         <SearchBar
           placeholder={this.props.placeholderText}
-          containerStyle={this.props.lightTheme ? styles.lightStyle : {}}
+          placeholderTextColor={colors.searchBarPlaceholderColor}
+          containerStyle={styles.searchBarContainer}
+          inputStyle={styles.searchBarInput}
+          icon={{
+            color: colors.searchBarPlaceholderColor
+          }}
           style={styles.searchBar}
-          lightTheme={this.props.lightTheme ? this.props.lightTheme : false}
           onChangeText={text => this.suggestMembers(text)}
           onClearText={() => this.clearSuggestions()}
-          round
         />
         <FlatList
           keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
@@ -106,14 +115,19 @@ class MemberSearchBarView extends React.Component<
           keyExtractor={member => {
             return member.get("memberId");
           }}
-          renderItem={({ item }) => (
-            <MemberItem
-              member={item}
-              onPressed={() => {
-                this.props.onMemberSelected(item);
-              }}
-            />
-          )}
+          renderItem={({ item, index }) => {
+            const extraStyle =
+              index === 0 ? styles.firstMemberItemRow : undefined;
+            return (
+              <MemberItem
+                style={extraStyle}
+                member={item}
+                onPressed={() => {
+                  this.props.onMemberSelected(item);
+                }}
+              />
+            );
+          }}
         />
       </View>
     );
@@ -123,12 +137,13 @@ class MemberSearchBarView extends React.Component<
 type MemberProps = {
   member: Member;
   onPressed: () => void;
+  style?: ViewStyle;
 };
 
 const MemberItem: React.StatelessComponent<MemberProps> = props => {
   return (
     <TouchableOpacity onPress={props.onPressed}>
-      <View style={styles.memberItemRow}>
+      <View style={[styles.memberItemRow, props.style]}>
         <Text style={styles.memberText}>{props.member.get("fullName")}</Text>
         <Text style={styles.memberSubtext}>{props.member.get("username")}</Text>
       </View>
@@ -143,14 +158,18 @@ const styles = StyleSheet.create({
   searchBar: {
     width: "100%"
   },
+  firstMemberItemRow: {
+    borderTopWidth: 1
+  },
   memberItemRow: {
     flexDirection: "row",
     padding: 12,
     width: "100%",
     height: 50,
-    backgroundColor: colors.lightAccent,
-    alignItems: "center",
-    borderRadius: 3
+    borderBottomWidth: 1,
+    borderColor: colors.searchBarResultBorder,
+    backgroundColor: colors.searchBarResultBackground,
+    alignItems: "center"
   },
   memberText: {
     flexGrow: 1
@@ -159,10 +178,14 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     color: "#555"
   },
-  lightStyle: {
-    backgroundColor: "#fff",
-    borderTopColor: "#fff",
-    borderBottomColor: "#fff"
+  searchBarInput: {
+    color: colors.bodyText,
+    backgroundColor: palette.veryLightGray
+  },
+  searchBarContainer: {
+    backgroundColor: palette.transparent,
+    borderTopColor: palette.transparent,
+    borderBottomColor: palette.transparent
   }
 });
 
