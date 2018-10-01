@@ -1,4 +1,5 @@
 import { Big } from "big.js";
+import differenceInSeconds from "date-fns/differenceInSeconds";
 
 import {
   Operation,
@@ -18,7 +19,8 @@ import {
   VideoReference,
   ActivityDirection,
   ActivityContent,
-  BodyType
+  BodyType,
+  ActivityType
 } from "./types";
 import { getMemberById, getUnverifiedMembers } from "../members";
 import { RahaState } from "../../reducers";
@@ -60,10 +62,9 @@ export function activities(
   state: RahaState,
   opFilter?: (operation: Operation) => boolean
 ): Activity[] {
-  let operations = state.operations;
-  if (opFilter) {
-    operations = operations.filter(opFilter);
-  }
+  const operations = opFilter
+    ? state.operations.filter(opFilter)
+    : state.operations;
   return convertOperationsToActivities(state, operations).reverse();
 }
 
@@ -86,29 +87,44 @@ function getOperationCreator(
 
 function addCreateMemberOperationToActivites(
   state: RahaState,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: CreateMemberOperation
-): Activity[] {
-  const creatorMember = getOperationCreator(state, operation);
+): OrderedMap<Activity["id"], Activity> {
+  // type suggestion since GENESIS_MEMBER is only possible for
+  // VERIFY operations
+  const creatorMember = getOperationCreator(state, operation) as Member;
+  const inviterId = operation.data.request_invite_from_member_id;
+  const inviter = inviterId ? getMemberById(state, inviterId) : undefined;
+
   const newActivity: Activity = {
+    type: ActivityType.NEW_MEMBER,
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      // type suggestions since GENESIS_MEMBER is only possible for
-      // VERIFY operations
-      actor: creatorMember as Member,
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
       description: ["just joined Raha!"],
       body: {
         bodyContent: {
           type: BodyType.MEDIA,
-          media: [videoReferenceForMember(creatorMember as Member)]
-        }
+          media: [videoReferenceForMember(creatorMember)]
+        },
+        ...(inviter
+          ? {
+              nextInChain: {
+                direction: ActivityDirection.Bidirectional,
+                nextActivityContent: {
+                  actors: OrderedMap({ [inviter.get("memberId")]: inviter }),
+                  description: ["invited them to join Raha."]
+                }
+              }
+            }
+          : {})
       }
     },
-    operations: OrderedMap({ [operation.id]: operation })
+    sourceOperations: OrderedMap({ [operation.id]: operation })
   };
 
-  return [...activities, newActivity];
+  return activities.set(newActivity.id, newActivity);
 }
 
 function addEditMemberOperationToActivities(
@@ -137,10 +153,12 @@ function addEditMemberOperationToActivities(
 
 function addRequestVerificationOperationToActivites(
   state: RahaState,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: RequestVerificationOperation
-): Activity[] {
-  const creatorMember = getOperationCreator(state, operation);
+): OrderedMap<Activity["id"], Activity> {
+  // type suggestion since GENESIS_MEMBER is only possible for
+  // VERIFY operations
+  const creatorMember = getOperationCreator(state, operation) as Member;
   const requestedMember = getMemberById(state, operation.data.to_uid);
   if (!requestedMember) {
     throw new Error(
@@ -151,36 +169,37 @@ function addRequestVerificationOperationToActivites(
   }
 
   const newActivity: Activity = {
+    type: ActivityType.REQUEST_VERIFICATION,
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      // type suggestions since GENESIS_MEMBER is only possible for
-      // VERIFY operations
-      actor: creatorMember as Member,
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
       description: ["requested a friend to verify their account."],
       body: {
         bodyContent: {
           type: BodyType.MEDIA,
-          media: [videoReferenceForMember(creatorMember as Member)]
+          media: [videoReferenceForMember(creatorMember)]
         },
         nextInChain: {
           direction: ActivityDirection.NonDirectional,
           nextActivityContent: {
-            actor: requestedMember
+            actors: OrderedMap({
+              [requestedMember.get("memberId")]: requestedMember
+            })
           }
         }
       }
     },
-    operations: OrderedMap({ [operation.id]: operation })
+    sourceOperations: OrderedMap({ [operation.id]: operation })
   };
-  return [...activities, newActivity];
+  return activities.set(newActivity.id, newActivity);
 }
 
 function addVerifyOperationToActivities(
   state: RahaState,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: VerifyOperation
-): Activity[] {
+): OrderedMap<Activity["id"], Activity> {
   const creatorMember = getOperationCreator(state, operation);
   const verifiedMember = getMemberById(state, operation.data.to_uid);
   if (!verifiedMember) {
@@ -197,10 +216,11 @@ function addVerifyOperationToActivities(
   }
 
   const newActivity: Activity = {
+    type: ActivityType.VERIFY_MEMBER,
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      actor: creatorMember,
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
       description: ["verified their friend's account!"],
       body: {
         bodyContent: {
@@ -211,22 +231,26 @@ function addVerifyOperationToActivities(
         nextInChain: {
           direction: ActivityDirection.Forward,
           nextActivityContent: {
-            actor: verifiedMember
+            actors: OrderedMap({
+              [verifiedMember.get("memberId")]: verifiedMember
+            })
           }
         }
       }
     },
-    operations: OrderedMap({ [operation.id]: operation })
+    sourceOperations: OrderedMap({ [operation.id]: operation })
   };
-  return [...activities, newActivity];
+  return activities.set(newActivity.id, newActivity);
 }
 
 function addGiveOperationToActivities(
   state: RahaState,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: GiveOperation
-): Activity[] {
-  const creatorMember = getOperationCreator(state, operation);
+): OrderedMap<Activity["id"], Activity> {
+  // type suggestion since GENESIS_MEMBER is only possible for
+  // VERIFY operations
+  const creatorMember = getOperationCreator(state, operation) as Member;
   const givenToMember = getMemberById(state, operation.data.to_uid);
   if (!givenToMember) {
     console.error(
@@ -248,12 +272,11 @@ function addGiveOperationToActivities(
     currencyType: CurrencyType.Raha
   };
   const newActivity: Activity = {
+    type: ActivityType.GIVE_RAHA,
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      // type suggestions since GENESIS_MEMBER is only possible for
-      // VERIFY operations
-      actor: creatorMember as Member,
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
       description: ["gave", amountGiven, "for"],
       body: {
         bodyContent: {
@@ -263,7 +286,9 @@ function addGiveOperationToActivities(
         nextInChain: {
           direction: ActivityDirection.Forward,
           nextActivityContent: {
-            actor: givenToMember,
+            actors: OrderedMap({
+              [givenToMember.get("memberId")]: givenToMember
+            }),
             description: ["donated", amountDonated],
             // TODO: make this configurable
             body: {
@@ -274,7 +299,7 @@ function addGiveOperationToActivities(
               nextInChain: {
                 direction: ActivityDirection.Forward,
                 nextActivityContent: {
-                  actor: RAHA_BASIC_INCOME_MEMBER
+                  actors: RAHA_BASIC_INCOME_MEMBER
                 }
               }
             }
@@ -282,17 +307,126 @@ function addGiveOperationToActivities(
         }
       }
     },
-    operations: OrderedMap({ [operation.id]: operation })
+    sourceOperations: OrderedMap({ [operation.id]: operation })
   };
-  return [...activities, newActivity];
+  return activities.set(newActivity.id, newActivity);
+}
+
+function addOperationToBundledBasicIncomeMintActivity(
+  basicIncomeCache: Required<BundledActivitiesCache>["bundledBasicIncome"],
+  existingActivity: Activity,
+  operation: MintOperation,
+  creatorMember: Member
+): {
+  bundledActivity: Activity;
+  newBasicIncomeCache: typeof basicIncomeCache;
+} {
+  if (existingActivity.content.actors === RAHA_BASIC_INCOME_MEMBER) {
+    throw new Error(
+      "Unexpected: RAHA_BASIC_INCOME_MEMBER was minting a basic income?"
+    );
+  }
+  const { runningTotal, operations } = basicIncomeCache;
+  const newTotal = runningTotal.add(operation.data.amount);
+  const newBasicIncomeCache: typeof basicIncomeCache = {
+    ...basicIncomeCache,
+    operations: operations.push(operation),
+    runningTotal: newTotal
+  };
+
+  // TODO: consider if there's a clean way to display this information
+  // const totalMinted: CurrencyValue = {
+  //   value: newTotal,
+  //   currencyType: CurrencyType.Raha,
+  //   role: CurrencyRole.Transaction
+  // };
+
+  const individualMintActivity = createIndividualBasicIncomeMintActivity(
+    creatorMember,
+    operation
+  );
+  const bundledActivity: Activity = {
+    ...existingActivity,
+    // use the newest operation's timestamp
+    timestamp:
+      existingActivity.timestamp > operation.created_at
+        ? existingActivity.timestamp
+        : operation.created_at,
+    content: {
+      ...existingActivity.content,
+      description: ["minted their basic income."],
+      // TODO: show the most relevant members to the logged in member first, not
+      // just in the order they're found
+      actors: existingActivity.content.actors.set(
+        creatorMember.get("memberId"),
+        creatorMember
+      )
+    },
+    sourceOperations: existingActivity.sourceOperations.set(
+      operation.id,
+      operation
+    ),
+    unbundledActivities: existingActivity.unbundledActivities
+      ? existingActivity.unbundledActivities.set(
+          operation.id,
+          individualMintActivity
+        )
+      : OrderedMap({ [operation.id]: individualMintActivity })
+  };
+
+  return {
+    bundledActivity,
+    newBasicIncomeCache
+  };
+}
+
+function createIndividualBasicIncomeMintActivity(
+  creatorMember: Member,
+  operation: MintOperation
+): Activity {
+  const amountMinted: CurrencyValue = {
+    value: new Big(operation.data.amount),
+    currencyType: CurrencyType.Raha,
+    role: CurrencyRole.Transaction
+  };
+
+  return {
+    type: ActivityType.MINT_BASIC_INCOME,
+    id: operation.id,
+    timestamp: operation.created_at,
+    content: {
+      actors: OrderedMap({
+        [creatorMember.get("memberId")]: creatorMember
+      }),
+      description: ["minted", amountMinted, "of basic income."],
+      body: {
+        bodyContent: {
+          type: BodyType.MINT_BASIC_INCOME
+        },
+        nextInChain: {
+          direction: ActivityDirection.NonDirectional,
+          nextActivityContent: {
+            actors: RAHA_BASIC_INCOME_MEMBER
+          }
+        }
+      }
+    },
+    sourceOperations: OrderedMap({ [operation.id]: operation })
+  };
 }
 
 function addMintOperationToActivities(
   state: RahaState,
-  activities: Activity[],
+  bundledActivitiesCache: BundledActivitiesCache,
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: MintOperation
-): Activity[] {
-  const creatorMember = getOperationCreator(state, operation);
+): {
+  activities: OrderedMap<Activity["id"], Activity>;
+  bundledActivitiesCache: BundledActivitiesCache;
+} {
+  // type suggestion since GENESIS_MEMBER is only possible for
+  // VERIFY operations
+  const creatorMember = getOperationCreator(state, operation) as Member;
 
   const amountMinted: CurrencyValue = {
     value: new Big(operation.data.amount),
@@ -302,29 +436,61 @@ function addMintOperationToActivities(
 
   switch (operation.data.type) {
     case MintType.BASIC_INCOME: {
-      const newActivity: Activity = {
-        id: operation.id,
-        timestamp: operation.created_at,
-        content: {
-          // type suggestions since GENESIS_MEMBER is only possible for
-          // VERIFY operations
-          actor: creatorMember as Member,
-          description: ["minted", amountMinted, "of basic income."],
-          body: {
-            bodyContent: {
-              type: BodyType.MINT_BASIC_INCOME
-            },
-            nextInChain: {
-              direction: ActivityDirection.NonDirectional,
-              nextActivityContent: {
-                actor: RAHA_BASIC_INCOME_MEMBER
-              }
+      // if cache is present, consider combining this basic income mint
+      // operation with existing activity
+      if (bundledActivitiesCache.bundledBasicIncome) {
+        // check if difference in time is too long before merging
+        const bundledActivityId =
+          bundledActivitiesCache.bundledBasicIncome.bundledActivityId;
+        const bundledActivity = activities.get(bundledActivityId);
+        if (!bundledActivity) {
+          // TODO: error handling that doesn't just kill the current mint operation?
+          throw new Error("Bundling failed; existing activity missing");
+        }
+
+        if (
+          differenceInSeconds(operation.created_at, bundledActivity.timestamp) <
+          MAX_MINT_SECONDS
+        ) {
+          // difference short enough—merge it
+          const newData = addOperationToBundledBasicIncomeMintActivity(
+            bundledActivitiesCache.bundledBasicIncome,
+            bundledActivity,
+            operation,
+            creatorMember
+          );
+          return {
+            activities: activities.set(
+              bundledActivityId,
+              newData.bundledActivity
+            ),
+            bundledActivitiesCache: {
+              ...bundledActivitiesCache,
+              bundledBasicIncome: newData.newBasicIncomeCache
             }
-          }
-        },
-        operations: OrderedMap({ [operation.id]: operation })
+          };
+        }
+      }
+
+      const newActivity = createIndividualBasicIncomeMintActivity(
+        creatorMember,
+        operation
+      );
+      // either nothing to merge since cache was empty, or difference was too
+      // long. Reset the cache and create a new activity
+      const newBasicIncomeCache: typeof bundledActivitiesCache.bundledBasicIncome = {
+        bundledActivityId: newActivity.id,
+        runningTotal: amountMinted.value,
+        operations: List([operation])
       };
-      return [...activities, newActivity];
+
+      return {
+        activities: activities.set(newActivity.id, newActivity),
+        bundledActivitiesCache: {
+          ...bundledActivitiesCache,
+          bundledBasicIncome: newBasicIncomeCache
+        }
+      };
     }
     case MintType.REFERRAL_BONUS: {
       const invitedMember = getMemberById(
@@ -337,15 +503,19 @@ function addMintOperationToActivities(
             operation.data.invited_member_id
           }) missing, invalid.`
         );
-        return activities;
+        return {
+          activities,
+          bundledActivitiesCache
+        };
       }
       const newActivity: Activity = {
+        type: ActivityType.MINT_REFERRAL_BONUS,
         id: operation.id,
         timestamp: operation.created_at,
         content: {
-          // type suggestions since GENESIS_MEMBER is only possible for
-          // VERIFY operations
-          actor: creatorMember as Member,
+          actors: OrderedMap({
+            [creatorMember.get("memberId")]: creatorMember
+          }),
           description: [
             "minted",
             amountMinted,
@@ -353,20 +523,31 @@ function addMintOperationToActivities(
           ],
           body: {
             bodyContent: {
-              type: BodyType.MEDIA,
-              media: [videoReferenceForMember(invitedMember)]
+              type: BodyType.MINT_BASIC_INCOME
             },
+            // Commented out showing the video since it leads to redundant
+            // videos in the feed until we have bundling ready for referral
+            // bonuses.
+            // bodyContent: {
+            //   type: BodyType.MEDIA,
+            //   media: [videoReferenceForMember(invitedMember)]
+            // },
             nextInChain: {
               direction: ActivityDirection.Bidirectional,
               nextActivityContent: {
-                actor: invitedMember
+                actors: OrderedMap({
+                  [invitedMember.get("memberId")]: invitedMember
+                })
               }
             }
           }
         },
-        operations: OrderedMap({ [operation.id]: operation })
+        sourceOperations: OrderedMap({ [operation.id]: operation })
       };
-      return [...activities, newActivity];
+      return {
+        activities: activities.set(newActivity.id, newActivity),
+        bundledActivitiesCache
+      };
     }
     default:
       // Shouldn't happen. Type assertion is because TypeScript also thinks
@@ -378,17 +559,21 @@ function addMintOperationToActivities(
             .data.type as MintType}". Operation: ${JSON.stringify(operation)}`
         )
       );
-      return activities;
+      return {
+        activities,
+        bundledActivitiesCache
+      };
   }
 }
 
 function addTrustOperationToActivities(
   state: RahaState,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: TrustOperation
-): Activity[] {
-  const creatorMember = getOperationCreator(state, operation);
-
+): OrderedMap<Activity["id"], Activity> {
+  // type suggestion since GENESIS_MEMBER is only possible for
+  // VERIFY operations
+  const creatorMember = getOperationCreator(state, operation) as Member;
   const trustedMember = getMemberById(state, operation.data.to_uid);
   if (!trustedMember) {
     console.error(
@@ -400,12 +585,11 @@ function addTrustOperationToActivities(
   }
 
   const newActivity: Activity = {
+    type: ActivityType.TRUST_MEMBER,
     id: operation.id,
     timestamp: operation.created_at,
     content: {
-      // type suggestions since GENESIS_MEMBER is only possible for
-      // VERIFY operations
-      actor: creatorMember as Member,
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
       description: ["trusted a new friend"],
       body: {
         bodyContent: {
@@ -414,50 +598,86 @@ function addTrustOperationToActivities(
         nextInChain: {
           direction: ActivityDirection.Forward,
           nextActivityContent: {
-            actor: trustedMember
+            actors: OrderedMap({
+              [trustedMember.get("memberId")]: trustedMember
+            })
           }
         }
       }
     },
-    operations: OrderedMap({ [operation.id]: operation })
+    sourceOperations: OrderedMap({ [operation.id]: operation })
   };
-  return [...activities, newActivity];
+  return activities.set(newActivity.id, newActivity);
 }
 
 function addOperationToActivitiesList(
   state: RahaState,
-  activities: Activity[],
+  bundledActivitiesCache: BundledActivitiesCache,
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: Operation
-): Activity[] {
+): {
+  activities: OrderedMap<Activity["id"], Activity>;
+  bundledActivitiesCache: BundledActivitiesCache;
+} {
   switch (operation.op_code) {
     case OperationType.CREATE_MEMBER: {
-      return addCreateMemberOperationToActivites(state, activities, operation);
+      return {
+        activities: addCreateMemberOperationToActivites(
+          state,
+          activities,
+          operation
+        ),
+        bundledActivitiesCache
+      };
     }
     case OperationType.EDIT_MEMBER: {
       return addEditMemberOperationToActivities(state, activities, operation);
     }
     case OperationType.REQUEST_VERIFICATION: {
-      return addRequestVerificationOperationToActivites(
+      return {
+        activities: addRequestVerificationOperationToActivites(
+          state,
+          activities,
+          operation
+        ),
+        bundledActivitiesCache
+      };
+    }
+    case OperationType.VERIFY: {
+      return {
+        activities: addVerifyOperationToActivities(
+          state,
+          activities,
+          operation
+        ),
+        bundledActivitiesCache
+      };
+    }
+    case OperationType.GIVE: {
+      return {
+        activities: addGiveOperationToActivities(state, activities, operation),
+        bundledActivitiesCache
+      };
+    }
+    case OperationType.MINT: {
+      return addMintOperationToActivities(
         state,
+        bundledActivitiesCache,
         activities,
         operation
       );
     }
-    case OperationType.VERIFY: {
-      return addVerifyOperationToActivities(state, activities, operation);
-    }
-    case OperationType.GIVE: {
-      return addGiveOperationToActivities(state, activities, operation);
-    }
-    case OperationType.MINT: {
-      return addMintOperationToActivities(state, activities, operation);
-    }
     case OperationType.TRUST: {
-      return addTrustOperationToActivities(state, activities, operation);
+      return {
+        activities: addTrustOperationToActivities(state, activities, operation),
+        bundledActivitiesCache
+      };
     }
     case OperationType.INVITE:
-      // We do not display any activity for Invite operations.
-      return activities;
+      // We do not display any activity for Invite operations. Whether or not
+      // a newly joined member was invited, is retrieved from the
+      // `request_invite_from_member_id` field on the `CREATE_MEMBER` operation.
+      return { activities, bundledActivitiesCache };
     default:
       // Shouldn't happen. Type assertion is because TypeScript also thinks
       // this should never happen.
@@ -468,6 +688,17 @@ function addOperationToActivitiesList(
         }". Operation: ${JSON.stringify(operation)}`
       );
   }
+}
+
+const MAX_MINT_SECONDS = 3 * 60 * 60; // 3 hours
+interface BundledActivitiesCache {
+  // bundling policy: bundle all mint operations whose timestamps are
+  // between the first collected one, to the MAX_MINT_SECONDS later.
+  bundledBasicIncome?: {
+    bundledActivityId: Activity["id"];
+    operations: List<MintOperation>;
+    runningTotal: Big;
+  };
 }
 
 /**
@@ -486,21 +717,32 @@ export function convertOperationsToActivities(
   state: RahaState,
   operations: List<Operation>
 ): Activity[] {
-  return operations.reduce(
-    (memo, operation) => {
-      try {
-        return addOperationToActivitiesList(state, memo, operation);
-      } catch (err) {
-        console.error(
-          err.message,
-          "| Operation:",
-          JSON.stringify(operation, null, 2)
-        );
-        return memo;
+  return operations
+    .reduce(
+      (memo, operation) => {
+        try {
+          return addOperationToActivitiesList(
+            state,
+            memo.bundledActivitiesCache,
+            memo.activities,
+            operation
+          );
+        } catch (err) {
+          console.error(
+            err.message,
+            "| Operation:",
+            JSON.stringify(operation, null, 2)
+          );
+          return memo;
+        }
+      },
+      {
+        activities: OrderedMap<Activity["id"], Activity>(),
+        bundledActivitiesCache: {} as BundledActivitiesCache
       }
-    },
-    [] as Activity[]
-  );
+    )
+    .activities.valueSeq()
+    .toArray();
 }
 
 /**
@@ -534,11 +776,14 @@ function activityContentContainsMember(
   content: ActivityContent,
   memberId: MemberId | typeof RAHA_BASIC_INCOME_MEMBER
 ): boolean {
-  if (content.actor === RAHA_BASIC_INCOME_MEMBER) {
-    if (memberId === RAHA_BASIC_INCOME_MEMBER) {
+  if (memberId === RAHA_BASIC_INCOME_MEMBER) {
+    if (content.actors === RAHA_BASIC_INCOME_MEMBER) {
       return true;
     }
-  } else if (content.actor.get("memberId") === memberId) {
+  } else if (
+    content.actors !== RAHA_BASIC_INCOME_MEMBER &&
+    content.actors.map(a => (a as Member).get("memberId")).includes(memberId)
+  ) {
     return true;
   }
 
@@ -560,9 +805,59 @@ function activityContentContainsMember(
  * Get all activities relevant to a member.
  *
  * TODO: make this more efficient.
+ * @param options Details: {
+ *   unbundleActivities: if an activity is bundled, don't return the bundled
+ *     activity, but the unbundled ones that are relevant to that user. Only
+ *     unbundles the types of activities specified. Useful for
+ *     things like unbundling bundled mint activities on a user's profile page.
+ * }
  */
-export const activitiesForMember = (state: RahaState, memberId: MemberId) => {
-  return activities(state).filter(activity =>
+export const activitiesForMember = (
+  state: RahaState,
+  memberId: MemberId,
+  options?: {
+    unbundleActivities?: ActivityType[];
+  }
+): Activity[] => {
+  const defaultOptions = {
+    unbundleActivities: []
+  };
+  const resolvedOptions: typeof options = {
+    ...defaultOptions,
+    ...(options || {})
+  };
+  const { unbundleActivities } = resolvedOptions;
+
+  const filteredActivities = activities(state).filter(activity =>
     activityContentContainsMember(activity.content, memberId)
   );
+
+  if (!unbundleActivities) {
+    return filteredActivities;
+  }
+
+  return filteredActivities
+    .map(maybeBundledActivity => {
+      if (
+        !maybeBundledActivity.unbundledActivities ||
+        !unbundleActivities.includes(maybeBundledActivity.type)
+      ) {
+        // not bundled or not an activity type to unbundle, so just return it
+        return maybeBundledActivity;
+      }
+
+      // definitely bundled
+      return maybeBundledActivity.unbundledActivities
+        .valueSeq()
+        .filter(activity =>
+          activityContentContainsMember(activity.content, memberId)
+        )
+        .toArray();
+    })
+    .reduce((memo: Activity[], activity) => {
+      if (activity instanceof Array) {
+        return [...memo, ...activity];
+      }
+      return [...memo, activity];
+    }, []);
 };

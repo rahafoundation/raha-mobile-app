@@ -12,6 +12,7 @@ import { activities } from "../../store/selectors/activities";
 import { Activity } from "../../store/selectors/activities/types";
 import { colors } from "../../helpers/colors";
 import { View } from "react-native";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 type StateProps = {
   activities: Activity[];
@@ -27,7 +28,10 @@ const FeedView: React.StatelessComponent<StateProps> = ({ activities }) => {
 
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
   return {
-    activities: activities(state)
+    activities: activities(
+      state,
+      operation => operation.op_code !== OperationType.REQUEST_VERIFICATION
+    )
   };
 };
 

@@ -3,10 +3,10 @@ import {
   RAHA_BASIC_INCOME_MEMBER
 } from "../../../store/reducers/members";
 import { CurrencyValue } from "../../../components/shared/elements/Currency";
-import { Omit } from "../../../../types/omit";
 import { LinkDestination } from "../../../components/shared/elements/TextLink";
 import { Operation } from "@raha/api-shared/dist/models/Operation";
 import { OrderedMap } from "immutable";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 /**
  * Represents the direction of the relationship between actors in an activity.
@@ -88,12 +88,14 @@ export interface NextInChain {
  */
 export interface ActivityContent {
   /**
-   * What member took action.
+   * What members took action. Stored as an OrderedMap in order to not keep
+   * duplicates. Would use an OrderedSet, but Immutable.JS doesn't support
+   * custom equality functions, so Map simulates equality by id.
    *
    * TODO: potentially support other special members than basic income, treat it
    * as an actual member/variation of it rather than a singleton
    */
-  actor: Member | typeof RAHA_BASIC_INCOME_MEMBER;
+  actors: OrderedMap<MemberId, Member> | typeof RAHA_BASIC_INCOME_MEMBER;
   /**
    * Description of the action they took. Currently rendered after the actor's
    * display name in the format of a complete sentence.
@@ -143,11 +145,29 @@ export interface ActivityCallToAction {
 }
 
 /**
+ * Types of activities shown in the feed.
+ */
+export enum ActivityType {
+  // encompasses both individual mints, and bundled ones
+  MINT_BASIC_INCOME = "MINT_BASIC_INCOME",
+
+  MINT_REFERRAL_BONUS = "MINT_REFERRAL_BONUS",
+  VERIFY_MEMBER = "VERIFY_MEMBER",
+  TRUST_MEMBER = "TRUST_MEMBER",
+  GIVE_RAHA = "GIVE_RAHA",
+  REQUEST_VERIFICATION = "REQUEST_VERIFICATION",
+
+  // will encompass CREATE_MEMBER + VERIFY + MINT_REFERRAL_BONUS bundles
+  NEW_MEMBER = "NEW_MEMBER"
+}
+
+/**
  * A full description of any conceptually whole activity that happens on Raha.
  *
  * id just needs to be unique and deterministically derived from the content.
  */
 export interface Activity {
+  type: ActivityType;
   id: string;
   timestamp: Date;
   content: ActivityContent;
@@ -155,7 +175,18 @@ export interface Activity {
   /**
    * Operations involved in this activity, ordered by how they were ingested to
    * create this activity (should generally be chronological, since that's how
-   * we receive operations; but this may change).
+   * we receive operations; but this may change). Stored as a Map to allow quick
+   * retrieval of relevant operations.
    */
-  operations: OrderedMap<Operation["id"], Operation>;
+  sourceOperations: OrderedMap<Operation["id"], Operation>;
+
+  /**
+   * Activities corresponding to individual operations before they've been
+   * bundled. Present only if a relevant one ought to exist, which is dependent
+   * on the semantics of the particular operation type.
+   *
+   * The presence of this key indicates that the Activity in question is
+   * an bundled one.
+   */
+  unbundledActivities?: OrderedMap<Operation["id"], Activity>;
 }

@@ -23,7 +23,7 @@ import {
   activitiesForMember,
   convertOperationsToActivities
 } from "../../store/selectors/activities";
-import { Activity } from "../../store/selectors/activities/types";
+import { Activity, ActivityType } from "../../store/selectors/activities/types";
 import {
   CurrencyType,
   CurrencyRole,
@@ -288,7 +288,9 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   const memberId = member.get("memberId");
   const freshMember = getMemberById(state, memberId) as Member;
 
-  const activities = activitiesForMember(state, memberId);
+  const activities = activitiesForMember(state, memberId, {
+    unbundleActivities: [ActivityType.MINT_BASIC_INCOME]
+  });
   const verifiedActivities: Activity[] = convertOperationsToActivities(
     state,
     operationsForMember(state.operations, memberId).filter(

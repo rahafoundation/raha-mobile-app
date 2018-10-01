@@ -28,6 +28,11 @@ import { TextLink } from "../elements/TextLink";
 import { ArrowHeadDirection, ArrowHead } from "./ArrowHead";
 import { MixedText } from "../elements/MixedText";
 import { styles, leftColumnWidth, chainIndicatorColor } from "./styles";
+import {
+  RAHA_BASIC_INCOME_MEMBER,
+  Member
+} from "../../../store/reducers/members";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 type Props = {
   activity: ActivityData;
@@ -179,6 +184,31 @@ const ChainIndicator: React.StatelessComponent<{
   );
 };
 
+function renderMemberNameInList({
+  actor,
+  index,
+  numActors
+}: {
+  actor: Member;
+  index: number;
+  numActors: number;
+}): React.ReactNode {
+  const insertComma = numActors > 2 && index < Math.min(numActors, 4) - 2;
+  const insertAnd = numActors > 1 && index === Math.min(numActors, 4) - 2;
+  return (
+    <React.Fragment key={index}>
+      <MemberName member={actor} />
+      {insertComma && <Text>, </Text>}
+      {insertAnd && (
+        <Text>
+          {!insertComma && " "}
+          and{" "}
+        </Text>
+      )}
+    </React.Fragment>
+  );
+}
+
 class ActivityContent extends React.Component<{
   content: ActivityContentData;
   onFindVideoElems: (elems: VideoWithPlaceholderView[]) => void;
@@ -186,14 +216,25 @@ class ActivityContent extends React.Component<{
   ownVideoElems: VideoWithPlaceholderView[] = [];
 
   public render() {
-    const { actor, description, body } = this.props.content;
+    const { actors, description, body } = this.props.content;
+    const actorsData: typeof RAHA_BASIC_INCOME_MEMBER | Member[] =
+      actors === RAHA_BASIC_INCOME_MEMBER
+        ? actors
+        : actors.valueSeq().toArray();
+    const numActors =
+      actorsData === RAHA_BASIC_INCOME_MEMBER ? 1 : actorsData.length;
     return (
       <View>
         <View style={styles.actorRow}>
+          {/* TODO: don't just represent member by the first actor; support multiple actors. */}
           <MemberThumbnail
             style={styles.actorThumbnail}
             diameter={leftColumnWidth}
-            member={actor}
+            member={
+              actorsData === RAHA_BASIC_INCOME_MEMBER
+                ? actorsData
+                : actorsData[0]
+            }
           />
           {/*
             * Everything in the description must ultimately be Text elements, or
@@ -201,7 +242,25 @@ class ActivityContent extends React.Component<{
             * flows correctly in descriptions.
             */}
           <Text style={styles.description}>
-            <MemberName member={actor} />
+            {/* 
+              * Name at most the first three actors, and just summarize the rest
+              */}
+            {actorsData === RAHA_BASIC_INCOME_MEMBER ? (
+              <MemberName member={actorsData} />
+            ) : (
+              (actorsData as Member[])
+                .slice(0, 3)
+                .map((actor, index) =>
+                  renderMemberNameInList({ actor, index, numActors })
+                )
+            )}
+            {/* TODO: make this clickable to see the list */}
+            {numActors > 3 && (
+              <Text>
+                {numActors - 3} other
+                {numActors > 4 ? "s" : " person"}
+              </Text>
+            )}
             {description && <MixedText content={description} />}
           </Text>
         </View>
