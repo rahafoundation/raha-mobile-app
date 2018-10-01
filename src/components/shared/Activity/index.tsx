@@ -248,9 +248,11 @@ class ActivityContent extends React.Component<{
             {actorsData === RAHA_BASIC_INCOME_MEMBER ? (
               <MemberName member={actorsData} />
             ) : (
-              (actorsData as Member[]).slice(0, 3).map((actor, index) => {
-                renderMemberNameInList({ actor, index, numActors });
-              })
+              (actorsData as Member[])
+                .slice(0, 3)
+                .map((actor, index) =>
+                  renderMemberNameInList({ actor, index, numActors })
+                )
             )}
             {/* TODO: make this clickable to see the list */}
             {numActors > 3 && (
