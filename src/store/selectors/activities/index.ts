@@ -498,9 +498,15 @@ function addMintOperationToActivities(
           ],
           body: {
             bodyContent: {
-              type: BodyType.MEDIA,
-              media: [videoReferenceForMember(invitedMember)]
+              type: BodyType.MINT_BASIC_INCOME
             },
+            // Commented out showing the video since it leads to redundant
+            // videos in the feed until we have bundling ready for referral
+            // bonuses.
+            // bodyContent: {
+            //   type: BodyType.MEDIA,
+            //   media: [videoReferenceForMember(invitedMember)]
+            // },
             nextInChain: {
               direction: ActivityDirection.Bidirectional,
               nextActivityContent: {
