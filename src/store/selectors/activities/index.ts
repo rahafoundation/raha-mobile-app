@@ -18,7 +18,8 @@ import {
   VideoReference,
   ActivityDirection,
   ActivityContent,
-  BodyType
+  BodyType,
+  ActivityType
 } from "./types";
 import { getMemberById, getUnverifiedMembers } from "../members";
 import { RahaState } from "../../reducers";
@@ -95,6 +96,7 @@ function addCreateMemberOperationToActivites(
   const inviter = inviterId ? getMemberById(state, inviterId) : undefined;
 
   const newActivity: Activity = {
+    type: ActivityType.NEW_MEMBER,
     id: operation.id,
     timestamp: operation.created_at,
     content: {
@@ -142,6 +144,7 @@ function addRequestVerificationOperationToActivites(
   }
 
   const newActivity: Activity = {
+    type: ActivityType.REQUEST_VERIFICATION,
     id: operation.id,
     timestamp: operation.created_at,
     content: {
@@ -188,6 +191,7 @@ function addVerifyOperationToActivities(
   }
 
   const newActivity: Activity = {
+    type: ActivityType.VERIFY_MEMBER,
     id: operation.id,
     timestamp: operation.created_at,
     content: {
@@ -243,6 +247,7 @@ function addGiveOperationToActivities(
     currencyType: CurrencyType.Raha
   };
   const newActivity: Activity = {
+    type: ActivityType.GIVE_RAHA,
     id: operation.id,
     timestamp: operation.created_at,
     content: {
@@ -362,6 +367,7 @@ function createIndividualBasicIncomeMintActivity(
   };
 
   return {
+    type: ActivityType.MINT_BASIC_INCOME,
     id: operation.id,
     timestamp: operation.created_at,
     content: {
@@ -479,6 +485,7 @@ function addMintOperationToActivities(
         };
       }
       const newActivity: Activity = {
+        type: ActivityType.MINT_REFERRAL_BONUS,
         id: operation.id,
         timestamp: operation.created_at,
         content: {
@@ -548,6 +555,7 @@ function addTrustOperationToActivities(
   }
 
   const newActivity: Activity = {
+    type: ActivityType.TRUST_MEMBER,
     id: operation.id,
     timestamp: operation.created_at,
     content: {
@@ -766,8 +774,8 @@ function activityContentContainsMember(
  * TODO: make this more efficient.
  * @param options Details: {
  *   unbundleActivities: if an activity is bundled, don't return the bundled
- *   activity, but the unbundled ones that are relevant to that user. Useful for
- *   things like bundled mint activities on the profile page.
+ *     activity, but the unbundled ones that are relevant to that user. Useful for
+ *     things like bundled mint activities on the profile page.
  * }
  */
 export const activitiesForMember = (
