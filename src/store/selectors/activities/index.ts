@@ -118,7 +118,7 @@ function addCreateMemberOperationToActivites(
           : {})
       }
     },
-    operations: OrderedMap({ [operation.id]: operation })
+    sourceOperations: OrderedMap({ [operation.id]: operation })
   };
 
   return activities.set(newActivity.id, newActivity);
@@ -162,7 +162,7 @@ function addRequestVerificationOperationToActivites(
         }
       }
     },
-    operations: OrderedMap({ [operation.id]: operation })
+    sourceOperations: OrderedMap({ [operation.id]: operation })
   };
   return activities.set(newActivity.id, newActivity);
 }
@@ -209,7 +209,7 @@ function addVerifyOperationToActivities(
         }
       }
     },
-    operations: OrderedMap({ [operation.id]: operation })
+    sourceOperations: OrderedMap({ [operation.id]: operation })
   };
   return activities.set(newActivity.id, newActivity);
 }
@@ -277,7 +277,7 @@ function addGiveOperationToActivities(
         }
       }
     },
-    operations: OrderedMap({ [operation.id]: operation })
+    sourceOperations: OrderedMap({ [operation.id]: operation })
   };
   return activities.set(newActivity.id, newActivity);
 }
@@ -367,7 +367,7 @@ function createIndividualBasicIncomeMintActivity(
         }
       }
     },
-    operations: OrderedMap({ [operation.id]: operation })
+    sourceOperations: OrderedMap({ [operation.id]: operation })
   };
 }
 
@@ -493,7 +493,7 @@ function addMintOperationToActivities(
             }
           }
         },
-        operations: OrderedMap({ [operation.id]: operation })
+        sourceOperations: OrderedMap({ [operation.id]: operation })
       };
       return {
         activities: activities.set(newActivity.id, newActivity),
@@ -555,7 +555,7 @@ function addTrustOperationToActivities(
         }
       }
     },
-    operations: OrderedMap({ [operation.id]: operation })
+    sourceOperations: OrderedMap({ [operation.id]: operation })
   };
   return activities.set(newActivity.id, newActivity);
 }

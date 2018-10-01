@@ -161,5 +161,15 @@ export interface Activity {
    * we receive operations; but this may change). Stored as a Map to allow quick
    * retrieval of relevant operations.
    */
-  operations: OrderedMap<Operation["id"], Operation>;
+  sourceOperations: OrderedMap<Operation["id"], Operation>;
+
+  /**
+   * Activities corresponding to individual operations before they've been
+   * bundled. Present only if a relevant one ought to exist, which is dependent
+   * on the semantics of the particular operation type.
+   *
+   * The presence of this key indicates that the Activity in question is
+   * an aggregated one.
+   */
+  unbundledActivities?: OrderedMap<Operation["id"], Activity>;
 }
