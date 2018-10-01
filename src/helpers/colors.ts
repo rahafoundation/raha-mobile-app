@@ -49,10 +49,8 @@ export const colors = {
   // Activity Feed, Account
   arrowColor: palette.lightGray,
   letterBackground: palette.blueWhite,
-  border1: palette.mint,
-  border2: palette.darkBlue,
-  secondaryBackground1: palette.paleMint,
-  secondaryBackground2: palette.paleBlue,
+  cardBorder: palette.veryLightGray,
+  cardBackground: palette.white,
 
   // Currency
   currency: {

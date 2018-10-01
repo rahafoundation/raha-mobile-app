@@ -8,34 +8,48 @@ import * as React from "react";
 import {
   View,
   TouchableHighlight,
-  WebView,
   ScrollView,
   Linking,
   StyleSheet,
-  TextStyle,
-  ViewStyle
+  ViewStyle,
+  Image,
+  ImageSourcePropType
 } from "react-native";
 
 import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { NavigationScreenProp } from "react-navigation";
 import { RouteName } from "../shared/Navigation";
-import { Button, Text } from "../shared/elements";
-import { colors } from "../../helpers/colors";
-import { fonts } from "../../helpers/fonts";
+import { Text } from "../shared/elements";
+import { sharedStyles } from "../shared/sharedStyles";
+import { colors, palette } from "../../helpers/colors";
+import { fonts, fontSizes } from "../../helpers/fonts";
 
 const INTERNAL_ROUTE_PROTOCOL = "route:";
+
+// require only allows string literals. Once we move everything to server, we
+// won't need this
+const CARD_IMAGE_IMPORTS = {
+  marketplace: require("../../assets/img/Marketplace.png"),
+  question: require("../../assets/img/Question.png"),
+  community: require("../../assets/img/Community.png"),
+  support: require("../../assets/img/Support.png"),
+  hi: require("../../assets/img/Hi.png"),
+  trophy: require("../../assets/img/Trophy.png")
+};
 
 type DiscoverCardRaw = {
   header?: string;
   bodyChoices: string[];
   action?: string;
   uri: string;
+  image_uri?: string;
 };
 
 type DiscoverCard = {
   header?: string;
   body: string;
   action?: string;
+  image_source?: ImageSourcePropType;
   uri: (navigation: NavigationScreenProp<{}>) => void;
 };
 
@@ -72,7 +86,12 @@ function convertCard(discoverCard: DiscoverCardRaw): DiscoverCard {
     header: discoverCard.header,
     body: pickRandomFromArr(discoverCard.bodyChoices),
     action: discoverCard.action,
-    uri: convertUriToCallback(discoverCard.uri)
+    uri: convertUriToCallback(discoverCard.uri),
+    image_source: discoverCard.image_uri
+      ? CARD_IMAGE_IMPORTS[
+          discoverCard.image_uri as keyof typeof CARD_IMAGE_IMPORTS
+        ]
+      : undefined
   };
 }
 
@@ -81,6 +100,7 @@ function convertCardArr(cardArr: DiscoverCardRaw[]): DiscoverCard[] {
 }
 
 // TODO below JSON should be available from website.
+// image_uri are just placeholders to work with local assets, replace with actual URI
 const DISCOVER_INFO = convertCardArr([
   {
     header: "Check out Raha Marketplace",
@@ -88,13 +108,15 @@ const DISCOVER_INFO = convertCardArr([
       "Find a personal trainer, get your resume reviewed, and more!"
     ],
     action: "Visit the marketplace",
-    uri: "https://discuss.raha.app/c/marketplace"
+    uri: "https://discuss.raha.app/c/marketplace",
+    image_uri: "marketplace"
   },
   {
     header: "Feedback or questions?",
     bodyChoices: ["Contact the Raha team at hi@raha.app!"],
     action: "Send us an email",
-    uri: "mailto:hi@raha.app"
+    uri: "mailto:hi@raha.app",
+    image_uri: "hi"
   },
   {
     header: "Raha supports...",
@@ -104,13 +126,15 @@ const DISCOVER_INFO = convertCardArr([
       "Delegative democracy and values-based development."
     ],
     action: "Read the Raha Manifesto",
-    uri: "https://raha.app/what-is-raha/"
+    uri: "https://raha.app/what-is-raha/",
+    image_uri: "support"
   },
   {
     header: "Meet the Raha Community",
     bodyChoices: ["Join discussions in the Raha Forums!"],
     action: "Check out the forums",
-    uri: "https://discuss.raha.app/"
+    uri: "https://discuss.raha.app/",
+    image_uri: "community"
   },
   {
     header: "Did you know?",
@@ -120,7 +144,8 @@ const DISCOVER_INFO = convertCardArr([
       '"The poor do not systematically abuse cash transfers (e.g. on alcohol)."'
     ],
     action: "Read more at GiveDirectly.org",
-    uri: "https://www.givedirectly.org/research-on-cash-transfers"
+    uri: "https://www.givedirectly.org/research-on-cash-transfers",
+    image_uri: "question"
   },
   {
     header: "Climb the leaderboard",
@@ -128,24 +153,14 @@ const DISCOVER_INFO = convertCardArr([
       "Invite more people to get to the top of the leaderboard ranks!"
     ],
     action: "View the leaderboard",
-    uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard" // Why does RouteName.LeaderBoard break?
-  },
+    uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard", // Why does RouteName.LeaderBoard break?
+    image_uri: "trophy"
+  }
 ]);
 
 type DiscoverProps = {
   navigation: NavigationScreenProp<{}>;
 };
-
-const BG_COLORS = [colors.secondaryBackground1, colors.secondaryBackground2];
-const BORDER_COLORS = [colors.border1, colors.border2];
-
-function getCardColor(index: number): string {
-  return BG_COLORS[index % BG_COLORS.length];
-}
-
-function getBorderColor(index: number): string {
-  return BORDER_COLORS[index % BORDER_COLORS.length];
-}
 
 function getCard(
   info: DiscoverCard,
@@ -154,23 +169,30 @@ function getCard(
 ) {
   return (
     <TouchableHighlight
-      style={[
-        styles.card,
-        {
-          backgroundColor: getCardColor(index),
-          borderColor: getBorderColor(index),
-          borderRadius: 4,
-          borderWidth: 4
-        }
-      ]}
       key={index}
+      style={styles.card}
+      underlayColor={palette.veryLightGray}
+      delayPressIn={0} // Looks like there's a default 130ms delay within
+      onPress={() => info.uri(navigation)}
     >
-      <View style={{ flex: 1, justifyContent: "space-between" }}>
+      <View>
         {info.header && <Text style={styles.headerText}>{info.header}</Text>}
-        <Text style={styles.bodyText}>{info.body}</Text>
-        {info.action && (
-          <Button title={info.action} onPress={() => info.uri(navigation)} />
-        )}
+        <View style={{ flexDirection: "row" }}>
+          {info.image_source && (
+            <Image
+              justifyContent="flex-start"
+              resizeMode="contain"
+              style={{ flex: 1, height: "auto" }}
+              source={info.image_source}
+            />
+          )}
+          <View style={{ flex: 2 }}>
+            <Text style={[styles.bodyText]}>{info.body}</Text>
+            {info.action && (
+              <Text style={styles.actionText}>{info.action}</Text>
+            )}
+          </View>
+        </View>
       </View>
     </TouchableHighlight>
   );
@@ -202,24 +224,33 @@ export const Discover: React.StatelessComponent<DiscoverProps> = ({
 };
 
 const pageStyle: ViewStyle = {
-  backgroundColor: colors.pageBackground
+  backgroundColor: palette.mint
 };
 const styles = StyleSheet.create({
   page: pageStyle,
   card: {
+    backgroundColor: colors.cardBackground,
+    borderColor: colors.cardBorder,
+    borderRadius: sharedStyles.borderRadius,
+    borderWidth: 1,
     marginTop: 8,
     marginLeft: 8,
     marginRight: 8,
     padding: 8,
-    borderRadius: 3
+    justifyContent: "space-between"
+  },
+  actionText: {
+    textAlign: "right",
+    color: palette.purple,
+    ...fonts.Lato.Bold
   },
   headerText: {
-    fontSize: 24,
-    marginBottom: 6,
+    marginBottom: 8,
+    ...fontSizes.large,
     ...fonts.Lato.Semibold
   },
   bodyText: {
-    fontSize: 16,
-    marginBottom: 8
+    marginBottom: 8,
+    ...fontSizes.medium
   }
 });
