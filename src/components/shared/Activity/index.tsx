@@ -184,6 +184,31 @@ const ChainIndicator: React.StatelessComponent<{
   );
 };
 
+function renderMemberNameInList({
+  actor,
+  index,
+  numActors
+}: {
+  actor: Member;
+  index: number;
+  numActors: number;
+}): React.ReactNode {
+  const insertComma = numActors > 2 && index < Math.min(numActors, 4) - 2;
+  const insertAnd = numActors > 1 && index === Math.min(numActors, 4) - 2;
+  return (
+    <React.Fragment key={index}>
+      <MemberName member={actor} />
+      {insertComma && <Text>, </Text>}
+      {insertAnd && (
+        <Text>
+          {!insertComma && " "}
+          and{" "}
+        </Text>
+      )}
+    </React.Fragment>
+  );
+}
+
 class ActivityContent extends React.Component<{
   content: ActivityContentData;
   onFindVideoElems: (elems: VideoWithPlaceholderView[]) => void;
@@ -192,11 +217,12 @@ class ActivityContent extends React.Component<{
 
   public render() {
     const { actors, description, body } = this.props.content;
-    const actorsArray: [typeof RAHA_BASIC_INCOME_MEMBER] | Member[] =
+    const actorsData: typeof RAHA_BASIC_INCOME_MEMBER | Member[] =
       actors === RAHA_BASIC_INCOME_MEMBER
-        ? [actors]
+        ? actors
         : actors.valueSeq().toArray();
-    const numActors = actorsArray.length;
+    const numActors =
+      actorsData === RAHA_BASIC_INCOME_MEMBER ? 1 : actorsData.length;
     return (
       <View>
         <View style={styles.actorRow}>
@@ -204,7 +230,11 @@ class ActivityContent extends React.Component<{
           <MemberThumbnail
             style={styles.actorThumbnail}
             diameter={leftColumnWidth}
-            member={actorsArray[0]}
+            member={
+              actorsData === RAHA_BASIC_INCOME_MEMBER
+                ? actorsData
+                : actorsData[0]
+            }
           />
           {/*
             * Everything in the description must ultimately be Text elements, or
@@ -215,26 +245,11 @@ class ActivityContent extends React.Component<{
             {/* 
               * Name at most the first three actors, and just summarize the rest
               */}
-            {actorsArray[0] === RAHA_BASIC_INCOME_MEMBER ? (
-              <MemberName member={RAHA_BASIC_INCOME_MEMBER} />
+            {actorsData === RAHA_BASIC_INCOME_MEMBER ? (
+              <MemberName member={actorsData} />
             ) : (
-              (actorsArray as Member[]).slice(0, 3).map((actor, index) => {
-                const insertComma =
-                  numActors > 2 && index < Math.min(numActors, 4) - 2;
-                const insertAnd =
-                  numActors > 1 && index === Math.min(numActors, 4) - 2;
-                return (
-                  <React.Fragment key={index}>
-                    <MemberName member={actor} />
-                    {insertComma && <Text>, </Text>}
-                    {insertAnd && (
-                      <Text>
-                        {!insertComma && " "}
-                        and{" "}
-                      </Text>
-                    )}
-                  </React.Fragment>
-                );
+              (actorsData as Member[]).slice(0, 3).map((actor, index) => {
+                renderMemberNameInList({ actor, index, numActors });
               })
             )}
             {/* TODO: make this clickable to see the list */}

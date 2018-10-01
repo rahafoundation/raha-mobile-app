@@ -331,8 +331,6 @@ function addOperationToBundledBasicIncomeMintActivity(
       description: ["minted a total of", totalMinted, "of basic income."],
       // TODO: show the most relevant members to the logged in member first, not
       // just in the order they're found
-      // Only add the actor if they aren't already in the list, to prevent
-      // duplicates
       actors: existingActivity.content.actors.set(
         creatorMember.get("memberId"),
         creatorMember
