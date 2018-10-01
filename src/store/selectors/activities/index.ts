@@ -767,8 +767,47 @@ function activityContentContainsMember(
  *
  * TODO: make this more efficient.
  */
-export const activitiesForMember = (state: RahaState, memberId: MemberId) => {
-  return activities(state).filter(activity =>
+export const activitiesForMember = (
+  state: RahaState,
+  memberId: MemberId,
+  options?: {
+    unbundleActivities?: boolean;
+  }
+): Activity[] => {
+  const defaultOptions = {
+    unbundleActivities: false
+  };
+  const resolvedOptions: typeof options = {
+    ...defaultOptions,
+    ...(options || {})
+  };
+  const { unbundleActivities } = resolvedOptions;
+
+  const filteredActivities = activities(state).filter(activity =>
     activityContentContainsMember(activity.content, memberId)
   );
+
+  if (!unbundleActivities) {
+    return filteredActivities;
+  }
+
+  return filteredActivities
+    .map(aggregateActivity => {
+      if (!aggregateActivity.unbundledActivities) {
+        // not aggregated, so just return it
+        return aggregateActivity;
+      }
+      return aggregateActivity.unbundledActivities
+        .valueSeq()
+        .filter(activity =>
+          activityContentContainsMember(activity.content, memberId)
+        )
+        .toArray();
+    })
+    .reduce((memo: Activity[], activity) => {
+      if (activity instanceof Array) {
+        return [...memo, ...activity];
+      }
+      return [...memo, activity];
+    }, []);
 };
