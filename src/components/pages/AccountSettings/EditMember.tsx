@@ -111,13 +111,12 @@ class EditMemberPageView extends React.Component<Props, State> {
       !this.canUpdate() ||
       apiCallStatus === ApiCallStatusType.STARTED ||
       apiCallStatus === ApiCallStatusType.SUCCESS;
-    const updateButtonPrefix =
+    const updateButtonTitle =
       apiCallStatus === ApiCallStatusType.STARTED
         ? "Updating"
         : apiCallStatus === ApiCallStatusType.SUCCESS
           ? "Updated"
           : "Update";
-    const updateButtonTitle = `${updateButtonPrefix} profile details`;
 
     return (
       <KeyboardAwareScrollContainer style={commonStyles.page}>
