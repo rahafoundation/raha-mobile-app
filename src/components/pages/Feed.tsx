@@ -13,18 +13,46 @@ import { Activity } from "../../store/selectors/activities/types";
 import { colors } from "../../helpers/colors";
 import { View } from "react-native";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
+import {
+  withNavigation,
+  NavigationInjectedProps,
+  NavigationScreenProps
+} from "react-navigation";
 
 type StateProps = {
   activities: Activity[];
 };
 
-const FeedView: React.StatelessComponent<StateProps> = ({ activities }) => {
-  return (
-    <View style={{ backgroundColor: colors.pageBackground }}>
-      <ActivityFeed activities={activities} />
-    </View>
-  );
-};
+type OwnProps = NavigationScreenProps<NavParams>;
+
+interface NavParams {
+  pageReset?: () => void;
+}
+
+type FeedProps = OwnProps & NavigationInjectedProps & StateProps;
+
+export class FeedView extends React.Component<FeedProps> {
+  activityFeed: ActivityFeed | null = null;
+
+  componentDidMount() {
+    if (this.activityFeed) {
+      this.props.navigation.setParams({
+        pageReset: this.activityFeed.pageUp
+      });
+    }
+  }
+
+  render() {
+    return (
+      <View style={{ backgroundColor: colors.pageBackground }}>
+        <ActivityFeed
+          ref={ref => (this.activityFeed = ref)}
+          activities={this.props.activities}
+        />
+      </View>
+    );
+  }
+}
 
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
   return {
@@ -35,4 +63,6 @@ const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
   };
 };
 
-export const Feed = connect(mapStateToProps)(FeedView);
+export const Feed = connect(mapStateToProps)(
+  withNavigation<FeedProps>(FeedView)
+);

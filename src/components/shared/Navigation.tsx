@@ -468,7 +468,23 @@ const SignedInNavigator = createSwitchNavigator(
           activeTintColor: colors.navFocusTint,
           labelStyle: styles.label
         },
-        tabBarColor: palette.lightGray
+        tabBarColor: palette.lightGray,
+        tabBarOnPress: ({ navigation, defaultHandler }: any) => {
+          // If the tab is pressed while there's only one page on the stack, see
+          // if the child navigation declared any pageReset function (e.g.
+          // scroll feed to the top).
+          if (navigation.isFocused() && navigation.state.routes.length === 1) {
+            const currentRouteKey = navigation.state.routes[0].key;
+            const childNavigation = navigation.getChildNavigation(
+              currentRouteKey
+            );
+            if (childNavigation && childNavigation.getParam("pageReset")) {
+              childNavigation.getParam("pageReset")();
+              return;
+            }
+          }
+          defaultHandler();
+        }
       })
     })
   },
@@ -515,6 +531,10 @@ type StateProps = {
   isLoaded: boolean;
   isLoggedIn: boolean;
   hasAccount: boolean;
+
+  // Callback when the tab button is clicked when already highlighted and there
+  // are no stacked paged.
+  pageReset?: () => void;
 };
 
 type Props = OwnProps & StateProps;
