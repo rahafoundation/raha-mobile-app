@@ -129,26 +129,27 @@ function addCreateMemberOperationToActivites(
 
 function addEditMemberOperationToActivities(
   state: RahaState,
-  activities: Activity[],
+  activities: OrderedMap<Activity["id"], Activity>,
   operation: EditMemberOperation
-): Activity[] {
-  const creatorMember = getOperationCreator(state, operation);
+): OrderedMap<Activity["id"], Activity> {
+  const creatorMember = getOperationCreator(state, operation) as Member;
   const description = operation.data.full_name
     ? "edited their name."
     : "edited their profile.";
   const newActivity: Activity = {
+    type: ActivityType.EDIT_MEMBER,
     id: operation.id,
     timestamp: operation.created_at,
     content: {
       // type suggestions since GENESIS_MEMBER is only possible for
       // VERIFY operations
-      actor: creatorMember as Member,
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
       description: [description]
     },
-    operations: OrderedMap({ [operation.id]: operation })
+    sourceOperations: OrderedMap({ [operation.id]: operation })
   };
 
-  return [...activities, newActivity];
+  return activities.set(newActivity.id, newActivity);
 }
 
 function addRequestVerificationOperationToActivites(
@@ -631,7 +632,14 @@ function addOperationToActivitiesList(
       };
     }
     case OperationType.EDIT_MEMBER: {
-      return addEditMemberOperationToActivities(state, activities, operation);
+      return {
+        activities: addEditMemberOperationToActivities(
+          state,
+          activities,
+          operation
+        ),
+        bundledActivitiesCache
+      };
     }
     case OperationType.REQUEST_VERIFICATION: {
       return {
