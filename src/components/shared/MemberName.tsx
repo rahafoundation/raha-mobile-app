@@ -64,7 +64,7 @@ const memberName: TextStyle = {
 };
 
 const unverifiedLabel: TextStyle = {
-  ...fonts.Lato.formInputStyle,
+  ...fonts.Lato.Normal,
   ...fontSizes.medium,
   color: palette.red
 };
