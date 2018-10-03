@@ -1,6 +1,6 @@
 import React from "react";
 
-const constants = (constants = {
+const constants = {
   Aspect: {},
   BarCodeType: {},
   Type: {},
@@ -10,7 +10,7 @@ const constants = (constants = {
   Orientation: {},
   FlashMode: {},
   TorchMode: {}
-});
+};
 
 export class RNCamera extends React.Component {
   static Constants = constants;
