@@ -201,7 +201,7 @@ class GiveFormView extends React.Component<Props, State> {
           <FormLabel labelStyle={styles.formLabelStyle}>Amount</FormLabel>
           <FormInput
             inputStyle={styles.formInputAmountStyle}
-            keyboardType="numeric"
+            keyboardType="decimal-pad"
             value={this.state.amount && this.state.amount.toString()}
             onChangeText={this.onChangeAmount}
             placeholder="0.00"
