@@ -26,7 +26,7 @@ export const Text: React.StatelessComponent<TextProps> = ({
 };
 
 const textStyle: TextStyle = {
-  ...fonts.Lato.formInputStyle,
+  ...fonts.Lato.Normal,
   ...fontSizes.medium,
   color: colors.bodyText
 };
