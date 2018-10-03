@@ -1,7 +1,7 @@
 import { AsyncStorage } from "react-native";
 import { combineReducers, Reducer } from "redux";
 import { persistReducer, PersistPartial } from "redux-persist";
-import * as immutableTransform from "redux-persist-transform-immutable";
+import immutableTransform from "redux-persist-transform-immutable";
 
 import { reducer as apiCalls } from "./reducers/apiCalls";
 import { reducer as members } from "./reducers/members";
