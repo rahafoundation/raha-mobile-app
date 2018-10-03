@@ -13,7 +13,8 @@
     "importHelpers": true,
     "strict": true,
     "noImplicitReturns": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["jest", "node"]
   },
   "exclude": ["node_modules"]
 }
