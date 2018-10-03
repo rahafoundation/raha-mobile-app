@@ -2,6 +2,10 @@
 
 *.tmp
 
+# jest
+
+.jest
+
 # OSX
 #
 .DS_Store
