@@ -54,13 +54,15 @@ type MergedProps = StateProps & {
 type Props = OwnProps & MergedProps;
 
 interface FormFields {
-  amount?: Big;
+  amount?: string;
+  roundedAmount?: Big;
   memo: string;
 }
 type FormState = { readonly [field in keyof FormFields]: FormFields[field] };
 
 type State = {
   toMember?: Member;
+  amountError?: string;
 } & FormState;
 
 class GiveFormView extends React.Component<Props, State> {
@@ -73,27 +75,56 @@ class GiveFormView extends React.Component<Props, State> {
     };
   }
 
-  private validateAmount: (amount: Big | undefined) => boolean = amount => {
+  private isLessThanBalance: (amount: Big) => boolean = amount => {
     return (
-      !!amount &&
-      amount.gt(0) &&
       !!this.props.loggedInMember &&
       amount.lte(this.props.loggedInMember.get("balance"))
     );
   };
+
+  private validateAmount: (amount: Big | undefined) => boolean = amount => {
+    return !!amount && amount.gt(0) && this.isLessThanBalance(amount);
+  };
+
+  private onEndEditingAmount = ({ nativeEvent }: any) => {
+    try {
+      // Rounding Mode half-up
+      const bigAmount = new Big(nativeEvent.text).round(2, 1);
+      if (bigAmount.lte(0)) {
+        this.setState({
+          amountError: "Please enter an amount greater than 0."
+        });
+      } else if (!this.isLessThanBalance(bigAmount)) {
+        this.setState({
+          amountError:
+            "Please enter an amount less than or equal to your balance."
+        });
+      } else {
+        this.setState({
+          amount: bigAmount.toString(),
+          roundedAmount: bigAmount
+        });
+      }
+    } catch {
+      this.setState({
+        amountError: "Please enter a valid amount."
+      });
+    }
+  };
+
   private onChangeAmount = (amount: string) => {
     if (amount.length === 0) {
-      this.setState({ amount: undefined });
+      this.setState({
+        amount: undefined,
+        roundedAmount: undefined,
+        amountError: undefined
+      });
     } else {
-      try {
-        // Rounding Mode half-up
-        const bigAmount = new Big(amount).round(2, 1);
-        if (this.validateAmount(bigAmount)) {
-          this.setState({
-            amount: bigAmount
-          });
-        }
-      } catch {}
+      this.setState({
+        amount: amount,
+        roundedAmount: undefined,
+        amountError: undefined
+      });
     }
   };
 
@@ -127,16 +158,16 @@ class GiveFormView extends React.Component<Props, State> {
 
   private validateForm = () => {
     return (
-      this.validateAmount(this.state.amount) &&
+      this.validateAmount(this.state.roundedAmount) &&
       this.validateMemo(this.state.memo) &&
       this.validateTo()
     );
   };
 
   private giveRaha = () => {
-    const { amount, memo, toMember } = this.state;
-    if (amount && toMember && this.validateForm()) {
-      this.props.give(amount, memo, toMember.get("memberId"));
+    const { roundedAmount, memo, toMember } = this.state;
+    if (roundedAmount && toMember && this.validateForm()) {
+      this.props.give(roundedAmount, memo, toMember.get("memberId"));
     }
   };
 
@@ -146,11 +177,11 @@ class GiveFormView extends React.Component<Props, State> {
       prevProps.apiCallStatus !== this.props.apiCallStatus &&
       this.props.apiCallStatus.status === ApiCallStatusType.SUCCESS &&
       this.state.toMember &&
-      this.state.amount
+      this.state.roundedAmount
     ) {
       this.props.onSuccessCallback(
         this.state.toMember,
-        this.state.amount,
+        this.state.roundedAmount,
         this.state.memo
       );
     }
@@ -201,11 +232,17 @@ class GiveFormView extends React.Component<Props, State> {
           <FormLabel labelStyle={styles.formLabelStyle}>Amount</FormLabel>
           <FormInput
             inputStyle={styles.formInputAmountStyle}
-            keyboardType="decimal-pad"
+            keyboardType="numeric"
             value={this.state.amount && this.state.amount.toString()}
             onChangeText={this.onChangeAmount}
+            onEndEditing={this.onEndEditingAmount}
             placeholder="0.00"
           />
+          {this.state.amountError && (
+            <FormValidationMessage>
+              {this.state.amountError}
+            </FormValidationMessage>
+          )}
           <FormValidationMessage labelStyle={styles.helper}>
             Your balance:{" "}
             {this.props.loggedInMember
