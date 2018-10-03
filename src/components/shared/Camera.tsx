@@ -35,40 +35,54 @@ export class Camera extends React.Component<CameraProps, CameraState> {
     isVideoRecording: false,
     permissionsDenied: false
   };
+  camera: RNCamera | null;
+
+  constructor(props: CameraProps) {
+    super(props);
+    this.camera = null;
+  }
 
   async componentWillMount() {
-    await this.requestPermissions();
+    // iOS will prompt when the component is access for the first time.
+    await this.requestPermissionsAndroid();
   }
 
-  async requestPermissions() {
-    if (Platform.OS === "ios") {
-      return;
-    }
-    try {
-      const results = await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-      ]);
-      if (
-        results[PermissionsAndroid.PERMISSIONS.CAMERA] ===
-          PermissionsAndroid.RESULTS.GRANTED &&
-        results[PermissionsAndroid.PERMISSIONS.RECORD_AUDIO] ===
-          PermissionsAndroid.RESULTS.GRANTED &&
-        results[PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE] ===
-          PermissionsAndroid.RESULTS.GRANTED &&
-        results[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] ===
-          PermissionsAndroid.RESULTS.GRANTED
-      ) {
-        this.setState({ permissionsDenied: false });
-      } else {
-        this.setState({ permissionsDenied: true });
+  async requestPermissionsAndroid() {
+    if (Platform.OS === "android") {
+      try {
+        const results = await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+        ]);
+        if (
+          results[PermissionsAndroid.PERMISSIONS.CAMERA] ===
+            PermissionsAndroid.RESULTS.GRANTED &&
+          results[PermissionsAndroid.PERMISSIONS.RECORD_AUDIO] ===
+            PermissionsAndroid.RESULTS.GRANTED &&
+          results[PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE] ===
+            PermissionsAndroid.RESULTS.GRANTED &&
+          results[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] ===
+            PermissionsAndroid.RESULTS.GRANTED
+        ) {
+          this.setState({ permissionsDenied: false });
+        } else {
+          this.setState({ permissionsDenied: true });
+        }
+      } catch (exception) {
+        console.error(exception);
       }
-    } catch (exception) {
-      console.error(exception);
     }
   }
+
+  requestPermissions = async () => {
+    if (Platform.OS === "ios") {
+      // TODO: Actually request permissions.
+    } else {
+      this.requestPermissionsAndroid();
+    }
+  };
 
   startRecordVideo = async (camera: RNCamera) => {
     await new Promise(resolve =>
@@ -84,37 +98,51 @@ export class Camera extends React.Component<CameraProps, CameraState> {
     this.props.onVideoRecorded(recordResponse.uri);
   };
 
+  renderNotAuthorizedView = () => {
+    return (
+      <View>
+        <Text style={styles.permissionsText}>
+          In order to verify your identity, you must record a video of yourself.
+          Please approve the camera and microphone permissions to continue.
+        </Text>
+        {/*TODO: Request permissions from iOS as well*/}
+        {Platform.OS === "android" && (
+          <Button
+            title="Approve Permissions"
+            onPress={() => {
+              this.requestPermissions();
+            }}
+          />
+        )}
+      </View>
+    );
+  };
+
+  renderPendingView = () => {
+    return <View />;
+  };
+
   render() {
     return (
       <View style={styles.container}>
         {this.state.permissionsDenied ? (
-          <React.Fragment>
-            <Text style={styles.permissionsText}>
-              In order to verify your identity, you must record a video of
-              yourself. Please approve the permissions to continue.
-            </Text>
-            <Button
-              title="Approve Permissions"
-              onPress={() => {
-                this.requestPermissions();
-              }}
-            />
-          </React.Fragment>
+          this.renderNotAuthorizedView()
         ) : (
           <RNCamera
+            ref={ref => {
+              this.camera = ref;
+            }}
             style={styles.camera}
             type={RNCamera.Constants.Type[this.state.type]}
             captureAudio
+            notAuthorizedView={this.renderNotAuthorizedView()}
+            pendingAuthorizationView={this.renderPendingView()}
           >
-            {({ camera }) => {
-              return (
-                <View style={styles.cameraButtons}>
-                  {this.renderFlipButton()}
-                  {this.renderRecordButton(camera)}
-                  <View style={{ flex: 1 }} />
-                </View>
-              );
-            }}
+            <View style={styles.cameraButtons}>
+              {this.renderFlipButton()}
+              {this.renderRecordButton()}
+              <View style={{ flex: 1 }} />
+            </View>
           </RNCamera>
         )}
       </View>
@@ -146,15 +174,17 @@ export class Camera extends React.Component<CameraProps, CameraState> {
     );
   };
 
-  renderRecordButton = (camera: RNCamera) => {
+  renderRecordButton = () => {
     return (
       <TouchableOpacity
         style={styles.recordButton}
         onPress={() => {
-          if (!this.state.isVideoRecording) {
-            this.startRecordVideo(camera);
-          } else {
-            camera.stopRecording();
+          if (this.camera) {
+            if (!this.state.isVideoRecording) {
+              this.startRecordVideo(this.camera);
+            } else {
+              this.camera.stopRecording();
+            }
           }
         }}
       >
