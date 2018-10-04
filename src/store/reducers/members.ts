@@ -11,7 +11,8 @@ import {
 } from "@raha/api-shared/dist/models/Operation";
 import {
   MemberId,
-  MemberUsername
+  MemberUsername,
+  OperationId
 } from "@raha/api-shared/dist/models/identifiers";
 
 import { Set, Map } from "immutable";
@@ -47,7 +48,8 @@ function getDefaultMemberFields(): OptionalMemberFields {
     verified: Set<MemberId>(),
     requestedVerificationFrom: Set<MemberId>(),
     requestedForVerificationBy: Set<MemberId>(),
-    verifiedBy: Set<MemberId>()
+    verifiedBy: Set<MemberId>(),
+    operationsFlaggingThisMember: Set<OperationId>()
   };
 }
 
@@ -63,6 +65,7 @@ interface OptionalMemberFields {
   requestedVerificationFrom: Set<MemberId>;
   requestedForVerificationBy: Set<MemberId>;
   verifiedBy: Set<MemberId>;
+  operationsFlaggingThisMember: Set<OperationId>;
 }
 
 interface RequiredMemberFields {
@@ -103,6 +106,22 @@ export class Member {
       ...(username ? { username } : {})
     };
     return this.withFields(editFields);
+  }
+
+  public flagMember(operationId: OperationId) {
+    return this.withFields({
+      operationsFlaggingThisMember: this.get(
+        "operationsFlaggingThisMember"
+      ).add(operationId)
+    });
+  }
+
+  public resolveFlagMember(operationId: OperationId) {
+    return this.withFields({
+      operationsFlaggingThisMember: this.get(
+        "operationsFlaggingThisMember"
+      ).remove(operationId)
+    });
   }
 
   /* =======================
@@ -223,6 +242,12 @@ function operationIsRelevantAndValid(operation: Operation): boolean {
     return true;
   }
   if (operation.op_code === OperationType.EDIT_MEMBER) {
+    return true;
+  }
+  if (operation.op_code === OperationType.FLAG_MEMBER) {
+    return true;
+  }
+  if (operation.op_code === OperationType.RESOLVE_FLAG_MEMBER) {
     return true;
   }
   if (operation.op_code === OperationType.REQUEST_VERIFICATION) {
@@ -409,6 +434,26 @@ function applyOperation(
           creator.editMember(full_name, username)
         );
       }
+      case OperationType.FLAG_MEMBER: {
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        const { to_uid } = operation.data;
+        assertMemberIdPresentInState(newState, to_uid, operation);
+        const memberToFlag = newState.byMemberId.get(to_uid) as Member;
+        return addMemberToState(
+          newState,
+          memberToFlag.flagMember(operation.id)
+        );
+      }
+      case OperationType.RESOLVE_FLAG_MEMBER: {
+        assertMemberIdPresentInState(newState, creator_uid, operation);
+        const { to_uid } = operation.data;
+        assertMemberIdPresentInState(newState, to_uid, operation);
+        const flaggedMember = newState.byMemberId.get(to_uid) as Member;
+        return addMemberToState(
+          newState,
+          flaggedMember.resolveFlagMember(operation.id)
+        );
+      }
       case OperationType.REQUEST_VERIFICATION: {
         const { to_uid } = operation.data;
 
@@ -509,12 +554,15 @@ function applyOperation(
  */
 const OP_CODE_ORDERING = [
   OperationType.CREATE_MEMBER,
+  OperationType.EDIT_MEMBER,
   OperationType.REQUEST_VERIFICATION,
   OperationType.VERIFY,
   OperationType.TRUST,
   OperationType.MINT,
   OperationType.GIVE,
-  OperationType.INVITE
+  OperationType.INVITE,
+  OperationType.FLAG_MEMBER,
+  OperationType.RESOLVE_FLAG_MEMBER
 ];
 
 function compareOperations(op1: Operation, op2: Operation) {
