@@ -215,11 +215,11 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   container: {
-    width: "100%"
+    width: "100%",
+    overflow: "hidden"
   },
   camera: {
-    // ensure children are pushed to the bottom
-
+    // ensure buttons are pushed to the bottom
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-end",
