@@ -55,13 +55,17 @@ export const MixedText: React.StatelessComponent<MixedTextProps> = props => {
         .filter(x => !!x)
         // Put spaces between each component
         .reduce(
-          (memo, nextComponent, idx) => [
-            ...memo,
-            <Text style={style} key={`spacing-${idx}`}>
-              {" "}
-            </Text>,
-            nextComponent
-          ],
+          (memo, nextComponent, idx) => {
+            let result = [...memo];
+            if (idx > 0) {
+              result = result.concat(
+                <Text style={style} key={`spacing-${idx}`}>
+                  {" "}
+                </Text>
+              );
+            }
+            return result.concat(nextComponent);
+          },
           [] as React.ReactNode[]
         )}
     </Text>
