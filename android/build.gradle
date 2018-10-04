@@ -29,10 +29,9 @@ allprojects {
         }
     }
     configurations.all {
-        // forgot why I did this, some dependency version mismatches.
-        // resolutionStrategy.force "com.android.support:support-v4:26.1.0"
-        // did this since react-native-camera wants an old version of google
-        // play services for vision, which doesn't matter to this project
+        // Firebase libraries still resolve to older versions of Google Play
+        // Services, so force it down to 15.0.1.
+        // Also, react-native-camera wants an old version of Play Services for vision.
         resolutionStrategy.force "com.google.android.gms:play-services-base:15.0.1"
         resolutionStrategy.force "com.google.android.gms:play-services-basement:15.0.1"
         resolutionStrategy.force "com.google.android.gms:play-services-tasks:15.0.1"
