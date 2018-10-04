@@ -128,24 +128,22 @@ export class Camera extends React.Component<CameraProps, CameraState> {
         {this.state.permissionsDenied ? (
           this.renderNotAuthorizedView()
         ) : (
-          <React.Fragment>
-            <RNCamera
-              ref={ref => {
-                this.camera = ref;
-              }}
-              style={styles.camera}
-              type={RNCamera.Constants.Type[this.state.type]}
-              captureAudio
-              notAuthorizedView={this.renderNotAuthorizedView()}
-              pendingAuthorizationView={this.renderPendingView()}
-            >
-              <View style={styles.cameraButtons}>
-                {this.renderFlipButton()}
-                {this.renderRecordButton()}
-                <View style={{ flex: 1 }} />
-              </View>
-            </RNCamera>
-          </React.Fragment>
+          <RNCamera
+            ref={ref => {
+              this.camera = ref;
+            }}
+            style={styles.camera}
+            type={RNCamera.Constants.Type[this.state.type]}
+            captureAudio
+            notAuthorizedView={this.renderNotAuthorizedView()}
+            pendingAuthorizationView={this.renderPendingView()}
+          >
+            <View style={styles.cameraButtons}>
+              {this.renderFlipButton()}
+              {this.renderRecordButton()}
+              <View style={{ flex: 1 }} />
+            </View>
+          </RNCamera>
         )}
       </View>
     );
