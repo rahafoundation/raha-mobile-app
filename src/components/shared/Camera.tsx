@@ -128,22 +128,24 @@ export class Camera extends React.Component<CameraProps, CameraState> {
         {this.state.permissionsDenied ? (
           this.renderNotAuthorizedView()
         ) : (
-          <RNCamera
-            ref={ref => {
-              this.camera = ref;
-            }}
-            style={styles.camera}
-            type={RNCamera.Constants.Type[this.state.type]}
-            captureAudio
-            notAuthorizedView={this.renderNotAuthorizedView()}
-            pendingAuthorizationView={this.renderPendingView()}
-          >
-            <View style={styles.cameraButtons}>
-              {this.renderFlipButton()}
-              {this.renderRecordButton()}
-              <View style={{ flex: 1 }} />
-            </View>
-          </RNCamera>
+          <React.Fragment>
+            <RNCamera
+              ref={ref => {
+                this.camera = ref;
+              }}
+              style={styles.camera}
+              type={RNCamera.Constants.Type[this.state.type]}
+              captureAudio
+              notAuthorizedView={this.renderNotAuthorizedView()}
+              pendingAuthorizationView={this.renderPendingView()}
+            >
+              <View style={styles.cameraButtons}>
+                {this.renderFlipButton()}
+                {this.renderRecordButton()}
+                <View style={{ flex: 1 }} />
+              </View>
+            </RNCamera>
+          </React.Fragment>
         )}
       </View>
     );
@@ -215,11 +217,11 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   container: {
-    width: "100%"
+    width: "100%",
+    overflow: "hidden"
   },
   camera: {
-    // ensure children are pushed to the bottom
-
+    // ensure buttons are pushed to the bottom
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-end",
