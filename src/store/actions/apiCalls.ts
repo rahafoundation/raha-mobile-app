@@ -3,7 +3,7 @@ import { ApiCallError } from "@raha/api/dist/errors";
 
 import { AsyncAction } from ".";
 
-export const enum ApiCallsActionType {
+export enum ApiCallsActionType {
   STARTED = "API_CALLS.STARTED",
   SUCCESS = "API_CALLS.SUCCESS",
   FAILURE = "API_CALLS.FAILURE"

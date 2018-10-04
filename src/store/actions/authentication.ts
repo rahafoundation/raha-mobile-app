@@ -3,14 +3,13 @@ import { ActionCreator } from "redux";
 
 import { validateMobileNumber as callValidateMobileNumber } from "@raha/api/dist/me/validateMobileNumber";
 import { ApiCallFailedError } from "@raha/api/dist/errors/ApiCallFailedError";
-import { ERROR_CODE as DISALLOWED_TYPE_ERROR_CODE } from "@raha/api-shared/dist/errors/RahaApiError/me/validateMobileNumber/DisallowedTypeError";
 
 import { AsyncActionCreator } from ".";
 import { auth } from "../../firebaseInit";
 import { config } from "../../data/config";
 import branch from "react-native-branch";
 
-export const enum PhoneLogInActionType {
+export enum PhoneLogInActionType {
   PHONE_LOGIN_SENDING_PHONE_NUMBER = "AUTHENTICATION.PHONE_LOGIN_SENDING_PHONE_NUMBER",
   PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED = "AUTHENTICATION.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED",
   PHONE_LOGIN_WAITING_FOR_CONFIRMATION_INPUT = "AUTHENTICATION.PHONE_LOGIN_WAITING_FOR_CONFIRMATION_INPUT",
@@ -18,7 +17,7 @@ export const enum PhoneLogInActionType {
   PHONE_LOGIN_SENDING_CONFIRMATION_FAILED = "AUTHENTICATION.PHONE_LOGIN_SENDING_CONFIRMATION_FAILED",
   PHONE_LOGIN_CANCELED = "AUTHENTICATION.PHONE_LOGIN_CANCELED"
 }
-export const enum FirebaseAuthActionType {
+export enum FirebaseAuthActionType {
   LOG_IN = "AUTHENTICATION.LOG_IN",
   // Action used by only on Android when Firebase logs in automatically.
   AUTO_LOG_IN = "AUTHENTICATION.AUTO_LOG_IN",
