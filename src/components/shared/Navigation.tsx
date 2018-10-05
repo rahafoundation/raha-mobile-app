@@ -4,8 +4,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextStyle,
-  ViewStyle,
-  View
+  ViewStyle
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { createBottomTabNavigator } from "react-navigation-tabs";
@@ -54,7 +53,6 @@ import { GovernancePage } from "../pages/AccountSettings/Governance";
 import { AccountRecoveryPage } from "../pages/AccountSettings/AccountRecovery";
 import { CurrencySettingsPage } from "../pages/AccountSettings/CurrencySettings";
 import { SignOutPage } from "../pages/AccountSettings/SignOut";
-import { isFunction } from "util";
 
 /**
  * Gets the current screen from navigation state.
