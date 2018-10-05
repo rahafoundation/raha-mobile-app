@@ -535,7 +535,7 @@ type StateProps = {
   hasAccount: boolean;
 
   // Callback when the tab button is clicked when already highlighted and there
-  // are no stacked paged.
+  // are no stacked pages.
   pageReset?: () => void;
 };
 
