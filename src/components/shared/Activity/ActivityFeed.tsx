@@ -4,18 +4,28 @@
  * Raha, trust each other, or join Raha.
  */
 import * as React from "react";
-import { FlatList, FlatListProps } from "react-native";
+import { FlatList, FlatListProps, NativeSyntheticEvent } from "react-native";
 
 import { Activity, ActivityView } from "./";
 import { Activity as ActivityData } from "../../../store/selectors/activities/types";
 
-interface ActivityFeedProps {
+type OwnProps = {
   activities: ActivityData[]; // in the order they should be rendered
   header?: React.ReactNode;
-}
+  onScroll?: (event?: NativeSyntheticEvent<any> | undefined) => void;
+};
+
+type ActivityFeedProps = OwnProps;
 
 export class ActivityFeed extends React.Component<ActivityFeedProps> {
+  list: FlatList<ActivityData> | null = null;
   activities: { [key: string]: ActivityView } = {};
+
+  public pageUp = () => {
+    if (this.list) {
+      this.list.scrollToIndex({ index: 0 });
+    }
+  };
 
   private onViewableItemsChanged: FlatListProps<
     ActivityData
@@ -40,6 +50,7 @@ export class ActivityFeed extends React.Component<ActivityFeedProps> {
   render() {
     return (
       <FlatList
+        ref={ref => (this.list = ref)}
         ListHeaderComponent={this.props.header ? this.renderHeader : undefined}
         data={this.props.activities}
         keyExtractor={activity => activity.id}
@@ -57,6 +68,7 @@ export class ActivityFeed extends React.Component<ActivityFeedProps> {
           />
         )}
         onViewableItemsChanged={this.onViewableItemsChanged}
+        onScroll={this.props.onScroll}
       />
     );
   }

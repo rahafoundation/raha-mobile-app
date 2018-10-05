@@ -13,18 +13,40 @@ import { Activity } from "../../store/selectors/activities/types";
 import { colors } from "../../helpers/colors";
 import { View } from "react-native";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
+import { NavigationScreenProps } from "react-navigation";
 
 type StateProps = {
   activities: Activity[];
 };
 
-const FeedView: React.StatelessComponent<StateProps> = ({ activities }) => {
-  return (
-    <View style={{ backgroundColor: colors.pageBackground }}>
-      <ActivityFeed activities={activities} />
-    </View>
-  );
-};
+interface NavParams {
+  pageReset?: () => void;
+}
+
+type FeedProps = NavigationScreenProps<NavParams> & StateProps;
+
+export class FeedView extends React.Component<FeedProps> {
+  private activityFeed: ActivityFeed | null = null;
+
+  componentDidMount() {
+    if (this.activityFeed) {
+      this.props.navigation.setParams({
+        pageReset: this.activityFeed.pageUp
+      });
+    }
+  }
+
+  render() {
+    return (
+      <View style={{ backgroundColor: colors.pageBackground }}>
+        <ActivityFeed
+          ref={ref => (this.activityFeed = ref)}
+          activities={this.props.activities}
+        />
+      </View>
+    );
+  }
+}
 
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
   return {
