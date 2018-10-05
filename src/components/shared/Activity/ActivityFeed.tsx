@@ -23,7 +23,7 @@ export class ActivityFeed extends React.Component<ActivityFeedProps> {
 
   public pageUp = () => {
     if (this.list) {
-      this.list.scrollToOffset({ offset: 0 });
+      this.list.scrollToIndex({ index: 0 });
     }
   };
 
