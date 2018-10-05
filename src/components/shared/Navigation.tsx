@@ -54,6 +54,7 @@ import { GovernancePage } from "../pages/AccountSettings/Governance";
 import { AccountRecoveryPage } from "../pages/AccountSettings/AccountRecovery";
 import { CurrencySettingsPage } from "../pages/AccountSettings/CurrencySettings";
 import { SignOutPage } from "../pages/AccountSettings/SignOut";
+import { isFunction } from "util";
 
 /**
  * Gets the current screen from navigation state.
@@ -478,9 +479,12 @@ const SignedInNavigator = createSwitchNavigator(
             const childNavigation = navigation.getChildNavigation(
               currentRouteKey
             );
-            if (childNavigation && childNavigation.getParam("pageReset")) {
-              childNavigation.getParam("pageReset")();
-              return;
+            if (childNavigation) {
+              const pageReset = childNavigation.getParam("pageReset");
+              if (pageReset && typeof pageReset === "function") {
+                pageReset();
+                return;
+              }
             }
           }
           defaultHandler();
