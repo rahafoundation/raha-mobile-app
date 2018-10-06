@@ -108,7 +108,7 @@ export class Member {
     return this.withFields(editFields);
   }
 
-  public flagMember(operationId: OperationId) {
+  public beFlaggedByMember(operationId: OperationId) {
     return this.withFields({
       operationsFlaggingThisMember: this.get(
         "operationsFlaggingThisMember"
@@ -439,9 +439,10 @@ function applyOperation(
         const { to_uid } = operation.data;
         assertMemberIdPresentInState(newState, to_uid, operation);
         const memberToFlag = newState.byMemberId.get(to_uid) as Member;
+        console.log(memberToFlag);
         return addMemberToState(
           newState,
-          memberToFlag.flagMember(operation.id)
+          memberToFlag.beFlaggedByMember(operation.id)
         );
       }
       case OperationType.RESOLVE_FLAG_MEMBER: {
