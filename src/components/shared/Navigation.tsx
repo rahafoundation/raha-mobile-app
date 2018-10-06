@@ -55,6 +55,7 @@ import { CurrencySettingsPage } from "../pages/AccountSettings/CurrencySettings"
 import { SignOutPage } from "../pages/AccountSettings/SignOut";
 import { FlagMemberPage } from "../pages/FlagMember";
 import { generateRandomIdentifier } from "../../helpers/identifiers";
+import { FlagFeedPage } from "../pages/FlagFeed";
 
 /**
  * Gets the current screen from navigation state.
@@ -121,7 +122,8 @@ export enum RouteName {
   AccountRecovery = "Account Recovery",
   SignOut = "Sign Out",
   CurrencySettings = "Currency Settings",
-  FlagMemberPage = "Flag Member Page"
+  FlagMemberPage = "Flag Member Page",
+  FlagFeed = "Flag Feed"
 }
 
 // TODO: Move this to Deeplinking. Need to also move RouteName out to avoid
@@ -250,6 +252,22 @@ const FlagMember = {
   navigationOptions: createHeaderNavigationOptions("Flag Member", true)
 };
 
+const FlagFeed = {
+  screen: FlagFeedPage,
+  navigationOptions: ({ navigation }: any) => {
+    const member = navigation.getParam("member", OWN_PROFILE) as
+      | Member
+      | typeof OWN_PROFILE;
+
+    const title = `Flags on ${
+      member !== OWN_PROFILE
+        ? `${member.get("fullName")}'s Profile`
+        : "Your Profile"
+    }`;
+    return createHeaderNavigationOptions(title, true)({ navigation });
+  }
+};
+
 type HeaderProps = {
   title: string;
   subtitle?: string;
@@ -325,6 +343,7 @@ export function createNavigatorForTab(
     {
       ...routeConfigMap,
       [RouteName.ProfilePage]: Profile,
+      [RouteName.FlagFeed]: FlagFeed,
       [RouteName.MemberListPage]: MemberList,
       [RouteName.StoryListPage]: StoryList,
       [RouteName.GivePage]: Give,

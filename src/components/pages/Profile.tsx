@@ -226,7 +226,15 @@ class ProfileView extends React.PureComponent<ProfileProps> {
       "operationsFlaggingThisMember"
     );
     return operationsFlaggingThisMember.isEmpty() ? null : (
-      <TouchableOpacity style={styles.flaggedStatus}>
+      <TouchableOpacity
+        style={styles.flaggedStatus}
+        onPress={() =>
+          this.props.navigation.navigate(RouteName.FlagFeed, {
+            member,
+            flagOperationIds: operationsFlaggingThisMember
+          })
+        }
+      >
         <Icon name="flag" size={30} style={styles.flaggedStatusIcon} />
         <Text style={styles.flaggedStatusText}>
           Members of the Raha community have raised issues with{" "}
