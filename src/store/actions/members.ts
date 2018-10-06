@@ -5,6 +5,7 @@ import { sendInvite as callSendInvite } from "@raha/api/dist/me/sendInvite";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import { UnauthenticatedError } from "@raha/api/dist/errors/UnauthenticatedError";
+import { flagMember as callFlagMember } from "@raha/api/dist/members/flagMember";
 
 import {
   SetOperationsAction,
@@ -135,5 +136,35 @@ export const verify: AsyncActionCreator = (
     },
     ApiEndpointName.VERIFY_MEMBER,
     memberId
+  );
+};
+
+export const flagMember: AsyncActionCreator = (
+  memberId: MemberId,
+  reason: string,
+  apiCallId: string
+) => {
+  return wrapApiCallAction(
+    async (dispatch, getState) => {
+      const authToken = await getAuthToken(getState());
+      if (!authToken) {
+        throw new UnauthenticatedError();
+      }
+
+      const { body } = await callFlagMember(
+        config.apiBase,
+        authToken,
+        memberId,
+        reason
+      );
+
+      const action: OperationsAction = {
+        type: OperationsActionType.ADD_OPERATIONS,
+        operations: [body]
+      };
+      dispatch(action);
+    },
+    ApiEndpointName.FLAG_MEMBER,
+    apiCallId
   );
 };

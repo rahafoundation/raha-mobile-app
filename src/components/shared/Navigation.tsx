@@ -53,6 +53,8 @@ import { GovernancePage } from "../pages/AccountSettings/Governance";
 import { AccountRecoveryPage } from "../pages/AccountSettings/AccountRecovery";
 import { CurrencySettingsPage } from "../pages/AccountSettings/CurrencySettings";
 import { SignOutPage } from "../pages/AccountSettings/SignOut";
+import { FlagMemberPage } from "../pages/FlagMember";
+import { generateRandomIdentifier } from "../../helpers/identifiers";
 
 /**
  * Gets the current screen from navigation state.
@@ -118,7 +120,8 @@ export enum RouteName {
   Governance = "Governance",
   AccountRecovery = "Account Recovery",
   SignOut = "Sign Out",
-  CurrencySettings = "Currency Settings"
+  CurrencySettings = "Currency Settings",
+  FlagMemberPage = "Flag Member Page"
 }
 
 // TODO: Move this to Deeplinking. Need to also move RouteName out to avoid
@@ -224,7 +227,9 @@ const Profile: NavigationRouteConfig = {
     const title =
       member !== OWN_PROFILE ? member.get("fullName") : "Your Profile";
     const headerRight =
-      member === OWN_PROFILE ? settingsButton(navigation) : <React.Fragment />;
+      member === OWN_PROFILE
+        ? settingsButton(navigation)
+        : flagButton(navigation, member);
 
     return {
       headerTitle: <HeaderTitle title={title} />,
@@ -238,6 +243,11 @@ const Profile: NavigationRouteConfig = {
 const Give = {
   screen: GiveScreen,
   navigationOptions: createHeaderNavigationOptions("Give Raha", true)
+};
+
+const FlagMember = {
+  screen: FlagMemberPage,
+  navigationOptions: createHeaderNavigationOptions("Flag Member", true)
 };
 
 type HeaderProps = {
@@ -278,6 +288,23 @@ function giveButton(navigation: any) {
   );
 }
 
+function flagButton(navigation: any, member: Member) {
+  return (
+    <TouchableOpacity>
+      <Icon
+        name="flag"
+        size={20}
+        onPress={() =>
+          navigation.navigate(RouteName.FlagMemberPage, {
+            memberToFlag: member,
+            apiCallId: generateRandomIdentifier()
+          })
+        }
+      />
+    </TouchableOpacity>
+  );
+}
+
 function settingsButton(navigation: any) {
   return (
     <TouchableOpacity
@@ -301,6 +328,7 @@ export function createNavigatorForTab(
       [RouteName.MemberListPage]: MemberList,
       [RouteName.StoryListPage]: StoryList,
       [RouteName.GivePage]: Give,
+      [RouteName.FlagMemberPage]: FlagMember,
       [RouteName.Verify]: {
         screen: Verify,
         navigationOptions: {
