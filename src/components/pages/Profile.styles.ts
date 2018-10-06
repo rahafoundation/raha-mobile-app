@@ -1,6 +1,6 @@
 import { StyleSheet, ViewStyle, TextStyle } from "react-native";
 import { fonts, fontSizes } from "../../helpers/fonts";
-import { colors } from "../../helpers/colors";
+import { colors, palette } from "../../helpers/colors";
 
 const bodyStyle: ViewStyle = {
   backgroundColor: colors.pageBackground
@@ -9,6 +9,25 @@ const bodyStyle: ViewStyle = {
 const headerStyle: ViewStyle = {
   backgroundColor: colors.darkAccent,
   padding: 20
+};
+
+const flaggedStatusStyle: ViewStyle = {
+  borderWidth: 2,
+  borderColor: palette.red,
+  borderRadius: 3,
+  marginBottom: 8,
+  padding: 8,
+  flexDirection: "row",
+  flexGrow: 1,
+  alignItems: "center"
+};
+
+const flaggedStatusIconStyle: TextStyle = {
+  color: palette.red
+};
+
+const flaggedStatusTextStyle: TextStyle = {
+  marginLeft: 8
 };
 
 const headerProfileStyle: ViewStyle = {
@@ -82,6 +101,9 @@ const floatRightStyle: TextStyle = {
 export const styles = StyleSheet.create({
   body: bodyStyle,
   header: headerStyle,
+  flaggedStatus: flaggedStatusStyle,
+  flaggedStatusIcon: flaggedStatusIconStyle,
+  flaggedStatusText: flaggedStatusTextStyle,
   headerProfile: headerProfileStyle,
   thumbnail: thumbnailStyle,
   memberName: memberNameStyle,

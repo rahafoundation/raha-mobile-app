@@ -14,16 +14,18 @@ import { palette } from "../../helpers/colors";
 interface OwnProps {
   member: MemberData | typeof RAHA_BASIC_INCOME_MEMBER;
   style?: StyleProp<TextStyle>;
-  hideVerifiedStatus?: boolean;
+  hideStatusLabels?: boolean;
   unverifiedLabelStyle?: StyleProp<TextStyle>;
+  flaggedLabelStyle?: StyleProp<TextStyle>;
 }
 type MemberNameProps = OwnProps;
 
 export const MemberName: React.StatelessComponent<MemberNameProps> = ({
   member,
   style,
-  hideVerifiedStatus,
-  unverifiedLabelStyle
+  hideStatusLabels,
+  unverifiedLabelStyle,
+  flaggedLabelStyle
 }) => {
   // TODO: probably make this a real member
   // TODO: make it navigate somewhere meaningful, maybe info about the basic
@@ -31,6 +33,11 @@ export const MemberName: React.StatelessComponent<MemberNameProps> = ({
   if (member === RAHA_BASIC_INCOME_MEMBER) {
     return <Text style={[styles.memberName, style]}>Raha Basic Income</Text>;
   }
+
+  const isVerified = member.get("isVerified");
+  const operationsFlaggingThisMember = member.get(
+    "operationsFlaggingThisMember"
+  );
 
   // TODO: make this touchable to navigate to member
   return (
@@ -48,11 +55,14 @@ export const MemberName: React.StatelessComponent<MemberNameProps> = ({
       >
         {member.get("fullName")}
       </TextLink>
-      {hideVerifiedStatus || member.get("isVerified") ? null : (
+      {hideStatusLabels || isVerified ? null : (
         <Text style={[styles.unverifiedLabel, unverifiedLabelStyle]}>
           {" "}
           (Unverified)
         </Text>
+      )}
+      {hideStatusLabels || operationsFlaggingThisMember.isEmpty() ? null : (
+        <Text style={[styles.flaggedLabel, flaggedLabelStyle]}> (Flagged)</Text>
       )}
     </Text>
   );
@@ -69,7 +79,14 @@ const unverifiedLabel: TextStyle = {
   color: palette.red
 };
 
+const flaggedLabel: TextStyle = {
+  ...fonts.Lato.Normal,
+  ...fontSizes.medium,
+  color: palette.red
+};
+
 const styles = StyleSheet.create({
   memberName,
-  unverifiedLabel
+  unverifiedLabel,
+  flaggedLabel
 });

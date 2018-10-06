@@ -4,9 +4,10 @@
  * as ability to Mint.
  */
 import * as React from "react";
-import { TouchableHighlight, View } from "react-native";
+import { TouchableHighlight, View, TouchableOpacity } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
@@ -218,6 +219,24 @@ class ProfileView extends React.PureComponent<ProfileProps> {
     );
   }
 
+  renderFlaggedStatus() {
+    const { member, isOwnProfile } = this.props;
+    const fullName = member.get("fullName");
+    const operationsFlaggingThisMember = member.get(
+      "operationsFlaggingThisMember"
+    );
+    return operationsFlaggingThisMember.isEmpty() ? null : (
+      <TouchableOpacity style={styles.flaggedStatus}>
+        <Icon name="flag" size={30} style={styles.flaggedStatusIcon} />
+        <Text style={styles.flaggedStatusText}>
+          Members of the Raha community have raised issues with{" "}
+          {isOwnProfile ? "your" : `${fullName}'s`} account. Tap this notice to
+          view their concerns.
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+
   render() {
     const {
       stories,
@@ -235,6 +254,7 @@ class ProfileView extends React.PureComponent<ProfileProps> {
           stories={stories}
           header={
             <View style={styles.header}>
+              {this.renderFlaggedStatus()}
               <View style={styles.headerProfile}>
                 <Thumbnail member={member} />
                 <View style={styles.headerDetails}>
