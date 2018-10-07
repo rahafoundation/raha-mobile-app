@@ -240,7 +240,7 @@ class ActivityContent extends React.Component<{
             * flows correctly in descriptions.
             */}
           <Text style={styles.description}>
-            {/* 
+            {/*
               * Name at most the first three actors, and just summarize the rest
               */}
             {actorsData === RAHA_BASIC_INCOME_MEMBER ? (
