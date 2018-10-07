@@ -236,11 +236,15 @@ class ProfileView extends React.PureComponent<ProfileProps> {
         }
       >
         <Icon name="flag" size={30} style={styles.flaggedStatusIcon} />
-        <Text style={styles.flaggedStatusText}>
-          Members of the Raha community have raised issues with{" "}
-          {isOwnProfile ? "your" : `${fullName}'s`} account. Tap this notice to
-          view their concerns.
-        </Text>
+        <View style={styles.flaggedStatusText}>
+          <Text>
+            Members of the Raha community have raised issues with{" "}
+            {isOwnProfile ? "your" : `${fullName}'s`} account.
+          </Text>
+          <Text style={styles.flaggedStatusTextAction}>
+            Tap this notice to view their concerns.
+          </Text>
+        </View>
       </TouchableOpacity>
     );
   }
