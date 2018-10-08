@@ -22,6 +22,7 @@ import {
 } from "../../../components/shared/elements/Currency";
 import { List, Map } from "immutable";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
+import { GENESIS_VERIFY_OPS } from "../../reducers/members";
 
 interface NewMemberCacheValues {
   index: number;
@@ -30,7 +31,7 @@ interface NewMemberCacheValues {
 /**
  * Optional data structure that speeds up creation of Activities from Operations
  */
-interface BundlingCache {
+interface ActivityBundlingCache {
   // member id -> index of corresponding NEW_MEMBER activity in the list
   newMember: Map<MemberId, NewMemberCacheValues>;
 }
@@ -38,22 +39,22 @@ interface BundlingCache {
 /**
  * Data required when building up activities list.
  */
-interface InitialBundlingData {
+interface InitialActivityBundlingData {
   activities: List<Activity>;
-  bundlingCache?: BundlingCache;
+  bundlingCache?: ActivityBundlingCache;
 }
 
-type BundlingData = Required<InitialBundlingData>;
+type ActivityBundlingData = Required<InitialActivityBundlingData>;
 
 /**
  * Adds an independent operation to the existing ones; if an index is specified,
  * overwrites the data at that index rather than pushing to the end.
  */
 function addIndependentOperation(
-  existingData: BundlingData,
+  existingData: ActivityBundlingData,
   operation: IndependentOperation,
   index?: number
-): BundlingData {
+): ActivityBundlingData {
   const newActivity: Activity = {
     type: ActivityType.INDEPENDENT_OPERATION,
     operations: operation
@@ -75,7 +76,7 @@ function addIndependentOperation(
  * @returns the index if present, or undefined if not.
  */
 function getNewMemberActivityIndexFromData(
-  { activities, bundlingCache }: BundlingData,
+  { activities, bundlingCache }: ActivityBundlingData,
   memberId: MemberId
 ): NewMemberCacheValues | undefined {
   const cachedNewMemberActivity = bundlingCache.newMember.get(memberId);
@@ -92,9 +93,9 @@ function getNewMemberActivityIndexFromData(
 }
 
 function addCreateMemberOperation(
-  existingData: BundlingData,
+  existingData: ActivityBundlingData,
   operation: CreateMemberOperation
-): BundlingData {
+): ActivityBundlingData {
   const { activities, bundlingCache } = existingData;
   const newMemberId = operation.creator_uid;
   const existingNewMemberActivity = getNewMemberActivityIndexFromData(
@@ -151,9 +152,9 @@ function addCreateMemberOperation(
  *     that of the previous VERIFY_MEMBER operation
  */
 function addVerifyMemberOperation(
-  existingData: BundlingData,
+  existingData: ActivityBundlingData,
   operation: VerifyOperation
-): BundlingData {
+): ActivityBundlingData {
   const { activities, bundlingCache } = existingData;
   const targetMemberId = operation.data.to_uid;
   const existingNewMemberActivity = getNewMemberActivityIndexFromData(
@@ -277,9 +278,9 @@ function addVerifyMemberOperation(
 }
 
 function addMintReferralBonusOperation(
-  existingData: BundlingData,
+  existingData: ActivityBundlingData,
   operation: MintReferralBonusOperation
-): BundlingData {
+): ActivityBundlingData {
   const { activities, bundlingCache } = existingData;
   const minterId = operation.creator_uid;
   const invitedMemberId = operation.data.invited_member_id;
@@ -326,10 +327,7 @@ function addMintReferralBonusOperation(
     return existingData;
   }
 
-  const [
-    createMemberOperation,
-    verifyMemberOperation
-  ] = newMemberActivity.operations;
+  const [createMemberOperation] = newMemberActivity.operations;
 
   if (
     invitedMemberId !== createMemberOperation.creator_uid ||
@@ -380,9 +378,9 @@ function addMintReferralBonusOperation(
  * Activities.
  */
 function addOperationToActivitiesList(
-  existingData: BundlingData,
+  existingData: ActivityBundlingData,
   operation: Operation
-): BundlingData {
+): ActivityBundlingData {
   switch (operation.op_code) {
     case OperationType.CREATE_MEMBER: {
       return addCreateMemberOperation(existingData, operation);
@@ -446,9 +444,9 @@ function addOperationToActivitiesList(
  */
 function addOperationsToActivities(
   newOperations: List<Operation>,
-  existingData?: InitialBundlingData
+  existingData?: InitialActivityBundlingData
 ): List<Activity> {
-  const initialBundlingData: BundlingData = existingData
+  const initialBundlingData: ActivityBundlingData = existingData
     ? {
         ...existingData,
         bundlingCache: existingData.bundlingCache
@@ -475,19 +473,70 @@ function addOperationsToActivities(
 }
 
 /**
- * Gets all activities.
+ * Gets all activities in chronological order (old -> new).
+ *
+ * TODO: make this more efficient. May naturally happen as we move this
+ * functionality to backend.
+ * - don't recreate the history every time (memoize the selector)
+ * - don't return all of them, probably paginate
  */
 export function allActivities(state: RahaState): List<Activity> {
   return addOperationsToActivities(state.operations);
 }
 
 /**
+ * Gets all activities that involve a set of specified members, in chronological
+ * order (old -> new).
+ *
+ * TODO: make this more efficient
+ */
+export function activitiesInvolvingMembers(
+  state: RahaState,
+  members: MemberId[]
+): List<Activity> {
+  // search all activities
+  return allActivities(state).filter(activity => {
+    const operations: Operation[] = Array.isArray(activity.operations)
+      ? activity.operations
+      : [activity.operations];
+
+    // if can find matching member in an operation, accept this activity
+    return !!operations.find(operation => {
+      if (members.includes(operation.creator_uid)) {
+        return true;
+      }
+
+      // search all the fields in `operation.data` for member ID
+      // this is a blunt tool, because we don't have consistency on where member
+      // IDs are stored in operations. Consider reworking operations to be more
+      // consistent, to make this more straightforward.
+      const operationDataKeys = Object.keys(
+        operation.data
+      ) as (keyof typeof operation.data)[];
+
+      return !!operationDataKeys.find(key =>
+        members.includes(operation.data[key])
+      );
+    });
+  });
+}
+
+export function isGenesisVerificationActivity(activity: Activity): boolean {
+  if (activity.type === ActivityType.INDEPENDENT_OPERATION) {
+    return GENESIS_VERIFY_OPS.includes(activity.operations.id);
+  }
+
+  return !!(activity.operations as Operation[]).find(o =>
+    GENESIS_VERIFY_OPS.includes(o.id)
+  );
+}
+/**
  * Get all NEW_MEMBER activities where the member has not yet been verified,
  * sorted newest to oldest.
  */
-export const createUnverifiedMemberActivities = (
+export function unverifiedCreateMemberActivities(
   state: RahaState
-): List<Activity> => {
+): List<Activity> {
   return allActivities(state).filter(
     activity =>
       activity.type === ActivityType.NEW_MEMBER &&
@@ -495,4 +544,4 @@ export const createUnverifiedMemberActivities = (
       // VERIFY_MEMBER operation at position 2
       activity.operations.length === 1
   );
-};
+}
