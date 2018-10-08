@@ -358,7 +358,7 @@ function createNewMemberStoryMinted(
     creatorMember,
     timestamp: mintBonusOperation.created_at,
     bodyMedia: [
-      videoReferenceForMember(creatorMember),
+      videoReferenceForMember(creatorMember)
       // TODO: show these once we can de-duplicate identical videos, have a
       // proper UI for multiple pieces of media
       // videoReferenceForUri(verifyMemberOperation.data.video_url)
@@ -367,8 +367,9 @@ function createNewMemberStoryMinted(
     facilitatorData: {
       facilitatingMember: inviter,
       actionDescription: [
-        "invited them to Raha, verified their identity, and minted a referral bonus of",
-        amountMinted
+        "invited them to Raha, and minted a referral bonus of",
+        amountMinted,
+        "after verifying their identity!"
       ]
     }
   });
@@ -412,7 +413,7 @@ function createNewMemberStoryVerified(
     creatorMember,
     timestamp: verifyMemberOperation.created_at,
     bodyMedia: [
-      videoReferenceForMember(creatorMember),
+      videoReferenceForMember(creatorMember)
       // TODO: show these once we can de-duplicate identical videos, have a
       // proper UI for multiple pieces of media
       // videoReferenceForUri(verifyMemberOperation.data.video_url)

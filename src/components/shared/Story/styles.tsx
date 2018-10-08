@@ -88,8 +88,7 @@ const iconBodyStyle: TextStyle = {
 // render properly
 const mediaBodyStyle: ViewStyle = {
   height: 300,
-  width: 300,
-  marginBottom: 30
+  width: 300
 };
 
 export const styles = StyleSheet.create({
