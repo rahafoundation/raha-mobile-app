@@ -55,7 +55,6 @@ const invisibleStyle: ViewStyle = {
 
 const chainIndicatorWidth = 3;
 const chainIndicatorStyle: ViewStyle = {
-
   flexDirection: "column",
   alignItems: "center",
   height: "100%",
@@ -89,7 +88,8 @@ const iconBodyStyle: TextStyle = {
 // render properly
 const mediaBodyStyle: ViewStyle = {
   height: 300,
-  width: 300
+  width: 300,
+  marginBottom: 30
 };
 
 export const styles = StyleSheet.create({
