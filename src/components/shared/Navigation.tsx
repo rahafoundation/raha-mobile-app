@@ -33,7 +33,7 @@ import { Profile as ProfileScreen } from "../pages/Profile";
 import { getMemberById } from "../../store/selectors/members";
 import { RahaState } from "../../store";
 import { MemberList as MemberListScreen } from "../pages/MemberList";
-import { ActivityList as ActivityListScreen } from "../pages/ActivityList";
+import { StoryList as StoryListScreen } from "../pages/StoryList";
 import { Onboarding } from "../pages/Onboarding/Onboarding";
 import { ReferralBonus } from "../pages/ReferralBonus";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
@@ -103,7 +103,7 @@ export enum RouteName {
   InvitePage = "Invite",
   LogInPage = "LogIn",
   MemberListPage = "Member List",
-  ActivityListPage = "Activity List",
+  StoryListPage = "Story List",
   OnboardingPage = "Onboarding",
   ProfilePage = "Profile Page",
   ProfileTab = "Profile",
@@ -202,12 +202,12 @@ const MemberList = {
   }
 };
 
-const ActivityList = {
-  screen: ActivityListScreen,
+const StoryList = {
+  screen: StoryListScreen,
   navigationOptions: ({ navigation }: any) => {
     return {
       headerTitle: (
-        <HeaderTitle title={navigation.getParam("title", "Activity List")} />
+        <HeaderTitle title={navigation.getParam("title", "Story List")} />
       ),
       headerStyle: styles.header
     };
@@ -299,7 +299,7 @@ export function createNavigatorForTab(
       ...routeConfigMap,
       [RouteName.ProfilePage]: Profile,
       [RouteName.MemberListPage]: MemberList,
-      [RouteName.ActivityListPage]: ActivityList,
+      [RouteName.StoryListPage]: StoryList,
       [RouteName.GivePage]: Give,
       [RouteName.Verify]: {
         screen: Verify,
