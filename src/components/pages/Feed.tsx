@@ -6,32 +6,40 @@
 import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 
-import { ActivityFeed } from "../shared/Activity/ActivityFeed";
+import { StoryFeed } from "../shared/StoryFeed";
 import { RahaState } from "../../store";
-import { activities } from "../../store/selectors/activities";
 import { Activity } from "../../store/selectors/activities/types";
 import { colors } from "../../helpers/colors";
 import { View } from "react-native";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
+import { allActivities } from "../../store/selectors/activities";
+import {
+  storiesForActivities,
+  bundleMintBasicIncomeStories
+} from "../../store/selectors/stories";
+import { StoryType, Story } from "../../store/selectors/stories/types";
+import { List } from "immutable";
 
 type StateProps = {
-  activities: Activity[];
+  stories: List<Story>;
 };
 
-const FeedView: React.StatelessComponent<StateProps> = ({ activities }) => {
+const FeedView: React.StatelessComponent<StateProps> = ({ stories }) => {
   return (
     <View style={{ backgroundColor: colors.pageBackground }}>
-      <ActivityFeed activities={activities} />
+      <StoryFeed stories={stories} />
     </View>
   );
 };
 
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
   return {
-    activities: activities(
+    stories: bundleMintBasicIncomeStories(
       state,
-      operation => operation.op_code !== OperationType.REQUEST_VERIFICATION
+      storiesForActivities(state, allActivities(state))
     )
+      .filter(story => story.storyData.type !== StoryType.REQUEST_VERIFICATION)
+      .reverse()
   };
 };
 

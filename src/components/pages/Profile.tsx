@@ -15,15 +15,10 @@ import { Member } from "../../store/reducers/members";
 import { RahaThunkDispatch, RahaState } from "../../store";
 import { trustMember } from "../../store/actions/members";
 import { getMemberById } from "../../store/selectors/members";
-import { ActivityFeed } from "../shared/Activity/ActivityFeed";
+import { StoryFeed } from "../shared/StoryFeed";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { Button, Text } from "../shared/elements";
 import { VideoWithPlaceholder } from "../shared/VideoWithPlaceholder";
-import {
-  activitiesForMember,
-  convertOperationsToActivities
-} from "../../store/selectors/activities";
-import { Activity, ActivityType } from "../../store/selectors/activities/types";
 import {
   CurrencyType,
   CurrencyRole,
@@ -31,8 +26,6 @@ import {
   currencySymbol
 } from "../shared/elements/Currency";
 import { styles } from "./Profile.styles";
-import { operationsForMember } from "../../store/selectors/operations";
-import { OperationType } from "@raha/api-shared/dist/models/Operation";
 import {
   ApiCallStatusType,
   ApiCallStatus
@@ -40,6 +33,10 @@ import {
 import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { MemberName } from "../shared/MemberName";
+import { activitiesInvolvingMembers } from "../../store/selectors/activities";
+import { storiesForActivities } from "../../store/selectors/stories";
+import { Story, StoryType } from "../../store/selectors/stories/types";
+import { List } from "immutable";
 
 interface NavParams {
   member: Member;
@@ -50,8 +47,8 @@ type StateProps = {
   loggedInMember?: Member;
   member: Member;
   isOwnProfile: boolean;
-  activities: Activity[];
-  verifiedActivities: Activity[];
+  stories: List<Story>;
+  verifiedThisMemberStories: List<Story>;
   trustApiCallStatus?: ApiCallStatus;
   verifyApiCallStatus?: ApiCallStatus;
 };
@@ -74,11 +71,11 @@ const Thumbnail: React.StatelessComponent<{ member: Member }> = props => (
 
 type StatsProps = NavigationScreenProps<NavParams> & {
   member: Member;
-  verifiedActivities: Activity[];
+  verifiedThisMemberStories: List<Story>;
 };
 const Stats: React.StatelessComponent<StatsProps> = ({
   member,
-  verifiedActivities,
+  verifiedThisMemberStories,
   navigation
 }) => (
   <View>
@@ -113,8 +110,8 @@ const Stats: React.StatelessComponent<StatsProps> = ({
     <View style={styles.statsContainer}>
       <TouchableHighlight
         onPress={() =>
-          navigation.push(RouteName.ActivityListPage, {
-            activities: verifiedActivities,
+          navigation.push(RouteName.StoryListPage, {
+            stories: verifiedThisMemberStories,
             title: "Verified By"
           })
         }
@@ -212,18 +209,18 @@ class ProfileView extends React.PureComponent<ProfileProps> {
 
   render() {
     const {
-      activities,
-      verifiedActivities,
+      stories,
       navigation,
       member,
       loggedInMember,
-      isOwnProfile
+      isOwnProfile,
+      verifiedThisMemberStories
     } = this.props;
 
     return (
       <View style={styles.body}>
-        <ActivityFeed
-          activities={activities}
+        <StoryFeed
+          stories={stories}
           header={
             <View style={styles.header}>
               <View style={styles.headerProfile}>
@@ -238,7 +235,7 @@ class ProfileView extends React.PureComponent<ProfileProps> {
                   <Stats
                     navigation={navigation}
                     member={member}
-                    verifiedActivities={verifiedActivities}
+                    verifiedThisMemberStories={verifiedThisMemberStories}
                   />
                 </View>
               </View>
@@ -282,31 +279,28 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   const loggedInMemberId = getLoggedInFirebaseUserId(state) as MemberId;
   // TODO: provide loading state if logged in member isn't present
   const loggedInMember = getMemberById(state, loggedInMemberId);
+
   // Get the fresh state for the member - the member that was passed as a navigation
   // parameter may no longer be fresh.
   const member: Member = props.navigation.getParam("member", loggedInMember);
   const memberId = member.get("memberId");
-  const freshMember = getMemberById(state, memberId) as Member;
+  const freshMember = getMemberById(state, memberId, { throwIfMissing: true });
 
-  const activities = activitiesForMember(state, memberId, {
-    unbundleActivities: [ActivityType.MINT_BASIC_INCOME]
-  });
-  const verifiedActivities: Activity[] = convertOperationsToActivities(
-    state,
-    operationsForMember(state.operations, memberId).filter(
-      op =>
-        op.op_code === OperationType.VERIFY &&
-        op.data.to_uid === member.get("memberId")
-    )
+  const activities = activitiesInvolvingMembers(state, [memberId]);
+  const stories = storiesForActivities(state, activities).reverse();
+  const verifiedThisMemberStories = stories.filter(
+    story =>
+      story.storyData.type === StoryType.VERIFY_MEMBER &&
+      story.storyData.activities.operations.data.to_uid === memberId
   );
+
   return {
-    activities,
-    verifiedActivities,
+    stories,
+    verifiedThisMemberStories,
     member: freshMember,
     loggedInMember,
     isOwnProfile:
-      !!loggedInMember &&
-      loggedInMember.get("memberId") === member.get("memberId"),
+      !!loggedInMember && loggedInMember.get("memberId") === memberId,
     trustApiCallStatus: getStatusOfApiCall(
       state,
       ApiEndpointName.TRUST_MEMBER,

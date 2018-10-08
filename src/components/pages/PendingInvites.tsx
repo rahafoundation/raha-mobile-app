@@ -1,30 +1,35 @@
 import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
 
-import { ActivityFeed } from "../shared/Activity/ActivityFeed";
+import { StoryFeed } from "../shared/StoryFeed";
 import { RahaState } from "../../store";
-import { Activity } from "../../store/selectors/activities/types";
-import { pendingInviteActivities } from "../../store/selectors/activities";
 import { View, StyleSheet, ViewStyle } from "react-native";
 import { colors } from "../../helpers/colors";
+import { unverifiedCreateMemberActivities } from "../../store/selectors/activities";
+import { Story } from "../../store/selectors/stories/types";
+import { List } from "immutable";
+import { storiesForActivities } from "../../store/selectors/stories";
 
 type StateProps = {
-  pendingInviteActivities: Activity[];
+  unverifiedCreateMemberStories: List<Story>;
 };
 
 const PendingInvitesView: React.StatelessComponent<StateProps> = ({
-  pendingInviteActivities
+  unverifiedCreateMemberStories
 }) => {
   return (
     <View style={styles.page}>
-      <ActivityFeed activities={pendingInviteActivities} />
+      <StoryFeed stories={unverifiedCreateMemberStories} />
     </View>
   );
 };
 
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
   return {
-    pendingInviteActivities: pendingInviteActivities(state)
+    unverifiedCreateMemberStories: storiesForActivities(
+      state,
+      unverifiedCreateMemberActivities(state)
+    )
   };
 };
 
