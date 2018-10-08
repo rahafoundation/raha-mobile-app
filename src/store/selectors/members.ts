@@ -9,11 +9,33 @@ import {
 import { RahaState } from "../reducers";
 import { Member, GENESIS_MEMBER } from "../reducers/members";
 
-export function getMemberById(
+interface GetMemberByIdOptions<ThrowIfMissing extends boolean> {
+  throwIfMissing: ThrowIfMissing;
+}
+export function getMemberById<ThrowIfMissing extends boolean = false>(
   state: RahaState,
-  id: MemberId
-): Member | undefined {
-  return state.members.byMemberId.get(id, undefined);
+  id: MemberId,
+  options?: GetMemberByIdOptions<ThrowIfMissing>
+): ThrowIfMissing extends true ? Member : Member | undefined {
+  const defaultOptions = { throwIfMissing: false };
+  const resolvedOptions = {
+    ...defaultOptions,
+    ...(options ? options : {})
+  } as GetMemberByIdOptions<ThrowIfMissing>;
+
+  const { throwIfMissing } = resolvedOptions;
+  const member = state.members.byMemberId.get(id, undefined);
+  if (!throwIfMissing) {
+    // type suggestions necessary due to
+    // https://github.com/Microsoft/TypeScript/issues/24929
+    return member as any;
+  }
+  if (!member) {
+    throw new Error(`Member with id ${id} expected to be present but was not.`);
+  }
+  // type suggestions necessary due to
+  // https://github.com/Microsoft/TypeScript/issues/24929
+  return member as any;
 }
 
 export function getMembersByIds(
