@@ -359,7 +359,9 @@ function createNewMemberStoryMinted(
     timestamp: mintBonusOperation.created_at,
     bodyMedia: [
       videoReferenceForMember(creatorMember),
-      videoReferenceForUri(verifyMemberOperation.data.video_url)
+      // TODO: show these once we can de-duplicate identical videos, have a
+      // proper UI for multiple pieces of media
+      // videoReferenceForUri(verifyMemberOperation.data.video_url)
     ],
     storyData,
     facilitatorData: {
@@ -411,7 +413,9 @@ function createNewMemberStoryVerified(
     timestamp: verifyMemberOperation.created_at,
     bodyMedia: [
       videoReferenceForMember(creatorMember),
-      videoReferenceForUri(verifyMemberOperation.data.video_url)
+      // TODO: show these once we can de-duplicate identical videos, have a
+      // proper UI for multiple pieces of media
+      // videoReferenceForUri(verifyMemberOperation.data.video_url)
     ],
     facilitatorData: {
       facilitatingMember: verifier,
