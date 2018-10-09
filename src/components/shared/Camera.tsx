@@ -16,6 +16,7 @@ import {
   Platform
 } from "react-native";
 import { RNCamera, CameraType } from "react-native-camera";
+import OpenAppSettings from "react-native-app-settings";
 
 import { Text, Button } from "./elements";
 
@@ -78,7 +79,9 @@ export class Camera extends React.Component<CameraProps, CameraState> {
 
   requestPermissions = async () => {
     if (Platform.OS === "ios") {
-      // TODO: Actually request permissions.
+      // iOS doesn't allow us to reprompt the user from the app, so send them to
+      // our app's settings page.
+      OpenAppSettings.open();
     } else {
       this.requestPermissionsAndroid();
     }
@@ -105,15 +108,12 @@ export class Camera extends React.Component<CameraProps, CameraState> {
           In order to verify your identity, you must record a video of yourself.
           Please approve the camera and microphone permissions to continue.
         </Text>
-        {/*TODO: Request permissions from iOS as well*/}
-        {Platform.OS === "android" && (
-          <Button
-            title="Approve Permissions"
-            onPress={() => {
-              this.requestPermissions();
-            }}
-          />
-        )}
+        <Button
+          title="Approve Permissions"
+          onPress={() => {
+            this.requestPermissions();
+          }}
+        />
       </View>
     );
   };
