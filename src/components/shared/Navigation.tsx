@@ -229,6 +229,7 @@ const Profile: NavigationRouteConfig = {
     return {
       headerTitle: <HeaderTitle title={title} />,
       headerRight,
+      headerLeft: undefined,
       headerStyle: styles.header
     };
   }
