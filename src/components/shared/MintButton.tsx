@@ -10,8 +10,7 @@ import { mintBasicIncome } from "../../store/actions/wallet";
 import { getLoggedInMember } from "../../store/selectors/authentication";
 import {
   getMintableAmount,
-  RAHA_MINT_WEEKLY_RATE,
-  RAHA_MINT_MAX
+  RAHA_MINT_WEEKLY_RATE
 } from "../../store/selectors/me";
 import {
   ApiCallStatus,
@@ -77,19 +76,13 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
         <MixedText
           style={[fontSizes.small, { textAlign: "center" }]}
           content={[
-            "Create ",
+            "Current mint rate is",
             {
               currencyType: CurrencyType.Raha,
               value: new Big(RAHA_MINT_WEEKLY_RATE),
               role: CurrencyRole.None
             },
-            "a week, limit",
-            {
-              currencyType: CurrencyType.Raha,
-              value: new Big(RAHA_MINT_MAX),
-              role: CurrencyRole.None
-            },
-            "per MINT."
+            "per week."
           ]}
         />
       </Text>

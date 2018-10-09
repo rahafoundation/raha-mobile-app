@@ -68,7 +68,6 @@ export const Button: React.StatelessComponent<ButtonProps> = props => {
             ...(props.disabled ? disabledTextStyles : [])
           ]}
           content={props.title}
-          textTransform={s => s.toUpperCase()}
         />
       </Text>
     </ArbitraryButton>

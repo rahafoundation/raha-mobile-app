@@ -11,7 +11,8 @@ import { getLoggedInMember } from "../../store/selectors/authentication";
 import { NavigationScreenProps } from "react-navigation";
 import {
   getUnclaimedReferrals,
-  getMintableAmount
+  getMintableAmount,
+  REFERRAL_BONUS
 } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
 import { Button, Text } from "../shared/elements";
@@ -118,9 +119,9 @@ const Actions: React.StatelessComponent<Props> = props => {
       {hasUnclaimedReferrals && (
         <Button
           style={styles.button}
-          title={"Claim invite bonuses!"}
+          title={"Mint Invite Bonuses!"}
           onPress={() => {
-            navigation.navigate(RouteName.ReferralBonusPage, {
+            navigation.push(RouteName.ReferralBonusPage, {
               unclaimedReferralIds
             });
           }}
@@ -140,18 +141,16 @@ const Invite: React.StatelessComponent<Props> = props => {
 
   return (
     <React.Fragment>
-      <Text style={[styles.inviteSectionText]}>
-        You have nothing to mint at this time.
-      </Text>
+      <Text style={[styles.inviteSectionText]}>Nothing to mint right now.</Text>
       <View>
         <Text style={styles.inviteSectionText}>
-          Invite a friend to earn 60 Raha:
+          Invite a friend to mint {REFERRAL_BONUS} Raha!
         </Text>
         <Button
           style={styles.button}
-          title="Invite"
+          title={`Invite +${REFERRAL_BONUS}`}
           onPress={() => {
-            navigation.navigate(RouteName.InvitePage);
+            navigation.push(RouteName.InvitePage);
           }}
         />
       </View>
@@ -189,7 +188,7 @@ const inviteSectionTextStyle: TextStyle = {
 const buttonStyle: ViewStyle = {
   marginVertical: 8,
   paddingVertical: 16,
-  width: 300
+  minWidth: 300
 };
 
 // shared to create consistent spacing

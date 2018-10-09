@@ -40,11 +40,11 @@ import { MemberThumbnail } from "../../shared/MemberThumbnail";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { Loading } from "../../shared/Loading";
 import { fonts } from "../../../helpers/fonts";
+import { REFERRAL_BONUS } from '../../../store/selectors/me';
 
-const REFERRAL_BONUS = new Big(60);
 const REFERRAL_BONUS_VALUE: CurrencyValue = {
   currencyType: CurrencyType.Raha,
-  value: REFERRAL_BONUS,
+  value: new Big(REFERRAL_BONUS),
   role: CurrencyRole.None
 };
 

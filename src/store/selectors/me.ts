@@ -14,7 +14,8 @@ import { getMemberById } from "./members";
 import { getOperationsForCreator, getOperationsForType } from "./operations";
 
 export const RAHA_MINT_WEEKLY_RATE = 10;
-export const RAHA_MINT_MAX = 40;
+export const MAX_WEEKS_ACCRUE = 4;  // TODO#420 Surface (and enforce) this limit
+export const REFERRAL_BONUS = 60;
 const MILLISECONDS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
 
 export function getMintableAmount(
