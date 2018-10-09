@@ -40,6 +40,7 @@ import { List } from "immutable";
 
 interface NavParams {
   member: Member;
+  pageReset?: () => void;
 }
 type OwnProps = NavigationScreenProps<NavParams>;
 
@@ -141,6 +142,16 @@ const Stats: React.StatelessComponent<StatsProps> = ({
 );
 
 class ProfileView extends React.PureComponent<ProfileProps> {
+  private storyFeed: StoryFeed | null = null;
+
+  componentDidMount() {
+    if (this.storyFeed) {
+      this.props.navigation.setParams({
+        pageReset: this.storyFeed.pageUp
+      });
+    }
+  }
+
   trustButton() {
     const { loggedInMember, member, trust, trustApiCallStatus } = this.props;
 
@@ -220,6 +231,7 @@ class ProfileView extends React.PureComponent<ProfileProps> {
     return (
       <View style={styles.body}>
         <StoryFeed
+          ref={ref => (this.storyFeed = ref)}
           stories={stories}
           header={
             <View style={styles.header}>

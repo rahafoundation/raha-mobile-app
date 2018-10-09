@@ -202,7 +202,7 @@ function renderMemberNameInList({
           {!insertComma && " "}
           and{" "}
         </Text>
-      )}
+      )}{" "}
     </React.Fragment>
   );
 }

@@ -5,32 +5,52 @@
  */
 import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
+import { List } from "immutable";
+import { NavigationScreenProps } from "react-navigation";
 
 import { StoryFeed } from "../shared/StoryFeed";
 import { RahaState } from "../../store";
-import { Activity } from "../../store/selectors/activities/types";
 import { colors } from "../../helpers/colors";
 import { View } from "react-native";
-import { OperationType } from "@raha/api-shared/dist/models/Operation";
 import { allActivities } from "../../store/selectors/activities";
 import {
   storiesForActivities,
   bundleMintBasicIncomeStories
 } from "../../store/selectors/stories";
 import { StoryType, Story } from "../../store/selectors/stories/types";
-import { List } from "immutable";
 
 type StateProps = {
   stories: List<Story>;
 };
 
-const FeedView: React.StatelessComponent<StateProps> = ({ stories }) => {
-  return (
-    <View style={{ backgroundColor: colors.pageBackground }}>
-      <StoryFeed stories={stories} />
-    </View>
-  );
-};
+interface NavParams {
+  pageReset?: () => void;
+}
+
+type FeedProps = NavigationScreenProps<NavParams> & StateProps;
+
+export class FeedView extends React.Component<FeedProps> {
+  private storyFeed: StoryFeed | null = null;
+
+  componentDidMount() {
+    if (this.storyFeed) {
+      this.props.navigation.setParams({
+        pageReset: this.storyFeed.pageUp
+      });
+    }
+  }
+
+  render() {
+    return (
+      <View style={{ backgroundColor: colors.pageBackground }}>
+        <StoryFeed
+          ref={ref => (this.storyFeed = ref)}
+          stories={this.props.stories}
+        />
+      </View>
+    );
+  }
+}
 
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
   return {

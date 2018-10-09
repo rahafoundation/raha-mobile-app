@@ -4,23 +4,30 @@
  * Raha, trust each other, or join Raha.
  */
 import * as React from "react";
-import { FlatList, FlatListProps } from "react-native";
+import { FlatList, FlatListProps, NativeSyntheticEvent } from "react-native";
 
 import { Story, StoryView } from "../Story";
-import { Activity as ActivityData } from "../../../store/selectors/activities/types";
 import { Story as StoryModel } from "../../../store/selectors/stories/types";
 import { List } from "immutable";
 
 interface StoryFeedProps {
   stories: List<StoryModel>; // in the order they should be rendered
   header?: React.ReactNode;
+  onScroll?: (event?: NativeSyntheticEvent<any> | undefined) => void;
 }
 
 export class StoryFeed extends React.Component<StoryFeedProps> {
+  list?: FlatList<StoryModel>;
   stories: { [key: string]: StoryView } = {};
 
+  public pageUp = () => {
+    if (this.list) {
+      this.list.scrollToIndex({ index: 0 });
+    }
+  };
+
   private onViewableItemsChanged: FlatListProps<
-    ActivityData
+    StoryModel
   >["onViewableItemsChanged"] = ({ changed }) => {
     changed.forEach(item => {
       const story: StoryModel = item.item;
@@ -42,6 +49,7 @@ export class StoryFeed extends React.Component<StoryFeedProps> {
   render() {
     return (
       <FlatList
+        ref={ref => ref && (this.list = ref)}
         ListHeaderComponent={this.props.header ? this.renderHeader : undefined}
         data={this.props.stories.toArray()}
         keyExtractor={story => story.id}
@@ -59,6 +67,7 @@ export class StoryFeed extends React.Component<StoryFeedProps> {
           />
         )}
         onViewableItemsChanged={this.onViewableItemsChanged}
+        onScroll={this.props.onScroll}
       />
     );
   }
