@@ -196,11 +196,11 @@ function renderMemberNameInList({
   return (
     <React.Fragment key={index}>
       <MemberName member={actor} />
-      {insertComma && <Text>, </Text>}
+      {insertComma && <Text>,</Text>}
       {insertAnd && (
         <Text>
           {!insertComma && " "}
-          and{" "}
+          and
         </Text>
       )}{" "}
     </React.Fragment>
@@ -256,7 +256,7 @@ class ActivityContent extends React.Component<{
             {numActors > 3 && (
               <Text>
                 {numActors - 3} other
-                {numActors > 4 ? "s" : " person"}
+                {numActors > 4 ? "s" : " person"}{" "}
               </Text>
             )}
             {description && <MixedText content={description} />}
