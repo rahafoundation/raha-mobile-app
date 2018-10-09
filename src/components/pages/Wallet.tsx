@@ -187,7 +187,9 @@ const inviteSectionTextStyle: TextStyle = {
 };
 
 const buttonStyle: ViewStyle = {
-  marginVertical: 8
+  marginVertical: 8,
+  paddingVertical: 16,
+  width: 300
 };
 
 // shared to create consistent spacing
@@ -210,7 +212,7 @@ const donationSectionStyle: ViewStyle = {
   flexDirection: "row",
   alignItems: "center"
 };
-const mintButtonStyle: ViewStyle = { ...sectionSpacer };
+const mintButtonStyle: ViewStyle = { ...sectionSpacer, ...buttonStyle };
 
 const pageStyle: ViewStyle = {
   backgroundColor: colors.pageBackground,
@@ -224,7 +226,6 @@ const pageStyle: ViewStyle = {
 const actionsSectionStyle: ViewStyle = {
   ...sectionSpacer,
   flex: 1,
-
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "space-between"
