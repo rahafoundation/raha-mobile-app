@@ -207,7 +207,7 @@ const StoryList = {
   navigationOptions: ({ navigation }: any) => {
     return {
       headerTitle: (
-        <HeaderTitle title={navigation.getParam("title", "Story List")} />
+        <HeaderTitle title={navigation.getParam("title", "Stories")} />
       ),
       headerStyle: styles.header
     };

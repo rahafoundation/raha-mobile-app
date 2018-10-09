@@ -51,7 +51,7 @@ export interface ImageReference {
 }
 
 /**
- * Reference to visual media to dipslay.
+ * Reference to visual media to display.
  */
 export type MediaReference = VideoReference | ImageReference;
 
@@ -98,8 +98,8 @@ export interface NextInChain {
 }
 
 /**
- * The content of an Story. Missing some metadata that makes a complete,
- * renderable Story.
+ * Specification of the visual display of a Story, generated from the StoryData.
+ * Missing some metadata that makes a complete, renderable Story.
  */
 export interface StoryContent {
   /**
@@ -216,7 +216,9 @@ export type VerifyMemberStoryData = StoryDataDefinition<
 >;
 
 /**
- * Possible data that can comprise a story
+ * Possible data that can comprise a Story. Ultimately is used to generate the
+ * rest of the data in a Story, including its metadata and the StoryContent
+ * object.
  */
 export type StoryData =
   | NewMemberStoryData

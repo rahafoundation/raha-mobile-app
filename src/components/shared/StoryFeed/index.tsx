@@ -11,12 +11,12 @@ import { Activity as ActivityData } from "../../../store/selectors/activities/ty
 import { Story as StoryModel } from "../../../store/selectors/stories/types";
 import { List } from "immutable";
 
-interface ActivityFeedProps {
+interface StoryFeedProps {
   stories: List<StoryModel>; // in the order they should be rendered
   header?: React.ReactNode;
 }
 
-export class StoryFeed extends React.Component<ActivityFeedProps> {
+export class StoryFeed extends React.Component<StoryFeedProps> {
   stories: { [key: string]: StoryView } = {};
 
   private onViewableItemsChanged: FlatListProps<
