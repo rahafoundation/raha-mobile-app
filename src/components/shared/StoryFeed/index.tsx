@@ -6,20 +6,19 @@
 import * as React from "react";
 import { FlatList, FlatListProps, NativeSyntheticEvent } from "react-native";
 
-import { Activity, ActivityView } from "./";
-import { Activity as ActivityData } from "../../../store/selectors/activities/types";
+import { Story, StoryView } from "../Story";
+import { Story as StoryModel } from "../../../store/selectors/stories/types";
+import { List } from "immutable";
 
-type OwnProps = {
-  activities: ActivityData[]; // in the order they should be rendered
+interface StoryFeedProps {
+  stories: List<StoryModel>; // in the order they should be rendered
   header?: React.ReactNode;
   onScroll?: (event?: NativeSyntheticEvent<any> | undefined) => void;
-};
+}
 
-type ActivityFeedProps = OwnProps;
-
-export class ActivityFeed extends React.Component<ActivityFeedProps> {
-  list: FlatList<ActivityData> | null = null;
-  activities: { [key: string]: ActivityView } = {};
+export class StoryFeed extends React.Component<StoryFeedProps> {
+  list?: FlatList<StoryModel>;
+  stories: { [key: string]: StoryView } = {};
 
   public pageUp = () => {
     if (this.list) {
@@ -28,18 +27,18 @@ export class ActivityFeed extends React.Component<ActivityFeedProps> {
   };
 
   private onViewableItemsChanged: FlatListProps<
-    ActivityData
+    StoryModel
   >["onViewableItemsChanged"] = ({ changed }) => {
     changed.forEach(item => {
-      const activity: ActivityData = item.item;
+      const story: StoryModel = item.item;
       if (item.isViewable) {
         return;
       }
-      const activityComponent = this.activities[activity.id];
-      if (!activityComponent) {
+      const storyComponent = this.stories[story.id];
+      if (!storyComponent) {
         return;
       }
-      activityComponent.resetVideo();
+      storyComponent.resetVideo();
     });
   };
 
@@ -50,20 +49,20 @@ export class ActivityFeed extends React.Component<ActivityFeedProps> {
   render() {
     return (
       <FlatList
-        ref={ref => (this.list = ref)}
+        ref={ref => ref && (this.list = ref)}
         ListHeaderComponent={this.props.header ? this.renderHeader : undefined}
-        data={this.props.activities}
-        keyExtractor={activity => activity.id}
+        data={this.props.stories.toArray()}
+        keyExtractor={story => story.id}
         renderItem={({ item }) => (
-          <Activity
-            activity={item}
+          <Story
+            story={item}
             onRef={elem => {
               if (!elem) {
                 // TODO: ensure this degrades well if this is observed to occur
                 // console.error("Unexpected: ActivityItem ref has no value");
                 return;
               }
-              this.activities[item.id] = elem as any;
+              this.stories[item.id] = elem as any;
             }}
           />
         )}

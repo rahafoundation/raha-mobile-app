@@ -55,7 +55,6 @@ const invisibleStyle: ViewStyle = {
 
 const chainIndicatorWidth = 3;
 const chainIndicatorStyle: ViewStyle = {
-
   flexDirection: "column",
   alignItems: "center",
   height: "100%",

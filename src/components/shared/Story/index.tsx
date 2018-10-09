@@ -13,15 +13,6 @@ import {
   VideoWithPlaceholderView,
   VideoWithPlaceholder
 } from "../VideoWithPlaceholder";
-import {
-  Activity as ActivityData,
-  ActivityContent as ActivityContentData,
-  ActivityCallToAction as CallToActionData,
-  ActivityDirection,
-  BodyType,
-  MediaBody,
-  NextInChain
-} from "../../../store/selectors/activities/types";
 import { MemberName } from "../MemberName";
 import { MemberThumbnail } from "../MemberThumbnail";
 import { TextLink } from "../elements/TextLink";
@@ -33,42 +24,49 @@ import {
   Member
 } from "../../../store/reducers/members";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
-
-type Props = {
-  activity: ActivityData;
-};
+import {
+  Story as StoryModel,
+  CallToAction as CallToActionData,
+  CallToActionPiece,
+  CallToActionDataType,
+  MediaBody,
+  StoryContent as StoryContentData,
+  BodyType,
+  NextInChain,
+  ChainDirection
+} from "../../../store/selectors/stories/types";
+import { MapStateToProps, connect } from "react-redux";
+import { RahaState } from "../../../store";
+import { getLoggedInMember } from "../../../store/selectors/authentication";
 
 /**
  * TODO: test this for proper output
  */
 const CallToAction: React.StatelessComponent<{
+  member: Member;
   callToAction: CallToActionData;
-}> = ({ callToAction: { actor, actions } }) => {
+}> = ({ member, callToAction }) => {
   return (
     <View>
-      <MemberThumbnail style={styles.actorThumbnail} member={actor} />
-      {actions.map(action => (
-        <View>
-          {/* TODO: don't ad hoc figure out value of piece like this, add explicit differentiator */}
-          {/* TODO: Figure out how to unify ActionLink handling with MixedText? */}
-          {action.text.map(piece => {
-            if (typeof piece === "string" || "currencyType" in piece) {
-              return <MixedText content={[piece]} />;
-            }
-            if ("destination" in piece) {
-              return (
-                <TextLink destination={piece.destination}>
-                  {piece.text}
-                </TextLink>
-              );
-            }
-            console.error(
-              `Unexpected value in ActivityContent's callToAction field: ${piece}. Aborting`
+      <MemberThumbnail style={styles.actorThumbnail} member={member} />
+      {callToAction.map((piece, idx) => {
+        switch (piece.type) {
+          case CallToActionDataType.TEXT:
+            return <MixedText key={idx} content={piece.data} />;
+          case CallToActionDataType.LINK:
+            return (
+              <TextLink key={idx} destination={piece.data.destination}>
+                {piece.data.text}
+              </TextLink>
             );
-            return <React.Fragment />;
-          })}
-        </View>
-      ))}
+          default:
+            console.error(
+              `Unexpected: invalid data type in piece of CallToAction. Piece:`,
+              JSON.stringify(piece, null, 2)
+            );
+            return <React.Fragment key={idx} />;
+        }
+      })}
     </View>
   );
 };
@@ -110,7 +108,7 @@ class MediaContentBody extends React.Component<{
 }
 
 class ActivityContentBody extends React.Component<{
-  body: ActivityContentData["body"];
+  body: StoryContentData["body"];
   onFindVideoElems: (elems: VideoWithPlaceholderView[]) => void;
 }> {
   renderBody = () => {
@@ -160,7 +158,7 @@ const ChainIndicator: React.StatelessComponent<{
     >
       {nextInChain &&
         [
-          ActivityDirection.Bidirectional
+          ChainDirection.Bidirectional
           // ActivityDirection.Backward
         ].includes(nextInChain.direction) && (
           <ArrowHead
@@ -171,7 +169,7 @@ const ChainIndicator: React.StatelessComponent<{
         )}
       <View style={styles.chainIndicatorLine} />
       {nextInChain &&
-        [ActivityDirection.Bidirectional, ActivityDirection.Forward].includes(
+        [ChainDirection.Bidirectional, ChainDirection.Forward].includes(
           nextInChain.direction
         ) && (
           <ArrowHead
@@ -198,11 +196,11 @@ function renderMemberNameInList({
   return (
     <React.Fragment key={index}>
       <MemberName member={actor} />
-      {insertComma && <Text>, </Text>}
+      {insertComma && <Text>,</Text>}
       {insertAnd && (
         <Text>
           {!insertComma && " "}
-          and{" "}
+          and
         </Text>
       )}{" "}
     </React.Fragment>
@@ -210,7 +208,7 @@ function renderMemberNameInList({
 }
 
 class ActivityContent extends React.Component<{
-  content: ActivityContentData;
+  content: StoryContentData;
   onFindVideoElems: (elems: VideoWithPlaceholderView[]) => void;
 }> {
   ownVideoElems: VideoWithPlaceholderView[] = [];
@@ -258,7 +256,7 @@ class ActivityContent extends React.Component<{
             {numActors > 3 && (
               <Text>
                 {numActors - 3} other
-                {numActors > 4 ? "s" : " person"}
+                {numActors > 4 ? "s" : " person"}{" "}
               </Text>
             )}
             {description && <MixedText content={description} />}
@@ -277,7 +275,7 @@ class ActivityContent extends React.Component<{
             </View>
             {body.nextInChain && (
               <ActivityContent
-                content={body.nextInChain.nextActivityContent}
+                content={body.nextInChain.nextStoryContent}
                 onFindVideoElems={elems =>
                   this.props.onFindVideoElems([...this.ownVideoElems, ...elems])
                 }
@@ -290,7 +288,18 @@ class ActivityContent extends React.Component<{
   }
 }
 
-export class ActivityView extends React.Component<
+interface StateProps {
+  loggedInMember: Member | undefined;
+}
+
+interface OwnProps {
+  story: StoryModel;
+  showCallsToAction?: boolean;
+}
+
+type Props = OwnProps & StateProps;
+
+export class StoryView extends React.Component<
   Props & NavigationInjectedProps,
   {}
 > {
@@ -308,7 +317,12 @@ export class ActivityView extends React.Component<
   };
 
   render() {
-    const { content, callToAction, timestamp } = this.props.activity;
+    const { story, loggedInMember } = this.props;
+    const showCallsToAction =
+      this.props.showCallsToAction !== undefined
+        ? this.props.showCallsToAction
+        : true;
+    const { content, callsToAction, timestamp } = story;
     return (
       <View style={styles.activity}>
         <ActivityContent
@@ -317,7 +331,16 @@ export class ActivityView extends React.Component<
             this.videoElems = elems;
           }}
         />
-        {callToAction && <CallToAction callToAction={callToAction} />}
+        {showCallsToAction &&
+          callsToAction &&
+          loggedInMember &&
+          callsToAction.map((callToAction, idx) => (
+            <CallToAction
+              key={idx}
+              member={loggedInMember}
+              callToAction={callToAction}
+            />
+          ))}
         <View style={styles.metadataRow}>
           <Text style={styles.timestamp}>
             {formatRelative(timestamp, new Date()).toUpperCase()}
@@ -328,4 +351,19 @@ export class ActivityView extends React.Component<
   }
 }
 
-export const Activity = withNavigation<Props>(ActivityView);
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  OwnProps,
+  RahaState
+> = state => {
+  return {
+    loggedInMember: getLoggedInMember(state)
+  };
+};
+
+export const Story = connect(
+  mapStateToProps,
+  null,
+  null,
+  { withRef: true }
+)(withNavigation<Props>(StoryView));

@@ -4,24 +4,26 @@
  */
 import * as React from "react";
 
-import { ActivityFeed } from "../shared/Activity/ActivityFeed";
+import { StoryFeed } from "../shared/StoryFeed";
 import { Activity } from "../../store/selectors/activities/types";
 import { colors } from "../../helpers/colors";
 import { View } from "react-native";
 import { NavigationScreenProps } from "react-navigation";
+import { Story } from "../../store/selectors/stories/types";
+import { List } from "immutable";
 
 interface NavParams {
-  activities: Activity[];
+  stories: List<Story>;
 }
 
 type OwnProps = NavigationScreenProps<NavParams>;
 
-export const ActivityList: React.StatelessComponent<OwnProps> = ({
+export const StoryList: React.StatelessComponent<OwnProps> = ({
   navigation
 }) => {
   return (
     <View style={{ backgroundColor: colors.pageBackground }}>
-      <ActivityFeed activities={navigation.getParam("activities")} />
+      <StoryFeed stories={navigation.getParam("stories")} />
     </View>
   );
 };

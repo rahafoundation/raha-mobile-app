@@ -5,18 +5,22 @@
  */
 import * as React from "react";
 import { connect, MapStateToProps } from "react-redux";
-
-import { ActivityFeed } from "../shared/Activity/ActivityFeed";
-import { RahaState } from "../../store";
-import { activities } from "../../store/selectors/activities";
-import { Activity } from "../../store/selectors/activities/types";
-import { colors } from "../../helpers/colors";
-import { View } from "react-native";
-import { OperationType } from "@raha/api-shared/dist/models/Operation";
+import { List } from "immutable";
 import { NavigationScreenProps } from "react-navigation";
 
+import { StoryFeed } from "../shared/StoryFeed";
+import { RahaState } from "../../store";
+import { colors } from "../../helpers/colors";
+import { View } from "react-native";
+import { allActivities } from "../../store/selectors/activities";
+import {
+  storiesForActivities,
+  bundleMintBasicIncomeStories
+} from "../../store/selectors/stories";
+import { StoryType, Story } from "../../store/selectors/stories/types";
+
 type StateProps = {
-  activities: Activity[];
+  stories: List<Story>;
 };
 
 interface NavParams {
@@ -26,12 +30,12 @@ interface NavParams {
 type FeedProps = NavigationScreenProps<NavParams> & StateProps;
 
 export class FeedView extends React.Component<FeedProps> {
-  private activityFeed: ActivityFeed | null = null;
+  private storyFeed: StoryFeed | null = null;
 
   componentDidMount() {
-    if (this.activityFeed) {
+    if (this.storyFeed) {
       this.props.navigation.setParams({
-        pageReset: this.activityFeed.pageUp
+        pageReset: this.storyFeed.pageUp
       });
     }
   }
@@ -39,9 +43,9 @@ export class FeedView extends React.Component<FeedProps> {
   render() {
     return (
       <View style={{ backgroundColor: colors.pageBackground }}>
-        <ActivityFeed
-          ref={ref => (this.activityFeed = ref)}
-          activities={this.props.activities}
+        <StoryFeed
+          ref={ref => (this.storyFeed = ref)}
+          stories={this.props.stories}
         />
       </View>
     );
@@ -50,10 +54,12 @@ export class FeedView extends React.Component<FeedProps> {
 
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
   return {
-    activities: activities(
+    stories: bundleMintBasicIncomeStories(
       state,
-      operation => operation.op_code !== OperationType.REQUEST_VERIFICATION
+      storiesForActivities(state, allActivities(state))
     )
+      .filter(story => story.storyData.type !== StoryType.REQUEST_VERIFICATION)
+      .reverse()
   };
 };
 

@@ -7,8 +7,12 @@ import {
   CreateMemberOperation
 } from "@raha/api-shared/dist/models/Operation";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
-import { Member } from "../reducers/members";
-import { isInviteConfirmed } from "./members";
+import {
+  Member,
+  GENESIS_MEMBER,
+  GENESIS_VERIFY_OPS
+} from "../reducers/members";
+import { isInviteConfirmed, getMemberById } from "./members";
 import { RahaState } from "../reducers";
 
 export function getOperationsForType(
@@ -55,4 +59,18 @@ export function getCreateMemberOperationFor(state: RahaState, member: Member) {
       operation.op_code === OperationType.CREATE_MEMBER &&
       operation.creator_uid === member.get("memberId")
   ) as CreateMemberOperation | undefined;
+}
+
+/**
+ * Get creator of a given operation
+ */
+export function getOperationCreator(
+  state: RahaState,
+  operation: Operation
+): Member | typeof GENESIS_MEMBER {
+  const member = GENESIS_VERIFY_OPS.includes(operation.id)
+    ? GENESIS_MEMBER
+    : getMemberById(state, operation.creator_uid, { throwIfMissing: true });
+
+  return member;
 }
