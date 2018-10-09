@@ -52,7 +52,8 @@ export const createMember: AsyncActionCreator = (
   emailAddress: string,
   username: string,
   videoToken: string,
-  inviteToken?: string
+  inviteToken?: string,
+  subscribeToNewsletter?: boolean
 ) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
@@ -68,7 +69,8 @@ export const createMember: AsyncActionCreator = (
         emailAddress,
         username,
         videoToken,
-        inviteToken
+        inviteToken,
+        subscribeToNewsletter
       );
 
       const action: OperationsAction = {

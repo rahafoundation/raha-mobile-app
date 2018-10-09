@@ -9,13 +9,16 @@ import {
   IndependentPageContainer
 } from "../../shared/elements";
 import { styles } from "./styles";
+import { CheckBox } from "react-native-elements";
+import { palette } from "../../../helpers/colors";
+import { fonts } from "../../../helpers/fonts";
 
 /**
  * Page that requests user's email address
  */
 
 type OwnProps = {
-  onInputEmail: (emailAddress: string) => any;
+  onInputEmail: (emailAddress: string, subscribeToNewsletter: boolean) => any;
   onBack: () => any;
 };
 
@@ -23,13 +26,16 @@ type InputEmailProps = OwnProps;
 
 type InputEmailState = {
   emailAddress?: string;
+  subscribeToNewsletter: boolean;
 };
 
 export class InputEmail extends React.Component<
   InputEmailProps,
   InputEmailState
 > {
-  state: InputEmailState = {};
+  state: InputEmailState = {
+    subscribeToNewsletter: false
+  };
 
   render() {
     return (
@@ -53,6 +59,17 @@ export class InputEmail extends React.Component<
                 }
                 value={this.state.emailAddress}
               />
+              <CheckBox
+                title="Sign me up for the monthly Raha newsletter"
+                checkedColor={palette.purple}
+                checked={this.state.subscribeToNewsletter}
+                textStyle={fonts.Lato.Normal}
+                onPress={() =>
+                  this.setState({
+                    subscribeToNewsletter: !this.state.subscribeToNewsletter
+                  })
+                }
+              />
               <Button
                 title={`Confirm`}
                 disabled={
@@ -65,7 +82,10 @@ export class InputEmail extends React.Component<
                       this.state.emailAddress
                     );
                     if (normalizedEmailAddress) {
-                      this.props.onInputEmail(normalizedEmailAddress);
+                      this.props.onInputEmail(
+                        normalizedEmailAddress,
+                        this.state.subscribeToNewsletter
+                      );
                     }
                   }
                 }}

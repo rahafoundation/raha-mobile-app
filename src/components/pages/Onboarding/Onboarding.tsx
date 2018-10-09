@@ -86,6 +86,8 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   videoToken: string;
   lastInviteToken?: string;
 
+  subscribeToNewsletter?: boolean;
+
   constructor(props: OnboardingProps) {
     super(props);
     this.steps = [];
@@ -330,7 +332,8 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       case OnboardingStep.INPUT_EMAIL: {
         return (
           <InputEmail
-            onInputEmail={(email: string) => {
+            onInputEmail={(email: string, subscribeToNewsletter: boolean) => {
+              this.subscribeToNewsletter = subscribeToNewsletter;
               this._goToStep(this._validatedCameraStep(), {
                 emailAddress: email
               });
@@ -453,6 +456,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
                 ? this.props.inviteToken
                 : undefined
             }
+            subscribeToNewsletter={this.subscribeToNewsletter}
           />
         );
       }
