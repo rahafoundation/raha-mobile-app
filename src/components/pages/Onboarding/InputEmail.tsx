@@ -60,7 +60,7 @@ export class InputEmail extends React.Component<
                 value={this.state.emailAddress}
               />
               <CheckBox
-                title="Sign me up for the monthly Raha newsletter"
+                title="Sign me up for the monthly newsletter"
                 checkedColor={palette.purple}
                 checked={this.state.subscribeToNewsletter}
                 textStyle={fonts.Lato.Normal}
