@@ -12,8 +12,7 @@ import { NavigationScreenProps } from "react-navigation";
 import {
   getUnclaimedReferrals,
   getMintableAmount,
-  REFERRAL_BONUS,
-  RAHA_MINT_WEEKLY_RATE
+  REFERRAL_BONUS
 } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
 import { Button, Text } from "../shared/elements";
@@ -129,6 +128,7 @@ const Actions: React.StatelessComponent<Props> = props => {
           }}
         />
       )}
+      <View style={styles.pushDownSpacer} />
       <Image
         resizeMode="contain"
         style={styles.actionImage}
@@ -150,7 +150,7 @@ const Invite: React.StatelessComponent<Props> = props => {
         title={"Come back soon to mint your basic income"}
       />
       <View style={styles.inviteSectionText}>
-        <Text style={styles.headerStyle}>Want to mint more Raha?</Text>
+        <Text style={styles.header}>Want to mint more Raha?</Text>
         <MixedText
           style={styles.inviteSectionText}
           content={[
@@ -209,6 +209,12 @@ const buttonStyle: ViewStyle = {
 // shared to create consistent spacing
 const sectionSpacer: ViewStyle = {
   marginTop: 20
+};
+
+// pushes content on mint page down so image shows up on bottom rather than
+// right after mint button.
+const pushDownSpacerStyle: ViewStyle = {
+  flex: 1
 };
 
 const financesSectionStyle: ViewStyle = {
@@ -277,7 +283,8 @@ const styles = StyleSheet.create({
   donationValue: donationTextStyle,
   numberLabel: numberLabelStyle,
   inviteSectionText: inviteSectionTextStyle,
-  headerStyle: headerStyle,
+  header: headerStyle,
+  pushDownSpacer: pushDownSpacerStyle,
   button: buttonStyle
 });
 
