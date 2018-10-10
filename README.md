@@ -29,13 +29,21 @@ yarn install
 
 ### Configuration
 
-Finally, copy over either the prod or test config, whichever environment you'd
-like to develop in.
+Finally, copy over the proper config for the environment you'd like to develop
+in.
 
 ```bash
-yarn config:prod
+#############
+# DEVELOPMENT
+#############
+yarn config:dev:prod
 # OR
-yarn config:test
+yarn config:dev:test
+
+############
+# DEPLOYMENT
+############
+yarn config:deploy
 ```
 
 **NOTE**: These commands change configuration not just in JavaScript, but also
