@@ -80,7 +80,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
             {
               currencyType: CurrencyType.Raha,
               value: new Big(RAHA_MINT_WEEKLY_RATE),
-              role: CurrencyRole.None
+              role: CurrencyRole.Transaction
             },
             "per week."
           ]}
