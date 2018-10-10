@@ -126,6 +126,16 @@ packager can transfer the source code over USB instead of via Wi-Fi, especially
 in networks that block your computer from connecting to your phone, like in
 public places.
 
+#### Hitting local server
+
+If you're running the Raha API locally, you can modify the `apiBase` in `test.config.ts` (for the test env):
+
+```
+apiBase: "http://localhost:4000/api/",
+```
+
+If you're testing on a real Android device via USB, run `adb reverse tcp:4000 tcp:4000`.
+
 ## Troubleshooting
 
 ### Android build errors
