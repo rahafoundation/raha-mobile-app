@@ -1,23 +1,23 @@
 import * as React from "react";
-import { KeyboardAwareScrollContainer } from "../shared/elements/KeyboardAwareScrollContainer";
-import { Text, Button, TextInput } from "../shared/elements";
+import { KeyboardAwareScrollContainer } from "../../shared/elements/KeyboardAwareScrollContainer";
+import { Text, Button, TextInput } from "../../shared/elements";
 import { NavigationScreenProps } from "react-navigation";
-import { Member } from "../../store/reducers/members";
+import { Member } from "../../../store/reducers/members";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { TextStyle, StyleSheet, ViewStyle, View } from "react-native";
-import { colors } from "../../helpers/colors";
-import { fonts, fontSizes } from "../../helpers/fonts";
+import { colors } from "../../../helpers/colors";
+import { fonts, fontSizes } from "../../../helpers/fonts";
 import { connect, MapStateToProps } from "react-redux";
-import { RahaState } from "../../store";
+import { RahaState } from "../../../store";
 import {
   ApiCallStatus,
   ApiCallStatusType
-} from "../../store/reducers/apiCalls";
-import { getLoggedInMember } from "../../store/selectors/authentication";
-import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
+} from "../../../store/reducers/apiCalls";
+import { getLoggedInMember } from "../../../store/selectors/authentication";
+import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
-import { flagMember } from "../../store/actions/members";
+import { flagMember } from "../../../store/actions/members";
 
 type NavProps = NavigationScreenProps<{
   memberToFlag: Member;

@@ -53,9 +53,9 @@ import { GovernancePage } from "../pages/AccountSettings/Governance";
 import { AccountRecoveryPage } from "../pages/AccountSettings/AccountRecovery";
 import { CurrencySettingsPage } from "../pages/AccountSettings/CurrencySettings";
 import { SignOutPage } from "../pages/AccountSettings/SignOut";
-import { FlagMemberPage } from "../pages/FlagMember";
+import { FlagMemberPage } from "../pages/Flagging/FlagMember";
 import { generateRandomIdentifier } from "../../helpers/identifiers";
-import { FlagFeedPage } from "../pages/FlagFeed";
+import { FlagFeedPage } from "../pages/Flagging/FlagFeed";
 
 /**
  * Gets the current screen from navigation state.

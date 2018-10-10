@@ -10,18 +10,17 @@ import { formatRelative } from "date-fns";
 
 import { OperationId } from "@raha/api-shared/dist/models/identifiers";
 
-import { RahaState } from "../../store";
-import { colors, palette } from "../../helpers/colors";
+import { RahaState } from "../../../store";
+import { colors, palette } from "../../../helpers/colors";
 import { NavigationScreenProps } from "react-navigation";
 import { FlagMemberOperation } from "@raha/api-shared/dist/models/Operation";
 import { List } from "immutable";
-import { Text } from "../shared/elements";
-import { MemberName } from "../shared/MemberName";
-import { Member } from "../../store/reducers/members";
-import { getMemberById } from "../../store/selectors/members";
-import { fontSizes } from "../../helpers/fonts";
-import Icon from "react-native-vector-icons/FontAwesome5";
-import { MemberThumbnail } from "../shared/MemberThumbnail";
+import { Text } from "../../shared/elements";
+import { MemberName } from "../../shared/MemberName";
+import { Member } from "../../../store/reducers/members";
+import { getMemberById } from "../../../store/selectors/members";
+import { fontSizes } from "../../../helpers/fonts";
+import { MemberThumbnail } from "../../shared/MemberThumbnail";
 
 interface FlagData {
   flaggingMember: Member;
