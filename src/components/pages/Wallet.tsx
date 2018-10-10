@@ -12,7 +12,8 @@ import { NavigationScreenProps } from "react-navigation";
 import {
   getUnclaimedReferrals,
   getMintableAmount,
-  REFERRAL_BONUS
+  REFERRAL_BONUS,
+  RAHA_MINT_WEEKLY_RATE
 } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
 import { Button, Text } from "../shared/elements";
@@ -25,6 +26,7 @@ import {
 import { fontSizes } from "../../helpers/fonts";
 import { TextLink, LinkType } from "../shared/elements/TextLink";
 import { Big } from "big.js";
+import { MixedText } from '../shared/elements/MixedText';
 
 type OwnProps = NavigationScreenProps<{}>;
 
@@ -143,12 +145,17 @@ const Invite: React.StatelessComponent<Props> = props => {
     <React.Fragment>
       <Text style={[styles.inviteSectionText]}>Nothing to mint right now.</Text>
       <View>
-        <Text style={styles.inviteSectionText}>
-          Invite a friend to mint {REFERRAL_BONUS} Raha!
-        </Text>
+        <MixedText
+          style={styles.inviteSectionText}
+          content={['Invite a friend to mint', {
+            currencyType: CurrencyType.Raha,
+            value: new Big(REFERRAL_BONUS),
+            role: CurrencyRole.None
+          }]}
+        />
         <Button
           style={styles.button}
-          title={`Invite +${REFERRAL_BONUS}`}
+          title="Invite"
           onPress={() => {
             navigation.push(RouteName.InvitePage);
           }}
