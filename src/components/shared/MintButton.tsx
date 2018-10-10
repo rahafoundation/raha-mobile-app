@@ -65,7 +65,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
       }
     : undefined;
   return (
-    <View style={{ flex: 1, alignItems: "center" }}>
+    <View>
       <Button
         style={props.style}
         title={[mintText, ...(mintValue ? [mintValue] : [])]}
