@@ -36,6 +36,7 @@ git push --tags
 
 ### iOS
 
+1. Run `yarn config:deploy`.
 1. If you have not already, create and install on your local machine a
    distribution certificate by following the instructions at: https://developer.apple.com/account/ios/certificate/
    (NOTE: MAKE SURE YOU SECURE THIS CERTIFICATE, AS IT CAN BE USED TO PUSH UPDATES
