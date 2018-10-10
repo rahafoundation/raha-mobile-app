@@ -7,21 +7,21 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>148482003030-7anom7nbfkqlmk9oicnsmds7lsq3hbvc.apps.googleusercontent.com</string>
+	<string>677137485282-j54pn1c5b51o8cle0g19s56mogl03eg7.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.148482003030-7anom7nbfkqlmk9oicnsmds7lsq3hbvc</string>
+	<string>com.googleusercontent.apps.677137485282-j54pn1c5b51o8cle0g19s56mogl03eg7</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAHiNHLSZROsuDmrxKd8c24RZRUJVhqia0</string>
+	<string>AIzaSyCMp31nMIR5KMJegtRIVT3y7aX71sadysY</string>
 	<key>GCM_SENDER_ID</key>
-	<string>148482003030</string>
+	<string>677137485282</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>app.raha.mobile.ios</string>
+	<string>app.raha.mobile.dev</string>
 	<key>PROJECT_ID</key>
-	<string>raha-test</string>
+	<string>raha-5395e</string>
 	<key>STORAGE_BUCKET</key>
-	<string>raha-test.appspot.com</string>
+	<string>raha-5395e.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<true></true>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -33,8 +33,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:148482003030:ios:c274ac163a2b12ef</string>
+	<string>1:677137485282:ios:76cd4480b6f26377</string>
 	<key>DATABASE_URL</key>
-	<string>https://raha-test.firebaseio.com</string>
+	<string>https://raha-5395e.firebaseio.com</string>
 </dict>
 </plist>
