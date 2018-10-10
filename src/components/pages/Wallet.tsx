@@ -23,10 +23,10 @@ import {
   CurrencyRole,
   CurrencyType
 } from "../shared/elements/Currency";
-import { fontSizes } from "../../helpers/fonts";
+import { fontSizes, fonts } from "../../helpers/fonts";
 import { TextLink, LinkType } from "../shared/elements/TextLink";
 import { Big } from "big.js";
-import { MixedText } from '../shared/elements/MixedText';
+import { MixedText } from "../shared/elements/MixedText";
 
 type OwnProps = NavigationScreenProps<{}>;
 
@@ -143,19 +143,29 @@ const Invite: React.StatelessComponent<Props> = props => {
 
   return (
     <React.Fragment>
-      <Text style={[styles.inviteSectionText]}>Nothing to mint right now.</Text>
-      <View>
+      <Button
+        style={styles.inviteSectionText}
+        disabled={true}
+        onPress={() => {}}
+        title={"Come back soon to mint your basic income"}
+      />
+      <View style={styles.inviteSectionText}>
+        <Text style={styles.headerStyle}>Want to mint more Raha?</Text>
         <MixedText
           style={styles.inviteSectionText}
-          content={['Invite a friend to mint', {
-            currencyType: CurrencyType.Raha,
-            value: new Big(REFERRAL_BONUS),
-            role: CurrencyRole.None
-          }]}
+          content={[
+            "Earn",
+            {
+              currencyType: CurrencyType.Raha,
+              value: new Big(REFERRAL_BONUS),
+              role: CurrencyRole.Transaction
+            },
+            "when friends you invite join Raha."
+          ]}
         />
         <Button
           style={styles.button}
-          title="Invite"
+          title="Invite a Friend"
           onPress={() => {
             navigation.push(RouteName.InvitePage);
           }}
@@ -188,14 +198,12 @@ const numberLabelStyle: TextStyle = {
 };
 
 const inviteSectionTextStyle: TextStyle = {
-  marginVertical: 12,
+  marginVertical: 24,
   textAlign: "center"
 };
 
 const buttonStyle: ViewStyle = {
-  marginVertical: 8,
-  paddingVertical: 16,
-  minWidth: 300
+  marginVertical: 8
 };
 
 // shared to create consistent spacing
@@ -233,8 +241,7 @@ const actionsSectionStyle: ViewStyle = {
   ...sectionSpacer,
   flex: 1,
   flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "space-between"
+  alignItems: "center"
 };
 
 const actionsSectionGetVerifiedTextBlockStyle: TextStyle = {
@@ -250,6 +257,13 @@ const actionImageStyle: ViewStyle = {
   maxWidth: "100%"
 };
 
+const headerStyle: TextStyle = {
+  ...fonts.Lato.Semibold,
+  ...fontSizes.large,
+  textAlign: "center",
+  marginBottom: 14
+};
+
 const styles = StyleSheet.create({
   page: pageStyle,
   sectionSpacer,
@@ -263,6 +277,7 @@ const styles = StyleSheet.create({
   donationValue: donationTextStyle,
   numberLabel: numberLabelStyle,
   inviteSectionText: inviteSectionTextStyle,
+  headerStyle: headerStyle,
   button: buttonStyle
 });
 
