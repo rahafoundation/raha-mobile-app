@@ -119,12 +119,12 @@ const Actions: React.StatelessComponent<Props> = props => {
   const canMint = mintableAmount && mintableAmount.gt(0);
   return (
     <View style={styles.actionsSection}>
-      {canMint ? (
+      {!canMint ? (
         <MintButton style={styles.mintButton} />
       ) : (
         <Invite {...props} />
       )}
-      {hasUnclaimedReferrals && (
+      {!hasUnclaimedReferrals && (
         <Button
           style={styles.button}
           title={"Mint Invite Bonuses!"}
@@ -150,16 +150,17 @@ const Invite: React.StatelessComponent<Props> = props => {
 
   return (
     <React.Fragment>
-      <Button
-        style={styles.inviteSectionText}
-        disabled={true}
-        onPress={() => {}}
-        title={"Come back soon to mint your basic income"}
-      />
-      <View style={styles.inviteSectionText}>
+      <View style={styles.section}>
+        <Button
+          style={styles.button}
+          disabled={true}
+          onPress={() => {}}
+          title={"Come back soon to mint your basic income"}
+        />
+      </View>
+      <View style={[styles.section, styles.sectionSpacer]}>
         <Text style={styles.header}>Want to mint more Raha?</Text>
         <MixedText
-          style={styles.inviteSectionText}
           content={[
             "Earn",
             {
@@ -204,17 +205,17 @@ const numberLabelStyle: TextStyle = {
   ...fontSizes.small
 };
 
-const inviteSectionTextStyle: TextStyle = {
-  marginVertical: 18,
-  textAlign: "center"
-};
-
 const buttonStyle: ViewStyle = {
   marginVertical: 12
 };
 
+const sectionStyle: ViewStyle = {
+  flexDirection: "column",
+  alignItems: "stretch"
+};
+
 // shared to create consistent spacing
-const sectionSpacer: ViewStyle = {
+const sectionSpacerStyle: ViewStyle = {
   marginTop: 15
 };
 
@@ -239,7 +240,7 @@ const donationSectionStyle: ViewStyle = {
   flexDirection: "row",
   alignItems: "center"
 };
-const mintButtonStyle: ViewStyle = { ...sectionSpacer, ...buttonStyle };
+const mintButtonStyle: ViewStyle = { ...sectionSpacerStyle, ...buttonStyle };
 
 const pageStyle: ViewStyle = {
   backgroundColor: colors.pageBackground,
@@ -250,10 +251,9 @@ const pageStyle: ViewStyle = {
 };
 
 const actionsSectionStyle: ViewStyle = {
-  ...sectionSpacer,
-  flex: 1,
-  flexDirection: "column",
-  alignItems: "center"
+  ...sectionSpacerStyle,
+  ...sectionStyle,
+  flex: 1
 };
 
 const actionsSectionGetVerifiedTextBlockStyle: TextStyle = {
@@ -279,7 +279,8 @@ const headerStyle: TextStyle = {
 
 const styles = StyleSheet.create({
   page: pageStyle,
-  sectionSpacer,
+  sectionSpacer: sectionSpacerStyle,
+  section: sectionStyle,
   mintButton: mintButtonStyle,
   financesSection: financesSectionStyle,
   donationSection: donationSectionStyle,
@@ -289,7 +290,6 @@ const styles = StyleSheet.create({
   balanceValue: balanceTextStyle,
   donationValue: donationTextStyle,
   numberLabel: numberLabelStyle,
-  inviteSectionText: inviteSectionTextStyle,
   header: headerStyle,
   pushDownSpacer: pushDownSpacerStyle,
   button: buttonStyle
