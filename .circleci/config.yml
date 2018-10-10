@@ -30,7 +30,7 @@ jobs:
       - run:
           name: tests
           command: |
-            yarn config:test
+            yarn config:dev:test
             mkdir -p test-results/jest
             yarn run test
           environment:
