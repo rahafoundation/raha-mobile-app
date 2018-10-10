@@ -1,5 +1,12 @@
 import * as React from "react";
-import { StyleSheet, View, Image, TextStyle, ViewStyle } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  TextStyle,
+  ViewStyle,
+  ScrollView
+} from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
@@ -11,7 +18,8 @@ import { getLoggedInMember } from "../../store/selectors/authentication";
 import { NavigationScreenProps } from "react-navigation";
 import {
   getUnclaimedReferrals,
-  getMintableAmount
+  getMintableAmount,
+  REFERRAL_BONUS
 } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
 import { Button, Text } from "../shared/elements";
@@ -21,9 +29,10 @@ import {
   CurrencyRole,
   CurrencyType
 } from "../shared/elements/Currency";
-import { fontSizes } from "../../helpers/fonts";
+import { fontSizes, fonts } from "../../helpers/fonts";
 import { TextLink, LinkType } from "../shared/elements/TextLink";
 import { Big } from "big.js";
+import { MixedText } from "../shared/elements/MixedText";
 
 type OwnProps = NavigationScreenProps<{}>;
 
@@ -118,14 +127,15 @@ const Actions: React.StatelessComponent<Props> = props => {
       {hasUnclaimedReferrals && (
         <Button
           style={styles.button}
-          title={"Claim invite bonuses!"}
+          title={"Mint Invite Bonuses!"}
           onPress={() => {
-            navigation.navigate(RouteName.ReferralBonusPage, {
+            navigation.push(RouteName.ReferralBonusPage, {
               unclaimedReferralIds
             });
           }}
         />
       )}
+      <View style={styles.pushDownSpacer} />
       <Image
         resizeMode="contain"
         style={styles.actionImage}
@@ -140,18 +150,31 @@ const Invite: React.StatelessComponent<Props> = props => {
 
   return (
     <React.Fragment>
-      <Text style={[styles.inviteSectionText]}>
-        You have nothing to mint at this time.
-      </Text>
-      <View>
-        <Text style={styles.inviteSectionText}>
-          Invite a friend to earn 60 Raha:
-        </Text>
+      <Button
+        style={styles.inviteSectionText}
+        disabled={true}
+        onPress={() => {}}
+        title={"Come back soon to mint your basic income"}
+      />
+      <View style={styles.inviteSectionText}>
+        <Text style={styles.header}>Want to mint more Raha?</Text>
+        <MixedText
+          style={styles.inviteSectionText}
+          content={[
+            "Earn",
+            {
+              currencyType: CurrencyType.Raha,
+              value: new Big(REFERRAL_BONUS),
+              role: CurrencyRole.Transaction
+            },
+            "when friends you invite join Raha."
+          ]}
+        />
         <Button
           style={styles.button}
-          title="Invite"
+          title="Invite a Friend"
           onPress={() => {
-            navigation.navigate(RouteName.InvitePage);
+            navigation.push(RouteName.InvitePage);
           }}
         />
       </View>
@@ -161,10 +184,10 @@ const Invite: React.StatelessComponent<Props> = props => {
 
 const WalletView: React.StatelessComponent<Props> = props => {
   return (
-    <View style={styles.page}>
+    <ScrollView bounces={false} contentContainerStyle={styles.page}>
       <MoneySection {...props} />
       <Actions {...props} />
-    </View>
+    </ScrollView>
   );
 };
 
@@ -182,23 +205,29 @@ const numberLabelStyle: TextStyle = {
 };
 
 const inviteSectionTextStyle: TextStyle = {
-  marginVertical: 12,
+  marginVertical: 18,
   textAlign: "center"
 };
 
 const buttonStyle: ViewStyle = {
-  marginVertical: 8
+  marginVertical: 12
 };
 
 // shared to create consistent spacing
 const sectionSpacer: ViewStyle = {
-  marginTop: 20
+  marginTop: 15
+};
+
+// pushes content on mint page down so image shows up on bottom rather than
+// right after mint button.
+const pushDownSpacerStyle: ViewStyle = {
+  flex: 1
 };
 
 const financesSectionStyle: ViewStyle = {
   flex: 0, // don't expand to fill space
   alignSelf: "stretch", // take full width
-  marginBottom: 20,
+  marginBottom: 10,
 
   // balance on left side, other financial info pushed to right.
   flexDirection: "row",
@@ -210,24 +239,21 @@ const donationSectionStyle: ViewStyle = {
   flexDirection: "row",
   alignItems: "center"
 };
-const mintButtonStyle: ViewStyle = { ...sectionSpacer };
+const mintButtonStyle: ViewStyle = { ...sectionSpacer, ...buttonStyle };
 
 const pageStyle: ViewStyle = {
   backgroundColor: colors.pageBackground,
-  flex: 1,
+  minHeight: "100%",
   padding: 20,
   flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "space-between"
+  alignItems: "center"
 };
 
 const actionsSectionStyle: ViewStyle = {
   ...sectionSpacer,
   flex: 1,
-
   flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "space-between"
+  alignItems: "center"
 };
 
 const actionsSectionGetVerifiedTextBlockStyle: TextStyle = {
@@ -237,10 +263,18 @@ const actionsSectionGetVerifiedTextBlockStyle: TextStyle = {
 
 const actionImageStyle: ViewStyle = {
   marginTop: 8,
-  // shrink images to ensure screen doesn't overflow
-  flex: -1,
+  flex: -1, // allow the image to shrink up to the min height
   flexBasis: 200,
+  maxHeight: 200,
+  minHeight: 150,
   maxWidth: "100%"
+};
+
+const headerStyle: TextStyle = {
+  ...fonts.Lato.Semibold,
+  ...fontSizes.large,
+  textAlign: "center",
+  marginBottom: 14
 };
 
 const styles = StyleSheet.create({
@@ -256,6 +290,8 @@ const styles = StyleSheet.create({
   donationValue: donationTextStyle,
   numberLabel: numberLabelStyle,
   inviteSectionText: inviteSectionTextStyle,
+  header: headerStyle,
+  pushDownSpacer: pushDownSpacerStyle,
   button: buttonStyle
 });
 
