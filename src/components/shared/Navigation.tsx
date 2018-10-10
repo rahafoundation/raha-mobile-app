@@ -372,7 +372,7 @@ const WalletTab = createNavigatorForTab(
     },
     [RouteName.ReferralBonusPage]: {
       screen: ReferralBonus,
-      navigationOptions: createHeaderNavigationOptions("Mint referral bonus", true)
+      navigationOptions: createHeaderNavigationOptions("Referrals", true)
     }
   },
   {
