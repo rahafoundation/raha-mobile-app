@@ -1,5 +1,12 @@
 import * as React from "react";
-import { StyleSheet, View, Image, TextStyle, ViewStyle } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  TextStyle,
+  ViewStyle,
+  ScrollView
+} from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
@@ -177,10 +184,10 @@ const Invite: React.StatelessComponent<Props> = props => {
 
 const WalletView: React.StatelessComponent<Props> = props => {
   return (
-    <View style={styles.page}>
+    <ScrollView bounces={false} contentContainerStyle={styles.page}>
       <MoneySection {...props} />
       <Actions {...props} />
-    </View>
+    </ScrollView>
   );
 };
 
@@ -198,17 +205,17 @@ const numberLabelStyle: TextStyle = {
 };
 
 const inviteSectionTextStyle: TextStyle = {
-  marginVertical: 24,
+  marginVertical: 18,
   textAlign: "center"
 };
 
 const buttonStyle: ViewStyle = {
-  marginVertical: 8
+  marginVertical: 12
 };
 
 // shared to create consistent spacing
 const sectionSpacer: ViewStyle = {
-  marginTop: 20
+  marginTop: 15
 };
 
 // pushes content on mint page down so image shows up on bottom rather than
@@ -220,7 +227,7 @@ const pushDownSpacerStyle: ViewStyle = {
 const financesSectionStyle: ViewStyle = {
   flex: 0, // don't expand to fill space
   alignSelf: "stretch", // take full width
-  marginBottom: 20,
+  marginBottom: 10,
 
   // balance on left side, other financial info pushed to right.
   flexDirection: "row",
@@ -236,11 +243,10 @@ const mintButtonStyle: ViewStyle = { ...sectionSpacer, ...buttonStyle };
 
 const pageStyle: ViewStyle = {
   backgroundColor: colors.pageBackground,
-  flex: 1,
+  minHeight: "100%",
   padding: 20,
   flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "space-between"
+  alignItems: "center"
 };
 
 const actionsSectionStyle: ViewStyle = {
@@ -257,9 +263,10 @@ const actionsSectionGetVerifiedTextBlockStyle: TextStyle = {
 
 const actionImageStyle: ViewStyle = {
   marginTop: 8,
-  // shrink images to ensure screen doesn't overflow
-  flex: -1,
+  flex: -1, // allow the image to shrink up to the min height
   flexBasis: 200,
+  maxHeight: 200,
+  minHeight: 150,
   maxWidth: "100%"
 };
 
