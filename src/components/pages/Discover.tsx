@@ -112,6 +112,15 @@ const DISCOVER_INFO = convertCardArr([
     image_uri: "marketplace"
   },
   {
+    header: "Climb the leaderboard",
+    bodyChoices: [
+      "Invite more people to get to the top of the leaderboard ranks!"
+    ],
+    action: "View the leaderboard",
+    uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard", // Why does RouteName.LeaderBoard break?
+    image_uri: "trophy"
+  },
+  {
     header: "Feedback or questions?",
     bodyChoices: ["Contact the Raha team at hi@raha.app!"],
     action: "Send us an email",
@@ -130,13 +139,6 @@ const DISCOVER_INFO = convertCardArr([
     image_uri: "support"
   },
   {
-    header: "Meet the Raha Community",
-    bodyChoices: ["Join discussions in the Raha Forums!"],
-    action: "Check out the forums",
-    uri: "https://discuss.raha.app/",
-    image_uri: "community"
-  },
-  {
     header: "Did you know?",
     bodyChoices: [
       '"Cash transfers have positive impacts, including on children."',
@@ -148,13 +150,11 @@ const DISCOVER_INFO = convertCardArr([
     image_uri: "question"
   },
   {
-    header: "Climb the leaderboard",
-    bodyChoices: [
-      "Invite more people to get to the top of the leaderboard ranks!"
-    ],
-    action: "View the leaderboard",
-    uri: INTERNAL_ROUTE_PROTOCOL + "LeaderBoard", // Why does RouteName.LeaderBoard break?
-    image_uri: "trophy"
+    header: "Meet the Raha Community",
+    bodyChoices: ["Join discussions in the Raha Forums!"],
+    action: "Check out the forums",
+    uri: "https://discuss.raha.app/",
+    image_uri: "community"
   }
 ]);
 
