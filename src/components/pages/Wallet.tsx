@@ -119,12 +119,12 @@ const Actions: React.StatelessComponent<Props> = props => {
   const canMint = mintableAmount && mintableAmount.gt(0);
   return (
     <View style={styles.actionsSection}>
-      {!canMint ? (
+      {canMint ? (
         <MintButton style={styles.mintButton} />
       ) : (
         <Invite {...props} />
       )}
-      {!hasUnclaimedReferrals && (
+      {hasUnclaimedReferrals && (
         <Button
           style={styles.button}
           title={"Mint Invite Bonuses!"}
