@@ -16,7 +16,8 @@ import {
   MintBasicIncomeStoryData,
   TrustMemberStoryData,
   EditMemberStoryData,
-  RequestVerificationStoryData
+  RequestVerificationStoryData,
+  FlagMemberStoryData
 } from "./types";
 import {
   Operation,
@@ -522,6 +523,44 @@ function createEditMemberStory(
   };
 }
 
+function createFlagMemberStory(
+  state: RahaState,
+  storyData: FlagMemberStoryData
+): Story {
+  const operation = storyData.activities.operations;
+  // Type suggestion since GENESIS_MEMBER is only possible for
+  // VERIFY operations
+  const creatorMember = getOperationCreator(state, operation) as Member;
+  const flaggedMember = getMemberById(state, operation.data.to_uid, {
+    throwIfMissing: true
+  });
+
+  return {
+    storyData,
+    id: operation.id,
+    timestamp: operation.created_at,
+    content: {
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
+      description: ["flagged an account!"],
+      body: {
+        bodyContent: {
+          type: BodyType.TEXT,
+          text: operation.data.reason
+        },
+
+        nextInChain: {
+          direction: ChainDirection.Forward,
+          nextStoryContent: {
+            actors: OrderedMap({
+              [flaggedMember.get("memberId")]: flaggedMember
+            })
+          }
+        }
+      }
+    }
+  };
+}
+
 function createRequestVerificationStory(
   state: RahaState,
   storyData: RequestVerificationStoryData
@@ -837,6 +876,8 @@ function storyTypeForIndependentOperationActivity(
   switch (operation.op_code) {
     case OperationType.EDIT_MEMBER:
       return StoryType.EDIT_MEMBER;
+    case OperationType.FLAG_MEMBER:
+      return StoryType.FLAG_MEMBER;
     case OperationType.GIVE:
       return StoryType.GIVE_RAHA;
     case OperationType.MINT:
@@ -856,7 +897,7 @@ function storyTypeForIndependentOperationActivity(
     default:
       throw new Error(
         "Unexpected: INDEPENDENT_OPERATION contained an " +
-          "unsupported operation type. Opreation: " +
+          "unsupported operation type. Operation: " +
           JSON.stringify(operation, null, 2)
       );
   }
@@ -899,6 +940,8 @@ export function createStory(
         return createVerifyMemberStory(state, storyData);
       case StoryType.EDIT_MEMBER:
         return createEditMemberStory(state, storyData);
+      case StoryType.FLAG_MEMBER:
+        return createFlagMemberStory(state, storyData);
       case StoryType.TRUST_MEMBER:
         return createTrustMemberStory(state, storyData);
       case StoryType.NEW_MEMBER:

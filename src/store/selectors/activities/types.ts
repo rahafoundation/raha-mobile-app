@@ -8,7 +8,8 @@ import {
   TrustOperation,
   MintBasicIncomePayload,
   RequestVerificationOperation,
-  EditMemberOperation
+  EditMemberOperation,
+  FlagMemberOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 /**
@@ -88,7 +89,8 @@ export type IndependentOperation =
   | TrustOperation
   | GiveOperation
   | RequestVerificationOperation
-  | VerifyOperation;
+  | VerifyOperation
+  | FlagMemberOperation;
 
 /**
  * Activity that corresponds to the process of a new member joining Raha, from
@@ -104,28 +106,10 @@ export type NewMemberActivity = ActivityDefinition<
  * Activity corresponding to a single operation that reflects a conceptually
  * whole event on the system on its own.
  */
-<<<<<<< HEAD
 export type IndependentOperationActivity = ActivityDefinition<
   ActivityType.INDEPENDENT_OPERATION,
   IndependentOperation
 >;
-=======
-export enum ActivityType {
-  // encompasses both individual mints, and bundled ones
-  MINT_BASIC_INCOME = "MINT_BASIC_INCOME",
-
-  MINT_REFERRAL_BONUS = "MINT_REFERRAL_BONUS",
-  VERIFY_MEMBER = "VERIFY_MEMBER",
-  TRUST_MEMBER = "TRUST_MEMBER",
-  GIVE_RAHA = "GIVE_RAHA",
-  REQUEST_VERIFICATION = "REQUEST_VERIFICATION",
-  FLAG_MEMBER = "FLAG_MEMBER",
-
-  // will encompass CREATE_MEMBER + VERIFY + MINT_REFERRAL_BONUS bundles
-  NEW_MEMBER = "NEW_MEMBER",
-  EDIT_MEMBER = "EDIT_MEMBER"
-}
->>>>>>> Add activity for flagging.
 
 /**
  * Activities are individual operations or sets of operations that together form

@@ -415,6 +415,7 @@ function addOperationToActivitiesList(
     case OperationType.REQUEST_VERIFICATION:
     case OperationType.GIVE:
     case OperationType.TRUST:
+    case OperationType.FLAG_MEMBER:
       return addIndependentOperation(existingData, operation);
     case OperationType.INVITE:
       // We do not display any activity for Invite operations. Whether or not

@@ -7,6 +7,7 @@ import { formatRelative } from "date-fns";
 import { View, Image } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { MapStateToProps, connect } from "react-redux";
 
 import { Text } from "../elements";
 import {
@@ -23,11 +24,9 @@ import {
   RAHA_BASIC_INCOME_MEMBER,
   Member
 } from "../../../store/reducers/members";
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import {
   Story as StoryModel,
   CallToAction as CallToActionData,
-  CallToActionPiece,
   CallToActionDataType,
   MediaBody,
   StoryContent as StoryContentData,
@@ -35,7 +34,6 @@ import {
   NextInChain,
   ChainDirection
 } from "../../../store/selectors/stories/types";
-import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../../store";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 
