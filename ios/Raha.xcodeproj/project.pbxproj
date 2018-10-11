@@ -2114,6 +2114,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PODS_CONFIGURATION_BUILD_DIR = "${PODS_BUILD_DIR}/Release$(EFFECTIVE_PLATFORM_NAME)";
 				PRODUCT_BUNDLE_IDENTIFIER = app.raha.mobile.ios;
 				PRODUCT_NAME = Raha;
 				PROVISIONING_PROFILE_SPECIFIER = "";
