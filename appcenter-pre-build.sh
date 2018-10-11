@@ -8,10 +8,10 @@ if [ -z "$APPCENTER_SECRET" ]; then
 fi
 
 # TODO enable below lines when "yarn test" is working
-# yarn config:test
+# yarn config:dev:test
 # yarn test
 
-yarn config:prod
+yarn config:deploy
 
 if [ "$(uname)" == "Darwin" ]; then
     # Compiling for iOS on Darwin

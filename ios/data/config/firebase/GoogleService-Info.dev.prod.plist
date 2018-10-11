@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>677137485282-b40vs956vd1hhm20g95h5ngpsjvm7p9s.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.677137485282-b40vs956vd1hhm20g95h5ngpsjvm7p9s</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCMp31nMIR5KMJegtRIVT3y7aX71sadysY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>677137485282</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>app.raha.mobile.ios.dev</string>
+	<key>PROJECT_ID</key>
+	<string>raha-5395e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>raha-5395e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:677137485282:ios:5f5820b7f519c5fc</string>
+	<key>DATABASE_URL</key>
+	<string>https://raha-5395e.firebaseio.com</string>
+</dict>
+</plist>
