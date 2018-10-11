@@ -95,10 +95,8 @@ are shared via keybase.
 
 #### iOS
 
-Add the codepush iOS deployment keys to your buildconfig settings.
-
-1. Copy and rename the `ios/BuildConfig/template.<debug/release>.xcconfig files` by removing the "template." prefix.
-1. Retrieve the codepush keys from keybase in the `iOS` directory and update the relevant values in the new config files you just created.
+Download and copy `private.xcconfig` from Keybase into `ios/BuildConfig`. It contains the
+iOS deployment keys. Make sure to reopen XCode to refresh the configurations.
 
 ### Releasing an update to codepush
 
