@@ -55,7 +55,7 @@ const TextInputStyle: TextStyle = {
   flexGrow: 1
 };
 
-const reasonSectionStyle: ViewStyle = {
+const flagNoticeStyle: ViewStyle = {
   borderWidth: 2,
   borderColor: palette.red,
   borderRadius: 3,
@@ -76,5 +76,5 @@ export const styles = StyleSheet.create({
   infoListItem: InfoListItemStyle,
   button: ButtonStyle,
   textInput: TextInputStyle,
-  reasonSection: reasonSectionStyle
+  flagNotice: flagNoticeStyle
 });

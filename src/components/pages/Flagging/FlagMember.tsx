@@ -18,6 +18,7 @@ import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import { flagMember } from "../../../store/actions/members";
+import { styles as sharedStyles } from "./styles";
 
 type NavProps = NavigationScreenProps<{
   memberToFlag: Member;
@@ -59,43 +60,43 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
   renderInfo = (memberName: string) => {
     return (
       <React.Fragment>
-        <View style={styles.section}>
-          <Text style={styles.infoText}>
-            Flag <Text style={styles.name}>{memberName}</Text>
+        <View style={sharedStyles.section}>
+          <Text style={sharedStyles.infoText}>
+            Flag <Text style={sharedStyles.name}>{memberName}</Text>
             's account to let people know there's an issue with it.{" "}
-            <Text style={styles.infoHeader}>They will:</Text>
+            <Text style={sharedStyles.infoHeader}>They will:</Text>
           </Text>
-          <Text style={[styles.infoText, styles.infoListItem]}>
+          <Text style={[sharedStyles.infoText, sharedStyles.infoListItem]}>
             Be notified that you have flagged their account.{" "}
           </Text>
-          <Text style={[styles.infoText, styles.infoListItem]}>
+          <Text style={[sharedStyles.infoText, sharedStyles.infoListItem]}>
             Show up as flagged to all other Raha members.
           </Text>
-          <Text style={[styles.infoText, styles.infoListItem]}>
+          <Text style={[sharedStyles.infoText, sharedStyles.infoListItem]}>
             Be unable to perform any actions other than editing their account
             until another Raha member marks this issue as resolved.
           </Text>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.infoHeader}>
+        <View style={sharedStyles.section}>
+          <Text style={sharedStyles.infoHeader}>
             Examples of reasons to flag an account:
           </Text>
-          <Text style={[styles.infoText, styles.infoListItem]}>
+          <Text style={[sharedStyles.infoText, sharedStyles.infoListItem]}>
             Their profile name is incorrect.
           </Text>
-          <Text style={[styles.infoText, styles.infoListItem]}>
+          <Text style={[sharedStyles.infoText, sharedStyles.infoListItem]}>
             They do not show their face and state their full name in their
             profile video.
           </Text>
-          <Text style={[styles.infoText, styles.infoListItem]}>
+          <Text style={[sharedStyles.infoText, sharedStyles.infoListItem]}>
             This appears to be a fraudulent or duplicate profile.
           </Text>
         </View>
-        <View style={styles.section}>
+        <View style={sharedStyles.section}>
           <Button
             title="Continue"
             onPress={this.continue}
-            style={styles.button}
+            style={sharedStyles.button}
           />
         </View>
       </React.Fragment>
@@ -126,21 +127,22 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <View style={styles.section}>
+        <View style={sharedStyles.section}>
           <Text>
-            Why are you flagging <Text style={styles.name}>{memberName}</Text>
+            Why are you flagging{" "}
+            <Text style={sharedStyles.name}>{memberName}</Text>
             's account?
           </Text>
         </View>
-        <View style={styles.section}>
+        <View style={sharedStyles.section}>
           <TextInput
             autoFocus={true}
             onChangeText={value => this.setState({ reason: value })}
             editable={!flaggedAccount}
-            style={styles.textInput}
+            style={sharedStyles.textInput}
           />
         </View>
-        <View style={styles.section}>
+        <View style={sharedStyles.section}>
           <Button
             title={flagButtonTitle}
             disabled={!this.state.reason || disableFlagButton}
@@ -148,7 +150,7 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
           />
         </View>
         {flaggedAccount && (
-          <View style={styles.section}>
+          <View style={sharedStyles.section}>
             <Button
               title="return"
               onPress={() => this.props.navigation.goBack()}
@@ -162,10 +164,10 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
   render() {
     const memberName = this.props.memberToFlag.get("fullName");
     return (
-      <KeyboardAwareScrollContainer style={styles.page}>
-        <View style={styles.header}>
+      <KeyboardAwareScrollContainer style={sharedStyles.page}>
+        <View style={sharedStyles.header}>
           <Icon name="flag" size={50} />
-          <Text style={styles.headerText}>
+          <Text style={sharedStyles.headerText}>
             Flag {memberName}
             's Account
           </Text>
@@ -213,68 +215,3 @@ export const FlagMemberPage = connect(
   mapStateToProps,
   { flagMember }
 )(FlagMemberPageComponent);
-
-const PageStyle: ViewStyle = {
-  backgroundColor: colors.pageBackground,
-  padding: 16,
-  display: "flex",
-  alignContent: "center",
-  flexGrow: 1
-};
-
-const HeaderStyle: ViewStyle = {
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
-  flexWrap: "wrap"
-};
-
-const HeaderTextStyle: TextStyle = {
-  marginLeft: 16,
-  ...fonts.Lato.Bold,
-  ...fontSizes.large
-};
-
-const SectionStyle: ViewStyle = {
-  marginTop: 16
-};
-
-const NameStyle: TextStyle = { ...fonts.Lato.Bold };
-
-const InfoHeaderStyle: TextStyle = {
-  ...fonts.Lato.Bold
-};
-
-const InfoTextStyle: TextStyle = {
-  ...fonts.Lato.Normal,
-  ...fontSizes.medium
-};
-
-const InfoListItemStyle: TextStyle = {
-  marginTop: 4,
-  marginLeft: 8
-};
-
-const ButtonStyle: ViewStyle = {
-  flexShrink: 1
-};
-
-const TextInputStyle: TextStyle = {
-  borderColor: colors.navFocusTint,
-  borderWidth: 1,
-  borderRadius: 3,
-  flexGrow: 1
-};
-
-const styles = StyleSheet.create({
-  page: PageStyle,
-  header: HeaderStyle,
-  headerText: HeaderTextStyle,
-  section: SectionStyle,
-  name: NameStyle,
-  infoHeader: InfoHeaderStyle,
-  infoText: InfoTextStyle,
-  infoListItem: InfoListItemStyle,
-  button: ButtonStyle,
-  textInput: TextInputStyle
-});

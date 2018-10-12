@@ -175,7 +175,7 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
             's account for the following reason:
           </Text>
         </View>
-        <View style={[sharedStyles.section, sharedStyles.reasonSection]}>
+        <View style={[sharedStyles.section, sharedStyles.flagNotice]}>
           <Text style={[sharedStyles.infoText]}>
             {flagToResolveOperation.data.reason}
           </Text>
