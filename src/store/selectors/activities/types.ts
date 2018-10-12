@@ -9,7 +9,8 @@ import {
   MintBasicIncomePayload,
   RequestVerificationOperation,
   EditMemberOperation,
-  FlagMemberOperation
+  FlagMemberOperation,
+  ResolveFlagMemberOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 /**
@@ -19,7 +20,9 @@ export enum ActivityType {
   INDEPENDENT_OPERATION = "INDEPENDENT_OPERATION",
 
   // CREATE_MEMBER + VERIFY + MINT_REFERRAL_BONUS
-  NEW_MEMBER = "NEW_MEMBER"
+  NEW_MEMBER = "NEW_MEMBER",
+  // FLAG_MEMBER + RESOLVE_FLAG_MEMBER
+  FLAG_MEMBER = "FLAG_MEMBER"
 }
 
 /**
@@ -80,6 +83,13 @@ export type NewMemberRelatedOperations =
   | NewMemberMintedOperations;
 
 /**
+ * Tuples of related operations that form a complete FLAG_MEMBER activity
+ */
+export type FlagMemberRelatedOperations =
+  | FlagMemberOperation
+  | ResolveFlagMemberOperation;
+
+/**
  * Operations that we consider to represent a complete event on the platform
  * itself.
  */
@@ -100,6 +110,14 @@ export type IndependentOperation =
 export type NewMemberActivity = ActivityDefinition<
   ActivityType.NEW_MEMBER,
   NewMemberRelatedOperations
+>;
+
+/**
+ * Activity that corresponds to the process of flagging an issue with a Raha member.
+ */
+export type FlagMemberActivity = ActivityDefinition<
+  ActivityType.FLAG_MEMBER,
+  FlagMemberRelatedOperations
 >;
 
 /**
