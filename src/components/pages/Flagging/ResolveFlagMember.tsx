@@ -119,7 +119,7 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
       <React.Fragment>
         <View style={sharedStyles.section}>
           <Text style={sharedStyles.infoHeader}>
-            How the issue with{" "}
+            How has this issue with{" "}
             <Text style={sharedStyles.name}>{flaggedMemberName}</Text>
             's account been fixed?
           </Text>
