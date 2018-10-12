@@ -22,6 +22,8 @@ import {
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
+import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 /**
  * I'm not sure if there's a better way to do this.. but essentially I want to
@@ -145,7 +147,8 @@ class EditMemberPageView extends React.Component<Props, State> {
             onPress={() => navigation.goBack()}
             style={styles.button}
           />
-          <Button
+          <CreateRahaOperationButton
+            operationType={OperationType.EDIT_MEMBER}
             title={updateButtonTitle}
             disabled={disableUpdateButton}
             onPress={this.onSubmitUpdate}

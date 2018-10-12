@@ -38,6 +38,10 @@ import { activitiesInvolvingMembers } from "../../store/selectors/activities";
 import { storiesForActivities } from "../../store/selectors/stories";
 import { Story, StoryType } from "../../store/selectors/stories/types";
 import { List } from "immutable";
+import { FlaggedNotice } from "../shared/Cards/FlaggedNotice";
+import { UnverifiedNotice } from "../shared/Cards/UnverifiedNotice";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
+import { CreateRahaOperationButton } from "../shared/elements/CreateRahaOperationButton";
 
 interface NavParams {
   member: Member;
@@ -171,7 +175,8 @@ class ProfileView extends React.PureComponent<ProfileProps> {
     const disableTrustButton = alreadyTrusted || inProgressOrFinished;
 
     return (
-      <Button
+      <CreateRahaOperationButton
+        operationType={OperationType.TRUST}
         title={trustTitle}
         onPress={() => trust(member.get("memberId"))}
         disabled={disableTrustButton}
@@ -190,8 +195,7 @@ class ProfileView extends React.PureComponent<ProfileProps> {
     const alreadyVerified =
       loggedInMember &&
       member.get("verifiedBy").includes(loggedInMember.get("memberId"));
-    const loggedInMemberCanVerify =
-      loggedInMember && loggedInMember.get("isVerified");
+    const loggedInMemberCanVerify = loggedInMember;
     const inProgressOrFinished =
       verifyApiCallStatus &&
       verifyApiCallStatus.status !== ApiCallStatusType.FAILURE;
@@ -205,9 +209,10 @@ class ProfileView extends React.PureComponent<ProfileProps> {
       alreadyVerified || !loggedInMemberCanVerify || inProgressOrFinished;
 
     return (
-      <Button
+      <CreateRahaOperationButton
         // TODO: Come up with a solution for indicating action completed
         // Changing the text on these buttons forces them off the side of small screens
+        operationType={OperationType.VERIFY}
         title={verifyTitle}
         onPress={() =>
           navigation.navigate(RouteName.Verify, {
@@ -219,7 +224,7 @@ class ProfileView extends React.PureComponent<ProfileProps> {
     );
   }
 
-  renderFlaggedStatus() {
+  renderProfileIsFlaggedStatus() {
     const { member, isOwnProfile } = this.props;
     const fullName = member.get("fullName");
     const operationsFlaggingThisMember = member.get(
@@ -265,7 +270,11 @@ class ProfileView extends React.PureComponent<ProfileProps> {
           stories={stories}
           header={
             <View style={styles.header}>
-              {this.renderFlaggedStatus()}
+              {this.renderProfileIsFlaggedStatus()}
+              {!isOwnProfile && (
+                <FlaggedNotice loggedInMember={loggedInMember} />
+              )}
+              <UnverifiedNotice loggedInMember={loggedInMember} />
               <View style={styles.headerProfile}>
                 <Thumbnail member={member} />
                 <View style={styles.headerDetails}>

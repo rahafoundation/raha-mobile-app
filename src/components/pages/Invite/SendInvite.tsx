@@ -4,6 +4,7 @@ import { View, StyleSheet, Dimensions } from "react-native";
 import validator from "validator";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 import { styles as sharedStyles } from "./styles";
 import { RahaState } from "../../../store";
@@ -15,6 +16,7 @@ import {
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { Text, Button, TextInput } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
+import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
 
 type ReduxStateProps = {
   sendInviteStatus?: ApiCallStatus;
@@ -119,7 +121,8 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
                 Please enter a valid email.
               </Text>
             )}
-            <Button
+            <CreateRahaOperationButton
+              operationType={OperationType.INVITE}
               title="Invite"
               onPress={this.sendInvite}
               disabled={isRequestSendingOrSent}

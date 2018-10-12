@@ -14,6 +14,7 @@ import { NavigationScreenProps } from "react-navigation";
 import { connect, MergeProps, MapStateToProps } from "react-redux";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 import {
   getInitialsForName,
@@ -28,7 +29,7 @@ import {
 import { Member } from "../../../store/reducers/members";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { RouteName } from "../../shared/Navigation";
-import { Button, Text } from "../../shared/elements";
+import { Text } from "../../shared/elements";
 import { ReferralBonusNavParams } from ".";
 import {
   CurrencyRole,
@@ -40,7 +41,8 @@ import { MemberThumbnail } from "../../shared/MemberThumbnail";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { Loading } from "../../shared/Loading";
 import { fonts } from "../../../helpers/fonts";
-import { REFERRAL_BONUS } from '../../../store/selectors/me';
+import { REFERRAL_BONUS } from "../../../store/selectors/me";
+import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
 
 const REFERRAL_BONUS_VALUE: CurrencyValue = {
   currencyType: CurrencyType.Raha,
@@ -87,7 +89,8 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
     .includes(loggedInMember.get("memberId"));
 
   const actionButton = canMintReferralBonus ? (
-    <Button
+    <CreateRahaOperationButton
+      operationType={OperationType.MINT}
       onPress={mintReferralBonus}
       disabled={isMinting}
       title={["Mint", REFERRAL_BONUS_VALUE]}

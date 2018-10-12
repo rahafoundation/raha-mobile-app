@@ -7,7 +7,8 @@ import { connect, MapStateToProps } from "react-redux";
 
 import {
   Operation,
-  FlagMemberOperation
+  FlagMemberOperation,
+  OperationType
 } from "@raha/api-shared/dist/models/Operation";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import {
@@ -27,6 +28,8 @@ import { getMemberById } from "../../../store/selectors/members";
 import { KeyboardAwareScrollContainer } from "../../shared/elements/KeyboardAwareScrollContainer";
 import { Text, Button, TextInput } from "../../shared/elements";
 import { styles as sharedStyles } from "./styles";
+import { canFlag } from "../../../store/selectors/abilities";
+import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
 
 type NavProps = NavigationScreenProps<{
   flagToResolveOperation: Operation;
@@ -37,6 +40,8 @@ type OwnProps = NavProps;
 
 interface StateProps {
   loggedInMember: Member;
+  isOwnProfile: boolean;
+  canFlag: boolean;
   memberOnWhichToResolveFlag: Member;
   flagToResolveOperation: FlagMemberOperation;
   flaggingMember: Member;
@@ -82,11 +87,24 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
           </Text>
         </View>
         <View style={sharedStyles.section}>
-          <Button
-            title="Continue"
-            onPress={this.continue}
-            style={sharedStyles.button}
-          />
+          {this.props.isOwnProfile ? (
+            <Text style={sharedStyles.error}>
+              You cannot resolve a flag on your own profile. Make sure you've
+              addressed the issue, and then ask another Raha member to resolve
+              the flag for you.
+            </Text>
+          ) : this.props.canFlag ? (
+            <Button
+              title="Continue"
+              onPress={this.continue}
+              style={sharedStyles.button}
+            />
+          ) : (
+            <Text style={sharedStyles.error}>
+              You must be verified by at least 5 other Raha members to resolve
+              this flag, and your own account cannot currently be flagged.
+            </Text>
+          )}
         </View>
       </React.Fragment>
     );
@@ -133,7 +151,8 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
           />
         </View>
         <View style={sharedStyles.section}>
-          <Button
+          <CreateRahaOperationButton
+            operationType={OperationType.RESOLVE_FLAG_MEMBER}
             title={resolveFlagButtonTitle}
             disabled={!this.state.reason || disableResolveFlagButton}
             onPress={this.flagMember}
@@ -196,6 +215,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   if (!loggedInMember) {
     throw new Error("User must be logged to ResolveFlagMember page.");
   }
+  const loggedInMemberId = loggedInMember.get("memberId");
   const { navigation } = ownProps;
   const flagToResolveOperation = navigation.getParam(
     "flagToResolveOperation"
@@ -223,6 +243,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   }
   return {
     loggedInMember,
+    isOwnProfile: loggedInMemberId === flagToResolveOperation.data.to_uid,
+    canFlag: canFlag(state, loggedInMemberId),
     flaggingMember,
     memberOnWhichToResolveFlag,
     flagToResolveOperation,

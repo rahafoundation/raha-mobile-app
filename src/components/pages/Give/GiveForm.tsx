@@ -22,10 +22,14 @@ import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { getMemberById } from "../../../store/selectors/members";
 import { MemberSearchBar } from "../../shared/MemberSearchBar";
-import { Button, Text } from "../../shared/elements";
+import { Text } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
 import { KeyboardAwareScrollContainer } from "../../shared/elements/KeyboardAwareScrollContainer";
-import { fontSizes, fonts } from "../../../helpers/fonts";
+import { fontSizes } from "../../../helpers/fonts";
+import { FlaggedNotice } from "../../shared/Cards/FlaggedNotice";
+import { UnverifiedNotice } from "../../shared/Cards/UnverifiedNotice";
+import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 const MAX_MEMO_LENGTH = 140;
 // Donation rate is currently constant.
@@ -190,7 +194,9 @@ class GiveFormView extends React.Component<Props, State> {
 
   public render() {
     return (
-      <KeyboardAwareScrollContainer>
+      <KeyboardAwareScrollContainer style={styles.container}>
+        <FlaggedNotice loggedInMember={this.props.loggedInMember} />
+        <UnverifiedNotice loggedInMember={this.props.loggedInMember} />
         <View style={styles.toRow}>
           {this.state.toMember ? (
             <React.Fragment>
@@ -279,7 +285,8 @@ class GiveFormView extends React.Component<Props, State> {
           <React.Fragment />
         )}
         <View style={[styles.section, styles.giveButtonRow]}>
-          <Button
+          <CreateRahaOperationButton
+            operationType={OperationType.GIVE}
             title="Give"
             onPress={this.giveRaha}
             disabled={
@@ -335,7 +342,9 @@ export const GiveForm = connect(
 )(GiveFormView);
 
 const containerStyle: ViewStyle = {
-  flex: 1 // grow to maximum size,
+  flex: 1,
+  padding: 16,
+  backgroundColor: colors.pageBackground
 };
 
 const giveButtonRowStyle: ViewStyle = {

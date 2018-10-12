@@ -1,24 +1,27 @@
 import * as React from "react";
+import { NavigationScreenProps } from "react-navigation";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import { View } from "react-native";
+import { connect, MapStateToProps } from "react-redux";
+
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
+
+import { RahaState } from "../../../store";
+import { Member } from "../../../store/reducers/members";
 import { KeyboardAwareScrollContainer } from "../../shared/elements/KeyboardAwareScrollContainer";
 import { Text, Button, TextInput } from "../../shared/elements";
-import { NavigationScreenProps } from "react-navigation";
-import { Member } from "../../../store/reducers/members";
-import Icon from "react-native-vector-icons/FontAwesome5";
-import { TextStyle, StyleSheet, ViewStyle, View } from "react-native";
-import { colors } from "../../../helpers/colors";
-import { fonts, fontSizes } from "../../../helpers/fonts";
-import { connect, MapStateToProps } from "react-redux";
-import { RahaState } from "../../../store";
 import {
   ApiCallStatus,
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import { flagMember } from "../../../store/actions/members";
 import { styles as sharedStyles } from "./styles";
+import { canFlag } from "../../../store/selectors/abilities";
+import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
 
 type NavProps = NavigationScreenProps<{
   memberToFlag: Member;
@@ -29,6 +32,7 @@ type OwnProps = NavProps;
 
 interface StateProps {
   loggedInMember: Member;
+  canFlag: boolean;
   memberToFlag: Member;
   apiCallId: string;
   flagApiCallStatus?: ApiCallStatus;
@@ -93,11 +97,18 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
           </Text>
         </View>
         <View style={sharedStyles.section}>
-          <Button
-            title="Continue"
-            onPress={this.continue}
-            style={sharedStyles.button}
-          />
+          {this.props.canFlag ? (
+            <Button
+              title="Continue"
+              onPress={this.continue}
+              style={sharedStyles.button}
+            />
+          ) : (
+            <Text style={sharedStyles.error}>
+              You must be verified by at least 5 other Raha members to flag, and
+              your own account cannot currently be flagged.
+            </Text>
+          )}
         </View>
       </React.Fragment>
     );
@@ -143,7 +154,8 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
           />
         </View>
         <View style={sharedStyles.section}>
-          <Button
+          <CreateRahaOperationButton
+            operationType={OperationType.FLAG_MEMBER}
             title={flagButtonTitle}
             disabled={!this.state.reason || disableFlagButton}
             onPress={this.flagMember}
@@ -201,6 +213,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   }
   return {
     loggedInMember,
+    canFlag: canFlag(state, loggedInMember.get("memberId")),
     memberToFlag,
     apiCallId,
     flagApiCallStatus: getStatusOfApiCall(

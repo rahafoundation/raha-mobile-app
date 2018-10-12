@@ -4,6 +4,7 @@ import { View, StyleSheet, Dimensions } from "react-native";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 import { RahaState } from "../../../store";
 import { verify } from "../../../store/actions/members";
@@ -14,6 +15,7 @@ import {
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { Text, Button, IndependentPageContainer } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
+import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
 
 type ReduxStateProps = {
   submitVerificationStatus?: ApiCallStatus;
@@ -87,7 +89,8 @@ class SubmitVerificationView extends React.Component<SubmitVerificationProps> {
               <Text style={styles.name}>{this.props.toMemberFullName}</Text> and
               this is the only time they have joined Raha.
             </Text>
-            <Button
+            <CreateRahaOperationButton
+              operationType={OperationType.VERIFY}
               title="Verify"
               onPress={this.submitVerification}
               disabled={isRequestSendingOrSent}

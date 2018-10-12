@@ -14,11 +14,11 @@ const PageStyle: ViewStyle = {
 const HeaderStyle: ViewStyle = {
   display: "flex",
   flexDirection: "row",
-  alignItems: "center",
-  flexWrap: "wrap"
+  alignItems: "center"
 };
 
 const HeaderTextStyle: TextStyle = {
+  flex: 1,
   marginLeft: 16,
   ...fonts.Lato.Bold,
   ...fontSizes.large
@@ -55,7 +55,7 @@ const TextInputStyle: TextStyle = {
   flexGrow: 1
 };
 
-const flagNoticeStyle: ViewStyle = {
+const FlagNoticeStyle: ViewStyle = {
   borderWidth: 2,
   borderColor: palette.red,
   borderRadius: 3,
@@ -63,6 +63,12 @@ const flagNoticeStyle: ViewStyle = {
   display: "flex",
   flexDirection: "row",
   alignItems: "center"
+};
+
+const ErrorStyle: TextStyle = {
+  textAlign: "center",
+  color: palette.red,
+  ...fonts.Lato.Bold
 };
 
 export const styles = StyleSheet.create({
@@ -76,5 +82,6 @@ export const styles = StyleSheet.create({
   infoListItem: InfoListItemStyle,
   button: ButtonStyle,
   textInput: TextInputStyle,
-  flagNotice: flagNoticeStyle
+  flagNotice: FlagNoticeStyle,
+  error: ErrorStyle
 });

@@ -22,6 +22,8 @@ import { Button, Text } from "./elements";
 import { CurrencyRole, CurrencyType, CurrencyValue } from "./elements/Currency";
 import { fontSizes } from "../../helpers/fonts";
 import { MixedText } from "./elements/MixedText";
+import { CreateRahaOperationButton } from "./elements/CreateRahaOperationButton";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 interface OwnProps {
   style?: StyleProp<ViewStyle>;
@@ -66,7 +68,8 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
     : undefined;
   return (
     <View>
-      <Button
+      <CreateRahaOperationButton
+        operationType={OperationType.MINT}
         style={props.style}
         title={[mintText, ...(mintValue ? [mintValue] : [])]}
         onPress={mint}
