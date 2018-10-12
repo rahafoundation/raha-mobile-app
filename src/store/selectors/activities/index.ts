@@ -4,7 +4,8 @@ import {
   MintType,
   CreateMemberOperation,
   VerifyOperation,
-  FlagMemberOperation
+  FlagMemberOperation,
+  ResolveFlagMemberOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 import {
@@ -402,6 +403,60 @@ function addFlagMemberOperation(
   };
 }
 
+function addResolveFlagMemberOperation(
+  existingData: ActivityBundlingData,
+  operation: ResolveFlagMemberOperation
+): ActivityBundlingData {
+  const { activities, bundlingCache } = existingData;
+
+  const existingActivityCacheData = bundlingCache.flagMember.get(
+    operation.data.flag_operation_id
+  );
+
+  if (!existingActivityCacheData) {
+    // Could this actually be a normal situation? Maybe if we only load "most-recent" operations? I think we should load "most-recent" activities instead of raw operations.
+    console.warn(
+      "Could not find an existing FLAG_MEMBER activity for RESOLVE_FLAG_MEMBER operation. Not applying operation."
+    );
+    return existingData;
+  }
+
+  const existingActivity = activities.get(existingActivityCacheData.index);
+  if (!existingActivity) {
+    console.warn(
+      "The activity indicated by the cache does not exist. Not applying operation."
+    );
+    return existingData;
+  }
+  if (existingActivity.type !== ActivityType.FLAG_MEMBER) {
+    console.warn(
+      "The activity indicated by the cache for this ResolveMemberFlag operation does not have the expected FLAG_MEMBER activity type. Not applying operation."
+    );
+    return existingData;
+  }
+
+  // We need to remove and re-add the existing activity to update its
+  // chronoligical position in the activities list.
+  const activitiesWithExistingActivityRemoved = activities.remove(
+    existingActivityCacheData.index
+  );
+  const newIndex = activitiesWithExistingActivityRemoved.size;
+
+  return {
+    activities: activitiesWithExistingActivityRemoved.push({
+      ...existingActivity,
+      operations: [...existingActivity.operations, operation]
+    }),
+    bundlingCache: {
+      ...bundlingCache,
+      flagMember: bundlingCache.flagMember.set(
+        operation.data.flag_operation_id,
+        { index: newIndex }
+      )
+    }
+  };
+}
+
 /**
  * Add a single operation to a list in progress of activities. Keeps track not
  * just of the final list, but of cached data to optimize the creation of
@@ -443,6 +498,8 @@ function addOperationToActivitiesList(
     }
     case OperationType.FLAG_MEMBER:
       return addFlagMemberOperation(existingData, operation);
+    case OperationType.RESOLVE_FLAG_MEMBER:
+      return addResolveFlagMemberOperation(existingData, operation);
     case OperationType.EDIT_MEMBER:
     case OperationType.REQUEST_VERIFICATION:
     case OperationType.GIVE:

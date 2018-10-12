@@ -527,37 +527,74 @@ function createFlagMemberStory(
   state: RahaState,
   storyData: FlagMemberStoryData
 ): Story {
-  const operation = storyData.activities.operations[0];
+  const { operations } = storyData.activities;
+  if (operations.length > 2) {
+    throw new Error(
+      `Unexpected number of operations for FLAG_MEMBER story: ${
+        operations.length
+      }.`
+    );
+  }
+
+  const [flagOperation, resolveFlagOperation] = storyData.activities.operations;
+
   // Type suggestion since GENESIS_MEMBER is only possible for
   // VERIFY operations
-  const creatorMember = getOperationCreator(state, operation) as Member;
-  const flaggedMember = getMemberById(state, operation.data.to_uid, {
+  const flaggerMember = getOperationCreator(state, flagOperation) as Member;
+  const flaggedMember = getMemberById(state, flagOperation.data.to_uid, {
     throwIfMissing: true
   });
+  const resolverMember = resolveFlagOperation
+    ? (getMemberById(state, resolveFlagOperation.creator_uid, {
+        throwIfMissing: true
+      }) as Member)
+    : undefined;
 
-  return {
-    storyData,
-    id: operation.id,
-    timestamp: operation.created_at,
-    content: {
-      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
-      description: ["flagged an account."],
-      body: {
-        bodyContent: {
-          type: BodyType.TEXT,
-          text: operation.data.reason
-        },
+  const flagStoryContent: StoryContent = {
+    actors: OrderedMap({ [flaggerMember.get("memberId")]: flaggerMember }),
+    description: ["flagged an account."],
+    body: {
+      bodyContent: {
+        type: BodyType.TEXT,
+        text: flagOperation.data.reason
+      },
 
-        nextInChain: {
-          direction: ChainDirection.Forward,
-          nextStoryContent: {
-            actors: OrderedMap({
-              [flaggedMember.get("memberId")]: flaggedMember
-            })
-          }
+      nextInChain: {
+        direction: ChainDirection.Forward,
+        nextStoryContent: {
+          actors: OrderedMap({
+            [flaggedMember.get("memberId")]: flaggedMember
+          })
         }
       }
     }
+  };
+
+  return {
+    storyData,
+    id: flagOperation.id,
+    timestamp: resolverMember
+      ? resolveFlagOperation.created_at
+      : flagOperation.created_at,
+    content: resolverMember
+      ? {
+          actors: OrderedMap({
+            [resolverMember.get("memberId")]: resolverMember
+          }),
+          description: ["resolved a flag."],
+          body: {
+            bodyContent: {
+              type: BodyType.TEXT,
+              text: resolveFlagOperation.data.reason
+            },
+
+            nextInChain: {
+              direction: ChainDirection.Forward,
+              nextStoryContent: flagStoryContent
+            }
+          }
+        }
+      : flagStoryContent
   };
 }
 

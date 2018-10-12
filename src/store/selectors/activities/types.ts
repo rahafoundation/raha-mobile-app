@@ -85,9 +85,9 @@ export type NewMemberRelatedOperations =
 /**
  * Tuples of related operations that form a complete FLAG_MEMBER activity
  */
-export type FlagMemberRelatedOperations = [
-  FlagMemberOperation | ResolveFlagMemberOperation
-];
+export type FlagMemberRelatedOperations = (
+  | FlagMemberOperation
+  | ResolveFlagMemberOperation)[];
 
 /**
  * Operations that we consider to represent a complete event on the platform
@@ -99,8 +99,7 @@ export type IndependentOperation =
   | TrustOperation
   | GiveOperation
   | RequestVerificationOperation
-  | VerifyOperation
-  | FlagMemberOperation;
+  | VerifyOperation;
 
 /**
  * Activity that corresponds to the process of a new member joining Raha, from
