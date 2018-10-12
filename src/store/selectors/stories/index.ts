@@ -541,7 +541,7 @@ function createFlagMemberStory(
     timestamp: operation.created_at,
     content: {
       actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
-      description: ["flagged an account!"],
+      description: ["flagged an account."],
       body: {
         bodyContent: {
           type: BodyType.TEXT,

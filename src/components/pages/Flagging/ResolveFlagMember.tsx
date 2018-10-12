@@ -1,13 +1,20 @@
 import * as React from "react";
-import { KeyboardAwareScrollContainer } from "../../shared/elements/KeyboardAwareScrollContainer";
-import { Text, Button, TextInput } from "../../shared/elements";
 import { NavigationScreenProps } from "react-navigation";
 import { Member } from "../../../store/reducers/members";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { TextStyle, StyleSheet, ViewStyle, View } from "react-native";
-import { colors } from "../../../helpers/colors";
-import { fonts, fontSizes } from "../../../helpers/fonts";
+import { View } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
+
+import {
+  Operation,
+  FlagMemberOperation
+} from "@raha/api-shared/dist/models/Operation";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
+import {
+  MemberId,
+  OperationId
+} from "@raha/api-shared/dist/models/identifiers";
+
 import { RahaState } from "../../../store";
 import {
   ApiCallStatus,
@@ -15,16 +22,14 @@ import {
 } from "../../../store/reducers/apiCalls";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
-import {
-  MemberId,
-  OperationId
-} from "@raha/api-shared/dist/models/identifiers";
 import { resolveFlagMember } from "../../../store/actions/members";
+import { getMemberById } from "../../../store/selectors/members";
+import { KeyboardAwareScrollContainer } from "../../shared/elements/KeyboardAwareScrollContainer";
+import { Text, Button, TextInput } from "../../shared/elements";
+import { styles as sharedStyles } from "./styles";
 
 type NavProps = NavigationScreenProps<{
-  memberOnWhichToResolveFlag: Member;
-  flagToResolveOperationId: OperationId;
+  flagToResolveOperation: Operation;
   apiCallId: string;
 }>;
 
@@ -33,7 +38,8 @@ type OwnProps = NavProps;
 interface StateProps {
   loggedInMember: Member;
   memberOnWhichToResolveFlag: Member;
-  flagToResolveOperationId: OperationId;
+  flagToResolveOperation: FlagMemberOperation;
+  flaggingMember: Member;
   apiCallId: string;
   resolveFlagApiCallStatus?: ApiCallStatus;
 }
@@ -54,7 +60,7 @@ interface State {
   reason?: string;
 }
 
-class FlagMemberPageComponent extends React.Component<Props, State> {
+class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -66,46 +72,20 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
     this.setState({ reviewedInfo: true });
   };
 
-  renderInfo = (memberName: string) => {
+  renderInfo = () => {
     return (
       <React.Fragment>
-        <View style={styles.section}>
-          <Text style={styles.infoText}>
-            Flag <Text style={styles.name}>{memberName}</Text>
-            's account to let people know there's an issue with it.{" "}
-            <Text style={styles.infoHeader}>They will:</Text>
-          </Text>
-          <Text style={[styles.infoText, styles.infoListItem]}>
-            Be notified that you have flagged their account.{" "}
-          </Text>
-          <Text style={[styles.infoText, styles.infoListItem]}>
-            Show up as flagged to all other Raha members.
-          </Text>
-          <Text style={[styles.infoText, styles.infoListItem]}>
-            Be unable to perform any actions other than editing their account
-            until another Raha member marks this issue as resolved.
+        <View style={sharedStyles.section}>
+          <Text style={sharedStyles.infoText}>
+            Resolving this flag will indicate that you believe this issue has
+            been fixed.
           </Text>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.infoHeader}>
-            Examples of reasons to flag an account:
-          </Text>
-          <Text style={[styles.infoText, styles.infoListItem]}>
-            Their profile name is incorrect.
-          </Text>
-          <Text style={[styles.infoText, styles.infoListItem]}>
-            They do not show their face and state their full name in their
-            profile video.
-          </Text>
-          <Text style={[styles.infoText, styles.infoListItem]}>
-            This appears to be a fraudulent or duplicate profile.
-          </Text>
-        </View>
-        <View style={styles.section}>
+        <View style={sharedStyles.section}>
           <Button
             title="Continue"
             onPress={this.continue}
-            style={styles.button}
+            style={sharedStyles.button}
           />
         </View>
       </React.Fragment>
@@ -115,51 +95,52 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
   flagMember = async () => {
     this.props.resolveFlagMember(
       this.props.memberOnWhichToResolveFlag.get("memberId"),
-      this.props.flagToResolveOperationId,
+      this.props.flagToResolveOperation.id,
       this.state.reason as string,
       this.props.apiCallId
     );
   };
 
-  renderFlagForm = (memberName: string) => {
+  renderResolveFlagForm = (flaggedMemberName: string) => {
     const { resolveFlagApiCallStatus } = this.props;
-    const disableFlagButton =
+    const disableResolveFlagButton =
       !!resolveFlagApiCallStatus &&
       resolveFlagApiCallStatus.status !== ApiCallStatusType.FAILURE;
-    const flaggedAccount =
+    const resolvedFlag =
       !!resolveFlagApiCallStatus &&
       resolveFlagApiCallStatus.status === ApiCallStatusType.SUCCESS;
-    const flagButtonTitle = disableFlagButton
-      ? flaggedAccount
-        ? "Flagged account"
-        : "Flagging account"
-      : "Flag account";
+    const resolveFlagButtonTitle = disableResolveFlagButton
+      ? resolvedFlag
+        ? "Resolved flag"
+        : "Resolving flag"
+      : "Resolve flag";
 
     return (
       <React.Fragment>
-        <View style={styles.section}>
-          <Text>
-            Reason for flagging <Text style={styles.name}>{memberName}</Text>
-            's account:
+        <View style={sharedStyles.section}>
+          <Text style={sharedStyles.infoHeader}>
+            How the issue with{" "}
+            <Text style={sharedStyles.name}>{flaggedMemberName}</Text>
+            's account been fixed?
           </Text>
         </View>
-        <View style={styles.section}>
+        <View style={sharedStyles.section}>
           <TextInput
             autoFocus={true}
             onChangeText={value => this.setState({ reason: value })}
-            editable={!flaggedAccount}
-            style={styles.textInput}
+            editable={!resolvedFlag}
+            style={sharedStyles.textInput}
           />
         </View>
-        <View style={styles.section}>
+        <View style={sharedStyles.section}>
           <Button
-            title={flagButtonTitle}
-            disabled={!this.state.reason || disableFlagButton}
+            title={resolveFlagButtonTitle}
+            disabled={!this.state.reason || disableResolveFlagButton}
             onPress={this.flagMember}
           />
         </View>
-        {flaggedAccount && (
-          <View style={styles.section}>
+        {resolvedFlag && (
+          <View style={sharedStyles.section}>
             <Button
               title="return"
               onPress={() => this.props.navigation.goBack()}
@@ -171,19 +152,37 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
   };
 
   render() {
-    const memberName = this.props.memberOnWhichToResolveFlag.get("fullName");
+    const {
+      flaggingMember,
+      memberOnWhichToResolveFlag,
+      flagToResolveOperation
+    } = this.props;
+    const flaggingMemberName = flaggingMember.get("fullName");
+    const flaggedMemberName = memberOnWhichToResolveFlag.get("fullName");
     return (
-      <KeyboardAwareScrollContainer style={styles.page}>
-        <View style={styles.header}>
+      <KeyboardAwareScrollContainer style={sharedStyles.page}>
+        <View style={sharedStyles.header}>
           <Icon name="flag" size={50} />
-          <Text style={styles.headerText}>
-            Flag {memberName}
+          <Text style={sharedStyles.headerText}>
+            Resolve flag on {flaggedMemberName}
             's Account
           </Text>
         </View>
+        <View style={sharedStyles.section}>
+          <Text style={sharedStyles.infoText}>
+            <Text style={sharedStyles.name}>{flaggingMemberName}</Text> flagged{" "}
+            <Text style={sharedStyles.name}>{flaggedMemberName}</Text>
+            's account for the following reason:
+          </Text>
+        </View>
+        <View style={[sharedStyles.section, sharedStyles.reasonSection]}>
+          <Text style={[sharedStyles.infoText]}>
+            {flagToResolveOperation.data.reason}
+          </Text>
+        </View>
         {this.state.reviewedInfo
-          ? this.renderFlagForm(memberName)
-          : this.renderInfo(memberName)}
+          ? this.renderResolveFlagForm(flaggedMemberName)
+          : this.renderInfo()}
       </KeyboardAwareScrollContainer>
     );
   }
@@ -198,20 +197,24 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
     throw new Error("User must be logged to ResolveFlagMember page.");
   }
   const { navigation } = ownProps;
-  const memberOnWhichToResolveFlag = navigation.getParam(
-    "memberOnWhichToResolveFlag"
-  );
-  if (!memberOnWhichToResolveFlag) {
-    throw new Error("No member was passed to the ResolveFlagMember page.");
-  }
-  const flagToResolveOperationId = navigation.getParam(
-    "flagToResolveOperationId"
-  );
-  if (!flagToResolveOperationId) {
+  const flagToResolveOperation = navigation.getParam(
+    "flagToResolveOperation"
+  ) as FlagMemberOperation | undefined;
+  if (!flagToResolveOperation) {
     throw new Error(
-      "No flagToResolveOperationId was passed to ResolveFlagMember page."
+      "No flagToResolveOperation was passed to ResolveFlagMember page."
     );
   }
+  const memberOnWhichToResolveFlag = getMemberById(
+    state,
+    flagToResolveOperation.data.to_uid,
+    { throwIfMissing: true }
+  );
+  const flaggingMember = getMemberById(
+    state,
+    flagToResolveOperation.creator_uid,
+    { throwIfMissing: true }
+  );
   const apiCallId = ownProps.navigation.getParam("apiCallId");
   if (!apiCallId) {
     throw new Error(
@@ -220,8 +223,9 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   }
   return {
     loggedInMember,
+    flaggingMember,
     memberOnWhichToResolveFlag,
-    flagToResolveOperationId,
+    flagToResolveOperation,
     apiCallId,
     resolveFlagApiCallStatus: getStatusOfApiCall(
       state,
@@ -231,72 +235,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   };
 };
 
-export const FlagMemberPage = connect(
+export const ResolveFlagMemberPage = connect(
   mapStateToProps,
   { resolveFlagMember }
-)(FlagMemberPageComponent);
-
-const PageStyle: ViewStyle = {
-  backgroundColor: colors.pageBackground,
-  padding: 16,
-  display: "flex",
-  alignContent: "center",
-  flexGrow: 1
-};
-
-const HeaderStyle: ViewStyle = {
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
-  flexWrap: "wrap"
-};
-
-const HeaderTextStyle: TextStyle = {
-  marginLeft: 16,
-  ...fonts.Lato.Bold,
-  ...fontSizes.large
-};
-
-const SectionStyle: ViewStyle = {
-  marginTop: 16
-};
-
-const NameStyle: TextStyle = { ...fonts.Lato.Bold };
-
-const InfoHeaderStyle: TextStyle = {
-  ...fonts.Lato.Bold
-};
-
-const InfoTextStyle: TextStyle = {
-  ...fonts.Lato.Normal,
-  ...fontSizes.medium
-};
-
-const InfoListItemStyle: TextStyle = {
-  marginTop: 4,
-  marginLeft: 8
-};
-
-const ButtonStyle: ViewStyle = {
-  flexShrink: 1
-};
-
-const TextInputStyle: TextStyle = {
-  borderColor: colors.navFocusTint,
-  borderWidth: 1,
-  borderRadius: 3,
-  flexGrow: 1
-};
-
-const styles = StyleSheet.create({
-  page: PageStyle,
-  header: HeaderStyle,
-  headerText: HeaderTextStyle,
-  section: SectionStyle,
-  name: NameStyle,
-  infoHeader: InfoHeaderStyle,
-  infoText: InfoTextStyle,
-  infoListItem: InfoListItemStyle,
-  button: ButtonStyle,
-  textInput: TextInputStyle
-});
+)(ResolveFlagMemberPageComponent);

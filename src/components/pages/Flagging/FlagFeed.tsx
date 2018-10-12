@@ -15,12 +15,14 @@ import { colors, palette } from "../../../helpers/colors";
 import { NavigationScreenProps } from "react-navigation";
 import { FlagMemberOperation } from "@raha/api-shared/dist/models/Operation";
 import { List } from "immutable";
-import { Text } from "../../shared/elements";
+import { Text, Button } from "../../shared/elements";
 import { MemberName } from "../../shared/MemberName";
 import { Member } from "../../../store/reducers/members";
 import { getMemberById } from "../../../store/selectors/members";
 import { fontSizes } from "../../../helpers/fonts";
 import { MemberThumbnail } from "../../shared/MemberThumbnail";
+import { RouteName } from "../../shared/Navigation";
+import { generateRandomIdentifier } from "../../../helpers/identifiers";
 
 interface FlagData {
   flaggingMember: Member;
@@ -37,7 +39,10 @@ interface StateProps {
 
 type Props = OwnProps & StateProps;
 
-const FlagFeedPageView: React.StatelessComponent<Props> = ({ flagData }) => {
+const FlagFeedPageView: React.StatelessComponent<Props> = ({
+  flagData,
+  navigation
+}) => {
   return (
     <View style={{ backgroundColor: colors.pageBackground, flex: 1 }}>
       <FlatList
@@ -46,7 +51,13 @@ const FlagFeedPageView: React.StatelessComponent<Props> = ({ flagData }) => {
         renderItem={dataItem => {
           const { flaggingMember, flagOperation } = dataItem.item;
           return (
-            <View style={{ flex: 1, flexDirection: "column", margin: 12 }}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "column",
+                margin: 12
+              }}
+            >
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <MemberThumbnail
                   member={flaggingMember}
@@ -57,25 +68,51 @@ const FlagFeedPageView: React.StatelessComponent<Props> = ({ flagData }) => {
                     marginRight: 10
                   }}
                 />
-                <Text>
-                  <MemberName member={flaggingMember} /> flagged this account.
-                </Text>
+                <View style={{ flexDirection: "column" }}>
+                  <Text>
+                    <MemberName member={flaggingMember} /> flagged this account.
+                  </Text>
+                  <Text
+                    style={{
+                      ...fontSizes.small,
+                      color: colors.secondaryText,
+                      marginTop: 4
+                    }}
+                  >
+                    {formatRelative(
+                      flagOperation.created_at,
+                      new Date()
+                    ).toUpperCase()}
+                  </Text>
+                </View>
               </View>
               <Text style={{ marginTop: 4, marginLeft: 50 }}>
                 {flagOperation.data.reason}
               </Text>
-              <Text
+              <View
                 style={{
-                  ...fontSizes.small,
-                  color: colors.secondaryText,
-                  marginTop: 4
+                  flexDirection: "row",
+                  alignContent: "center",
+                  justifyContent: "space-around"
                 }}
               >
-                {formatRelative(
-                  flagOperation.created_at,
-                  new Date()
-                ).toUpperCase()}
-              </Text>
+                <Button
+                  title="Resolve flag"
+                  style={{
+                    borderColor: colors.button,
+                    borderWidth: 1,
+                    backgroundColor: colors.pageBackground,
+                    marginTop: 8
+                  }}
+                  textStyle={{ color: colors.button }}
+                  onPress={() =>
+                    navigation.navigate(RouteName.ResolveFlagMemberPage, {
+                      flagToResolveOperation: flagOperation,
+                      apiCallId: generateRandomIdentifier()
+                    })
+                  }
+                />
+              </View>
             </View>
           );
         }}

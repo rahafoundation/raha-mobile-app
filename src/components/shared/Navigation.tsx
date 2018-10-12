@@ -56,6 +56,7 @@ import { SignOutPage } from "../pages/AccountSettings/SignOut";
 import { FlagMemberPage } from "../pages/Flagging/FlagMember";
 import { generateRandomIdentifier } from "../../helpers/identifiers";
 import { FlagFeedPage } from "../pages/Flagging/FlagFeed";
+import { ResolveFlagMemberPage } from "../pages/Flagging/ResolveFlagMember";
 
 /**
  * Gets the current screen from navigation state.
@@ -123,7 +124,8 @@ export enum RouteName {
   SignOut = "Sign Out",
   CurrencySettings = "Currency Settings",
   FlagMemberPage = "Flag Member Page",
-  FlagFeed = "Flag Feed"
+  FlagFeed = "Flag Feed",
+  ResolveFlagMemberPage = "Resolve Flag Member Page"
 }
 
 // TODO: Move this to Deeplinking. Need to also move RouteName out to avoid
@@ -268,6 +270,11 @@ const FlagFeed = {
   }
 };
 
+const ResolveFlagMember = {
+  screen: ResolveFlagMemberPage,
+  navigationOptions: createHeaderNavigationOptions("Resolve Flag", true)
+};
+
 type HeaderProps = {
   title: string;
   subtitle?: string;
@@ -348,6 +355,7 @@ export function createNavigatorForTab(
       [RouteName.StoryListPage]: StoryList,
       [RouteName.GivePage]: Give,
       [RouteName.FlagMemberPage]: FlagMember,
+      [RouteName.ResolveFlagMemberPage]: ResolveFlagMember,
       [RouteName.Verify]: {
         screen: Verify,
         navigationOptions: {

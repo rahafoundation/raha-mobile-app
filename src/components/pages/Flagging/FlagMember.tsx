@@ -128,8 +128,8 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
       <React.Fragment>
         <View style={styles.section}>
           <Text>
-            Reason for flagging <Text style={styles.name}>{memberName}</Text>
-            's account:
+            Why are you flagging <Text style={styles.name}>{memberName}</Text>
+            's account?
           </Text>
         </View>
         <View style={styles.section}>
