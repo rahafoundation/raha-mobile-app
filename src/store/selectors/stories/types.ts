@@ -9,19 +9,17 @@ import {
   EditMemberOperation,
   RequestVerificationOperation,
   TrustOperation,
-  VerifyOperation,
-  FlagMemberOperation
+  VerifyOperation
 } from "@raha/api-shared/dist/models/Operation";
 import { OrderedMap } from "immutable";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import {
-  NewMemberRelatedOperations,
   MintBasicIncomeOperation,
   NewMemberActivity,
   ActivityType,
-  ActivityDefinition
+  ActivityDefinition,
+  FlagMemberActivity
 } from "../activities/types";
-import { operationsForMember } from "../operations";
 import { Activity } from "../activities/types";
 
 /**
@@ -178,6 +176,11 @@ export type NewMemberStoryData = StoryDataDefinition<
   NewMemberActivity
 >;
 
+export type FlagMemberStoryData = StoryDataDefinition<
+  StoryType.FLAG_MEMBER,
+  FlagMemberActivity
+>;
+
 type MintBasicIncomeActivity = ActivityDefinition<
   ActivityType.INDEPENDENT_OPERATION,
   MintBasicIncomeOperation
@@ -196,11 +199,6 @@ export type GiveRahaStoryData = StoryDataDefinition<
 export type EditMemberStoryData = StoryDataDefinition<
   StoryType.EDIT_MEMBER,
   ActivityDefinition<ActivityType.INDEPENDENT_OPERATION, EditMemberOperation>
->;
-
-export type FlagMemberStoryData = StoryDataDefinition<
-  StoryType.FLAG_MEMBER,
-  ActivityDefinition<ActivityType.INDEPENDENT_OPERATION, FlagMemberOperation>
 >;
 
 export type RequestVerificationStoryData = StoryDataDefinition<

@@ -85,9 +85,9 @@ export type NewMemberRelatedOperations =
 /**
  * Tuples of related operations that form a complete FLAG_MEMBER activity
  */
-export type FlagMemberRelatedOperations =
-  | FlagMemberOperation
-  | ResolveFlagMemberOperation;
+export type FlagMemberRelatedOperations = [
+  FlagMemberOperation | ResolveFlagMemberOperation
+];
 
 /**
  * Operations that we consider to represent a complete event on the platform
@@ -136,4 +136,7 @@ export type IndependentOperationActivity = ActivityDefinition<
  * In contrast, Stories are the mechanism for how Activities actually get
  * presented to users, which may include aggregating Activities together.
  */
-export type Activity = NewMemberActivity | IndependentOperationActivity;
+export type Activity =
+  | NewMemberActivity
+  | FlagMemberActivity
+  | IndependentOperationActivity;

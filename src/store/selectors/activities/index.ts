@@ -3,7 +3,8 @@ import {
   OperationType,
   MintType,
   CreateMemberOperation,
-  VerifyOperation
+  VerifyOperation,
+  FlagMemberOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 import {
@@ -21,10 +22,17 @@ import {
   CurrencyType
 } from "../../../components/shared/elements/Currency";
 import { List, Map } from "immutable";
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
+import {
+  MemberId,
+  OperationId
+} from "@raha/api-shared/dist/models/identifiers";
 import { GENESIS_VERIFY_OPS } from "../../reducers/members";
 
 interface NewMemberCacheValues {
+  index: number;
+}
+
+interface FlagMemberCacheValues {
   index: number;
 }
 
@@ -34,6 +42,7 @@ interface NewMemberCacheValues {
 interface ActivityBundlingCache {
   // member id -> index of corresponding NEW_MEMBER activity in the list
   newMember: Map<MemberId, NewMemberCacheValues>;
+  flagMember: Map<OperationId, FlagMemberCacheValues>;
 }
 
 /**
@@ -372,6 +381,27 @@ function addMintReferralBonusOperation(
   };
 }
 
+function addFlagMemberOperation(
+  existingData: ActivityBundlingData,
+  operation: FlagMemberOperation
+): ActivityBundlingData {
+  const { activities, bundlingCache } = existingData;
+
+  const nextIndex = activities.size;
+  return {
+    activities: activities.push({
+      type: ActivityType.FLAG_MEMBER,
+      operations: [operation]
+    }),
+    bundlingCache: {
+      ...bundlingCache,
+      flagMember: bundlingCache.flagMember.set(operation.id, {
+        index: nextIndex
+      })
+    }
+  };
+}
+
 /**
  * Add a single operation to a list in progress of activities. Keeps track not
  * just of the final list, but of cached data to optimize the creation of
@@ -411,11 +441,12 @@ function addOperationToActivitiesList(
           );
       }
     }
+    case OperationType.FLAG_MEMBER:
+      return addFlagMemberOperation(existingData, operation);
     case OperationType.EDIT_MEMBER:
     case OperationType.REQUEST_VERIFICATION:
     case OperationType.GIVE:
     case OperationType.TRUST:
-    case OperationType.FLAG_MEMBER:
       return addIndependentOperation(existingData, operation);
     case OperationType.INVITE:
       // We do not display any activity for Invite operations. Whether or not
@@ -452,11 +483,11 @@ function addOperationsToActivities(
         ...existingData,
         bundlingCache: existingData.bundlingCache
           ? existingData.bundlingCache
-          : { newMember: Map() }
+          : { newMember: Map(), flagMember: Map() }
       }
     : {
         activities: List(),
-        bundlingCache: { newMember: Map() }
+        bundlingCache: { newMember: Map(), flagMember: Map() }
       };
 
   return newOperations.reduce((memo, operation) => {

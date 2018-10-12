@@ -527,7 +527,7 @@ function createFlagMemberStory(
   state: RahaState,
   storyData: FlagMemberStoryData
 ): Story {
-  const operation = storyData.activities.operations;
+  const operation = storyData.activities.operations[0];
   // Type suggestion since GENESIS_MEMBER is only possible for
   // VERIFY operations
   const creatorMember = getOperationCreator(state, operation) as Member;
@@ -876,8 +876,6 @@ function storyTypeForIndependentOperationActivity(
   switch (operation.op_code) {
     case OperationType.EDIT_MEMBER:
       return StoryType.EDIT_MEMBER;
-    case OperationType.FLAG_MEMBER:
-      return StoryType.FLAG_MEMBER;
     case OperationType.GIVE:
       return StoryType.GIVE_RAHA;
     case OperationType.MINT:
@@ -917,6 +915,11 @@ export function createStoryFromActivity(
     case ActivityType.NEW_MEMBER:
       return createStory(state, {
         type: StoryType.NEW_MEMBER,
+        activities: activity
+      });
+    case ActivityType.FLAG_MEMBER:
+      return createStory(state, {
+        type: StoryType.FLAG_MEMBER,
         activities: activity
       });
     case ActivityType.INDEPENDENT_OPERATION:
