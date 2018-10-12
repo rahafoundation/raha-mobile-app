@@ -4,17 +4,16 @@
  * We should add ability to see only transactions of people you trust.
  */
 import * as React from "react";
-import { View, FlatList } from "react-native";
+import { View, FlatList, StyleSheet, ViewStyle, TextStyle } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 import { formatRelative } from "date-fns";
+import { NavigationScreenProps } from "react-navigation";
+import { List } from "immutable";
 
-import { OperationId } from "@raha/api-shared/dist/models/identifiers";
+import { FlagMemberOperation } from "@raha/api-shared/dist/models/Operation";
 
 import { RahaState } from "../../../store";
-import { colors, palette } from "../../../helpers/colors";
-import { NavigationScreenProps } from "react-navigation";
-import { FlagMemberOperation } from "@raha/api-shared/dist/models/Operation";
-import { List } from "immutable";
+import { colors } from "../../../helpers/colors";
 import { Text, Button } from "../../shared/elements";
 import { MemberName } from "../../shared/MemberName";
 import { Member } from "../../../store/reducers/members";
@@ -45,7 +44,7 @@ const FlagFeedPageView: React.StatelessComponent<Props> = ({
   navigation
 }) => {
   return (
-    <View style={{ backgroundColor: colors.pageBackground, flex: 1 }}>
+    <View style={styles.list}>
       <FlatList
         data={flagData.toArray()}
         keyExtractor={flagOp => flagOp.flagOperation.id}
@@ -59,34 +58,17 @@ const FlagFeedPageView: React.StatelessComponent<Props> = ({
         renderItem={dataItem => {
           const { flaggingMember, flagOperation } = dataItem.item;
           return (
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "column",
-                margin: 12
-              }}
-            >
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={styles.listItem}>
+              <View style={listItemHeaderStyle}>
                 <MemberThumbnail
                   member={flaggingMember}
-                  style={{
-                    flexGrow: 0,
-                    flexShrink: 0,
-                    flexBasis: 50,
-                    marginRight: 10
-                  }}
+                  style={styles.listItemHeaderThumbnail}
                 />
-                <View style={{ flexDirection: "column" }}>
+                <View style={listItemHeaderTextStyle}>
                   <Text>
                     <MemberName member={flaggingMember} /> flagged this account.
                   </Text>
-                  <Text
-                    style={{
-                      ...fontSizes.small,
-                      color: colors.secondaryText,
-                      marginTop: 4
-                    }}
-                  >
+                  <Text style={listItemHeaderTextTimestampStyle}>
                     {formatRelative(
                       flagOperation.created_at,
                       new Date()
@@ -94,25 +76,14 @@ const FlagFeedPageView: React.StatelessComponent<Props> = ({
                   </Text>
                 </View>
               </View>
-              <Text style={{ marginTop: 4, marginLeft: 50 }}>
+              <Text style={styles.listItemBody}>
                 {flagOperation.data.reason}
               </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignContent: "center",
-                  justifyContent: "space-around"
-                }}
-              >
+              <View style={styles.listItemActions}>
                 <Button
                   title="Resolve flag"
-                  style={{
-                    borderColor: colors.button,
-                    borderWidth: 1,
-                    backgroundColor: colors.pageBackground,
-                    marginTop: 8
-                  }}
-                  textStyle={{ color: colors.button }}
+                  style={styles.listItemButton}
+                  textStyle={styles.listItemButtonText}
                   onPress={() =>
                     navigation.navigate(RouteName.ResolveFlagMemberPage, {
                       flagToResolveOperation: flagOperation,
@@ -167,3 +138,73 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
 };
 
 export const FlagFeedPage = connect(mapStateToProps)(FlagFeedPageView);
+
+const LEFT_MARGIN = 50;
+
+const listStyle: ViewStyle = {
+  backgroundColor: colors.pageBackground,
+  flex: 1
+};
+
+const listItemStyle: ViewStyle = {
+  flex: 1,
+  flexDirection: "column",
+  margin: 12
+};
+
+const listItemHeaderStyle: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center"
+};
+
+const listItemHeaderThumbnailStyle: ViewStyle = {
+  flexGrow: 0,
+  flexShrink: 0,
+  flexBasis: LEFT_MARGIN,
+  marginRight: 10
+};
+
+const listItemHeaderTextStyle: ViewStyle = {
+  flexDirection: "column"
+};
+
+const listItemHeaderTextTimestampStyle: TextStyle = {
+  ...fontSizes.small,
+  color: colors.secondaryText,
+  marginTop: 4
+};
+
+const listItemBodyStyle: TextStyle = {
+  marginTop: 4,
+  marginLeft: 50
+};
+
+const listItemActionsStyle: ViewStyle = {
+  flexDirection: "row",
+  alignContent: "center",
+  justifyContent: "space-around"
+};
+
+const listItemButtonStyle: ViewStyle = {
+  borderColor: colors.button,
+  borderWidth: 1,
+  backgroundColor: colors.pageBackground,
+  marginTop: 8
+};
+
+const listItemButtonTextStyle: TextStyle = {
+  color: colors.button
+};
+
+const styles = StyleSheet.create({
+  list: listStyle,
+  listItem: listItemStyle,
+  listItemHeader: listItemHeaderStyle,
+  listItemHeaderThumbnail: listItemHeaderThumbnailStyle,
+  listItemHeaderText: listItemHeaderTextStyle,
+  listItemHeaderTextTimestamp: listItemHeaderTextTimestampStyle,
+  listItemBody: listItemBodyStyle,
+  listItemActions: listItemActionsStyle,
+  listItemButton: listItemButtonStyle,
+  listItemButtonText: listItemButtonTextStyle
+});
