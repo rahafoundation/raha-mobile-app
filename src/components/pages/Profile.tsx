@@ -273,7 +273,10 @@ class ProfileView extends React.PureComponent<ProfileProps> {
             <View style={styles.header}>
               {this.renderProfileIsFlaggedStatus()}
               {!isOwnProfile && (
-                <FlaggedNotice loggedInMember={loggedInMember} />
+                <FlaggedNotice
+                  loggedInMember={loggedInMember}
+                  restrictedFrom="interacting with other members of Raha"
+                />
               )}
               <UnverifiedNotice loggedInMember={loggedInMember} />
               <View style={styles.headerProfile}>

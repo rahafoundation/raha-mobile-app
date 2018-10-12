@@ -195,7 +195,10 @@ class GiveFormView extends React.Component<Props, State> {
   public render() {
     return (
       <KeyboardAwareScrollContainer style={styles.container}>
-        <FlaggedNotice loggedInMember={this.props.loggedInMember} />
+        <FlaggedNotice
+          loggedInMember={this.props.loggedInMember}
+          restrictedFrom="interacting with other members of Raha"
+        />
         <UnverifiedNotice loggedInMember={this.props.loggedInMember} />
         <View style={styles.toRow}>
           {this.state.toMember ? (

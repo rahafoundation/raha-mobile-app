@@ -10,7 +10,6 @@ const card: ViewStyle = {
   padding: 8,
   display: "flex",
   flexDirection: "row",
-  flex: 1,
   alignItems: "center"
 };
 

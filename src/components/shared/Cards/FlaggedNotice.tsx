@@ -10,10 +10,12 @@ import { RouteName } from "../Navigation";
 
 interface Props {
   loggedInMember: Member | undefined;
+  restrictedFrom: string;
 }
 
 export const FlaggedNotice: React.StatelessComponent<Props> = ({
-  loggedInMember
+  loggedInMember,
+  restrictedFrom
 }) => {
   if (!loggedInMember) {
     return null;
@@ -28,8 +30,8 @@ export const FlaggedNotice: React.StatelessComponent<Props> = ({
       <Icon name="exclamation" size={30} style={CardStyles.cardErrorIcon} />
       <View style={CardStyles.cardBody}>
         <Text>
-          You have been restricted from interacting with other members of Raha
-          until all flags on your profile are resolved.
+          You have been restricted from {restrictedFrom} until all flags on your
+          profile are resolved.
         </Text>
         <Text style={CardStyles.cardBodyAction}>
           View{" "}

@@ -22,6 +22,7 @@ import { flagMember } from "../../../store/actions/members";
 import { styles as sharedStyles } from "./styles";
 import { canFlag } from "../../../store/selectors/abilities";
 import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
+import { FlaggedNotice } from "../../shared/Cards/FlaggedNotice";
 
 type NavProps = NavigationScreenProps<{
   memberToFlag: Member;
@@ -98,15 +99,15 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
         </View>
         <View style={sharedStyles.section}>
           {this.props.canFlag ? (
-            <Button
+            <CreateRahaOperationButton
+              operationType={OperationType.FLAG_MEMBER}
               title="Continue"
               onPress={this.continue}
               style={sharedStyles.button}
             />
           ) : (
             <Text style={sharedStyles.error}>
-              You must be verified by at least 5 other Raha members to flag, and
-              your own account cannot currently be flagged.
+              You must be verified by at least 5 other Raha members to flag.
             </Text>
           )}
         </View>
@@ -177,6 +178,10 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
     const memberName = this.props.memberToFlag.get("fullName");
     return (
       <KeyboardAwareScrollContainer style={sharedStyles.page}>
+        <FlaggedNotice
+          loggedInMember={this.props.loggedInMember}
+          restrictedFrom="flagging other members of Raha"
+        />
         <View style={sharedStyles.header}>
           <Icon name="flag" size={50} />
           <Text style={sharedStyles.headerText}>

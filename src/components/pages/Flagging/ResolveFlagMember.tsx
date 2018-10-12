@@ -30,6 +30,7 @@ import { Text, Button, TextInput } from "../../shared/elements";
 import { styles as sharedStyles } from "./styles";
 import { canFlag } from "../../../store/selectors/abilities";
 import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
+import { FlaggedNotice } from "../../shared/Cards/FlaggedNotice";
 
 type NavProps = NavigationScreenProps<{
   flagToResolveOperation: Operation;
@@ -102,7 +103,7 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
           ) : (
             <Text style={sharedStyles.error}>
               You must be verified by at least 5 other Raha members to resolve
-              this flag, and your own account cannot currently be flagged.
+              this flag.
             </Text>
           )}
         </View>
@@ -180,6 +181,10 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
     const flaggedMemberName = memberOnWhichToResolveFlag.get("fullName");
     return (
       <KeyboardAwareScrollContainer style={sharedStyles.page}>
+        <FlaggedNotice
+          loggedInMember={this.props.loggedInMember}
+          restrictedFrom="resolving flags on other members of Raha"
+        />
         <View style={sharedStyles.header}>
           <Icon name="flag" size={50} />
           <Text style={sharedStyles.headerText}>
