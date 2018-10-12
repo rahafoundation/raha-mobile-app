@@ -142,7 +142,7 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
         {resolvedFlag && (
           <View style={sharedStyles.section}>
             <Button
-              title="return"
+              title="Return"
               onPress={() => this.props.navigation.goBack()}
             />
           </View>

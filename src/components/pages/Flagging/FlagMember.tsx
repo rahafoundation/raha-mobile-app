@@ -152,7 +152,7 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
         {flaggedAccount && (
           <View style={sharedStyles.section}>
             <Button
-              title="return"
+              title="Return"
               onPress={() => this.props.navigation.goBack()}
             />
           </View>

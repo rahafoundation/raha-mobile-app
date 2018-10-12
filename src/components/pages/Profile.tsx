@@ -230,8 +230,7 @@ class ProfileView extends React.PureComponent<ProfileProps> {
         style={styles.flaggedStatus}
         onPress={() =>
           this.props.navigation.navigate(RouteName.FlagFeed, {
-            member,
-            flagOperationIds: operationsFlaggingThisMember
+            member
           })
         }
       >

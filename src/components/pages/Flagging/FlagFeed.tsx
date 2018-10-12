@@ -23,6 +23,7 @@ import { fontSizes } from "../../../helpers/fonts";
 import { MemberThumbnail } from "../../shared/MemberThumbnail";
 import { RouteName } from "../../shared/Navigation";
 import { generateRandomIdentifier } from "../../../helpers/identifiers";
+import { styles as sharedStyles } from "./styles";
 
 interface FlagData {
   flaggingMember: Member;
@@ -30,7 +31,7 @@ interface FlagData {
 }
 
 type OwnProps = NavigationScreenProps<{
-  flagOperationIds: OperationId[];
+  member: Member;
 }>;
 
 interface StateProps {
@@ -48,6 +49,13 @@ const FlagFeedPageView: React.StatelessComponent<Props> = ({
       <FlatList
         data={flagData.toArray()}
         keyExtractor={flagOp => flagOp.flagOperation.id}
+        ListEmptyComponent={() => (
+          <View style={[sharedStyles.page, sharedStyles.section]}>
+            <Text style={sharedStyles.infoHeader}>
+              There are no remaining flags on this account!
+            </Text>
+          </View>
+        )}
         renderItem={dataItem => {
           const { flaggingMember, flagOperation } = dataItem.item;
           return (
@@ -125,10 +133,16 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const flagOperationIds = ownProps.navigation.getParam("flagOperationIds");
-  if (!flagOperationIds) {
-    throw new Error("No flagOperationIds passed to FlagFeed page.");
+  const member = ownProps.navigation.getParam("member");
+  if (!member) {
+    throw new Error("No member passed to FlagFeed page.");
   }
+  // Refresh member state
+  const refreshedMember = getMemberById(
+    state,
+    member.get("memberId")
+  ) as Member;
+  const flagOperationIds = refreshedMember.get("operationsFlaggingThisMember");
   return {
     flagData: (state.operations.filter(op =>
       flagOperationIds.includes(op.id)

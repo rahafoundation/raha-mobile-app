@@ -452,7 +452,7 @@ function applyOperation(
         const flaggedMember = newState.byMemberId.get(to_uid) as Member;
         return addMemberToState(
           newState,
-          flaggedMember.resolveFlagMember(operation.id)
+          flaggedMember.resolveFlagMember(operation.data.flag_operation_id)
         );
       }
       case OperationType.REQUEST_VERIFICATION: {
