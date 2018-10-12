@@ -3,7 +3,7 @@ import { View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 import { Text } from "../elements";
-import { styles } from "./styles";
+import { CardStyles } from "./CardStyles";
 import { Member } from "../../../store/reducers/members";
 import { TextLink, LinkType } from "../elements/TextLink";
 
@@ -18,15 +18,19 @@ export const UnverifiedNotice: React.StatelessComponent<Props> = ({
     return null;
   }
 
+  // if (loggedInMember.get("verifiedBy").size > 0) {
+  //   return null;
+  // }
+
   return (
-    <View style={[styles.card, styles.alert]}>
-      <Icon name="exclamation" size={30} style={styles.cardErrorIcon} />
-      <View style={styles.cardBody}>
+    <View style={[CardStyles.card, CardStyles.alert]}>
+      <Icon name="exclamation" size={30} style={CardStyles.cardInfoIcon} />
+      <View style={CardStyles.cardBody}>
         <Text>
           Get verified to interact with others in the community and begin
           minting your basic income.
         </Text>
-        <Text style={styles.cardBodyAction}>
+        <Text style={CardStyles.cardBodyAction}>
           Ask a Raha friend for help or email us at{" "}
           <TextLink
             destination={{

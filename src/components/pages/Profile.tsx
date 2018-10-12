@@ -42,6 +42,7 @@ import { FlaggedNotice } from "../shared/Cards/FlaggedNotice";
 import { UnverifiedNotice } from "../shared/Cards/UnverifiedNotice";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
 import { CreateRahaOperationButton } from "../shared/elements/CreateRahaOperationButton";
+import { CardStyles } from "../shared/Cards/CardStyles";
 
 interface NavParams {
   member: Member;
@@ -232,20 +233,20 @@ class ProfileView extends React.PureComponent<ProfileProps> {
     );
     return operationsFlaggingThisMember.isEmpty() ? null : (
       <TouchableOpacity
-        style={styles.flaggedStatus}
+        style={[CardStyles.card, CardStyles.error, styles.flaggedStatus]}
         onPress={() =>
           this.props.navigation.navigate(RouteName.FlagFeed, {
             member
           })
         }
       >
-        <Icon name="flag" size={30} style={styles.flaggedStatusIcon} />
-        <View style={styles.flaggedStatusText}>
+        <Icon name="flag" size={30} style={CardStyles.cardErrorIcon} />
+        <View style={CardStyles.cardBody}>
           <Text>
             Members of the Raha community have raised issues with{" "}
             {isOwnProfile ? "your" : `${fullName}'s`} account.
           </Text>
-          <Text style={styles.flaggedStatusTextAction}>
+          <Text style={CardStyles.cardBodyAction}>
             Tap this notice to view their concerns.
           </Text>
         </View>

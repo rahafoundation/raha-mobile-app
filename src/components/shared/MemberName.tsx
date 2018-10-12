@@ -76,7 +76,7 @@ const memberName: TextStyle = {
 const unverifiedLabel: TextStyle = {
   ...fonts.Lato.Normal,
   ...fontSizes.medium,
-  color: palette.red
+  color: palette.purple
 };
 
 const flaggedLabel: TextStyle = {

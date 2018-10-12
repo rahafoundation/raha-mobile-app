@@ -22,8 +22,18 @@ const alert: ViewStyle = {
   borderColor: palette.purple
 };
 
+const cardIcon: TextStyle = {
+  marginLeft: 4
+};
+
 const cardErrorIcon: TextStyle = {
+  ...cardIcon,
   color: palette.red
+};
+
+const cardInfoIcon: TextStyle = {
+  ...cardIcon,
+  color: palette.purple
 };
 
 const cardBody: ViewStyle = {
@@ -38,11 +48,12 @@ const cardBodyAction: TextStyle = {
   ...fonts.Lato.Bold
 };
 
-export const styles = StyleSheet.create({
+export const CardStyles = StyleSheet.create({
   card,
   error,
   alert,
   cardErrorIcon,
+  cardInfoIcon,
   cardBody,
   cardBodyAction
 });

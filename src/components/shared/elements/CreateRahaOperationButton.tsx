@@ -13,7 +13,7 @@ import { connect, MapStateToProps } from "react-redux";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
 import { RahaState } from "../../../store";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
-import { canCreateOperation } from "../../../store/selectors/me";
+import { canCreateOperation } from "../../../store/selectors/abilities";
 
 type OwnProps = ButtonProps & {
   operationType: OperationType;

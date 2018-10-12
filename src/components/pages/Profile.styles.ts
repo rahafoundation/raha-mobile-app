@@ -12,32 +12,7 @@ const headerStyle: ViewStyle = {
 };
 
 const flaggedStatusStyle: ViewStyle = {
-  borderWidth: 2,
-  borderColor: palette.red,
-  backgroundColor: palette.paleMint,
-  borderRadius: 3,
-  marginBottom: 8,
-  padding: 8,
-  display: "flex",
-  flexDirection: "row",
-  flex: 1,
-  alignItems: "center"
-};
-
-const flaggedStatusIconStyle: TextStyle = {
-  color: palette.red
-};
-
-const flaggedStatusTextStyle: ViewStyle = {
-  display: "flex",
-  flexDirection: "column",
-  flex: 1,
-  marginLeft: 12
-};
-
-const flaggedStatusTextRowStyle: TextStyle = {
-  marginTop: 4,
-  ...fonts.Lato.Bold
+  backgroundColor: palette.paleMint
 };
 
 const headerProfileStyle: ViewStyle = {
@@ -112,9 +87,6 @@ export const styles = StyleSheet.create({
   body: bodyStyle,
   header: headerStyle,
   flaggedStatus: flaggedStatusStyle,
-  flaggedStatusIcon: flaggedStatusIconStyle,
-  flaggedStatusText: flaggedStatusTextStyle,
-  flaggedStatusTextAction: flaggedStatusTextRowStyle,
   headerProfile: headerProfileStyle,
   thumbnail: thumbnailStyle,
   memberName: memberNameStyle,
