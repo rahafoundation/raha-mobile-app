@@ -34,15 +34,11 @@ interface StateProps {
   isOwnProfile: boolean;
 }
 
-type Props = OwnProps & StateProps & NavigationInjectedProps;
+type Props = OwnProps & StateProps;
 
-export const MemberThumbnailView: React.StatelessComponent<Props> = ({
-  navigation,
-  isOwnProfile,
-  member,
-  diameter,
-  style
-}) => {
+const MemberThumbnailView: React.StatelessComponent<
+  Props & NavigationInjectedProps
+> = ({ navigation, isOwnProfile, member, diameter, style }) => {
   const styles = getStyles(diameter ? diameter : 50, member);
   return (
     <TouchableOpacity
