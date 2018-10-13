@@ -82,7 +82,7 @@ approval process by using codepush.
 Note: new codepush releases are automatically targeted to the current version of the app,
 so we should never need to both release to codepush and publish to the app store.
 
-### Setting up Appcenter and Codepush on your local machine
+### Setting up Appcenter and CodePush on your local machine
 
 1. Make sure you have the latest dependencies installed by running `yarn install`.
 1. Login to appcenter via `yarn run appcenter login`.
@@ -95,23 +95,38 @@ are shared via keybase.
 
 #### iOS
 
-Add the codepush iOS deployment keys to your buildconfig settings.
+Download and copy `private.xcconfig` from Keybase into `ios/BuildConfig`. It contains the
+iOS deployment keys. Make sure to reopen XCode to refresh the configurations.
 
-1. Copy and rename the `ios/BuildConfig/template.<debug/release>.xcconfig files` by removing the "template." prefix.
-1. Retrieve the codepush keys from keybase in the `iOS` directory and update the relevant values in the new config files you just created.
-
-### Releasing an update to codepush
+### Releasing an update to CodePush
 
 Under normal circumstances, we'd like to release to Android and iOS simultaneously to avoid versions getting out of sync.
 
 TODO: Update what extraordinary circumstances are if we ever encounter them.
 
-1. Run `yarn codepush:[android|ios]:release`. This will push a codepush update using our Staging
-   key which all non-prod-release builds use. Test that the update looks correct on
-   one of these builds.
+1. [Build a pre-push Staging build](#staging-build-for-testing).
+1. Run `yarn codepush:[android|ios]:release`.
+1. Verify that your Staging build has received the new update.
 1. Once you've verified the update is working, run `yarn codepush:[android|ios]:promote` to promote
    the staging update to the Production environment. All app installs via the app stores
    should then receive this update.
 1. Once you've promoted a codepush release, tag the current commit with the codepush release label with
    `git tag -a codepush-[android|ios]-[label]`. You can list the labels of production codepush releases by
    using `yarn codepush:[android|ios]:history:production`.
+
+### Staging Build for Testing
+
+#### Android
+
+1. Go to a commit without the new change but with the same app version number.
+1. Install a non-prod version via `./gradlew assembleDevProd`, which is
+   built with the Staging keys.
+
+#### iOS
+
+1. Go to a commit without the new change but with the same app version number.
+1. In XCode, go to `Product -> Scheme -> Edit Scheme...` (all the way at the
+   bottom)
+1. Edit "Run" task (with the play button) "Build Configuration" to "Staging"
+1. Press the play button to install a bundled staging build onto your device
+1. This may have changed our default project scheme -- please revert these changes.

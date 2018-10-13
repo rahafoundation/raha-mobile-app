@@ -40,8 +40,7 @@ DerivedData
 project.xcworkspace
 
 # Configs
-ios/BuildConfig/debug.xcconfig
-ios/BuildConfig/release.xcconfig
+ios/BuildConfig/private.xcconfig
 
 # Android/IntelliJ
 #

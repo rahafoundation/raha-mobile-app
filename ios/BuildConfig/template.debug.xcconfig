@@ -1,9 +1,0 @@
-//
-//  template.debug.xcconfig
-//  mobile
-//
-// USAGE: Rename to debug.xcconfig and copy api key into value below.
-
-#include "Pods/Target Support Files/Pods-Raha/Pods-Raha.debug.xcconfig"
-
-APPCENTER_CODEPUSH_DEPLOYMENT_KEY = <COPY_REAL_KEY_HERE>
