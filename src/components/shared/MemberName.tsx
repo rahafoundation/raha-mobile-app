@@ -10,6 +10,9 @@ import { RouteName } from "./Navigation";
 import { TextLink, LinkType } from "./elements/TextLink";
 import { fonts, fontSizes } from "../../helpers/fonts";
 import { palette } from "../../helpers/colors";
+import { MapStateToProps, connect } from "react-redux";
+import { RahaState } from "../../store";
+import { getLoggedInMemberId } from "../../store/selectors/authentication";
 
 interface OwnProps {
   member: MemberData | typeof RAHA_BASIC_INCOME_MEMBER;
@@ -18,9 +21,15 @@ interface OwnProps {
   unverifiedLabelStyle?: StyleProp<TextStyle>;
   flaggedLabelStyle?: StyleProp<TextStyle>;
 }
-type MemberNameProps = OwnProps;
 
-export const MemberName: React.StatelessComponent<MemberNameProps> = ({
+interface StateProps {
+  isOwnProfile: boolean;
+}
+
+type MemberNameProps = OwnProps & StateProps;
+
+const MemberNameComponent: React.StatelessComponent<MemberNameProps> = ({
+  isOwnProfile,
   member,
   style,
   hideStatusLabels,
@@ -48,7 +57,7 @@ export const MemberName: React.StatelessComponent<MemberNameProps> = ({
         destination={{
           type: LinkType.InApp,
           route: {
-            name: RouteName.ProfilePage,
+            name: isOwnProfile ? RouteName.ProfileTab : RouteName.ProfilePage,
             params: { member }
           }
         }}
@@ -67,6 +76,22 @@ export const MemberName: React.StatelessComponent<MemberNameProps> = ({
     </Text>
   );
 };
+
+const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
+  state,
+  ownProps
+) => {
+  const { member } = ownProps;
+  const loggedInMemberId = getLoggedInMemberId(state);
+  return {
+    isOwnProfile:
+      member === RAHA_BASIC_INCOME_MEMBER
+        ? false
+        : member.get("memberId") === loggedInMemberId
+  };
+};
+
+export const MemberName = connect(mapStateToProps)(MemberNameComponent);
 
 const memberName: TextStyle = {
   ...fonts.Lato.Bold,

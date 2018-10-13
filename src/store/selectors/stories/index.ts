@@ -25,7 +25,7 @@ import {
   MintType
 } from "@raha/api-shared/dist/models/Operation";
 
-import { getMemberById, getUnverifiedMembers } from "../members";
+import { getMemberById } from "../members";
 import { RahaState } from "../../reducers";
 import {
   Member,
