@@ -8,11 +8,12 @@
  */
 
 import * as React from "react";
-import { ButtonProps, Button } from "./Button";
 import { connect, MapStateToProps } from "react-redux";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
+
+import { ButtonProps, Button } from "./Button";
 import { RahaState } from "../../../store";
-import { getLoggedInMember } from "../../../store/selectors/authentication";
+import { getLoggedInMemberId } from "../../../store/selectors/authentication";
 import { canCreateOperation } from "../../../store/selectors/abilities";
 
 type OwnProps = ButtonProps & {
@@ -36,12 +37,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const loggedInMember = getLoggedInMember(state);
-  const loggedInMemberId = loggedInMember
-    ? loggedInMember.get("memberId")
-    : undefined;
+  const loggedInMemberId = getLoggedInMemberId(state);
   return {
-    loggedInMemberId,
     canCreateOperation: canCreateOperation(
       state,
       ownProps.operationType,

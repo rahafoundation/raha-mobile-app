@@ -18,9 +18,9 @@ export const UnverifiedNotice: React.StatelessComponent<Props> = ({
     return null;
   }
 
-  // if (loggedInMember.get("verifiedBy").size > 0) {
-  //   return null;
-  // }
+  if (loggedInMember.get("verifiedBy").size > 0) {
+    return null;
+  }
 
   return (
     <View style={[CardStyles.card, CardStyles.alert]}>

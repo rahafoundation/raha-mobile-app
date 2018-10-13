@@ -22,7 +22,7 @@ const headerProfileStyle: ViewStyle = {
 };
 
 const headerDetailsStyle: ViewStyle = {
-  flexGrow: 1
+  flex: 1
 };
 
 const statNumberStyle: TextStyle = {

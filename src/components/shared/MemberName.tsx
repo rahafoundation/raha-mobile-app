@@ -55,14 +55,14 @@ export const MemberName: React.StatelessComponent<MemberNameProps> = ({
       >
         {member.get("fullName")}
       </TextLink>
+      {hideStatusLabels || operationsFlaggingThisMember.isEmpty() ? null : (
+        <Text style={[styles.flaggedLabel, flaggedLabelStyle]}> (Flagged)</Text>
+      )}
       {hideStatusLabels || isVerified ? null : (
         <Text style={[styles.unverifiedLabel, unverifiedLabelStyle]}>
           {" "}
           (Unverified)
         </Text>
-      )}
-      {hideStatusLabels || operationsFlaggingThisMember.isEmpty() ? null : (
-        <Text style={[styles.flaggedLabel, flaggedLabelStyle]}> (Flagged)</Text>
       )}
     </Text>
   );

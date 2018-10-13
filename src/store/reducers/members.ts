@@ -439,7 +439,6 @@ function applyOperation(
         const { to_uid } = operation.data;
         assertMemberIdPresentInState(newState, to_uid, operation);
         const memberToFlag = newState.byMemberId.get(to_uid) as Member;
-        console.log(memberToFlag);
         return addMemberToState(
           newState,
           memberToFlag.beFlaggedByMember(operation.id)

@@ -21,9 +21,9 @@ export const FlaggedNotice: React.StatelessComponent<Props> = ({
     return null;
   }
 
-  // if (loggedInMember.get("operationsFlaggingThisMember").size <= 0) {
-  //   return null;
-  // }
+  if (loggedInMember.get("operationsFlaggingThisMember").size <= 0) {
+    return null;
+  }
 
   return (
     <View style={[CardStyles.card, CardStyles.error]}>

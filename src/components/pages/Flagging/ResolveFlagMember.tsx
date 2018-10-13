@@ -173,6 +173,7 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
 
   render() {
     const {
+      isOwnProfile,
       flaggingMember,
       memberOnWhichToResolveFlag,
       flagToResolveOperation
@@ -181,10 +182,12 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
     const flaggedMemberName = memberOnWhichToResolveFlag.get("fullName");
     return (
       <KeyboardAwareScrollContainer style={sharedStyles.page}>
-        <FlaggedNotice
-          loggedInMember={this.props.loggedInMember}
-          restrictedFrom="resolving flags on other members of Raha"
-        />
+        {!isOwnProfile && (
+          <FlaggedNotice
+            loggedInMember={this.props.loggedInMember}
+            restrictedFrom="resolving flags on other members of Raha"
+          />
+        )}
         <View style={sharedStyles.header}>
           <Icon name="flag" size={50} />
           <Text style={sharedStyles.headerText}>

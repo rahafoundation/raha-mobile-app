@@ -2,6 +2,7 @@ import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 import { RahaState } from "../reducers";
 import { auth, storage } from "../../firebaseInit";
+import { STATUS_CODES } from "http";
 
 export async function getAuthToken(
   state: RahaState
@@ -16,6 +17,9 @@ export async function getAuthToken(
   return authFirebaseUser.getIdToken();
 }
 
+/**
+ * Use this to get the Firebase userId regardless of whether the user has already created an account.
+ */
 export function getLoggedInFirebaseUserId(state: RahaState) {
   return state.authentication.isLoggedIn && auth.currentUser
     ? (auth.currentUser.uid as MemberId)
@@ -36,6 +40,14 @@ export function getLoggedInMember(state: RahaState) {
   return loggedInUserId
     ? state.members.byMemberId.get(loggedInUserId)
     : undefined;
+}
+
+/**
+ * Use this if you only want the memberId if the user has created an account already.
+ */
+export function getLoggedInMemberId(state: RahaState) {
+  const loggedInMember = getLoggedInMember(state);
+  return loggedInMember ? loggedInMember.get("memberId") : undefined;
 }
 
 /**
