@@ -33,7 +33,8 @@ type DispatchProps = {
     emailAddress: string,
     username: string,
     videoToken: string,
-    inviteToken?: string
+    inviteToken?: string,
+    subscribeToNewsletter?: boolean
   ) => void;
 };
 
@@ -42,6 +43,7 @@ type OwnProps = {
   emailAddress: string;
   videoToken: string;
   inviteToken?: string;
+  subscribeToNewsletter: boolean;
 };
 
 type OnboardingCreateAccountProps = OwnProps & ReduxStateProps & DispatchProps;
@@ -60,7 +62,8 @@ class OnboardingCreateAccountView extends React.Component<
       this.props.emailAddress,
       username,
       this.props.videoToken,
-      this.props.inviteToken
+      this.props.inviteToken,
+      this.props.subscribeToNewsletter
     );
   };
 
