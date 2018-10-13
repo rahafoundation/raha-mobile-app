@@ -72,6 +72,7 @@ export class InputEmail extends React.Component<
               />
               <Button
                 title={`Confirm`}
+                style={{ marginTop: 8 }}
                 disabled={
                   this.state.emailAddress === undefined ||
                   !validator.isEmail(this.state.emailAddress)

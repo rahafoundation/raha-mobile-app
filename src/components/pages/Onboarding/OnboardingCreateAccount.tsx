@@ -43,7 +43,7 @@ type OwnProps = {
   emailAddress: string;
   videoToken: string;
   inviteToken?: string;
-  subscribeToNewsletter?: boolean;
+  subscribeToNewsletter: boolean;
 };
 
 type OnboardingCreateAccountProps = OwnProps & ReduxStateProps & DispatchProps;

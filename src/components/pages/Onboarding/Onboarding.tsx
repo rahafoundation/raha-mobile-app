@@ -456,7 +456,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
                 ? this.props.inviteToken
                 : undefined
             }
-            subscribeToNewsletter={this.subscribeToNewsletter}
+            subscribeToNewsletter={!!this.subscribeToNewsletter}
           />
         );
       }
