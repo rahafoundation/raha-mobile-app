@@ -120,15 +120,9 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
     ) as List<FlagMemberOperation>).map(flagMemberOperation => {
       const flaggingMember = getMemberById(
         state,
-        flagMemberOperation.creator_uid
+        flagMemberOperation.creator_uid,
+        { throwIfMissing: true }
       );
-      if (!flaggingMember) {
-        throw new Error(
-          `Invalid flag operation with id: ${
-            flagMemberOperation.id
-          } in flag feed. Flag creator could not be found.`
-        );
-      }
       return {
         flaggingMember,
         flagOperation: flagMemberOperation
