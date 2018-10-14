@@ -17,11 +17,6 @@ import {
   IndependentOperation
 } from "./types";
 import { RahaState } from "../../reducers";
-import {
-  CurrencyValue,
-  CurrencyRole,
-  CurrencyType
-} from "../../../components/shared/elements/Currency";
 import { List, Map } from "immutable";
 import {
   MemberId,
@@ -143,18 +138,19 @@ function addCreateMemberOperation(
  * since VERIFY_MEMBER operations should only happen for members that already
  * have CREATE_MEMBER operations.
  *
- * Additionally, we prefer the VERIFY_MEMBER operations on NEW_MEMBER activities to be
- * from the inviter, but they can have one from others.
+ * Additionally, we prefer the VERIFY_MEMBER operations on NEW_MEMBER activities
+ * to be from the inviter, but they can have one from others.
  *
  * So, three scenarios: Corresponding NEW_MEMBER activity...
  * - doesn't have a VERIFY_MEMBER operation yet: Add this one to that NEW_MEMBER
  *   activity
- * - has a VERIFY_MEMBER operation corresponding to the new member's inviter: create
- *   this as an INDEPENDENT_OPERATION activity
- * - has a VERIFY_MEMBER operation, but this new one comes from the inviter: Replace
- *   the previous NEW_MEMBER activity with the old VERIFY_MEMBER operation as an
- *   INDEPENDENT_OPERATION activity, and add a new NEW_MEMBER activity
- *   replacing the previous VERIFY_MEMBER operation with this one from the inviter.
+ * - has a VERIFY_MEMBER operation corresponding to the new member's inviter:
+ *   create this as an INDEPENDENT_OPERATION activity
+ * - has a VERIFY_MEMBER operation, but this new one comes from the inviter:
+ *   Replace the previous NEW_MEMBER activity with the old VERIFY_MEMBER
+ *   operation as an INDEPENDENT_OPERATION activity, and add a new NEW_MEMBER
+ *   activity replacing the previous VERIFY_MEMBER operation with this one from
+ *   the inviter.
  *   - we don't need to worry about messing up timestamps, since a referral
  *     bonus mint activity also shouldn't exist yet (because this VERIFY_MEMBER
  *     operation comes from the inviter, which should precede the inviter
@@ -608,6 +604,39 @@ export function activitiesInvolvingMembers(
       );
     });
   });
+}
+
+/**
+ * Get all Verify Member activities; Also extracts bundled VERIFY operations
+ * from NEW_MEMBER activities into INDEPENDENT_OPERATIONs. Useful for profile
+ * verified members list.
+ */
+export function filterVerifyMemberActivities(
+  activities: List<Activity>
+): List<Activity> {
+  return activities
+    .filter(
+      a =>
+        a.type === ActivityType.NEW_MEMBER ||
+        (a.type === ActivityType.INDEPENDENT_OPERATION &&
+          a.operations.op_code === OperationType.VERIFY)
+    )
+    .reduce((newList, a) => {
+      if (a.type === ActivityType.INDEPENDENT_OPERATION) {
+        return newList.push(a);
+      }
+      const verifyOperation = (a.operations as Operation[]).find(
+        o => o.op_code === OperationType.VERIFY
+      ) as VerifyOperation | undefined;
+      if (!verifyOperation) {
+        return newList;
+      }
+      const verifyActivity: Activity = {
+        type: ActivityType.INDEPENDENT_OPERATION,
+        operations: verifyOperation
+      };
+      return newList.push(verifyActivity);
+    }, List<Activity>());
 }
 
 export function isGenesisVerificationActivity(activity: Activity): boolean {
