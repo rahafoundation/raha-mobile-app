@@ -21,7 +21,7 @@ export const StoryList: React.StatelessComponent<OwnProps> = ({
   navigation
 }) => {
   return (
-    <View style={{ backgroundColor: colors.pageBackground }}>
+    <View style={{ backgroundColor: colors.pageBackground, flex: 1 }}>
       <StoryFeed stories={navigation.getParam("stories")} />
     </View>
   );
