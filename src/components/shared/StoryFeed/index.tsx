@@ -9,6 +9,7 @@ import { FlatList, FlatListProps, NativeSyntheticEvent } from "react-native";
 import { Story, StoryView } from "../Story";
 import { Story as StoryModel } from "../../../store/selectors/stories/types";
 import { List } from "immutable";
+import { styles } from "./styles";
 
 interface StoryFeedProps {
   stories: List<StoryModel>; // in the order they should be rendered
@@ -51,6 +52,7 @@ export class StoryFeed extends React.Component<StoryFeedProps> {
       <FlatList
         ref={ref => ref && (this.list = ref)}
         ListHeaderComponent={this.props.header ? this.renderHeader : undefined}
+        contentContainerStyle={styles.contentContainer}
         data={this.props.stories.toArray()}
         keyExtractor={story => story.id}
         renderItem={({ item }) => (

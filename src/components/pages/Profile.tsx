@@ -34,7 +34,10 @@ import {
 import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { MemberName } from "../shared/MemberName";
-import { activitiesInvolvingMembers } from "../../store/selectors/activities";
+import {
+  activitiesInvolvingMembers,
+  filterVerifyMemberActivities
+} from "../../store/selectors/activities";
 import { storiesForActivities } from "../../store/selectors/stories";
 import { Story, StoryType } from "../../store/selectors/stories/types";
 import { List } from "immutable";
@@ -341,7 +344,10 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
 
   const activities = activitiesInvolvingMembers(state, [memberId]);
   const stories = storiesForActivities(state, activities).reverse();
-  const verifiedThisMemberStories = stories.filter(
+  const verifiedThisMemberStories = storiesForActivities(
+    state,
+    filterVerifyMemberActivities(activities)
+  ).filter(
     story =>
       story.storyData.type === StoryType.VERIFY_MEMBER &&
       story.storyData.activities.operations.data.to_uid === memberId
