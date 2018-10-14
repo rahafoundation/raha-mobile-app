@@ -5,7 +5,8 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  TextStyle
+  TextStyle,
+  ViewStyle
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Text } from "./Text";
@@ -67,22 +68,30 @@ export class Hint extends React.Component<HintProps, HintState> {
   }
 }
 
+const hintIcon: TextStyle = {
+  marginRight: 8
+};
+
+const modalContent: ViewStyle = {
+  padding: 22,
+  backgroundColor: colors.modalBackground,
+  justifyContent: "center",
+  alignItems: "center",
+  borderRadius: 4
+};
+
+const modalCloseButton: ViewStyle = {
+  marginTop: 8
+};
+
+const text: TextStyle = {
+  flexGrow: 1,
+  ...fonts.Lato.Normal
+};
+
 const styles = StyleSheet.create({
-  hintIcon: {
-    marginRight: 8
-  },
-  modalContent: {
-    padding: 22,
-    backgroundColor: colors.modalBackground,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 4
-  },
-  modalCloseButton: {
-    marginTop: 8
-  },
-  text: {
-    flexGrow: 1,
-    ...fonts.Lato.Normal
-  } as TextStyle
+  hintIcon,
+  modalContent,
+  modalCloseButton,
+  text
 });
