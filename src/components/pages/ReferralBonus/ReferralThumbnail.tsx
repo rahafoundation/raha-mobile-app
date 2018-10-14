@@ -42,7 +42,7 @@ import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { Loading } from "../../shared/Loading";
 import { fonts } from "../../../helpers/fonts";
 import { REFERRAL_BONUS } from "../../../store/selectors/me";
-import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
+import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissionsButton";
 
 const REFERRAL_BONUS_VALUE: CurrencyValue = {
   currencyType: CurrencyType.Raha,
@@ -89,7 +89,7 @@ const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
     .includes(loggedInMember.get("memberId"));
 
   const actionButton = canMintReferralBonus ? (
-    <CreateRahaOperationButton
+    <EnforcePermissionsButton
       operationType={OperationType.MINT}
       onPress={mintReferralBonus}
       disabled={isMinting}

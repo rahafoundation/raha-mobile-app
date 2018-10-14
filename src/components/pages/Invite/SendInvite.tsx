@@ -16,7 +16,7 @@ import {
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { Text, Button, TextInput } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
-import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
+import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissionsButton";
 
 type ReduxStateProps = {
   sendInviteStatus?: ApiCallStatus;
@@ -121,7 +121,7 @@ class SendInviteView extends React.Component<SendInviteProps, SendInviteState> {
                 Please enter a valid email.
               </Text>
             )}
-            <CreateRahaOperationButton
+            <EnforcePermissionsButton
               operationType={OperationType.INVITE}
               title="Invite"
               onPress={this.sendInvite}

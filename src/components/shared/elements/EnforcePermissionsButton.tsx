@@ -26,7 +26,7 @@ interface StateProps {
 
 type Props = OwnProps & StateProps;
 
-const CreateRahaOperationButtonComponent: React.StatelessComponent<
+const EnforcePermissionsButtonComponent: React.StatelessComponent<
   Props
 > = props => {
   const disabled = props.disabled || !props.canCreateOperation;
@@ -47,6 +47,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   };
 };
 
-export const CreateRahaOperationButton = connect(mapStateToProps)(
-  CreateRahaOperationButtonComponent
+export const EnforcePermissionsButton = connect(mapStateToProps)(
+  EnforcePermissionsButtonComponent
 );

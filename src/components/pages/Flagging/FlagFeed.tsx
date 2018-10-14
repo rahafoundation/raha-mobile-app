@@ -1,7 +1,6 @@
 /**
- * The Feed is a great place for members to catch up on what's happened recently!
- * Shows all of the most recent raha gives and verified join videos.
- * We should add ability to see only transactions of people you trust.
+ * A Feed that displays all the flags on a given member's account. It also
+ * provides a way to resolve these flags.
  */
 import * as React from "react";
 import { View, FlatList, StyleSheet, ViewStyle, TextStyle } from "react-native";
@@ -25,7 +24,7 @@ import { generateRandomIdentifier } from "../../../helpers/identifiers";
 import { styles as sharedStyles } from "./styles";
 
 interface FlagData {
-  flaggingMember: Member;
+  flaggedByMember: Member;
   flagOperation: FlagMemberOperation;
 }
 
@@ -56,17 +55,18 @@ const FlagFeedPageView: React.StatelessComponent<Props> = ({
           </View>
         )}
         renderItem={dataItem => {
-          const { flaggingMember, flagOperation } = dataItem.item;
+          const { flaggedByMember, flagOperation } = dataItem.item;
           return (
             <View style={styles.listItem}>
               <View style={listItemHeaderStyle}>
                 <MemberThumbnail
-                  member={flaggingMember}
+                  member={flaggedByMember}
                   style={styles.listItemHeaderThumbnail}
                 />
                 <View style={listItemHeaderTextStyle}>
                   <Text>
-                    <MemberName member={flaggingMember} /> flagged this account.
+                    <MemberName member={flaggedByMember} /> flagged this
+                    account.
                   </Text>
                   <Text style={listItemHeaderTextTimestampStyle}>
                     {formatRelative(
@@ -118,13 +118,13 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
     flagData: (state.operations.filter(op =>
       flagOperationIds.includes(op.id)
     ) as List<FlagMemberOperation>).map(flagMemberOperation => {
-      const flaggingMember = getMemberById(
+      const flaggedByMember = getMemberById(
         state,
         flagMemberOperation.creator_uid,
         { throwIfMissing: true }
       );
       return {
-        flaggingMember,
+        flaggedByMember,
         flagOperation: flagMemberOperation
       };
     })

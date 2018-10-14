@@ -28,7 +28,7 @@ import { KeyboardAwareScrollContainer } from "../../shared/elements/KeyboardAwar
 import { fontSizes } from "../../../helpers/fonts";
 import { FlaggedNotice } from "../../shared/Cards/FlaggedNotice";
 import { UnverifiedNotice } from "../../shared/Cards/UnverifiedNotice";
-import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
+import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissionsButton";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 const MAX_MEMO_LENGTH = 140;
@@ -288,7 +288,7 @@ class GiveFormView extends React.Component<Props, State> {
           <React.Fragment />
         )}
         <View style={[styles.section, styles.giveButtonRow]}>
-          <CreateRahaOperationButton
+          <EnforcePermissionsButton
             operationType={OperationType.GIVE}
             title="Give"
             onPress={this.giveRaha}

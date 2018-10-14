@@ -15,7 +15,7 @@ import {
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { Text, Button, IndependentPageContainer } from "../../shared/elements";
 import { colors } from "../../../helpers/colors";
-import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
+import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissionsButton";
 
 type ReduxStateProps = {
   submitVerificationStatus?: ApiCallStatus;
@@ -89,7 +89,7 @@ class SubmitVerificationView extends React.Component<SubmitVerificationProps> {
               <Text style={styles.name}>{this.props.toMemberFullName}</Text> and
               this is the only time they have joined Raha.
             </Text>
-            <CreateRahaOperationButton
+            <EnforcePermissionsButton
               operationType={OperationType.VERIFY}
               title="Verify"
               onPress={this.submitVerification}

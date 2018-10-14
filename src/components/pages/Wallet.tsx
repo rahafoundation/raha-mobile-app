@@ -34,7 +34,7 @@ import { TextLink, LinkType } from "../shared/elements/TextLink";
 import { Big } from "big.js";
 import { MixedText } from "../shared/elements/MixedText";
 import { FlaggedNotice } from "../shared/Cards/FlaggedNotice";
-import { CreateRahaOperationButton } from "../shared/elements/CreateRahaOperationButton";
+import { EnforcePermissionsButton } from "../shared/elements/EnforcePermissionsButton";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 type OwnProps = NavigationScreenProps<{}>;
@@ -132,7 +132,7 @@ const Actions: React.StatelessComponent<Props> = props => {
         <Invite {...props} />
       )}
       {hasUnclaimedReferrals && (
-        <CreateRahaOperationButton
+        <EnforcePermissionsButton
           operationType={OperationType.MINT}
           style={styles.button}
           title={"Mint Invite Bonuses!"}
@@ -179,7 +179,7 @@ const Invite: React.StatelessComponent<Props> = props => {
             "when friends you invite join Raha."
           ]}
         />
-        <CreateRahaOperationButton
+        <EnforcePermissionsButton
           operationType={OperationType.INVITE}
           style={styles.button}
           title="Invite a Friend"

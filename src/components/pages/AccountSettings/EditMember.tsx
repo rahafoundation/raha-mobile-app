@@ -22,7 +22,7 @@ import {
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
+import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissionsButton";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 /**
@@ -147,7 +147,7 @@ class EditMemberPageView extends React.Component<Props, State> {
             onPress={() => navigation.goBack()}
             style={styles.button}
           />
-          <CreateRahaOperationButton
+          <EnforcePermissionsButton
             operationType={OperationType.EDIT_MEMBER}
             title={updateButtonTitle}
             disabled={disableUpdateButton}

@@ -41,7 +41,7 @@ import { List } from "immutable";
 import { FlaggedNotice } from "../shared/Cards/FlaggedNotice";
 import { UnverifiedNotice } from "../shared/Cards/UnverifiedNotice";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
-import { CreateRahaOperationButton } from "../shared/elements/CreateRahaOperationButton";
+import { EnforcePermissionsButton } from "../shared/elements/EnforcePermissionsButton";
 import { CardStyles } from "../shared/Cards/CardStyles";
 
 interface NavParams {
@@ -176,7 +176,7 @@ class ProfileView extends React.PureComponent<ProfileProps> {
     const disableTrustButton = alreadyTrusted || inProgressOrFinished;
 
     return (
-      <CreateRahaOperationButton
+      <EnforcePermissionsButton
         operationType={OperationType.TRUST}
         title={trustTitle}
         onPress={() => trust(member.get("memberId"))}
@@ -210,7 +210,7 @@ class ProfileView extends React.PureComponent<ProfileProps> {
       alreadyVerified || !loggedInMemberCanVerify || inProgressOrFinished;
 
     return (
-      <CreateRahaOperationButton
+      <EnforcePermissionsButton
         // TODO: Come up with a solution for indicating action completed
         // Changing the text on these buttons forces them off the side of small screens
         operationType={OperationType.VERIFY}

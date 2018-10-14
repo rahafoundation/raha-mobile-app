@@ -20,8 +20,11 @@ import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { flagMember } from "../../../store/actions/members";
 import { styles as sharedStyles } from "./styles";
-import { canFlag } from "../../../store/selectors/abilities";
-import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
+import {
+  canFlag,
+  VERIFICATIONS_REQUIRED_TO_FLAG
+} from "../../../store/selectors/abilities";
+import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissionsButton";
 import { FlaggedNotice } from "../../shared/Cards/FlaggedNotice";
 
 type NavProps = NavigationScreenProps<{
@@ -87,19 +90,20 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
             Examples of reasons to flag an account:
           </Text>
           <Text style={[sharedStyles.infoText, sharedStyles.infoListItem]}>
-            Their profile name is incorrect.
+            Their profile name is not their real, full name.
           </Text>
           <Text style={[sharedStyles.infoText, sharedStyles.infoListItem]}>
             They do not show their face and state their full name in their
             profile video.
           </Text>
           <Text style={[sharedStyles.infoText, sharedStyles.infoListItem]}>
-            This appears to be a fraudulent or duplicate profile.
+            This account looks like a fake person, or this person has more than
+            one account.
           </Text>
         </View>
         <View style={sharedStyles.section}>
           {this.props.canFlag ? (
-            <CreateRahaOperationButton
+            <EnforcePermissionsButton
               operationType={OperationType.FLAG_MEMBER}
               title="Continue"
               onPress={this.continue}
@@ -107,7 +111,8 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
             />
           ) : (
             <Text style={sharedStyles.error}>
-              You must be verified by at least 5 other Raha members to flag.
+              You must be verified by at least {VERIFICATIONS_REQUIRED_TO_FLAG}{" "}
+              other Raha members to flag.
             </Text>
           )}
         </View>
@@ -155,7 +160,7 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
           />
         </View>
         <View style={sharedStyles.section}>
-          <CreateRahaOperationButton
+          <EnforcePermissionsButton
             operationType={OperationType.FLAG_MEMBER}
             title={flagButtonTitle}
             disabled={!this.state.reason || disableFlagButton}
@@ -203,7 +208,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
 ) => {
   const loggedInMember = getLoggedInMember(state);
   if (!loggedInMember) {
-    throw new Error("User must be logged to flag account.");
+    throw new Error("Member must be logged to flag account.");
   }
   const { navigation } = ownProps;
   const memberToFlag = navigation.getParam("memberToFlag");

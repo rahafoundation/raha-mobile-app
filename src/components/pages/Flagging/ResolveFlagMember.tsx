@@ -28,8 +28,11 @@ import { getMemberById } from "../../../store/selectors/members";
 import { KeyboardAwareScrollContainer } from "../../shared/elements/KeyboardAwareScrollContainer";
 import { Text, Button, TextInput } from "../../shared/elements";
 import { styles as sharedStyles } from "./styles";
-import { canFlag } from "../../../store/selectors/abilities";
-import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
+import {
+  canFlag,
+  VERIFICATIONS_REQUIRED_TO_FLAG
+} from "../../../store/selectors/abilities";
+import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissionsButton";
 import { FlaggedNotice } from "../../shared/Cards/FlaggedNotice";
 
 type NavProps = NavigationScreenProps<{
@@ -83,8 +86,8 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
       <React.Fragment>
         <View style={sharedStyles.section}>
           <Text style={sharedStyles.infoText}>
-            Resolving this flag will indicate that you believe this issue has
-            been fixed.
+            If you think this member fixed the issue with their account, you may
+            resolve this flag.
           </Text>
         </View>
         <View style={sharedStyles.section}>
@@ -102,8 +105,8 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
             />
           ) : (
             <Text style={sharedStyles.error}>
-              You must be verified by at least 5 other Raha members to resolve
-              this flag.
+              You must be verified by at least {VERIFICATIONS_REQUIRED_TO_FLAG}{" "}
+              other Raha members to resolve this flag.
             </Text>
           )}
         </View>
@@ -152,7 +155,7 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
           />
         </View>
         <View style={sharedStyles.section}>
-          <CreateRahaOperationButton
+          <EnforcePermissionsButton
             operationType={OperationType.RESOLVE_FLAG_MEMBER}
             title={resolveFlagButtonTitle}
             disabled={!this.state.reason || disableResolveFlagButton}

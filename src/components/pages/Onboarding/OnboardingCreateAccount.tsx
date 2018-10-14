@@ -16,7 +16,7 @@ import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { Text, IndependentPageContainer } from "../../shared/elements";
 import { styles } from "./styles";
 import { TextLink, LinkType } from "../../shared/elements/TextLink";
-import { CreateRahaOperationButton } from "../../shared/elements/CreateRahaOperationButton";
+import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissionsButton";
 
 type ReduxStateProps = {
   createMemberStatus?: ApiCallStatus;
@@ -127,7 +127,7 @@ class OnboardingCreateAccountView extends React.Component<
                 .
               </Text>
 
-              <CreateRahaOperationButton
+              <EnforcePermissionsButton
                 operationType={OperationType.CREATE_MEMBER}
                 title="Join"
                 onPress={this.createAccount}
