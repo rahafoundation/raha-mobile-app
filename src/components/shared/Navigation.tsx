@@ -174,6 +174,10 @@ const headerButtonStyle: TextStyle = {
   alignItems: "center"
 };
 
+const flagButtonStyle: TextStyle = {
+  color: palette.purple
+};
+
 const styles = StyleSheet.create({
   header: headerStyle,
   headerText: headerTextStyle,
@@ -182,7 +186,8 @@ const styles = StyleSheet.create({
   navIconFocused: navIconFocusedStyle,
   label: labelStyle,
   headerButton: headerButtonStyle,
-  headerButtonLabel: headerButtonLabelStyle
+  headerButtonLabel: headerButtonLabelStyle,
+  flagButton: flagButtonStyle
 });
 
 const HeaderTitle: React.StatelessComponent<HeaderProps> = props => {
@@ -319,6 +324,7 @@ function flagButton(navigation: any, member: Member) {
       <Icon
         name="flag"
         size={20}
+        style={styles.flagButton}
         onPress={() =>
           navigation.navigate(RouteName.FlagMemberPage, {
             memberToFlag: member,
