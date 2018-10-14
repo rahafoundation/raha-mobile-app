@@ -56,10 +56,10 @@ const TextInputStyle: TextStyle = {
 };
 
 const FlagNoticeStyle: ViewStyle = {
-  borderWidth: 2,
   borderColor: palette.red,
-  borderRadius: 3,
+  borderLeftWidth: 3,
   padding: 8,
+  paddingLeft: 12,
   display: "flex",
   flexDirection: "row",
   alignItems: "center"
