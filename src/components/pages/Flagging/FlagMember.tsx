@@ -183,10 +183,7 @@ class FlagMemberPageComponent extends React.Component<Props, State> {
     const memberName = this.props.memberToFlag.get("fullName");
     return (
       <KeyboardAwareScrollContainer style={sharedStyles.page}>
-        <FlaggedNotice
-          loggedInMember={this.props.loggedInMember}
-          restrictedFrom="flagging other members of Raha"
-        />
+        <FlaggedNotice restrictedFrom="flagging other members of Raha" />
         <View style={sharedStyles.header}>
           <Icon name="flag" size={50} />
           <Text style={sharedStyles.headerText}>

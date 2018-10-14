@@ -122,10 +122,7 @@ const Actions: React.StatelessComponent<Props> = props => {
   const canMint = mintableAmount && mintableAmount.gt(0);
   return (
     <View style={styles.actionsSection}>
-      <FlaggedNotice
-        loggedInMember={props.loggedInMember}
-        restrictedFrom="minting"
-      />
+      <FlaggedNotice restrictedFrom="minting" />
       {canMint ? (
         <MintButton style={styles.mintButton} />
       ) : (

@@ -1,19 +1,27 @@
 import * as React from "react";
 import { View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { connect, MapStateToProps } from "react-redux";
 
 import { Text } from "../elements";
 import { CardStyles } from "./CardStyles";
 import { Member } from "../../../store/reducers/members";
 import { TextLink, LinkType } from "../elements/TextLink";
 import { RouteName } from "../Navigation";
+import { RahaState } from "../../../store";
+import { getLoggedInMember } from "../../../store/selectors/authentication";
 
-interface Props {
-  loggedInMember: Member | undefined;
+interface OwnProps {
   restrictedFrom: string;
 }
 
-export const FlaggedNotice: React.StatelessComponent<Props> = ({
+interface StateProps {
+  loggedInMember?: Member;
+}
+
+type Props = OwnProps & StateProps;
+
+const FlaggedNoticeComponent: React.StatelessComponent<Props> = ({
   loggedInMember,
   restrictedFrom
 }) => {
@@ -51,3 +59,13 @@ export const FlaggedNotice: React.StatelessComponent<Props> = ({
     </View>
   );
 };
+
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  OwnProps,
+  RahaState
+> = state => ({
+  loggedInMember: getLoggedInMember(state)
+});
+
+export const FlaggedNotice = connect(mapStateToProps)(FlaggedNoticeComponent);

@@ -186,10 +186,7 @@ class ResolveFlagMemberPageComponent extends React.Component<Props, State> {
     return (
       <KeyboardAwareScrollContainer style={sharedStyles.page}>
         {!isOwnProfile && (
-          <FlaggedNotice
-            loggedInMember={this.props.loggedInMember}
-            restrictedFrom="resolving flags on other members of Raha"
-          />
+          <FlaggedNotice restrictedFrom="resolving flags on other members of Raha" />
         )}
         <View style={sharedStyles.header}>
           <Icon name="flag" size={50} />

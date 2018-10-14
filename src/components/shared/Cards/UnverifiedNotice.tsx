@@ -1,17 +1,24 @@
 import * as React from "react";
 import { View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { connect, MapStateToProps } from "react-redux";
 
 import { Text } from "../elements";
 import { CardStyles } from "./CardStyles";
 import { Member } from "../../../store/reducers/members";
 import { TextLink, LinkType } from "../elements/TextLink";
+import { RahaState } from "../../../store";
+import { getLoggedInMember } from "../../../store/selectors/authentication";
 
-interface Props {
-  loggedInMember: Member | undefined;
+interface OwnProps {}
+
+interface StateProps {
+  loggedInMember?: Member;
 }
 
-export const UnverifiedNotice: React.StatelessComponent<Props> = ({
+type Props = OwnProps & StateProps;
+
+const UnverifiedNoticeComponent: React.StatelessComponent<Props> = ({
   loggedInMember
 }) => {
   if (!loggedInMember) {
@@ -46,3 +53,15 @@ export const UnverifiedNotice: React.StatelessComponent<Props> = ({
     </View>
   );
 };
+
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  OwnProps,
+  RahaState
+> = state => ({
+  loggedInMember: getLoggedInMember(state)
+});
+
+export const UnverifiedNotice = connect(mapStateToProps)(
+  UnverifiedNoticeComponent
+);
