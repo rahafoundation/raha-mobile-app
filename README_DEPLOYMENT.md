@@ -52,7 +52,7 @@ git push --tags
    option.
 1. Once the upload is complete, wait for Apple to finish processing the app.
    (You can monitor this from the "Activity" tab of appstoreconnect.apple.com.)
-1. Then submit the app for review through appstoreconnect.apple.com.
+1. Then submit the app for review through `appstoreconnect.apple.com`.
 
 ### Android
 
@@ -61,14 +61,10 @@ git push --tags
     Adjust the keystore path accordingly (use an absolute path).
 1.  Run `yarn bundle:android` to create a bundled and signed APK in
     `./android/app/build/outputs/apk/prod/release/app-prod-release.apk`.
-1.  You can install this APK on your physical device through `adb install PATH.apk`.
-
-Note, to build dev versions of the app - you can use the following commands:
-
-1. `yarn config:[prod|test]` - this controls whether you're running against the prod/test api
-1. `cd android`
-1. `./gradlew assemble[DevProd|DevTest|Prod]Release`
-1. adb install as described above.
+1.  You can install this APK on your physical device through `adb install PATH.apk`. Do a sanity check pass to make sure the app doesn't break.
+1.  Submit the app through [Google Play
+    Console](https://play.google.com/apps/publish/?account=4907477562070921278)
+    via `Release Management > App Releases > Production Track > Manage > Create Release`.
 
 ## Deploying updates via AppCenter CodePush
 
