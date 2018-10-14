@@ -1,14 +1,9 @@
 import * as React from "react";
-import {
-  View,
-  StyleSheet,
-  Linking,
-  Dimensions,
-  ScrollView
-} from "react-native";
+import { View, ScrollView } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 import { getUsername } from "../../../helpers/username";
 import { RahaState } from "../../../store";
@@ -18,10 +13,10 @@ import {
   ApiCallStatusType
 } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { Text, Button, IndependentPageContainer } from "../../shared/elements";
-import { colors } from "../../../helpers/colors";
+import { Text, IndependentPageContainer } from "../../shared/elements";
 import { styles } from "./styles";
 import { TextLink, LinkType } from "../../shared/elements/TextLink";
+import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissionsButton";
 
 type ReduxStateProps = {
   createMemberStatus?: ApiCallStatus;
@@ -132,7 +127,11 @@ class OnboardingCreateAccountView extends React.Component<
                 .
               </Text>
 
-              <Button title="Join" onPress={this.createAccount} />
+              <EnforcePermissionsButton
+                operationType={OperationType.CREATE_MEMBER}
+                title="Join"
+                onPress={this.createAccount}
+              />
               {this._renderRequestingStatus()}
             </View>
           </View>

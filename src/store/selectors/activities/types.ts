@@ -8,7 +8,9 @@ import {
   TrustOperation,
   MintBasicIncomePayload,
   RequestVerificationOperation,
-  EditMemberOperation
+  EditMemberOperation,
+  FlagMemberOperation,
+  ResolveFlagMemberOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 /**
@@ -18,7 +20,9 @@ export enum ActivityType {
   INDEPENDENT_OPERATION = "INDEPENDENT_OPERATION",
 
   // CREATE_MEMBER + VERIFY + MINT_REFERRAL_BONUS
-  NEW_MEMBER = "NEW_MEMBER"
+  NEW_MEMBER = "NEW_MEMBER",
+  // FLAG_MEMBER + RESOLVE_FLAG_MEMBER
+  FLAG_MEMBER = "FLAG_MEMBER"
 }
 
 /**
@@ -79,6 +83,13 @@ export type NewMemberRelatedOperations =
   | NewMemberMintedOperations;
 
 /**
+ * Tuples of related operations that form a complete FLAG_MEMBER activity
+ */
+export type FlagMemberRelatedOperations = (
+  | FlagMemberOperation
+  | ResolveFlagMemberOperation)[];
+
+/**
  * Operations that we consider to represent a complete event on the platform
  * itself.
  */
@@ -101,6 +112,14 @@ export type NewMemberActivity = ActivityDefinition<
 >;
 
 /**
+ * Activity that corresponds to the process of flagging an issue with a Raha member.
+ */
+export type FlagMemberActivity = ActivityDefinition<
+  ActivityType.FLAG_MEMBER,
+  FlagMemberRelatedOperations
+>;
+
+/**
  * Activity corresponding to a single operation that reflects a conceptually
  * whole event on the system on its own.
  */
@@ -116,4 +135,7 @@ export type IndependentOperationActivity = ActivityDefinition<
  * In contrast, Stories are the mechanism for how Activities actually get
  * presented to users, which may include aggregating Activities together.
  */
-export type Activity = NewMemberActivity | IndependentOperationActivity;
+export type Activity =
+  | NewMemberActivity
+  | FlagMemberActivity
+  | IndependentOperationActivity;

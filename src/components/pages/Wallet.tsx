@@ -33,6 +33,9 @@ import { fontSizes, fonts } from "../../helpers/fonts";
 import { TextLink, LinkType } from "../shared/elements/TextLink";
 import { Big } from "big.js";
 import { MixedText } from "../shared/elements/MixedText";
+import { FlaggedNotice } from "../shared/Cards/FlaggedNotice";
+import { EnforcePermissionsButton } from "../shared/elements/EnforcePermissionsButton";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
 type OwnProps = NavigationScreenProps<{}>;
 
@@ -119,13 +122,15 @@ const Actions: React.StatelessComponent<Props> = props => {
   const canMint = mintableAmount && mintableAmount.gt(0);
   return (
     <View style={styles.actionsSection}>
+      <FlaggedNotice restrictedFrom="minting" />
       {canMint ? (
         <MintButton style={styles.mintButton} />
       ) : (
         <Invite {...props} />
       )}
       {hasUnclaimedReferrals && (
-        <Button
+        <EnforcePermissionsButton
+          operationType={OperationType.MINT}
           style={styles.button}
           title={"Mint Invite Bonuses!"}
           onPress={() => {
@@ -171,7 +176,8 @@ const Invite: React.StatelessComponent<Props> = props => {
             "when friends you invite join Raha."
           ]}
         />
-        <Button
+        <EnforcePermissionsButton
+          operationType={OperationType.INVITE}
           style={styles.button}
           title="Invite a Friend"
           onPress={() => {

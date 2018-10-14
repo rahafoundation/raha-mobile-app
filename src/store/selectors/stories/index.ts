@@ -16,7 +16,8 @@ import {
   MintBasicIncomeStoryData,
   TrustMemberStoryData,
   EditMemberStoryData,
-  RequestVerificationStoryData
+  RequestVerificationStoryData,
+  FlagMemberStoryData
 } from "./types";
 import {
   Operation,
@@ -24,7 +25,7 @@ import {
   MintType
 } from "@raha/api-shared/dist/models/Operation";
 
-import { getMemberById, getUnverifiedMembers } from "../members";
+import { getMemberById } from "../members";
 import { RahaState } from "../../reducers";
 import {
   Member,
@@ -522,6 +523,81 @@ function createEditMemberStory(
   };
 }
 
+function createFlagMemberStory(
+  state: RahaState,
+  storyData: FlagMemberStoryData
+): Story {
+  const { operations } = storyData.activities;
+  if (operations.length > 2) {
+    throw new Error(
+      `Unexpected number of operations for FLAG_MEMBER story: ${
+        operations.length
+      }.`
+    );
+  }
+
+  const [flagOperation, resolveFlagOperation] = storyData.activities.operations;
+
+  // Type suggestion since GENESIS_MEMBER is only possible for
+  // VERIFY operations
+  const flaggerMember = getOperationCreator(state, flagOperation) as Member;
+  const flaggedMember = getMemberById(state, flagOperation.data.to_uid, {
+    throwIfMissing: true
+  });
+  const resolverMember = resolveFlagOperation
+    ? (getMemberById(state, resolveFlagOperation.creator_uid, {
+        throwIfMissing: true
+      }) as Member)
+    : undefined;
+
+  const flagStoryContent: StoryContent = {
+    actors: OrderedMap({ [flaggerMember.get("memberId")]: flaggerMember }),
+    description: ["flagged an account."],
+    body: {
+      bodyContent: {
+        type: BodyType.TEXT,
+        text: flagOperation.data.reason
+      },
+
+      nextInChain: {
+        direction: ChainDirection.Forward,
+        nextStoryContent: {
+          actors: OrderedMap({
+            [flaggedMember.get("memberId")]: flaggedMember
+          })
+        }
+      }
+    }
+  };
+
+  return {
+    storyData,
+    id: flagOperation.id,
+    timestamp: resolverMember
+      ? resolveFlagOperation.created_at
+      : flagOperation.created_at,
+    content: resolverMember
+      ? {
+          actors: OrderedMap({
+            [resolverMember.get("memberId")]: resolverMember
+          }),
+          description: ["resolved a flag."],
+          body: {
+            bodyContent: {
+              type: BodyType.TEXT,
+              text: resolveFlagOperation.data.reason
+            },
+
+            nextInChain: {
+              direction: ChainDirection.Forward,
+              nextStoryContent: flagStoryContent
+            }
+          }
+        }
+      : flagStoryContent
+  };
+}
+
 function createRequestVerificationStory(
   state: RahaState,
   storyData: RequestVerificationStoryData
@@ -856,7 +932,7 @@ function storyTypeForIndependentOperationActivity(
     default:
       throw new Error(
         "Unexpected: INDEPENDENT_OPERATION contained an " +
-          "unsupported operation type. Opreation: " +
+          "unsupported operation type. Operation: " +
           JSON.stringify(operation, null, 2)
       );
   }
@@ -876,6 +952,11 @@ export function createStoryFromActivity(
     case ActivityType.NEW_MEMBER:
       return createStory(state, {
         type: StoryType.NEW_MEMBER,
+        activities: activity
+      });
+    case ActivityType.FLAG_MEMBER:
+      return createStory(state, {
+        type: StoryType.FLAG_MEMBER,
         activities: activity
       });
     case ActivityType.INDEPENDENT_OPERATION:
@@ -899,6 +980,8 @@ export function createStory(
         return createVerifyMemberStory(state, storyData);
       case StoryType.EDIT_MEMBER:
         return createEditMemberStory(state, storyData);
+      case StoryType.FLAG_MEMBER:
+        return createFlagMemberStory(state, storyData);
       case StoryType.TRUST_MEMBER:
         return createTrustMemberStory(state, storyData);
       case StoryType.NEW_MEMBER:

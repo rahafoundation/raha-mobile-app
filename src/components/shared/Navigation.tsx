@@ -53,6 +53,10 @@ import { GovernancePage } from "../pages/AccountSettings/Governance";
 import { AccountRecoveryPage } from "../pages/AccountSettings/AccountRecovery";
 import { CurrencySettingsPage } from "../pages/AccountSettings/CurrencySettings";
 import { SignOutPage } from "../pages/AccountSettings/SignOut";
+import { FlagMemberPage } from "../pages/Flagging/FlagMember";
+import { generateRandomIdentifier } from "../../helpers/identifiers";
+import { FlagFeedPage } from "../pages/Flagging/FlagFeed";
+import { ResolveFlagMemberPage } from "../pages/Flagging/ResolveFlagMember";
 
 /**
  * Gets the current screen from navigation state.
@@ -118,7 +122,10 @@ export enum RouteName {
   Governance = "Governance",
   AccountRecovery = "Account Recovery",
   SignOut = "Sign Out",
-  CurrencySettings = "Currency Settings"
+  CurrencySettings = "Currency Settings",
+  FlagMemberPage = "Flag Member Page",
+  FlagFeed = "Flag Feed",
+  ResolveFlagMemberPage = "Resolve Flag Member Page"
 }
 
 // TODO: Move this to Deeplinking. Need to also move RouteName out to avoid
@@ -224,7 +231,9 @@ const Profile: NavigationRouteConfig = {
     const title =
       member !== OWN_PROFILE ? member.get("fullName") : "Your Profile";
     const headerRight =
-      member === OWN_PROFILE ? settingsButton(navigation) : <React.Fragment />;
+      member === OWN_PROFILE
+        ? settingsButton(navigation)
+        : flagButton(navigation, member);
 
     return {
       headerTitle: <HeaderTitle title={title} />,
@@ -238,6 +247,32 @@ const Profile: NavigationRouteConfig = {
 const Give = {
   screen: GiveScreen,
   navigationOptions: createHeaderNavigationOptions("Give Raha", true)
+};
+
+const FlagMember = {
+  screen: FlagMemberPage,
+  navigationOptions: createHeaderNavigationOptions("Flag Member", true)
+};
+
+const FlagFeed = {
+  screen: FlagFeedPage,
+  navigationOptions: ({ navigation }: any) => {
+    const member = navigation.getParam("member", OWN_PROFILE) as
+      | Member
+      | typeof OWN_PROFILE;
+
+    const title = `Flags on ${
+      member !== OWN_PROFILE
+        ? `${member.get("fullName")}'s Profile`
+        : "Your Profile"
+    }`;
+    return createHeaderNavigationOptions(title, true)({ navigation });
+  }
+};
+
+const ResolveFlagMember = {
+  screen: ResolveFlagMemberPage,
+  navigationOptions: createHeaderNavigationOptions("Resolve Flag", true)
 };
 
 type HeaderProps = {
@@ -278,6 +313,23 @@ function giveButton(navigation: any) {
   );
 }
 
+function flagButton(navigation: any, member: Member) {
+  return (
+    <TouchableOpacity>
+      <Icon
+        name="flag"
+        size={20}
+        onPress={() =>
+          navigation.navigate(RouteName.FlagMemberPage, {
+            memberToFlag: member,
+            apiCallId: generateRandomIdentifier()
+          })
+        }
+      />
+    </TouchableOpacity>
+  );
+}
+
 function settingsButton(navigation: any) {
   return (
     <TouchableOpacity
@@ -298,9 +350,12 @@ export function createNavigatorForTab(
     {
       ...routeConfigMap,
       [RouteName.ProfilePage]: Profile,
+      [RouteName.FlagFeed]: FlagFeed,
       [RouteName.MemberListPage]: MemberList,
       [RouteName.StoryListPage]: StoryList,
       [RouteName.GivePage]: Give,
+      [RouteName.FlagMemberPage]: FlagMember,
+      [RouteName.ResolveFlagMemberPage]: ResolveFlagMember,
       [RouteName.Verify]: {
         screen: Verify,
         navigationOptions: {

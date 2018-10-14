@@ -4,9 +4,10 @@
  * as ability to Mint.
  */
 import * as React from "react";
-import { TouchableHighlight, View } from "react-native";
+import { TouchableHighlight, View, TouchableOpacity } from "react-native";
 import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { NavigationScreenProps } from "react-navigation";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
@@ -37,6 +38,11 @@ import { activitiesInvolvingMembers } from "../../store/selectors/activities";
 import { storiesForActivities } from "../../store/selectors/stories";
 import { Story, StoryType } from "../../store/selectors/stories/types";
 import { List } from "immutable";
+import { FlaggedNotice } from "../shared/Cards/FlaggedNotice";
+import { UnverifiedNotice } from "../shared/Cards/UnverifiedNotice";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
+import { EnforcePermissionsButton } from "../shared/elements/EnforcePermissionsButton";
+import { CardStyles } from "../shared/Cards/CardStyles";
 
 interface NavParams {
   member: Member;
@@ -170,7 +176,8 @@ class ProfileView extends React.PureComponent<ProfileProps> {
     const disableTrustButton = alreadyTrusted || inProgressOrFinished;
 
     return (
-      <Button
+      <EnforcePermissionsButton
+        operationType={OperationType.TRUST}
         title={trustTitle}
         onPress={() => trust(member.get("memberId"))}
         disabled={disableTrustButton}
@@ -189,8 +196,7 @@ class ProfileView extends React.PureComponent<ProfileProps> {
     const alreadyVerified =
       loggedInMember &&
       member.get("verifiedBy").includes(loggedInMember.get("memberId"));
-    const loggedInMemberCanVerify =
-      loggedInMember && loggedInMember.get("isVerified");
+    const loggedInMemberCanVerify = loggedInMember;
     const inProgressOrFinished =
       verifyApiCallStatus &&
       verifyApiCallStatus.status !== ApiCallStatusType.FAILURE;
@@ -204,9 +210,10 @@ class ProfileView extends React.PureComponent<ProfileProps> {
       alreadyVerified || !loggedInMemberCanVerify || inProgressOrFinished;
 
     return (
-      <Button
+      <EnforcePermissionsButton
         // TODO: Come up with a solution for indicating action completed
         // Changing the text on these buttons forces them off the side of small screens
+        operationType={OperationType.VERIFY}
         title={verifyTitle}
         onPress={() =>
           navigation.navigate(RouteName.Verify, {
@@ -215,6 +222,35 @@ class ProfileView extends React.PureComponent<ProfileProps> {
         }
         disabled={disableVerify}
       />
+    );
+  }
+
+  renderProfileIsFlaggedStatus() {
+    const { member, isOwnProfile } = this.props;
+    const fullName = member.get("fullName");
+    const operationsFlaggingThisMember = member.get(
+      "operationsFlaggingThisMember"
+    );
+    return operationsFlaggingThisMember.isEmpty() ? null : (
+      <TouchableOpacity
+        style={[CardStyles.card, CardStyles.error, styles.flaggedStatus]}
+        onPress={() =>
+          this.props.navigation.navigate(RouteName.FlagFeed, {
+            member
+          })
+        }
+      >
+        <Icon name="flag" size={30} style={CardStyles.cardErrorIcon} />
+        <View style={CardStyles.cardBody}>
+          <Text>
+            Members of the Raha community have raised issues with{" "}
+            {isOwnProfile ? "your" : `${fullName}'s`} account.
+          </Text>
+          <Text style={CardStyles.cardBodyAction}>
+            Tap this notice to view their concerns.
+          </Text>
+        </View>
+      </TouchableOpacity>
     );
   }
 
@@ -235,6 +271,11 @@ class ProfileView extends React.PureComponent<ProfileProps> {
           stories={stories}
           header={
             <View style={styles.header}>
+              {this.renderProfileIsFlaggedStatus()}
+              {!isOwnProfile && (
+                <FlaggedNotice restrictedFrom="interacting with other members of Raha" />
+              )}
+              <UnverifiedNotice />
               <View style={styles.headerProfile}>
                 <Thumbnail member={member} />
                 <View style={styles.headerDetails}>

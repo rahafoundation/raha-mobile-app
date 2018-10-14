@@ -5,7 +5,6 @@
 import * as React from "react";
 
 import { StoryFeed } from "../shared/StoryFeed";
-import { Activity } from "../../store/selectors/activities/types";
 import { colors } from "../../helpers/colors";
 import { View } from "react-native";
 import { NavigationScreenProps } from "react-navigation";

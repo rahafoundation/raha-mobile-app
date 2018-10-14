@@ -3,7 +3,9 @@ import {
   OperationType,
   MintType,
   CreateMemberOperation,
-  VerifyOperation
+  VerifyOperation,
+  FlagMemberOperation,
+  ResolveFlagMemberOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 import {
@@ -21,10 +23,17 @@ import {
   CurrencyType
 } from "../../../components/shared/elements/Currency";
 import { List, Map } from "immutable";
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
+import {
+  MemberId,
+  OperationId
+} from "@raha/api-shared/dist/models/identifiers";
 import { GENESIS_VERIFY_OPS } from "../../reducers/members";
 
 interface NewMemberCacheValues {
+  index: number;
+}
+
+interface FlagMemberCacheValues {
   index: number;
 }
 
@@ -34,6 +43,7 @@ interface NewMemberCacheValues {
 interface ActivityBundlingCache {
   // member id -> index of corresponding NEW_MEMBER activity in the list
   newMember: Map<MemberId, NewMemberCacheValues>;
+  flagMember: Map<OperationId, FlagMemberCacheValues>;
 }
 
 /**
@@ -372,6 +382,81 @@ function addMintReferralBonusOperation(
   };
 }
 
+function addFlagMemberOperation(
+  existingData: ActivityBundlingData,
+  operation: FlagMemberOperation
+): ActivityBundlingData {
+  const { activities, bundlingCache } = existingData;
+
+  const nextIndex = activities.size;
+  return {
+    activities: activities.push({
+      type: ActivityType.FLAG_MEMBER,
+      operations: [operation]
+    }),
+    bundlingCache: {
+      ...bundlingCache,
+      flagMember: bundlingCache.flagMember.set(operation.id, {
+        index: nextIndex
+      })
+    }
+  };
+}
+
+function addResolveFlagMemberOperation(
+  existingData: ActivityBundlingData,
+  operation: ResolveFlagMemberOperation
+): ActivityBundlingData {
+  const { activities, bundlingCache } = existingData;
+
+  const existingActivityCacheData = bundlingCache.flagMember.get(
+    operation.data.flag_operation_id
+  );
+
+  if (!existingActivityCacheData) {
+    // Could this actually be a normal situation? Maybe if we only load "most-recent" operations? I think we should load "most-recent" activities instead of raw operations.
+    console.warn(
+      "Could not find an existing FLAG_MEMBER activity for RESOLVE_FLAG_MEMBER operation. Not applying operation."
+    );
+    return existingData;
+  }
+
+  const existingActivity = activities.get(existingActivityCacheData.index);
+  if (!existingActivity) {
+    console.warn(
+      "The activity indicated by the cache does not exist. Not applying operation."
+    );
+    return existingData;
+  }
+  if (existingActivity.type !== ActivityType.FLAG_MEMBER) {
+    console.warn(
+      "The activity indicated by the cache for this ResolveMemberFlag operation does not have the expected FLAG_MEMBER activity type. Not applying operation."
+    );
+    return existingData;
+  }
+
+  // We need to remove and re-add the existing activity to update its
+  // chronoligical position in the activities list.
+  const activitiesWithExistingActivityRemoved = activities.remove(
+    existingActivityCacheData.index
+  );
+  const newIndex = activitiesWithExistingActivityRemoved.size;
+
+  return {
+    activities: activitiesWithExistingActivityRemoved.push({
+      ...existingActivity,
+      operations: [...existingActivity.operations, operation]
+    }),
+    bundlingCache: {
+      ...bundlingCache,
+      flagMember: bundlingCache.flagMember.set(
+        operation.data.flag_operation_id,
+        { index: newIndex }
+      )
+    }
+  };
+}
+
 /**
  * Add a single operation to a list in progress of activities. Keeps track not
  * just of the final list, but of cached data to optimize the creation of
@@ -411,6 +496,10 @@ function addOperationToActivitiesList(
           );
       }
     }
+    case OperationType.FLAG_MEMBER:
+      return addFlagMemberOperation(existingData, operation);
+    case OperationType.RESOLVE_FLAG_MEMBER:
+      return addResolveFlagMemberOperation(existingData, operation);
     case OperationType.EDIT_MEMBER:
     case OperationType.REQUEST_VERIFICATION:
     case OperationType.GIVE:
@@ -451,11 +540,11 @@ function addOperationsToActivities(
         ...existingData,
         bundlingCache: existingData.bundlingCache
           ? existingData.bundlingCache
-          : { newMember: Map() }
+          : { newMember: Map(), flagMember: Map() }
       }
     : {
         activities: List(),
-        bundlingCache: { newMember: Map() }
+        bundlingCache: { newMember: Map(), flagMember: Map() }
       };
 
   return newOperations.reduce((memo, operation) => {
