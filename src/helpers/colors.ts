@@ -72,5 +72,9 @@ export const colors = {
     purple: "#C04DEE",
     blue: "#4AAFEE",
     red: "#FC515B"
-  }
+  },
+
+  // Modal
+  modalIcon: palette.lightGray,
+  modalBackground: palette.white
 };
