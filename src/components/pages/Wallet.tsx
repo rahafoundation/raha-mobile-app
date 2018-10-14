@@ -5,7 +5,8 @@ import {
   Image,
   TextStyle,
   ViewStyle,
-  ScrollView
+  ScrollView,
+  ImageStyle
 } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
@@ -267,7 +268,7 @@ const actionsSectionGetVerifiedTextBlockStyle: TextStyle = {
   margin: 12
 };
 
-const actionImageStyle: ViewStyle = {
+const actionImageStyle: ImageStyle = {
   marginTop: 8,
   flex: -1, // allow the image to shrink up to the min height
   flexBasis: 200,
