@@ -111,7 +111,8 @@ export class VideoWithPlaceholderView extends React.Component<
                 width: "100%",
                 height: "100%",
                 maxWidth: "100%",
-                maxHeight: "100%"
+                maxHeight: "100%",
+                ...(videoLoaded ? {} : { display: "none" })
               }}
             />
           )}
