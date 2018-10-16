@@ -412,6 +412,10 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
         }
         return (
           <IndependentPageContainer>
+            <Text style={{ textAlign: "center" }}>
+              This video will be shown publicly to show that you are a real
+              person.
+            </Text>
             <VideoUploader
               videoUri={videoUri}
               videoUploadRef={videoUploadRef}

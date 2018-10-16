@@ -12,6 +12,7 @@ import { styles } from "./styles";
 import { CheckBox } from "react-native-elements";
 import { palette } from "../../../helpers/colors";
 import { fonts } from "../../../helpers/fonts";
+import { Hint, IconType } from "../../shared/elements/Hint";
 
 /**
  * Page that requests user's email address
@@ -46,11 +47,27 @@ export class InputEmail extends React.Component<
           </Text>
           <View style={styles.body}>
             <View style={styles.card}>
-              <Text style={{ fontSize: 18 }}>
-                Please enter your email address:
-              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+              >
+                <Text style={{ fontSize: 18 }}>
+                  Please enter your email address:
+                </Text>
+                <Hint
+                  style={{ margin: 4 }}
+                  text={
+                    "We will use this email to send you information about your account. You can optionally " +
+                    "subscribe to our newsletter for updates about Raha."
+                  }
+                />
+              </View>
               {/*TODO: Unify email input InputEmail/SendInvite*/}
               <TextInput
+                style={styles.input}
                 keyboardType="email-address"
                 autoFocus={true}
                 placeholder="you@gmail.com"

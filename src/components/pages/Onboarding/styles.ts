@@ -53,6 +53,10 @@ const back: TextStyle = {
   padding: 12
 };
 
+const input: ViewStyle = {
+  margin: 8
+};
+
 export const styles = StyleSheet.create({
   cardPageContainer,
   page,
@@ -62,5 +66,6 @@ export const styles = StyleSheet.create({
   paragraph,
   paragraphText,
   button,
-  back
+  back,
+  input
 });

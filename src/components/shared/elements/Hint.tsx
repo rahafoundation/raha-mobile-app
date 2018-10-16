@@ -25,6 +25,7 @@ export enum IconType {
 type HintProps = {
   type?: IconType;
   text: string;
+  style?: ViewStyle;
 };
 
 type HintState = {
@@ -59,7 +60,8 @@ export class Hint extends React.Component<HintProps, HintState> {
         <TouchableOpacity style={styles.hintIcon} onPress={this._toggleModal}>
           <Icon
             name={this.props.type ? this.props.type : IconType.INFO}
-            size={20}
+            style={this.props.style}
+            size={16}
             color={colors.modalIcon}
           />
         </TouchableOpacity>

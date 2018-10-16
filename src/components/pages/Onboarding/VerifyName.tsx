@@ -9,6 +9,7 @@ import {
   IndependentPageContainer
 } from "../../shared/elements";
 import { styles } from "./styles";
+import { Hint } from "../../shared/elements/Hint";
 
 /**
  * Page that confirms user's full name
@@ -44,8 +45,20 @@ export class VerifyName extends React.Component<
           </Text>
           <View style={styles.body}>
             <View style={styles.card}>
-              <Text style={{ fontSize: 18 }}>Please enter your full name:</Text>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text style={{ fontSize: 18 }}>
+                  Please enter your full name:
+                </Text>
+                <Hint
+                  style={{ margin: 4 }}
+                  text={
+                    "Everybody's full names are displayed publicly on their profiles and transactions " +
+                    "so that members can check for duplicate or fake accounts."
+                  }
+                />
+              </View>
               <TextInput
+                style={styles.input}
                 autoCapitalize="words"
                 autoFocus={true}
                 onChangeText={text => this.setState({ verifiedName: text })}
