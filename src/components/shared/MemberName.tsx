@@ -10,11 +10,9 @@ import { RouteName } from "./Navigation";
 import { TextLink, LinkType } from "./elements/TextLink";
 import { fonts, fontSizes } from "../../helpers/fonts";
 import { palette } from "../../helpers/colors";
-import { MapStateToProps, connect } from "react-redux";
-import { RahaState } from "../../store";
-import { getLoggedInMemberId } from "../../store/selectors/authentication";
 
-interface OwnProps {
+// TODO it appears that today member is only prop used ... delete all others?
+interface Props {
   member: MemberData | typeof RAHA_BASIC_INCOME_MEMBER;
   style?: StyleProp<TextStyle>;
   hideStatusLabels?: boolean;
@@ -22,14 +20,7 @@ interface OwnProps {
   flaggedLabelStyle?: StyleProp<TextStyle>;
 }
 
-interface StateProps {
-  isOwnProfile: boolean;
-}
-
-type MemberNameProps = OwnProps & StateProps;
-
-const MemberNameComponent: React.StatelessComponent<MemberNameProps> = ({
-  isOwnProfile,
+export const MemberName: React.StatelessComponent<Props> = ({
   member,
   style,
   hideStatusLabels,
@@ -57,7 +48,7 @@ const MemberNameComponent: React.StatelessComponent<MemberNameProps> = ({
         destination={{
           type: LinkType.InApp,
           route: {
-            name: isOwnProfile ? RouteName.ProfileTab : RouteName.ProfilePage,
+            name: RouteName.ProfilePage,
             params: { member }
           }
         }}
@@ -76,22 +67,6 @@ const MemberNameComponent: React.StatelessComponent<MemberNameProps> = ({
     </Text>
   );
 };
-
-const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
-  state,
-  ownProps
-) => {
-  const { member } = ownProps;
-  const loggedInMemberId = getLoggedInMemberId(state);
-  return {
-    isOwnProfile:
-      member === RAHA_BASIC_INCOME_MEMBER
-        ? false
-        : member.get("memberId") === loggedInMemberId
-  };
-};
-
-export const MemberName = connect(mapStateToProps)(MemberNameComponent);
 
 const memberName: TextStyle = {
   ...fonts.Lato.Bold,

@@ -47,8 +47,8 @@ const FlaggedNoticeComponent: React.StatelessComponent<Props> = ({
             destination={{
               type: LinkType.InApp,
               route: {
-                name: RouteName.ProfileTab,
-                params: {}
+                name: RouteName.ProfilePage,
+                params: { member: loggedInMember }
               }
             }}
           >
