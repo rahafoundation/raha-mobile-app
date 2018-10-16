@@ -50,7 +50,7 @@ function determineOnPress({ destination, navigation }: TextLinkProps) {
   switch (destination.type) {
     case LinkType.InApp:
       return () =>
-        navigation.navigate(destination.route.name, destination.route.params);
+        navigation.push(destination.route.name, destination.route.params);
     case LinkType.Website:
       return () => Linking.openURL(destination.url);
     default:

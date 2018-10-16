@@ -49,8 +49,8 @@ const MemberThumbnailView: React.StatelessComponent<
         if (member === RAHA_BASIC_INCOME_MEMBER) {
           return;
         }
-        navigation.navigate(
-          isOwnProfile ? RouteName.ProfileTab : RouteName.ProfilePage,
+        navigation.push(
+          RouteName.ProfilePage,
           { member }
         );
       }}
