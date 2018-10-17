@@ -53,7 +53,7 @@ export class InputEmail extends React.Component<
                   alignItems: "baseline"
                 }}
               >
-                <Text style={{ fontSize: 18 }}>
+                <Text style={{ fontSize: 18, flex: 1 }}>
                   Please enter your email address:
                 </Text>
                 <Hint

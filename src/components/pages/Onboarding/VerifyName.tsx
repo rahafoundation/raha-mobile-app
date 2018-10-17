@@ -46,7 +46,7 @@ export class VerifyName extends React.Component<
           <View style={styles.body}>
             <View style={styles.card}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={{ fontSize: 18 }}>
+                <Text style={{ fontSize: 18, flex: 1 }}>
                   Please enter your full name:
                 </Text>
                 <Hint
