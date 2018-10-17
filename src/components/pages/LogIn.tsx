@@ -64,6 +64,7 @@ type StateProps = {
   isLoggedIn: boolean;
   hasAccount: boolean;
   phoneLogInStatus: RahaState["authentication"]["phoneLogInStatus"];
+  receivedConfirmationCode?: string;
 };
 
 interface DispatchProps {
@@ -230,6 +231,9 @@ interface ConfirmationCodeFormProps {
   signOut: () => void;
   waitingForConfirmation: boolean;
   sentTime?: Date;
+
+  // Receive the confirmation code from external sources
+  receivedConfirmationCode?: string;
 }
 
 interface ConfirmationCodeFormState {
@@ -284,6 +288,13 @@ class ConfirmationCodeForm extends React.Component<
       clearInterval(this.timerInterval);
       this.timerInterval = setInterval(this._updateTimeLeft, 1000);
     }
+    // If we received a confirmation code from external source, fill it in
+    if (
+      !!this.props.receivedConfirmationCode &&
+      this.props.receivedConfirmationCode !== prevProps.receivedConfirmationCode
+    ) {
+      this.setState({ confirmationCode: this.props.receivedConfirmationCode });
+    }
   }
 
   _updateTimeLeft = () => {
@@ -314,6 +325,15 @@ class ConfirmationCodeForm extends React.Component<
     this.props.onSubmit(this.state.confirmationCode);
   };
 
+  _handleCodeInput: TextInputProps["onChange"] = event => {
+    const code = event.nativeEvent.text;
+    let callback = undefined;
+    if (confirmationCodeIsValid(code)) {
+      callback = this._handleSubmit;
+    }
+    this.setState({ confirmationCode: code }, callback);
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -322,9 +342,8 @@ class ConfirmationCodeForm extends React.Component<
           <TextInput
             maxLength={6}
             style={styles.confirmationNumberInput}
-            onChange={event =>
-              this.setState({ confirmationCode: event.nativeEvent.text })
-            }
+            onChange={this._handleCodeInput}
+            value={this.state.confirmationCode}
             keyboardType="numeric"
             placeholder={"123456"}
             onSubmitEditing={this._handleSubmit}
@@ -490,6 +509,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
             // defensively set sentTime to the current time if it wasn't set,
             // which may briefly happen between state updates
             sentTime={this.state.phoneNumberSentTime}
+            receivedConfirmationCode={this.props.receivedConfirmationCode}
             waitingForConfirmation={
               !!this.props.phoneLogInStatus &&
               this.props.phoneLogInStatus.status ===
@@ -633,7 +653,8 @@ const mapStateToProps: MapStateToProps<
   return {
     isLoggedIn,
     hasAccount,
-    phoneLogInStatus: state.authentication.phoneLogInStatus
+    phoneLogInStatus: state.authentication.phoneLogInStatus,
+    receivedConfirmationCode: state.authentication.confirmationCode
   };
 };
 

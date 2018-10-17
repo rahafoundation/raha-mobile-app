@@ -22,7 +22,8 @@ export enum FirebaseAuthActionType {
   // Action used by only on Android when Firebase logs in automatically.
   AUTO_LOG_IN = "AUTH.AUTO_LOG_IN",
   SIGN_OUT = "AUTH.SIGN_OUT",
-  SIGNED_OUT = "AUTH.SIGNED_OUT"
+  SIGNED_OUT = "AUTH.SIGNED_OUT",
+  RECEIVED_CODE = "AUTH.RECEIVED_CODE"
 }
 export type AuthenticationActionType =
   | PhoneLogInActionType
@@ -32,8 +33,9 @@ export interface LogInAction {
   type: FirebaseAuthActionType.LOG_IN;
 }
 
-export interface AutoLogInAction {
-  type: FirebaseAuthActionType.AUTO_LOG_IN;
+export interface ReceivedCodeAction {
+  type: FirebaseAuthActionType.RECEIVED_CODE;
+  code: string;
 }
 
 export interface SignOutAction {
@@ -60,7 +62,7 @@ export type PhoneLogInAction =
 
 export type AuthenticationAction =
   | LogInAction
-  | AutoLogInAction
+  | ReceivedCodeAction
   | SignOutAction
   | SignedOutAction
   | PhoneLogInAction;
@@ -69,10 +71,11 @@ export const logInAction: ActionCreator<LogInAction> = (): LogInAction => ({
   type: FirebaseAuthActionType.LOG_IN
 });
 
-export const autoLogInAction: ActionCreator<
-  AutoLogInAction
-> = (): AutoLogInAction => ({
-  type: FirebaseAuthActionType.AUTO_LOG_IN
+export const receivedCodeAction: ActionCreator<ReceivedCodeAction> = (
+  code: string
+): ReceivedCodeAction => ({
+  type: FirebaseAuthActionType.RECEIVED_CODE,
+  code: code
 });
 
 const signOutAction: ActionCreator<SignOutAction> = (): SignOutAction => ({
@@ -132,9 +135,9 @@ export const initiatePhoneLogIn: AsyncActionCreator = (
             // This only happens on Android phones. Log in automatically.
             if (snapshot.code) {
               verificationId = snapshot.verificationId;
-              await _logInWithCredential(verificationId, snapshot.code);
               dispatch({
-                type: FirebaseAuthActionType.AUTO_LOG_IN
+                type: FirebaseAuthActionType.RECEIVED_CODE,
+                code: snapshot.code
               });
             }
             break;
