@@ -26,6 +26,7 @@ import { fontSizes } from "../../../helpers/fonts";
 import { colors } from "../../../helpers/colors";
 import { displayDropdownMessage } from "../../../store/actions/dropdown";
 import { DropdownType } from "../../../store/reducers/dropdown";
+import { Hint } from "../../shared/elements/Hint";
 
 /**
  * Parent component for Onboarding flow.
@@ -412,10 +413,26 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
         }
         return (
           <IndependentPageContainer>
-            <Text style={{ textAlign: "center", margin: 12 }}>
-              This video will be shown publicly to show that you are a real
-              person.
-            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                margin: 12
+              }}
+            >
+              <Text style={{ flex: 1, textAlign: "center" }}>
+                This video will be shown publicly as proof that you're a real
+                person.
+              </Text>
+              <Hint
+                style={{ paddingHorizontal: 4 }}
+                text={
+                  "Selfie videos are a core part of proving that you are a real person on Raha. Other people, including those " +
+                  "you aren't directly connected with, will be able to view your video to validate that you're who you " +
+                  "say you are."
+                }
+              />
+            </View>
             <VideoUploader
               videoUri={videoUri}
               videoUploadRef={videoUploadRef}

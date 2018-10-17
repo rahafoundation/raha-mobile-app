@@ -53,7 +53,11 @@ export class Hint extends React.Component<HintProps, HintState> {
           <View style={styles.modalContent}>
             <ScrollView>
               <Text style={{ margin: 8 }}>{this.props.text}</Text>
-              <Button title="Close" onPress={this._toggleModal} />
+              <Button
+                style={{ marginTop: 8 }}
+                title="Close"
+                onPress={this._toggleModal}
+              />
             </ScrollView>
           </View>
         </Modal>
