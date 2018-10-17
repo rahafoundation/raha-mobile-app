@@ -50,15 +50,14 @@ export class InputEmail extends React.Component<
               <View
                 style={{
                   flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center"
+                  alignItems: "baseline"
                 }}
               >
                 <Text style={{ fontSize: 18 }}>
                   Please enter your email address:
                 </Text>
                 <Hint
-                  style={{ margin: 4 }}
+                  style={{ paddingHorizontal: 4 }}
                   text={
                     "We will use this email to send you information about your account. You can optionally " +
                     "subscribe to our newsletter for updates about Raha."

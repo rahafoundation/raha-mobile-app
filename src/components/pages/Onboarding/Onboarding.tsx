@@ -412,7 +412,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
         }
         return (
           <IndependentPageContainer>
-            <Text style={{ textAlign: "center" }}>
+            <Text style={{ textAlign: "center", margin: 12 }}>
               This video will be shown publicly to show that you are a real
               person.
             </Text>

@@ -50,7 +50,7 @@ export class VerifyName extends React.Component<
                   Please enter your full name:
                 </Text>
                 <Hint
-                  style={{ margin: 4 }}
+                  style={{ paddingHorizontal: 4 }}
                   text={
                     "Everybody's full names are displayed publicly on their profiles and transactions " +
                     "so that members can check for duplicate or fake accounts."
