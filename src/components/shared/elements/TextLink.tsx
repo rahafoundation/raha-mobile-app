@@ -72,7 +72,11 @@ const TextLinkView: React.StatelessComponent<TextLinkProps> = props => {
   return (
     <Text
       onPress={determineOnPress(props)}
-      style={[styles.text, colored ? styles.colored : undefined, style]}
+      style={[
+        styles.text,
+        colored === undefined || colored ? styles.colored : undefined,
+        style
+      ]}
     >
       {children}
     </Text>
