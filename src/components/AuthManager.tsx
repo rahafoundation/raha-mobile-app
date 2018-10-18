@@ -6,13 +6,12 @@ import { auth } from "../firebaseInit";
 import { logInAction, signedOutAction } from "../store/actions/authentication";
 import { RNFirebase } from "react-native-firebase";
 
-type ReduxStateProps = {};
 type OwnProps = { children: React.ReactNode };
 type DispatchProps = {
   logIn: () => any;
   signOut: () => any;
 };
-type AuthManagerProps = OwnProps & DispatchProps & ReduxStateProps;
+type AuthManagerProps = OwnProps & DispatchProps;
 
 /**
  * Component that manages login state when the user is logged in by Firebase and

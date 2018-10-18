@@ -293,7 +293,10 @@ class ConfirmationCodeForm extends React.Component<
       !!this.props.receivedConfirmationCode &&
       this.props.receivedConfirmationCode !== prevProps.receivedConfirmationCode
     ) {
-      this.setState({ confirmationCode: this.props.receivedConfirmationCode });
+      this.setState(
+        { confirmationCode: this.props.receivedConfirmationCode },
+        this._handleSubmit
+      );
     }
   }
 
