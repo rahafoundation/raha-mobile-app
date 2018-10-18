@@ -31,6 +31,11 @@ import { UnverifiedNotice } from "../../shared/Cards/UnverifiedNotice";
 import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissionsButton";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
+// GROSS
+import { NativeModules, Platform } from "react-native";
+import numeral from "numeral";
+import * as alllocales from "numeral/locales";
+
 const MAX_MEMO_LENGTH = 140;
 // Donation rate is currently constant.
 const DONATION_RATE = 3;
@@ -77,7 +82,43 @@ class GiveFormView extends React.Component<Props, State> {
       toMember: toMemberId ? props.getMemberById(toMemberId) : undefined,
       memo: ""
     };
+
+    this._initCurrencyLocale();
   }
+
+  private _setLocale = (locale: string) => {
+    try {
+      numeral.locale(locale);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  private toLocaleCurrency = (value: string) => {
+    return numeral(value).format("0.00");
+  };
+
+  private _initCurrencyLocale = () => {
+    let locale;
+    let languageCode;
+    try {
+      // Full Locale (en-US)
+      locale = (Platform.OS === "ios"
+        ? NativeModules.SettingsManager.settings.AppleLocale
+        : NativeModules.I18nManager.localeIdentifier
+      ).replace("_", "-");
+
+      // Language Code ISO 639-1 (en)
+      languageCode = locale.split("-")[0];
+      console.log("YOLO", "set " + locale);
+    } catch (e) {
+      console.warn("Could not parse locale. ", e);
+      return;
+    }
+
+    this._setLocale(locale) || this._setLocale(languageCode);
+  };
 
   private isLessThanBalance: (amount: Big) => boolean = amount => {
     return (
@@ -252,7 +293,9 @@ class GiveFormView extends React.Component<Props, State> {
           <FormValidationMessage labelStyle={styles.helper}>
             Your balance:{" "}
             {this.props.loggedInMember
-              ? this.props.loggedInMember.get("balance").toString()
+              ? this.toLocaleCurrency(
+                  this.props.loggedInMember.get("balance").toString()
+                )
               : 0}{" "}
             Raha
           </FormValidationMessage>
