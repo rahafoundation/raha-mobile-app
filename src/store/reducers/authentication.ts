@@ -19,7 +19,7 @@ export enum PhoneLogInStatus {
 export interface AuthenticationState {
   isLoaded: boolean;
   isLoggedIn: boolean;
-  wasAutoLoggedIn?: boolean;
+  confirmationCode?: string;
   phoneLogInStatus:
     | {
         status:
@@ -48,18 +48,23 @@ export const reducer: Reducer<AuthenticationState> = (
   untypedAction
 ) => {
   const action = untypedAction as AuthenticationAction;
+
   switch (action.type) {
-    case FirebaseAuthActionType.AUTO_LOG_IN:
+    case FirebaseAuthActionType.RECEIVED_CODE: {
+      return {
+        ...state,
+        confirmationCode: action.code
+      };
+    }
     case FirebaseAuthActionType.LOG_IN: {
       return {
         // clear phone login status since we will transition out of the phone
-        // login flow now
+        // login flow nows
         phoneLogInStatus: {
           status: PhoneLogInStatus.WAITING_FOR_PHONE_NUMBER_INPUT
         },
         isLoaded: true,
-        isLoggedIn: true,
-        wasAutoLoggedIn: action.type === FirebaseAuthActionType.AUTO_LOG_IN
+        isLoggedIn: true
       };
     }
     case FirebaseAuthActionType.SIGN_OUT:
