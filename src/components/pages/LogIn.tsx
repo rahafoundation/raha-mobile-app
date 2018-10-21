@@ -49,6 +49,7 @@ import { colors } from "../../helpers/colors";
 import { KeyboardAwareScrollContainer } from "../shared/elements/KeyboardAwareScrollContainer";
 import { displayDropdownMessage } from "../../store/actions/dropdown";
 import { DropdownType } from "../../store/reducers/dropdown";
+import { TextLink, LinkType } from "../shared/elements/TextLink";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 const countries = getAllCountries().reduce<Map<string, Country>>(
@@ -546,6 +547,15 @@ class LogInView extends React.Component<LogInProps, LogInState> {
                 </Text>
               )}
               {this._renderContents()}
+              <TextLink
+                style={{ marginTop: 8, textAlign: "center" }}
+                destination={{
+                  type: LinkType.Website,
+                  url: "mailto:help@raha.app"
+                }}
+              >
+                Having trouble? Contact us!
+              </TextLink>
             </View>
           </View>
         </KeyboardAwareScrollContainer>
