@@ -109,11 +109,11 @@ export const initiatePhoneLogIn: AsyncActionCreator = (
     type: PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER
   });
 
-  await callValidateMobileNumber(config.apiBase, phoneNumber);
-
   // Handle phone state events manually so that we can know when the user is
   // logged in automatically.
   try {
+    await callValidateMobileNumber(config.apiBase, phoneNumber);
+
     await auth
       .verifyPhoneNumber(phoneNumber)
       .on("state_changed", async snapshot => {
