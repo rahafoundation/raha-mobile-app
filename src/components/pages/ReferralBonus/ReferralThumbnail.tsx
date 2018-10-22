@@ -46,7 +46,7 @@ import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissio
 
 const REFERRAL_BONUS_VALUE: CurrencyValue = {
   currencyType: CurrencyType.Raha,
-  value: new Big(REFERRAL_BONUS),
+  value: REFERRAL_BONUS,
   role: CurrencyRole.None
 };
 
