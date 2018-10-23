@@ -171,7 +171,7 @@ const Invite: React.StatelessComponent<Props> = props => {
             "Earn",
             {
               currencyType: CurrencyType.Raha,
-              value: new Big(REFERRAL_BONUS),
+              value: REFERRAL_BONUS,
               role: CurrencyRole.Transaction
             },
             "when friends you invite join Raha."
