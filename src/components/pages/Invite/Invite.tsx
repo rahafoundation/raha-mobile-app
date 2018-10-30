@@ -139,13 +139,13 @@ class InviteView extends React.Component<InviteProps, InviteState> {
       case InviteStep.SPECIFY_VIDEO_TOGETHER: {
         return (
           <SpecifyJointVideo
-            onNo={() => {
+            onRemote={() => {
               this.setState({
                 isJointVideo: false,
                 step: InviteStep.INSTRUCTIONS
               });
             }}
-            onYes={() => {
+            onInPerson={() => {
               this.setState({
                 isJointVideo: true,
                 step: InviteStep.INSTRUCTIONS
