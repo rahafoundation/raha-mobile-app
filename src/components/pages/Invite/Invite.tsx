@@ -18,14 +18,12 @@ import { generateToken } from "../../../helpers/token";
 import { SendInvite } from "./SendInvite";
 import { SpecifyJointVideo } from "./SpecifyJointVideo";
 import { InviteSplash } from "./InviteSplash";
-import { Instructions } from "./Instructions";
 import { displayDropdownMessage } from "../../../store/actions/dropdown";
 import { DropdownType } from "../../../store/reducers/dropdown";
 
 enum InviteStep {
   SPLASH,
   SPECIFY_VIDEO_TOGETHER,
-  INSTRUCTIONS,
   CAMERA,
   VIDEO_PREVIEW,
   SEND_INVITE
@@ -139,27 +137,18 @@ class InviteView extends React.Component<InviteProps, InviteState> {
       case InviteStep.SPECIFY_VIDEO_TOGETHER: {
         return (
           <SpecifyJointVideo
-            onNo={() => {
+            onRemote={() => {
               this.setState({
                 isJointVideo: false,
-                step: InviteStep.INSTRUCTIONS
+                step: InviteStep.CAMERA
               });
             }}
-            onYes={() => {
+            onInPerson={() => {
               this.setState({
                 isJointVideo: true,
-                step: InviteStep.INSTRUCTIONS
+                step: InviteStep.CAMERA
               });
             }}
-            onBack={this._handleSoftBackPress}
-          />
-        );
-      }
-      case InviteStep.INSTRUCTIONS: {
-        return (
-          <Instructions
-            isJointVideo={this.state.isJointVideo}
-            onContinue={() => this.setState({ step: InviteStep.CAMERA })}
             onBack={this._handleSoftBackPress}
           />
         );
@@ -174,6 +163,7 @@ class InviteView extends React.Component<InviteProps, InviteState> {
                 step: InviteStep.VIDEO_PREVIEW
               });
             }}
+            onBack={this._handleSoftBackPress}
           />
         );
       }

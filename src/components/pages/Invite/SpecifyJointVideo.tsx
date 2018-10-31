@@ -2,10 +2,11 @@ import * as React from "react";
 import { View } from "react-native";
 import { Text, Button } from "../../shared/elements";
 import { styles } from "./styles";
+import { fontSizes } from '../../../helpers/fonts';
 
 interface Props {
-  onNo: () => void;
-  onYes: () => void;
+  onRemote: () => void;
+  onInPerson: () => void;
   onBack: () => void;
 }
 
@@ -17,11 +18,21 @@ export const SpecifyJointVideo: React.StatelessComponent<Props> = props => {
       </Text>
       <View style={styles.body}>
         <Text style={styles.paragraph}>
-          Is the person you're inviting with you right now?
+          Would you like to create an in-person video together or invite your friend remotely?
         </Text>
         <View style={styles.actionRow}>
-          <Button title="No" style={styles.button} onPress={props.onNo} />
-          <Button title="Yes" style={styles.button} onPress={props.onYes} />
+          <Button
+            title="In-Person Invite"
+            style={styles.button}
+            onPress={props.onInPerson}
+          />
+        </View>
+        <View style={styles.actionRow}>
+          <Button
+            title="Remote Invite"
+            style={styles.button}
+            onPress={props.onRemote}
+          />
         </View>
       </View>
     </View>

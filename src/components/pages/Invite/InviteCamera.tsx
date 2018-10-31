@@ -20,18 +20,19 @@ type ReduxStateProps = {
 type OwnProps = {
   onVideoRecorded: (videoUri: string) => void;
   jointVideo: boolean;
+  onBack: () => void;
 };
 
 type InviteCameraProps = ReduxStateProps & OwnProps;
 
 export class InviteCameraView extends React.Component<InviteCameraProps> {
   render() {
+    const speechStyle = this.props.jointVideo ? styles.speech : sharedStyles.paragraph;
+    const nameStyle = [styles.name, this.props.jointVideo ? fontSizes.small : fontSizes.medium];
     return (
       <View style={sharedStyles.page}>
-        <Text style={sharedStyles.paragraph}>
-          {this.props.jointVideo
-            ? "Record a video with the person you're inviting."
-            : "Record a video of yourself inviting your friend to Raha."}
+        <Text style={sharedStyles.back} onPress={this.props.onBack}>
+          Back
         </Text>
         <Camera
           onVideoRecorded={uri => {
@@ -39,15 +40,17 @@ export class InviteCameraView extends React.Component<InviteCameraProps> {
           }}
         />
         <View style={styles.promptContainer}>
-          <Text style={styles.promptHeader}>Example of what to say:</Text>
-          <Text style={sharedStyles.paragraph}>
+          <Text style={styles.promptHeader}>
+          {this.props.jointVideo ? "Each say your full name, for example" : "Example of what to say"}:
+          </Text>
+          <Text style={speechStyle}>
             "Hi, my name is{" "}
-            <Text style={styles.name}>{this.props.ownFullName}</Text> and I'm
-            inviting <Text style={styles.name}>Jane Doe</Text> to Raha."
+            <Text style={nameStyle}>{this.props.ownFullName}</Text> and I'm
+            inviting <Text style={nameStyle}>Jane Doe</Text> to Raha."
           </Text>
           {this.props.jointVideo && (
-            <Text style={sharedStyles.paragraph}>
-              "My name is <Text style={styles.name}>Jane Doe</Text> and I'm
+            <Text style={speechStyle}>
+              "My name is <Text style={nameStyle}>Jane Doe</Text> and I'm
               joining Raha because I believe every life has value."
             </Text>
           )}
@@ -59,8 +62,7 @@ export class InviteCameraView extends React.Component<InviteCameraProps> {
 
 const styles = StyleSheet.create({
   name: {
-    ...fonts.Lato.Bold,
-    ...fontSizes.medium
+    ...fonts.Lato.Bold
   },
   promptHeader: {
     fontSize: 10,
@@ -69,6 +71,11 @@ const styles = StyleSheet.create({
   },
   promptContainer: {
     padding: 8
+  },
+  speech: {
+    ...fontSizes.small,
+    marginVertical: 4,
+    marginHorizontal: 20
   }
 });
 
