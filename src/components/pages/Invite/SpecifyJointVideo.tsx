@@ -2,6 +2,7 @@ import * as React from "react";
 import { View } from "react-native";
 import { Text, Button } from "../../shared/elements";
 import { styles } from "./styles";
+import { fontSizes } from '../../../helpers/fonts';
 
 interface Props {
   onRemote: () => void;
@@ -25,6 +26,8 @@ export const SpecifyJointVideo: React.StatelessComponent<Props> = props => {
             style={styles.button}
             onPress={props.onInPerson}
           />
+        </View>
+        <View style={styles.actionRow}>
           <Button
             title="Remote Invite"
             style={styles.button}
