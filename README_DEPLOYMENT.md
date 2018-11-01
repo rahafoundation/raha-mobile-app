@@ -57,8 +57,8 @@ git push --tags
 
 ### Android
 
-1.  Download and copy the `release.keystore` somewhere locally and copy the signing
-    keys from `release-signing.txt` and CodePush deployment keys into your `~/.gradle/gradle.properties`.
+1.  Download and copy the `release.keystore` from KeyBase somewhere locally and copy the signing
+   and CodePush deployment keys from `gradle.properties` into your `~/.gradle/gradle.properties`.
     Adjust the keystore path accordingly (use an absolute path).
 1.  Run `yarn bundle:android` to create a bundled and signed APK in
     `./android/app/build/outputs/apk/prod/release/app-prod-release.apk`.
@@ -101,7 +101,7 @@ TODO: Update what extraordinary circumstances are if we ever encounter them.
 #### Android
 
 1. Go to a commit without the new change but with the same app version number.
-1. Install a non-prod version via `./gradlew assembleDevProd`, which is
+1. Install a non-prod version via `./gradlew assembleDevProdRelease`, which is
    built with the Staging keys.
 
 #### iOS
