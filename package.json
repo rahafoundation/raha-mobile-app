@@ -24,7 +24,7 @@
     "codepush:ios:history:staging": "appcenter codepush deployment history Staging --app rahafoundation/iOS-Raha-App",
     "codepush:ios:history:production": "appcenter codepush deployment history Production --app rahafoundation/iOS-Raha-App",
     "postinstall": "./ios/fix-rncamera-search-paths.sh ./node_modules/react-native-camera/ios/RNCamera.xcodeproj/project.pbxproj",
-    "bumpVersion": "node scripts/incrementVersion.js"
+    "bumpVersion": "./scripts/checkiOSCodePushKey.sh && node scripts/incrementVersion.js"
   },
   "dependencies": {
     "@raha/api": "^0.2.11",
