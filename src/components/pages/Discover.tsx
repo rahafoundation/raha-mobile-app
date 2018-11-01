@@ -34,7 +34,8 @@ const CARD_IMAGE_IMPORTS = {
   community: require("../../assets/img/Community.png"),
   support: require("../../assets/img/Support.png"),
   hi: require("../../assets/img/Hi.png"),
-  trophy: require("../../assets/img/Trophy.png")
+  trophy: require("../../assets/img/Trophy.png"),
+  lightbulb: require("../../assets/img/Lightbulb.png")
 };
 
 type DiscoverCardRaw = {
