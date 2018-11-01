@@ -8,7 +8,7 @@ There are multiple ways to push updates:
 - Necessary for changes to native dependencies, permissions, etc.
 - Should be used for significant code changes.
 
-1. AppCenter Codepush
+2. AppCenter Codepush
 
 - Much faster.
 - Push updates to certain resources, namely Javascript code and some image
@@ -41,6 +41,7 @@ git push --tags
    distribution certificate by following the instructions at: https://developer.apple.com/account/ios/certificate/
    (NOTE: MAKE SURE YOU SECURE THIS CERTIFICATE, AS IT CAN BE USED TO PUSH UPDATES
    TO ALL OUR USERS. I saved mine in 1password and deleted the original file.)
+1. Download and copy `private.xcconfig` from Keybase into `ios/BuildConfig`. It contains the iOS CodePush deployment keys. Make sure to reopen XCode to refresh the configurations.
 1. Go to XCode
 1. Next to the Play and Stop buttons at the top, choose a device for the Raha
    target that allows for publication. If you need to register a device, let me
@@ -57,7 +58,7 @@ git push --tags
 ### Android
 
 1.  Download and copy the `release.keystore` somewhere locally and copy the signing
-    keys from `release-signing.txt` into your `~/.gradle/gradle.properties`.
+    keys from `release-signing.txt` and CodePush deployment keys into your `~/.gradle/gradle.properties`.
     Adjust the keystore path accordingly (use an absolute path).
 1.  Run `yarn bundle:android` to create a bundled and signed APK in
     `./android/app/build/outputs/apk/prod/release/app-prod-release.apk`.
@@ -78,17 +79,6 @@ so we should never need to both release to codepush and publish to the app store
 
 1. Make sure you have the latest dependencies installed by running `yarn install`.
 1. Login to appcenter via `yarn run appcenter login`.
-
-#### Android
-
-Add the codepush Android deployment keys to your `~/.gradle/gradle.properties` file so that
-so that your builds contain the proper codepush keys. The codepush deployment keys
-are shared via keybase.
-
-#### iOS
-
-Download and copy `private.xcconfig` from Keybase into `ios/BuildConfig`. It contains the
-iOS deployment keys. Make sure to reopen XCode to refresh the configurations.
 
 ### Releasing an update to CodePush
 
