@@ -123,7 +123,7 @@ const DISCOVER_INFO = convertCardArr([
   },
   {
     header: "Frequently Asked Questions",
-    bodyChoices: ["Find answers to common questions"],
+    bodyChoices: ["Find answers to common questions."],
     action: "View FAQ",
     uri: "https://raha.app/faq",
     image_uri: "question"
