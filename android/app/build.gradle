@@ -227,14 +227,12 @@ task copyDownloadableDepsToLibs(type: Copy) {
 apply plugin: 'com.google.gms.google-services'
 
 task validateCodePushKeys << {
-    println "validating"
     // CodePush deployment keys should not be missing in production build.
     assert project.hasProperty('RAHA_APPCENTER_CODEPUSH_PROD_KEY')
 }
 
 tasks.whenTaskAdded { task ->
-  if (task.name == 'assembleProdRelease') {
-      println "found assemble"
+  if (task.name == 'bundleProdReleaseJsAndAssets') {
     task.dependsOn validateCodePushKeys
   }
 }
