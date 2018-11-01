@@ -34,7 +34,8 @@ const CARD_IMAGE_IMPORTS = {
   community: require("../../assets/img/Community.png"),
   support: require("../../assets/img/Support.png"),
   hi: require("../../assets/img/Hi.png"),
-  trophy: require("../../assets/img/Trophy.png")
+  trophy: require("../../assets/img/Trophy.png"),
+  lightbulb: require("../../assets/img/Lightbulb.png")
 };
 
 type DiscoverCardRaw = {
@@ -121,6 +122,13 @@ const DISCOVER_INFO = convertCardArr([
     image_uri: "trophy"
   },
   {
+    header: "Frequently Asked Questions",
+    bodyChoices: ["Find answers to common questions."],
+    action: "View FAQ",
+    uri: "https://raha.app/faq",
+    image_uri: "question"
+  },
+  {
     header: "Feedback or questions?",
     bodyChoices: ["Contact the Raha team at hi@raha.app!"],
     action: "Send us an email",
@@ -147,7 +155,7 @@ const DISCOVER_INFO = convertCardArr([
     ],
     action: "Read more at GiveDirectly.org",
     uri: "https://www.givedirectly.org/research-on-cash-transfers",
-    image_uri: "question"
+    image_uri: "lightbulb"
   },
   {
     header: "Meet the Raha Community",
