@@ -34,6 +34,7 @@ export interface ActivityDefinition<
 > {
   type: Type;
   operations: RelatedOps;
+  childOperations?: ChildOperation[];
 }
 
 /**
@@ -100,6 +101,11 @@ export type IndependentOperation =
   | GiveOperation
   | RequestVerificationOperation
   | VerifyOperation;
+
+/**
+ * Operations cannot exist independently and must be attached to another operation.
+ */
+export type ChildOperation = TipGiveOperation;
 
 /**
  * Activity that corresponds to the process of a new member joining Raha, from
