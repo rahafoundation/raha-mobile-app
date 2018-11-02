@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View } from "react-native";
+import { View, ViewStyle } from "react-native";
 
 import {
   Button,
@@ -19,6 +19,7 @@ import { colors } from "react-native-elements";
 
 type OwnProps = {
   onInputInviteToken: (inviteToken: string) => any;
+  onContinueWithoutToken: () => any;
   onBack: () => any;
 };
 
@@ -76,7 +77,8 @@ class InputInviteTokenView extends React.Component<
           <View style={styles.body}>
             <View style={styles.card}>
               <Text style={{ fontSize: 18 }}>
-                Please enter your invite token:
+                If you were invited by an existing Raha member, please enter the
+                invite token you received in your invite email:
               </Text>
               <TextInput
                 autoFocus={true}
@@ -88,6 +90,7 @@ class InputInviteTokenView extends React.Component<
                   })
                 }
                 value={this.state.inviteToken}
+                style={styles.input}
               />
               {this.state.errorMessage && (
                 <Text style={[{ color: colors.error }, sharedStyles.paragraph]}>
@@ -95,11 +98,18 @@ class InputInviteTokenView extends React.Component<
                 </Text>
               )}
               <Button
-                title={`Confirm`}
+                title={`Confirm invite token`}
                 disabled={this.state.inviteToken === undefined}
+                style={styles.button}
                 onPress={() => {
                   this.validateInviteToken();
                 }}
+              />
+              <Button
+                title={`Continue without invite token`}
+                disabled={this.state.inviteToken !== undefined}
+                style={styles.button}
+                onPress={this.props.onContinueWithoutToken}
               />
             </View>
           </View>
@@ -108,4 +118,9 @@ class InputInviteTokenView extends React.Component<
     );
   }
 }
+
 export const InputInviteToken = connect(mapStateToProps)(InputInviteTokenView);
+
+const RowStyle: ViewStyle = {
+  marginTop: 8
+};
