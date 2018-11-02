@@ -446,7 +446,7 @@ class LogInView extends React.Component<LogInProps, LogInState> {
       const redirectParams = this.props.navigation.getParam("redirectParams");
       this.props.navigation.navigate(
         redirectTo,
-        ...(redirectParams ? redirectParams : {})
+        redirectParams ? redirectParams : {}
       );
       return;
     }

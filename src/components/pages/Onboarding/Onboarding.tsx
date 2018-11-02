@@ -27,6 +27,7 @@ import { colors } from "../../../helpers/colors";
 import { displayDropdownMessage } from "../../../store/actions/dropdown";
 import { DropdownType } from "../../../store/reducers/dropdown";
 import { Hint } from "../../shared/elements/Hint";
+import { styles } from "./styles";
 
 /**
  * Parent component for Onboarding flow.
@@ -159,6 +160,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
 
   componentDidMount() {
     BackHandler.addEventListener("hardwareBackPress", this._handleBackPress);
+    this._redirectIfLoggedOut();
   }
 
   componentWillUnmount() {
@@ -169,6 +171,10 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
     // Track forward changes in steps so we can handle backpresses.
     if (prevState && this.state.step > prevState.step) {
       this.steps.push(prevState.step);
+    }
+
+    if (prevProps.isLoggedIn && !this.props.isLoggedIn) {
+      this._redirectIfLoggedOut();
     }
 
     this.extractVideoUrlForLatestInviteToken();
@@ -183,6 +189,17 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       this.state.emailAddress
     ) {
       this._goToStep(this._validatedInviteTokenStep());
+    }
+  }
+
+  _redirectIfLoggedOut() {
+    if (!this.props.isLoggedIn) {
+      this.props.navigation.replace(RouteName.LogInPage, {
+        redirectTo: RouteName.OnboardingPage,
+        loginMessage:
+          "Welcome to Raha! Please sign up with your\nmobile number to accept your invite.",
+        redirectParams: this.props.navigation.state.params
+      });
     }
   }
 
@@ -294,13 +311,13 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
 
   _renderOnboardingStep() {
     if (!this.props.isLoggedIn) {
-      this.props.navigation.replace(RouteName.LogInPage, {
-        redirectTo: RouteName.OnboardingPage,
-        loginMessage:
-          "Welcome to Raha! Please sign up with your\nmobile number to accept your invite.",
-        redirectParams: this.props.navigation.state.params
-      });
-      return <Loading />;
+      return (
+        <View style={styles.page}>
+          <View style={{ flex: 1, alignItems: "center" }}>
+            <Loading />
+          </View>
+        </View>
+      );
     }
 
     switch (this.state.step) {
