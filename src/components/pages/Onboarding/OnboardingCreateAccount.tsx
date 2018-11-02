@@ -67,17 +67,23 @@ class OnboardingCreateAccountView extends React.Component<
     const statusType = status ? status.status : undefined;
     switch (statusType) {
       case ApiCallStatusType.STARTED:
-        return <Text>Creating account...</Text>;
+        return <Text style={styles.paragraph}>Creating account...</Text>;
       case ApiCallStatusType.SUCCESS:
-        return <Text>Account creation successful!</Text>;
+        return (
+          <Text style={styles.paragraph}>Account creation successful!</Text>
+        );
       case ApiCallStatusType.FAILURE:
-        return <Text>Account creation failed.</Text>;
+        return <Text style={styles.paragraph}>Account creation failed.</Text>;
       default:
         return undefined;
     }
   };
 
   render() {
+    const disableJoinButton =
+      !!this.props.createMemberStatus &&
+      this.props.createMemberStatus.status !== ApiCallStatusType.FAILURE;
+
     return (
       <IndependentPageContainer containerStyle={styles.cardPageContainer}>
         <ScrollView style={styles.page}>
@@ -128,6 +134,7 @@ class OnboardingCreateAccountView extends React.Component<
               </Text>
 
               <EnforcePermissionsButton
+                disabled={disableJoinButton}
                 operationType={OperationType.CREATE_MEMBER}
                 title="Join"
                 onPress={this.createAccount}
