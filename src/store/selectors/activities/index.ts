@@ -559,7 +559,7 @@ function addOperationToActivitiesList(
       if (operation.data.metadata) {
         switch (operation.data.metadata.type) {
           case GiveType.DIRECT_GIVE:
-            return addDirectGiveOperation(
+            return addIndependentOperation(
               existingData,
               operation as DirectGiveOperation
             );
@@ -574,9 +574,6 @@ function addOperationToActivitiesList(
               )}`
             );
         }
-      } else {
-        // TODO(tina): Migrate GIVE operations to have metadata block
-        return addIndependentOperation(existingData, operation);
       }
     case OperationType.EDIT_MEMBER:
     case OperationType.REQUEST_VERIFICATION:
