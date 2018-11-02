@@ -14,7 +14,8 @@ import {
   Activity,
   NewMemberRelatedOperations,
   ActivityType,
-  IndependentOperation
+  IndependentOperation,
+  ChildOperation
 } from "./types";
 import { RahaState } from "../../reducers";
 import { List, Map } from "immutable";
@@ -41,7 +42,7 @@ interface ActivityBundlingCache {
   flagMember: Map<OperationId, FlagMemberCacheValues>;
 
   // operation id -> list of children ops for that operation
-  childrenOps: Map<OperationId, Operation[]>;
+  childrenOps: Map<OperationId, ChildOperation[]>;
 }
 
 /**
@@ -607,7 +608,7 @@ function addOperationsToActivities(
         }
       };
 
-  return newOperations.reduce((memo, operation) => {
+  const result = newOperations.reduce((memo, operation) => {
     try {
       return addOperationToActivitiesList(memo, operation);
     } catch (err) {
@@ -618,7 +619,48 @@ function addOperationsToActivities(
       );
       return memo;
     }
-  }, initialBundlingData).activities;
+  }, initialBundlingData);
+
+  if (result.bundlingCache.childrenOps) {
+    // Add all children operations to the associated activity
+    const merged = result.activities.map(activity => {
+      return {
+        ...activity,
+        childOperations: mergeChildOpsForOps(
+          Array.isArray(activity.operations)
+            ? activity.operations
+            : [activity.operations],
+          result.bundlingCache.childrenOps
+        )
+      };
+    });
+    return merged;
+  } else {
+    return result.activities;
+  }
+}
+
+function mergeChildOpsForOps(
+  ops: Operation[],
+  childOps: Map<OperationId, ChildOperation[]>
+): ChildOperation[] {
+  // for each op, add up all the child ops
+  return ops.reduce(
+    (allChildOps, op) => {
+      const children = childOps.get(op.id);
+      if (children) {
+        return allChildOps.concat(children);
+      } else {
+        return allChildOps;
+      }
+    },
+    [] as ChildOperation[]
+  );
+}
+
+interface InitialActivityBundlingData {
+  activities: List<Activity>;
+  bundlingCache?: ActivityBundlingCache;
 }
 
 /**
