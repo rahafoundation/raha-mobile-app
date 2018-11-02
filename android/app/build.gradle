@@ -225,3 +225,14 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 // RN Firebase requires that this line be at
 apply plugin: 'com.google.gms.google-services'
+
+task validateCodePushKeys << {
+    // CodePush deployment keys should not be missing in production build.
+    assert project.hasProperty('RAHA_APPCENTER_CODEPUSH_PROD_KEY')
+}
+
+tasks.whenTaskAdded { task ->
+  if (task.name == 'bundleProdReleaseJsAndAssets') {
+    task.dependsOn validateCodePushKeys
+  }
+}
