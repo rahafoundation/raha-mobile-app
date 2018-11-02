@@ -35,9 +35,9 @@ enum OnboardingStep {
   SPLASH,
   VERIFY_NAME,
   INPUT_EMAIL,
+  INPUT_INVITE_TOKEN,
 
   CAMERA,
-  INPUT_INVITE_TOKEN,
   VIDEO_PREVIEW,
 
   CREATE_ACCOUNT
@@ -182,7 +182,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       this.state.verifiedName &&
       this.state.emailAddress
     ) {
-      this._goToStep(this._validatedCameraStep());
+      this._goToStep(this._validatedInviteTokenStep());
     }
   }
 
@@ -277,17 +277,19 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
   };
 
   /**
-   * Checks whether the user needs to record a video and returns the CAMERA
-   * OnboardingStep. Otherwise, returns CREATE_ACCOUNT to skip the step.
+   * Checks whether the user has a valid invite token. If not, it sends them to
+   * it requests them for an invite token. If they do, then it checks whether they need
+   * to take an identity video.
    */
-  _validatedCameraStep() {
-    return this.props.hasValidInviteToken &&
-      this.props.inviteVideoIsJoint &&
-      this.state.inviteVideoIsValid
-      ? // The new member does not need to take a verification video
-        // if they have a valid joint invite video.
-        OnboardingStep.CREATE_ACCOUNT
-      : OnboardingStep.CAMERA;
+  _validatedInviteTokenStep() {
+    return this.props.hasValidInviteToken && this.state.inviteVideoIsValid
+      ? // The new member is not requested to input an invite token
+        // if they already have a valid one.
+        // Note, Previously we would send the user directly to CREATE_ACCOUNT
+        // if the onboarding video was joint. Now we require an identity video from
+        // all users.
+        OnboardingStep.CAMERA
+      : OnboardingStep.INPUT_INVITE_TOKEN;
   }
 
   _renderOnboardingStep() {
@@ -335,7 +337,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
           <InputEmail
             onInputEmail={(email: string, subscribeToNewsletter: boolean) => {
               this.subscribeToNewsletter = subscribeToNewsletter;
-              this._goToStep(this._validatedCameraStep(), {
+              this._goToStep(this._validatedInviteTokenStep(), {
                 emailAddress: email
               });
             }}
@@ -351,6 +353,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
                 t: token
               });
             }}
+            onContinueWithoutToken={() => this._goToStep(OnboardingStep.CAMERA)}
             onBack={this._handleBackPress}
           />
         );
