@@ -2,18 +2,16 @@ import {
   Operation,
   CreateMemberOperation,
   VerifyOperation,
-  MintOperation,
-  MintReferralBonusPayload,
   GiveOperation,
   TrustOperation,
-  MintBasicIncomePayload,
   RequestVerificationOperation,
   EditMemberOperation,
   FlagMemberOperation,
   ResolveFlagMemberOperation,
   MintReferralBonusOperation,
   MintBasicIncomeOperation,
-  TipGiveOperation
+  TipGiveOperation,
+  DirectGiveOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 /**
@@ -21,6 +19,7 @@ import {
  */
 export enum ActivityType {
   INDEPENDENT_OPERATION = "INDEPENDENT_OPERATION",
+  GIVE = "GIVE",
 
   // CREATE_MEMBER + VERIFY + MINT_REFERRAL_BONUS
   NEW_MEMBER = "NEW_MEMBER",
@@ -33,11 +32,12 @@ export enum ActivityType {
  */
 export interface ActivityDefinition<
   Type extends ActivityType,
-  RelatedOps extends Operation | Operation[]
+  RelatedOps extends Operation | Operation[],
+  RelatedChildOp extends ChildOperation = never
 > {
   type: Type;
   operations: RelatedOps;
-  childOperations?: ChildOperation[];
+  childOperations?: RelatedChildOp[];
 }
 
 /**
@@ -117,6 +117,12 @@ export type FlagMemberActivity = ActivityDefinition<
   FlagMemberRelatedOperations
 >;
 
+export type GiveActivity = ActivityDefinition<
+  ActivityType.GIVE,
+  DirectGiveOperation,
+  TipGiveOperation
+>;
+
 /**
  * Activity corresponding to a single operation that reflects a conceptually
  * whole event on the system on its own.
@@ -136,4 +142,5 @@ export type IndependentOperationActivity = ActivityDefinition<
 export type Activity =
   | NewMemberActivity
   | FlagMemberActivity
-  | IndependentOperationActivity;
+  | IndependentOperationActivity
+  | GiveActivity;
