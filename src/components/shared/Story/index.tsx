@@ -4,7 +4,7 @@
  */
 import * as React from "react";
 import { formatRelative } from "date-fns";
-import { View, Image, ViewStyle } from "react-native";
+import { View, Image, ViewStyle, TouchableOpacity } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { MapStateToProps, connect } from "react-redux";
@@ -97,22 +97,28 @@ const CallToAction: React.StatelessComponent<{
                   </Text>
                 </View>
 
-                <Text
-                  style={{
-                    ...fontSizes.small,
-                    ...fonts.Lato.Bold,
-                    marginRight: 2,
-                    color: palette.darkGray
+                <TouchableOpacity
+                  onPress={() => {
+                    // TODO: Go to TipList
                   }}
                 >
-                  {piece.data.fromMemberIds.length}
-                </Text>
-                <Icon
-                  name="user"
-                  style={{ marginRight: 6 }}
-                  color={palette.darkGray}
-                  solid
-                />
+                  <Text
+                    style={{
+                      ...fontSizes.small,
+                      ...fonts.Lato.Bold,
+                      marginRight: 2,
+                      color: palette.darkGray
+                    }}
+                  >
+                    {piece.data.fromMemberIds.length}
+                  </Text>
+                  <Icon
+                    name="user"
+                    style={{ marginRight: 6 }}
+                    color={palette.darkGray}
+                    solid
+                  />
+                </TouchableOpacity>
                 <Currency
                   style={{ ...fontSizes.small }}
                   currencyValue={{
