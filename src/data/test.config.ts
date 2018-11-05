@@ -2,6 +2,11 @@ import { Config } from "./prod.config";
 
 export const config: Config = {
   apiBase: "https://raha-test.appspot.com/api/",
+  versionInfo: {
+    appVersion: "0.1.3",
+    iosCodepushVersion: 8,
+    androidCodepushVersion: 12
+  },
   publicVideoBucket: "raha-video-test",
   firebase: {
     ios: {
