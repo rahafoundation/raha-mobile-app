@@ -113,7 +113,6 @@ export const initiatePhoneLogIn: AsyncActionCreator = (
   // logged in automatically.
   try {
     await callValidateMobileNumber(config.apiBase, phoneNumber);
-
     await auth
       .verifyPhoneNumber(phoneNumber)
       .on("state_changed", async snapshot => {
@@ -139,6 +138,13 @@ export const initiatePhoneLogIn: AsyncActionCreator = (
                 type: FirebaseAuthActionType.RECEIVED_CODE,
                 code: snapshot.code
               });
+            } else {
+              // This is a bit of an odd scenario - but sometimes we receive
+              // auto-verified without a code or verificationId attached.
+              // We can't manually create the credential in this case, which
+              // we were doing to make the sign-in-flow less "magical" and thus confusing,
+              // so just do the magical thing instead of breaking.
+              auth.signInWithPhoneNumber(phoneNumber);
             }
             break;
         }
