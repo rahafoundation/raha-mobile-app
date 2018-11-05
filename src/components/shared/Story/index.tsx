@@ -4,11 +4,12 @@
  */
 import * as React from "react";
 import { formatRelative } from "date-fns";
-import { View, Image } from "react-native";
+import { View, Image, ViewStyle } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { MapStateToProps, connect } from "react-redux";
 
+import { Big } from "big.js";
 import { Text } from "../elements";
 import {
   VideoWithPlaceholderView,
@@ -19,7 +20,12 @@ import { MemberThumbnail } from "../MemberThumbnail";
 import { TextLink } from "../elements/TextLink";
 import { ArrowHeadDirection, ArrowHead } from "./ArrowHead";
 import { MixedText } from "../elements/MixedText";
-import { styles, leftColumnWidth, chainIndicatorColor } from "./styles";
+import {
+  styles,
+  leftColumnWidth,
+  chainIndicatorColor,
+  thumbnailMarginRight
+} from "./styles";
 import {
   RAHA_BASIC_INCOME_MEMBER,
   Member
@@ -36,16 +42,20 @@ import {
 } from "../../../store/selectors/stories/types";
 import { RahaState } from "../../../store";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
+import { Currency, CurrencyRole, CurrencyType } from "../elements/Currency";
+import { fonts, fontSizes } from "../../../helpers/fonts";
+import { palette } from "../../../helpers/colors";
 
 /**
- * TODO: test this for proper output
+ * TODOt: test this for proper output
  */
 const CallToAction: React.StatelessComponent<{
   member: Member;
   callToAction: CallToActionData;
-}> = ({ member, callToAction }) => {
+  style?: ViewStyle;
+}> = ({ member, callToAction, style }) => {
   return (
-    <View>
+    <View style={style}>
       {callToAction.map((piece, idx) => {
         switch (piece.type) {
           case CallToActionDataType.TEXT:
@@ -58,9 +68,59 @@ const CallToAction: React.StatelessComponent<{
             );
           case CallToActionDataType.TIP:
             return (
-              <Text key={idx}>
-                {piece.data.tipTotal} from {piece.data.tipUsers}
-              </Text>
+              <View
+                key={idx}
+                style={{ flexDirection: "row", alignItems: "center" }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginRight: 6,
+                    paddingHorizontal: 6,
+                    borderRadius: 3,
+                    borderWidth: 2,
+                    borderColor: palette.lightGray,
+                    alignItems: "center"
+                  }}
+                >
+                  <Icon name="caret-up" color={palette.darkMint} solid />
+                  <Text
+                    style={{
+                      ...fontSizes.small,
+                      ...fonts.Lato.Bold,
+                      color: palette.darkMint,
+                      textAlign: "center"
+                    }}
+                  >
+                    Tip
+                  </Text>
+                </View>
+
+                <Text
+                  style={{
+                    ...fontSizes.small,
+                    ...fonts.Lato.Bold,
+                    marginRight: 2,
+                    color: palette.darkGray
+                  }}
+                >
+                  {piece.data.tipUsers.length}
+                </Text>
+                <Icon
+                  name="user"
+                  style={{ marginRight: 6 }}
+                  color={palette.darkGray}
+                  solid
+                />
+                <Currency
+                  style={{ ...fontSizes.small }}
+                  currencyValue={{
+                    value: new Big(piece.data.tipTotal),
+                    role: CurrencyRole.Transaction,
+                    currencyType: CurrencyType.Raha
+                  }}
+                />
+              </View>
             );
           default:
             console.error(
@@ -266,8 +326,9 @@ class ActivityContent extends React.Component<{
           </Text>
         </View>
         {actorCallToAction &&
-        actorsData !== RAHA_BASIC_INCOME_MEMBER && ( // TODO
+        actorsData !== RAHA_BASIC_INCOME_MEMBER && ( // TODOt
             <CallToAction
+              style={{ marginLeft: leftColumnWidth + thumbnailMarginRight }}
               key={"tip"}
               member={actorsData[0]}
               callToAction={actorCallToAction}
