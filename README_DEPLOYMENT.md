@@ -58,7 +58,7 @@ git push --tags
 ### Android
 
 1.  Download and copy the `release.keystore` from KeyBase somewhere locally and copy the signing
-   and CodePush deployment keys from `gradle.properties` into your `~/.gradle/gradle.properties`.
+    and CodePush deployment keys from `gradle.properties` into your `~/.gradle/gradle.properties`.
     Adjust the keystore path accordingly (use an absolute path).
 1.  Run `yarn bundle:android` to create a bundled and signed APK in
     `./android/app/build/outputs/apk/prod/release/app-prod-release.apk`.
@@ -86,6 +86,7 @@ Under normal circumstances, we'd like to release to Android and iOS simultaneous
 
 TODO: Update what extraordinary circumstances are if we ever encounter them.
 
+1. Bump the codepush version using `yarn bumpVersion -r codepush --apply`
 1. [Build a pre-push Staging build](#staging-build-for-testing).
 1. Run `yarn codepush:[android|ios]:release`.
 1. Verify that your Staging build has received the new update.
