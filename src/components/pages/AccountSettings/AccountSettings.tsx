@@ -2,9 +2,13 @@ import * as React from "react";
 import { List, ListItem } from "react-native-elements";
 import { RouteName } from "../../shared/Navigation";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
-import { ScrollView } from "react-native";
+import { ScrollView, Platform } from "react-native";
 import { styles } from "./styles";
 import { generateRandomIdentifier } from "../../../helpers/identifiers";
+import { Text } from "../../shared/elements";
+import { config } from "../../../data/config";
+import { fontSizes } from "../../../helpers/fonts";
+import { colors } from "../../../helpers/colors";
 
 interface NavigationListItem {
   title: string;
@@ -59,6 +63,11 @@ type Props = OwnProps & NavigationInjectedProps;
 const AccountSettingsPageView: React.StatelessComponent<Props> = (
   props: Props
 ) => {
+  const versionInfo = config.versionInfo;
+  const codepushVersion =
+    Platform.OS === "ios"
+      ? versionInfo.iosCodepushVersion
+      : versionInfo.androidCodepushVersion;
   return (
     <ScrollView style={styles.page}>
       <List>
@@ -76,6 +85,12 @@ const AccountSettingsPageView: React.StatelessComponent<Props> = (
           />
         ))}
       </List>
+      <Text
+        style={[
+          fontSizes.small,
+          { textAlign: "center", margin: 4, color: colors.secondaryText }
+        ]}
+      >{`App Version: ${versionInfo.appVersion}-${codepushVersion}`}</Text>
     </ScrollView>
   );
 };
