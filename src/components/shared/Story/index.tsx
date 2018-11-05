@@ -4,7 +4,7 @@
  */
 import * as React from "react";
 import { formatRelative } from "date-fns";
-import { View, Image, ViewStyle } from "react-native";
+import { View, Image, ViewStyle, TouchableOpacity } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { MapStateToProps, connect } from "react-redux";
@@ -68,59 +68,65 @@ const CallToAction: React.StatelessComponent<{
             );
           case CallToActionDataType.TIP:
             return (
-              <View
-                key={idx}
-                style={{ flexDirection: "row", alignItems: "center" }}
+              <TouchableOpacity
+                onPress={() => {
+                  // TODO: Go to TipList
+                }}
               >
                 <View
-                  style={{
-                    flexDirection: "row",
-                    marginRight: 6,
-                    paddingHorizontal: 6,
-                    borderRadius: 3,
-                    borderWidth: 2,
-                    borderColor: palette.lightGray,
-                    alignItems: "center"
-                  }}
+                  key={idx}
+                  style={{ flexDirection: "row", alignItems: "center" }}
                 >
-                  <Icon name="caret-up" color={palette.darkMint} solid />
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginRight: 6,
+                      paddingHorizontal: 6,
+                      borderRadius: 3,
+                      borderWidth: 2,
+                      borderColor: palette.lightGray,
+                      alignItems: "center"
+                    }}
+                  >
+                    <Icon name="caret-up" color={palette.darkMint} solid />
+                    <Text
+                      style={{
+                        ...fontSizes.small,
+                        ...fonts.Lato.Bold,
+                        color: palette.darkMint,
+                        textAlign: "center"
+                      }}
+                    >
+                      Tip
+                    </Text>
+                  </View>
+
                   <Text
                     style={{
                       ...fontSizes.small,
                       ...fonts.Lato.Bold,
-                      color: palette.darkMint,
-                      textAlign: "center"
+                      marginRight: 2,
+                      color: palette.darkGray
                     }}
                   >
-                    Tip
+                    {piece.data.tipUsers.length}
                   </Text>
+                  <Icon
+                    name="user"
+                    style={{ marginRight: 6 }}
+                    color={palette.darkGray}
+                    solid
+                  />
+                  <Currency
+                    style={{ ...fontSizes.small }}
+                    currencyValue={{
+                      value: new Big(piece.data.tipTotal),
+                      role: CurrencyRole.Transaction,
+                      currencyType: CurrencyType.Raha
+                    }}
+                  />
                 </View>
-
-                <Text
-                  style={{
-                    ...fontSizes.small,
-                    ...fonts.Lato.Bold,
-                    marginRight: 2,
-                    color: palette.darkGray
-                  }}
-                >
-                  {piece.data.tipUsers.length}
-                </Text>
-                <Icon
-                  name="user"
-                  style={{ marginRight: 6 }}
-                  color={palette.darkGray}
-                  solid
-                />
-                <Currency
-                  style={{ ...fontSizes.small }}
-                  currencyValue={{
-                    value: new Big(piece.data.tipTotal),
-                    role: CurrencyRole.Transaction,
-                    currencyType: CurrencyType.Raha
-                  }}
-                />
-              </View>
+              </TouchableOpacity>
             );
           default:
             console.error(
