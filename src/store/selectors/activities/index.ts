@@ -559,7 +559,7 @@ function addOperationToActivitiesList(
       if (operation.data.metadata) {
         switch (operation.data.metadata.type) {
           case GiveType.DIRECT_GIVE:
-            return addIndependentOperation(
+            return addDirectGiveOperation(
               existingData,
               operation as DirectGiveOperation
             );
