@@ -175,6 +175,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
 
     if (prevProps.isLoggedIn && !this.props.isLoggedIn) {
       this._redirectIfLoggedOut();
+      return;
     }
 
     this.extractVideoUrlForLatestInviteToken();
