@@ -46,7 +46,6 @@ const CallToAction: React.StatelessComponent<{
 }> = ({ member, callToAction }) => {
   return (
     <View>
-      <MemberThumbnail style={styles.actorThumbnail} member={member} />
       {callToAction.map((piece, idx) => {
         switch (piece.type) {
           case CallToActionDataType.TEXT:
@@ -56,6 +55,12 @@ const CallToAction: React.StatelessComponent<{
               <TextLink key={idx} destination={piece.data.destination}>
                 {piece.data.text}
               </TextLink>
+            );
+          case CallToActionDataType.TIP:
+            return (
+              <Text key={idx}>
+                {piece.data.tipTotal} from {piece.data.tipUsers}
+              </Text>
             );
           default:
             console.error(
@@ -212,7 +217,7 @@ class ActivityContent extends React.Component<{
   ownVideoElems: VideoWithPlaceholderView[] = [];
 
   public render() {
-    const { actors, description, body } = this.props.content;
+    const { actors, actorCallToAction, description, body } = this.props.content;
     const actorsData: typeof RAHA_BASIC_INCOME_MEMBER | Member[] =
       actors === RAHA_BASIC_INCOME_MEMBER
         ? actors
@@ -260,6 +265,15 @@ class ActivityContent extends React.Component<{
             {description && <MixedText content={description} />}
           </Text>
         </View>
+        {actorCallToAction &&
+        actorsData !== RAHA_BASIC_INCOME_MEMBER && ( // TODO
+            <CallToAction
+              key={"tip"}
+              member={actorsData[0]}
+              callToAction={actorCallToAction}
+            />
+          )}
+        {/* TODOt actor based CTA here */}
         {body && (
           <React.Fragment>
             <View style={styles.contentBodyRow}>
