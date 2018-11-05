@@ -3,6 +3,7 @@ import { fontSizes } from "../../../helpers/fonts";
 import { colors, palette } from "../../../helpers/colors";
 
 export const leftColumnWidth = 50;
+export const thumbnailMarginRight = 10;
 const activitySpacing = 30;
 const sectionSpacing = 10;
 export const chainIndicatorColor = palette.veryLightGray;
@@ -39,7 +40,7 @@ const actorThumbnailStyle: ViewStyle = {
   flexGrow: 0,
   flexShrink: 0,
   flexBasis: leftColumnWidth,
-  marginRight: 10
+  marginRight: thumbnailMarginRight
 };
 
 const contentBodyRowStyle: ViewStyle = {
