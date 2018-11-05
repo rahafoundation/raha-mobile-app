@@ -9,7 +9,14 @@ const PromptConfirm = require("prompt-confirm");
 const process = require("process");
 const os = require("os");
 
-const PLATFORMS = ["packageJson", "ios", "android"];
+const VERSION_LOCATIONS = [
+  "packageJson",
+  "ios",
+  "android",
+  "testConfig",
+  "prodConfig"
+];
+const CODEPUSH = "codepush";
 
 const packageJsonPath = path.join(__dirname, "..", "package.json");
 const iosInfoPlistPath = path.join(
@@ -26,9 +33,63 @@ const androidGradleVersionPath = path.join(
   "app",
   "version.gradle"
 );
+const testConfigPath = path.join(
+  __dirname,
+  "..",
+  "src",
+  "data",
+  "test.config.ts"
+);
+const prodConfigPath = path.join(
+  __dirname,
+  "..",
+  "src",
+  "data",
+  "prod.config.ts"
+);
+const configAppVersionRegexTemplate = /((appVersion)|("appVersion"))\s*:\s*"(.*)"/g;
+const configIosCodepushVersionRegexTemplate = /((iosCodepushVersion)|("iosCodepushVersion"))\s*:\s*(\d+)/g;
+const configAndroidCodepushVersionRegexTemplate = /((androidCodepushVersion)|("androidCodepushVersion"))\s*:\s*(\d+)/g;
 
 /**
- * Get data from package json, info.plist, and build.gradle
+ * Gets version data from the given config file.
+ * @params config: The full text of the config file, configName: (for-display-only) name of the configuration.
+ * @returns {appVersion, androidCodepushVersion, iosCodepushVersion}
+ */
+function parseConfigVersionData(config, configName) {
+  const configAppVersionRegexResult = new RegExp(
+    configAppVersionRegexTemplate
+  ).exec(config);
+  if (!configAppVersionRegexResult) {
+    throw new Error(`Could not find key appVersion in ${configName} config.`);
+  }
+  const configIosCodepushVersionRegexResult = new RegExp(
+    configIosCodepushVersionRegexTemplate
+  ).exec(config);
+  if (!configIosCodepushVersionRegexResult) {
+    throw new Error(
+      `Could not find key iosCodepushVersion in ${configName} config.`
+    );
+  }
+  const configAndroidCodepushVersionRegexResult = new RegExp(
+    configAndroidCodepushVersionRegexTemplate
+  ).exec(config);
+  if (!configAndroidCodepushVersionRegexResult) {
+    throw new Error(
+      `Could not find key androidCodepushVersion in ${configName} config.`
+    );
+  }
+  return {
+    appVersion: configAppVersionRegexResult[4],
+    androidCodepushVersion: Number.parseInt(
+      configAndroidCodepushVersionRegexResult[4]
+    ),
+    iosCodepushVersion: Number.parseInt(configIosCodepushVersionRegexResult[4])
+  };
+}
+
+/**
+ * Get data from package json, info.plist, build.gradle, test.config.ts, and prod.config.ts.
  * @returns {Promise<{android: {versionName, versionCode, fullConfig}, ios: {versionName,
  * buildName, fullConfig}, packageJson: {versionName, fullConfig}}>}
  */
@@ -36,6 +97,11 @@ function parseVersionData() {
   return new Promise(resolve => {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
     const iosInfoPlist = plist.parse(fs.readFileSync(iosInfoPlistPath, "utf8"));
+
+    const testConfig = fs.readFileSync(testConfigPath, "utf8");
+    const prodConfig = fs.readFileSync(prodConfigPath, "utf8");
+    const testConfigVersionData = parseConfigVersionData(testConfig, "test");
+    const prodConfigVersionData = parseConfigVersionData(prodConfig, "prod");
 
     gradle2js
       .parseText(fs.readFileSync(androidGradleVersionPath, "utf8"))
@@ -55,6 +121,20 @@ function parseVersionData() {
             versionName: versionName,
             versionCode: Number.parseInt(versionCode),
             fullConfig: versionGradle
+          },
+          testConfig: {
+            versionName: testConfigVersionData.appVersion,
+            iosCodepushVersion: testConfigVersionData.iosCodepushVersion,
+            androidCodepushVersion:
+              testConfigVersionData.androidCodepushVersion,
+            fullConfig: testConfig
+          },
+          prodConfig: {
+            versionName: prodConfigVersionData.appVersion,
+            iosCodepushVersion: prodConfigVersionData.iosCodepushVersion,
+            androidCodepushVersion:
+              prodConfigVersionData.androidCodepushVersion,
+            fullConfig: prodConfig
           }
         });
       });
@@ -62,35 +142,36 @@ function parseVersionData() {
 }
 
 /**
- * Throws if any version in package.json, ios, and android is invalid.
+ * Throws if any version in package.json, ios, android, testConfig, prodConfig is invalid.
  */
 function validateVersionNames(data) {
-  const validData = PLATFORMS.reduce(
-    (memo, platform) => ({
+  const validData = VERSION_LOCATIONS.reduce(
+    (memo, location) => ({
       ...memo,
-      [platform]: {
-        versionName: data[platform].versionName,
-        valid: !!semver.valid(data[platform].versionName)
+      [location]: {
+        versionName: data[location].versionName,
+        valid: !!semver.valid(data[location].versionName)
       }
     }),
     {}
   );
-  const invalidPlatforms = Object.keys(validData).filter(
+  const invalidLocation = Object.keys(validData).filter(
     key => !validData[key].valid
   );
-  if (invalidPlatforms.length !== 0) {
-    const invalidPlatformsOutput = JSON.stringify(invalidPlatforms);
+  if (invalidLocation.length !== 0) {
+    const invalidLocationsOutput = JSON.stringify(invalidLocation);
     const versionDataOutput = JSON.stringify(validData, null, 2);
     throw new Error(
-      `Invalid existing version number for the following platforms: ${invalidPlatformsOutput}. Versions found: ${versionDataOutput}`
+      `Invalid existing version number for the following locations: ${invalidLocationsOutput}. Versions found: ${versionDataOutput}`
     );
   }
 
   // check if they're all consistent; if not show a warning
   if (
-    !PLATFORMS.every(
-      platform =>
-        validData[platform].versionName === validData[PLATFORMS[0]].versionName
+    !VERSION_LOCATIONS.every(
+      location =>
+        validData[location].versionName ===
+        validData[VERSION_LOCATIONS[0]].versionName
     )
   ) {
     // strip out the full config since it's a lot of data to show in a warning
@@ -107,7 +188,7 @@ function validateVersionNames(data) {
     );
     console.warn(
       chalk.yellow(
-        "Warning: Android, iOS, and package.json versions are out of sync."
+        "Warning: Android, iOS, package.json, testConfig, and prodConfig versions are out of sync."
       ),
       "Values:",
       chalk.bold(versionDataOutput)
@@ -161,11 +242,40 @@ function writePackageJson({ newPath, origPackageJSON, versionName }) {
   console.info(chalk.green("Wrote package.json.tmp!"));
 }
 
+function writeConfig({
+  configName,
+  newPath,
+  origConfig,
+  versionName,
+  iosCodepushVersion,
+  androidCodepushVersion
+}) {
+  console.info(
+    `Writing ${configName} config to temporary file:`,
+    chalk.bold(newPath)
+  );
+  const newConfig = origConfig
+    .replace(
+      new RegExp(configAppVersionRegexTemplate),
+      `appVersion: "${versionName}"`
+    )
+    .replace(
+      new RegExp(configIosCodepushVersionRegexTemplate),
+      `iosCodepushVersion: ${iosCodepushVersion}`
+    )
+    .replace(
+      new RegExp(configAndroidCodepushVersionRegexTemplate),
+      `androidCodepushVersion: ${androidCodepushVersion}`
+    );
+  fs.writeFileSync(newPath, newConfig);
+  console.info(chalk.green(`Wrote ${configName} config!`));
+}
+
 function generateAndSaveConfigs({ release, apply }) {
   parseVersionData().then(data => {
     validateVersionNames(data);
-    const highestVersion = PLATFORMS.map(
-      platform => data[platform].versionName
+    const highestVersion = VERSION_LOCATIONS.map(
+      location => data[location].versionName
     ).sort(semver.lt)[0];
 
     console.info("Previous semantic version:", chalk.bold(highestVersion));
@@ -173,20 +283,61 @@ function generateAndSaveConfigs({ release, apply }) {
       "Previous Android version code:",
       chalk.bold(data.android.versionCode)
     );
-    const nextVersionName = semver.inc(highestVersion, release);
-    const nextAndroidVersionCode = data.android.versionCode + 1;
     console.info(
-      chalk.bold("New semantic version:"),
-      chalk.blue(chalk.underline(chalk.bold(nextVersionName)))
+      "Previous iOS Codepush version code:",
+      chalk.bold(data.prodConfig.iosCodepushVersion)
     );
     console.info(
-      chalk.bold("New Android version code:"),
-      chalk.blue(chalk.underline(chalk.bold(nextAndroidVersionCode)))
+      "Previous Android Codepush version code:",
+      chalk.bold(data.prodConfig.androidCodepushVersion)
     );
+
+    const nextVersionName =
+      release === CODEPUSH
+        ? highestVersion
+        : semver.inc(highestVersion, release);
+    const nextAndroidVersionCode =
+      release === CODEPUSH
+        ? data.android.versionCode
+        : data.android.versionCode + 1;
+    const nextIosCodepushVersionCode =
+      release === CODEPUSH
+        ? data.prodConfig.iosCodepushVersion + 1
+        : data.prodConfig.iosCodepushVersion;
+    const nextAndroidCodepushVersionCode =
+      release === CODEPUSH
+        ? data.prodConfig.androidCodepushVersion + 1
+        : data.prodConfig.androidCodepushVersion;
+
+    if (release === CODEPUSH) {
+      console.info(
+        chalk.bold("Semantic and Android version codes have not changed.")
+      );
+      console.info(
+        chalk.bold("New iOS Codepush version code:"),
+        chalk.blue(chalk.underline(chalk.bold(nextIosCodepushVersionCode)))
+      );
+      console.info(
+        chalk.bold("New Android Codepush version code:"),
+        chalk.blue(chalk.underline(chalk.bold(nextAndroidCodepushVersionCode)))
+      );
+    } else {
+      console.info(
+        chalk.bold("New semantic version:"),
+        chalk.blue(chalk.underline(chalk.bold(nextVersionName)))
+      );
+      console.info(
+        chalk.bold("New Android version code:"),
+        chalk.blue(chalk.underline(chalk.bold(nextAndroidVersionCode)))
+      );
+      console.info(chalk.bold("Codepush versions have not changed."));
+    }
 
     const tmpIosPath = iosInfoPlistPath + ".tmp";
     const tmpAndroidPath = androidGradleVersionPath + ".tmp";
     const tmpPackageJsonPath = packageJsonPath + ".tmp";
+    const tmpTestConfigPath = testConfigPath + ".tmp";
+    const tmpProdConfigPath = prodConfigPath + ".tmp";
     writeIosVersion({
       newPath: tmpIosPath,
       origPlist: data.ios.fullConfig,
@@ -201,6 +352,22 @@ function generateAndSaveConfigs({ release, apply }) {
       newPath: tmpPackageJsonPath,
       origPackageJSON: data.packageJson.fullConfig,
       versionName: nextVersionName
+    });
+    writeConfig({
+      configName: "test",
+      newPath: tmpTestConfigPath,
+      origConfig: data.testConfig.fullConfig,
+      versionName: nextVersionName,
+      iosCodepushVersion: nextIosCodepushVersionCode,
+      androidCodepushVersion: nextAndroidCodepushVersionCode
+    });
+    writeConfig({
+      configName: "prod",
+      newPath: tmpProdConfigPath,
+      origConfig: data.prodConfig.fullConfig,
+      versionName: nextVersionName,
+      iosCodepushVersion: nextIosCodepushVersionCode,
+      androidCodepushVersion: nextAndroidCodepushVersionCode
     });
 
     console.info(
@@ -218,6 +385,8 @@ function generateAndSaveConfigs({ release, apply }) {
     fs.renameSync(tmpIosPath, iosInfoPlistPath);
     fs.renameSync(tmpAndroidPath, androidGradleVersionPath);
     fs.renameSync(tmpPackageJsonPath, packageJsonPath);
+    fs.renameSync(tmpTestConfigPath, testConfigPath);
+    fs.renameSync(tmpProdConfigPath, prodConfigPath);
     console.info(chalk.green("Process is complete. Exiting."));
   });
 }
@@ -227,7 +396,7 @@ function main() {
     .option("release", {
       alias: "r",
       desc: "Release type",
-      choices: ["major", "minor", "patch"],
+      choices: ["major", "minor", "patch", CODEPUSH],
       required: true
     })
     .option("apply", {
