@@ -98,7 +98,7 @@ class InputInviteTokenView extends React.Component<
                 </Text>
               )}
               <Button
-                title={`Confirm invite token`}
+                title="Confirm invite token"
                 disabled={this.state.inviteToken === undefined}
                 style={styles.button}
                 onPress={() => {
@@ -106,7 +106,7 @@ class InputInviteTokenView extends React.Component<
                 }}
               />
               <Button
-                title={`Continue without invite token`}
+                title="Continue without invite token"
                 disabled={this.state.inviteToken !== undefined}
                 style={styles.button}
                 onPress={this.props.onContinueWithoutToken}
