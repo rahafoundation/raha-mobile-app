@@ -142,11 +142,10 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
       this.props.inviteVideoToken
     );
     // We must be able to access the video specified by the invite.
+    const inviteTokenError =
+      "Invite video doesn't exist or has expired. Please try a different token or continue without a token.";
     if (!videoDownloadUrl) {
-      this._displayDropdownError(
-        "Error: Invalid Deeplink",
-        "Invite video doesn't exist or has expired. Please try signing up directly from your phone."
-      );
+      this._displayDropdownError("Error: Invalid Deeplink", inviteTokenError);
       this.setState({
         inviteVideoIsValid: false
       });
@@ -181,7 +180,7 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
     this.extractVideoUrlForLatestInviteToken();
 
     // If the video download URL has been validated for the first time and the
-    // user can be advanced to CAMERA or CREATE_ACCOUNT, do so. This will happen
+    // user can be advanced to CAMERA, do so. This will happen
     // if the user manually entered an invite token.
     if (
       !prevState.inviteVideoIsValid &&
@@ -523,7 +522,12 @@ async function extractDeeplinkVideoUrl(
   if (!videoToken || !invitingMember) {
     return undefined;
   }
-  return await getAuthRestrictedVideoRef(videoToken).getDownloadURL();
+  try {
+    return await getAuthRestrictedVideoRef(videoToken).getDownloadURL();
+  } catch {
+    console.warn(`Invite video for token ${videoToken} did not exist.`);
+    return undefined;
+  }
 }
 
 const mapStateToProps: MapStateToProps<ReduxStateProps, OwnProps, RahaState> = (
