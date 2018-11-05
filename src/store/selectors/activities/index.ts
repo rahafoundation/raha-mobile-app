@@ -7,7 +7,10 @@ import {
   FlagMemberOperation,
   ResolveFlagMemberOperation,
   MintReferralBonusOperation,
-  MintBasicIncomeOperation
+  MintBasicIncomeOperation,
+  DirectGiveOperation,
+  TipGiveOperation,
+  GiveType
 } from "@raha/api-shared/dist/models/Operation";
 
 import {
