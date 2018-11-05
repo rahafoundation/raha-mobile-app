@@ -138,6 +138,21 @@ function addCreateMemberOperation(
   };
 }
 
+function addDirectGiveOperation(
+  existingData: ActivityBundlingData,
+  operation: DirectGiveOperation
+): ActivityBundlingData {
+  const newActivity: Activity = {
+    type: ActivityType.GIVE,
+    operations: operation
+  };
+
+  return {
+    activities: existingData.activities.push(newActivity),
+    bundlingCache: existingData.bundlingCache
+  };
+}
+
 /**
  * Adds a VERIFY_MEMBER operation to the in-progress list of Activities.
  *
@@ -545,7 +560,7 @@ function addOperationToActivitiesList(
       if (operation.data.metadata) {
         switch (operation.data.metadata.type) {
           case GiveType.DIRECT_GIVE:
-            return addIndependentOperation(
+            return addDirectGiveOperation(
               existingData,
               operation as DirectGiveOperation
             );
@@ -627,15 +642,19 @@ function addOperationsToActivities(
   if (result.bundlingCache.childrenOps) {
     // Add all children operations to the associated activity
     const merged = result.activities.map(activity => {
-      return {
-        ...activity,
-        childOperations: mergeChildOpsForOps(
-          Array.isArray(activity.operations)
-            ? activity.operations
-            : [activity.operations],
-          result.bundlingCache.childrenOps
-        )
-      };
+      if (activity.type === ActivityType.GIVE) {
+        return {
+          ...activity,
+          childOperations: mergeChildOpsForOps(
+            Array.isArray(activity.operations)
+              ? activity.operations
+              : [activity.operations],
+            result.bundlingCache.childrenOps
+          )
+        };
+      } else {
+        return activity;
+      }
     });
     return merged;
   } else {
