@@ -118,6 +118,7 @@ export interface StoryContent {
    * display name in the format of a complete sentence.
    */
   description?: (string | CurrencyValue)[];
+
   /**
    * An invitation for the user to take an action on the Story that relates to
    * the actors of the Story. This will be rendered under the actor names.
