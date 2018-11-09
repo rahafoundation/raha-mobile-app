@@ -636,6 +636,15 @@
     enum-values "^1.2.1"
     http-status "^1.2.0"
 
+"@raha/api-shared@^0.1.17":
+  version "0.1.17"
+  resolved "https://registry.yarnpkg.com/@raha/api-shared/-/api-shared-0.1.17.tgz#82d06abc7e372ef319e3bcc074b360125604a51a"
+  integrity sha512-gFHLbhGQt7kw0c9g9i4wJA25RbUP5K2A6wGI84LR08urqA1nh4c5VDqPwdn0u3rzrjy+UDQqgHtH5AcFW+qV4Q==
+  dependencies:
+    big.js "^5.1.2"
+    enum-values "^1.2.1"
+    http-status "^1.2.0"
+
 "@raha/api@^0.2.11":
   version "0.2.11"
   resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.2.11.tgz#5eb9a296326dc88f63878ea1d7a9b9f8b42e8536"
