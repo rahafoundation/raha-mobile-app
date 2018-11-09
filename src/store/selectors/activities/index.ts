@@ -10,9 +10,7 @@ import {
   MintBasicIncomeOperation,
   TipGiveOperation,
   GiveType,
-  DirectGiveOperation,
-  MintReferralBonusOperation,
-  MintBasicIncomeOperation
+  DirectGiveOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 import {
