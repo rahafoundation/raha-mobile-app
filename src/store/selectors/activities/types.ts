@@ -10,7 +10,9 @@ import {
   RequestVerificationOperation,
   EditMemberOperation,
   FlagMemberOperation,
-  ResolveFlagMemberOperation
+  ResolveFlagMemberOperation,
+  MintReferralBonusOperation,
+  MintBasicIncomeOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 /**
@@ -34,17 +36,6 @@ export interface ActivityDefinition<
 > {
   type: Type;
   operations: RelatedOps;
-}
-
-/**
- * TODO: just expose these from @raha/api-shared
- */
-export interface MintReferralBonusOperation extends MintOperation {
-  data: MintReferralBonusPayload;
-}
-
-export interface MintBasicIncomeOperation extends MintOperation {
-  data: MintBasicIncomePayload;
 }
 
 /**
