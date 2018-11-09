@@ -577,10 +577,7 @@ function addOperationToActivitiesList(
         }
       } else {
         // TODO(tina): Migrate GIVE operations to have metadata block
-        return addDirectGiveOperation(
-          existingData,
-          operation as DirectGiveOperation
-        );
+        return addIndependentOperation(existingData, operation);
       }
     case OperationType.EDIT_MEMBER:
     case OperationType.REQUEST_VERIFICATION:

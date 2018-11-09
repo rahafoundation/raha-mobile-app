@@ -58,11 +58,8 @@ const CallToAction: React.StatelessComponent<{
               </TextLink>
             );
           case CallToActionDataType.TIP:
-            return (
-              <Text key={idx}>
-                {piece.data.tipTotal} from {piece.data.tipUsers}
-              </Text>
-            );
+            // TODO(tina): Make real component
+            return <Text key={idx}>{piece.data.tipTotal} as tip!</Text>;
           default:
             console.error(
               `Unexpected: invalid data type in piece of CallToAction. Piece:`,
