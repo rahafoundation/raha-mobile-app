@@ -38,7 +38,8 @@ import { RahaState } from "../../../store";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 
 /**
- * TODO: test this for proper output
+ * Component for call-to-actions that allow the user to interact with a rendered
+ * story.
  */
 const CallToAction: React.StatelessComponent<{
   member: Member;
@@ -238,14 +239,14 @@ class ActivityContent extends React.Component<{
             }
           />
           {/*
-            * Everything in the description must ultimately be Text elements, or
-            * else React Native doesn't support it. This is done to ensure text
-            * flows correctly in descriptions.
-            */}
+           * Everything in the description must ultimately be Text elements, or
+           * else React Native doesn't support it. This is done to ensure text
+           * flows correctly in descriptions.
+           */}
           <Text style={styles.description}>
             {/*
-              * Name at most the first three actors, and just summarize the rest
-              */}
+             * Name at most the first three actors, and just summarize the rest
+             */}
             {actorsData === RAHA_BASIC_INCOME_MEMBER ? (
               <MemberName member={actorsData} />
             ) : (
@@ -265,15 +266,15 @@ class ActivityContent extends React.Component<{
             {description && <MixedText content={description} />}
           </Text>
         </View>
+        {/* TODO(tina): Render call to action for tipping
         {actorCallToAction &&
-        actorsData !== RAHA_BASIC_INCOME_MEMBER && ( // TODO
+        actorsData !== RAHA_BASIC_INCOME_MEMBER && ( 
             <CallToAction
               key={"tip"}
               member={actorsData[0]}
               callToAction={actorCallToAction}
             />
-          )}
-        {/* TODOt actor based CTA here */}
+          )} */}
         {body && (
           <React.Fragment>
             <View style={styles.contentBodyRow}>

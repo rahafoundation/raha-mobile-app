@@ -23,6 +23,7 @@ import {
   FlagMemberActivity
 } from "../activities/types";
 import { Activity } from "../activities/types";
+import Big from "big.js";
 
 /**
  * Represents the direction of the relationship between actors in an story.
@@ -117,8 +118,10 @@ export interface StoryContent {
    * display name in the format of a complete sentence.
    */
   description?: (string | CurrencyValue)[];
-
-  // TODOt create the call to action here
+  /**
+   * An invitation for the user to take an action on the Story that relates to
+   * the actors of the Story. This will be rendered under the actor names.
+   */
   actorCallToAction?: CallToAction;
 
   /**
@@ -166,10 +169,10 @@ export type CallToActionPiece =
       data: TipData;
     };
 
-type TipData = {
-  tipTotal: number;
-  tipMember: MemberId;
-  tipUsers: MemberId[];
+export type TipData = {
+  tipTotal: Big;
+  toMemberId: MemberId;
+  fromMemberIds: MemberId[];
 };
 
 /**

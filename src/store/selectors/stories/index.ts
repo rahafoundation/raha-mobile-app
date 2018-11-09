@@ -27,7 +27,8 @@ import {
   OperationType,
   MintType,
   MintBasicIncomeOperation,
-  TipGiveOperation
+  TipGiveOperation,
+  TipMetadata
 } from "@raha/api-shared/dist/models/Operation";
 
 import { getMemberById } from "../members";
@@ -686,12 +687,34 @@ function createVerifyMemberStory(
   };
 }
 
-function createTipCallToAction(tips: TipGiveOperation[]): CallToAction {
-  const tipData = {
-    tipTotal: 10,
-    tipMember: "boop",
-    tipUsers: ["bertman dingus"]
-  };
+function createTipCallToAction(
+  member: Member,
+  tips?: TipGiveOperation[]
+): CallToAction | undefined {
+  if (!tips) {
+    return undefined;
+  }
+
+  const tipData = tips.reduce(
+    (data, tip) => {
+      if (tip.data.to_uid === member.get("memberId")) {
+        return {
+          tipTotal: data.tipTotal.plus(tip.data.donation_amount),
+          fromMemberIds: data.fromMemberIds.concat(tip.creator_uid),
+          toMemberId: data.toMemberId
+        };
+      } else {
+        // Skip -- this tip doesn't apply to the given member.
+        return data;
+      }
+    },
+    {
+      tipTotal: new Big(0),
+      toMemberId: member.get("memberId"),
+      fromMemberIds: [] as MemberId[]
+    }
+  );
+
   const piece = {
     type: CallToActionDataType.TIP,
     data: tipData
@@ -705,11 +728,6 @@ function createGiveRahaStory(
 ): Story {
   const operation = storyData.activities.operations;
   const tipOperations = storyData.activities.childOperations;
-
-  // TODOt: calculate calls to action for tipping
-  const callToAction = createTipCallToAction([]);
-  // if (tipOperations) {
-  // }
 
   // type suggestion since GENESIS_MEMBER is only possible for
   // VERIFY operations
@@ -735,7 +753,7 @@ function createGiveRahaStory(
     timestamp: operation.created_at,
     content: {
       actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
-      actorCallToAction: callToAction,
+      actorCallToAction: createTipCallToAction(creatorMember, tipOperations),
       description: ["gave", amountGiven, "for"],
       body: {
         bodyContent: {
@@ -748,7 +766,10 @@ function createGiveRahaStory(
             actors: OrderedMap({
               [givenToMember.get("memberId")]: givenToMember
             }),
-            actorCallToAction: callToAction,
+            actorCallToAction: createTipCallToAction(
+              givenToMember,
+              tipOperations
+            ),
             description: ["donated", amountDonated, "to Raha Basic Income"]
           }
         }
