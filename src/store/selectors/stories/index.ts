@@ -22,7 +22,8 @@ import {
 import {
   Operation,
   OperationType,
-  MintType
+  MintType,
+  MintBasicIncomeOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 import { getMemberById } from "../members";
