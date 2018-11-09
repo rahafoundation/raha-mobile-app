@@ -22,7 +22,8 @@ import {
 import {
   Operation,
   OperationType,
-  MintType
+  MintType,
+  MintBasicIncomeOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 import { getMemberById } from "../members";
@@ -43,7 +44,6 @@ import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import {
   Activity,
   IndependentOperationActivity,
-  MintBasicIncomeOperation,
   ActivityType
 } from "../activities/types";
 import { isGenesisVerificationActivity } from "../activities";

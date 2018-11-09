@@ -9,12 +9,12 @@ import {
   EditMemberOperation,
   RequestVerificationOperation,
   TrustOperation,
-  VerifyOperation
+  VerifyOperation,
+  MintBasicIncomeOperation
 } from "@raha/api-shared/dist/models/Operation";
 import { OrderedMap } from "immutable";
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import {
-  MintBasicIncomeOperation,
   NewMemberActivity,
   ActivityType,
   ActivityDefinition,
