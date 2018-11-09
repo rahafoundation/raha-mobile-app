@@ -26,12 +26,8 @@ import {
   Operation,
   OperationType,
   MintType,
-<<<<<<< HEAD
-  MintBasicIncomeOperation
-=======
   MintBasicIncomeOperation,
   TipGiveOperation
->>>>>>> Pipe all the data through
 } from "@raha/api-shared/dist/models/Operation";
 
 import { getMemberById } from "../members";
