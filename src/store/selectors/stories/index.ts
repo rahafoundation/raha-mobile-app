@@ -28,7 +28,8 @@ import {
   OperationType,
   MintType,
   MintBasicIncomeOperation,
-  TipGiveOperation
+  TipGiveOperation,
+  TipMetadata
 } from "@raha/api-shared/dist/models/Operation";
 
 import { getMemberById } from "../members";
@@ -695,7 +696,11 @@ function createTipCallToAction(
     return undefined;
   }
 
+<<<<<<< HEAD
   const tipData: TipData = tips.reduce(
+=======
+  const tipData = tips.reduce(
+>>>>>>> Fill in TODOs
     (data, tip) => {
       if (tip.data.to_uid === member.get("memberId")) {
         return {
@@ -715,7 +720,11 @@ function createTipCallToAction(
     }
   );
 
+<<<<<<< HEAD
   const piece: CallToActionPiece = {
+=======
+  const piece = {
+>>>>>>> Fill in TODOs
     type: CallToActionDataType.TIP,
     data: tipData
   };
@@ -770,7 +779,11 @@ function createGiveRahaStory(
               givenToMember,
               tipOperations
             ),
+<<<<<<< HEAD
             description: ["donated", amountDonated, "to the Raha Basic Income"]
+=======
+            description: ["donated", amountDonated, "to Raha Basic Income"]
+>>>>>>> Fill in TODOs
           }
         }
       }
