@@ -11,7 +11,7 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
-import { RouteName } from "../shared/Navigation";
+import { RouteName } from "../shared/navigation";
 import { Member } from "../../store/reducers/members";
 import { RahaThunkDispatch, RahaState } from "../../store";
 import { trustMember } from "../../store/actions/members";
@@ -174,8 +174,8 @@ class ProfileView extends React.PureComponent<ProfileProps> {
     const trustTitle = alreadyTrusted
       ? "Trusted"
       : !inProgressOrFinished
-        ? "Trust"
-        : "Trusting";
+      ? "Trust"
+      : "Trusting";
     const disableTrustButton = alreadyTrusted || inProgressOrFinished;
 
     return (
@@ -207,8 +207,8 @@ class ProfileView extends React.PureComponent<ProfileProps> {
     const verifyTitle = alreadyVerified
       ? "Verified"
       : inProgressOrFinished
-        ? "Verifying"
-        : "Verify";
+      ? "Verifying"
+      : "Verify";
     const disableVerify =
       alreadyVerified || !loggedInMemberCanVerify || inProgressOrFinished;
 
@@ -295,21 +295,20 @@ class ProfileView extends React.PureComponent<ProfileProps> {
                   />
                 </View>
               </View>
-              {!!loggedInMember &&
-                !isOwnProfile && (
-                  <View style={styles.memberActions}>
-                    {this.trustButton()}
-                    {this.verifyButton()}
-                    <Button
-                      title={currencySymbol(CurrencyType.Raha)}
-                      onPress={() =>
-                        navigation.navigate(RouteName.GivePage, {
-                          toMember: member
-                        })
-                      }
-                    />
-                  </View>
-                )}
+              {!!loggedInMember && !isOwnProfile && (
+                <View style={styles.memberActions}>
+                  {this.trustButton()}
+                  {this.verifyButton()}
+                  <Button
+                    title={currencySymbol(CurrencyType.Raha)}
+                    onPress={() =>
+                      navigation.navigate(RouteName.GivePage, {
+                        toMember: member
+                      })
+                    }
+                  />
+                </View>
+              )}
             </View>
           }
         />

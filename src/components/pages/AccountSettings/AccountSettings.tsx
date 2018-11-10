@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List, ListItem } from "react-native-elements";
-import { RouteName } from "../../shared/Navigation";
+import { RouteName } from "../../shared/navigation";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import { ScrollView, Platform } from "react-native";
 import { styles } from "./styles";

@@ -18,7 +18,7 @@ import {
 } from "../../helpers/memberDisplay";
 import { Member, RAHA_BASIC_INCOME_MEMBER } from "../../store/reducers/members";
 import { Text } from "./elements";
-import { RouteName } from "./Navigation";
+import { RouteName } from "./navigation";
 import { colors } from "../../helpers/colors";
 import { MapStateToProps, connect } from "react-redux";
 import { RahaState } from "../../store";
@@ -49,10 +49,7 @@ const MemberThumbnailView: React.StatelessComponent<
         if (member === RAHA_BASIC_INCOME_MEMBER) {
           return;
         }
-        navigation.push(
-          RouteName.ProfilePage,
-          { member }
-        );
+        navigation.push(RouteName.ProfilePage, { member });
       }}
     >
       <Text style={styles.thumbnailText}>

@@ -7,7 +7,7 @@ import { Text } from "../elements";
 import { CardStyles } from "./CardStyles";
 import { Member } from "../../../store/reducers/members";
 import { TextLink, LinkType } from "../elements/TextLink";
-import { RouteName } from "../Navigation";
+import { RouteName } from "../navigation";
 import { RahaState } from "../../../store";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 

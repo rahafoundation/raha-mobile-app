@@ -4,7 +4,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import codePush from "react-native-code-push";
 
 import { AuthManager } from "./AuthManager";
-import { Navigation } from "./shared/Navigation";
+import { Navigation } from "./shared/navigation/Navigation";
 import { store, persistor } from "../store";
 import { refreshMembers } from "../store/actions/members";
 import { MessagingManager } from "./MessagingManager";

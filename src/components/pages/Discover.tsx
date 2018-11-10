@@ -18,7 +18,7 @@ import {
 
 import { MemberSearchBar } from "../shared/MemberSearchBar";
 import { NavigationScreenProp } from "react-navigation";
-import { RouteName } from "../shared/Navigation";
+import { RouteName } from "../shared/navigation";
 import { Text } from "../shared/elements";
 import { sharedStyles } from "../shared/sharedStyles";
 import { colors, palette } from "../../helpers/colors";

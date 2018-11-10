@@ -6,7 +6,7 @@ import {
   RAHA_BASIC_INCOME_MEMBER
 } from "../../store/reducers/members";
 import { Text } from "./elements";
-import { RouteName } from "./Navigation";
+import { RouteName } from "./navigation";
 import { TextLink, LinkType } from "./elements/TextLink";
 import { fonts, fontSizes } from "../../helpers/fonts";
 import { palette } from "../../helpers/colors";

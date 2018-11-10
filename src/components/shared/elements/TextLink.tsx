@@ -2,7 +2,7 @@ import * as React from "react";
 import { NavigationInjectedProps, withNavigation } from "react-navigation";
 import { Text, TextStyle, StyleSheet, StyleProp, Linking } from "react-native";
 import { fonts } from "../../../helpers/fonts";
-import { RouteName } from "../Navigation";
+import { RouteName } from "../navigation";
 import { colors } from "../../../helpers/colors";
 
 /**

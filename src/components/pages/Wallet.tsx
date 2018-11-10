@@ -14,7 +14,7 @@ import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
 import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";
-import { RouteName } from "../shared/Navigation";
+import { RouteName } from "../shared/navigation";
 import { getLoggedInMember } from "../../store/selectors/authentication";
 import { NavigationScreenProps } from "react-navigation";
 import {
