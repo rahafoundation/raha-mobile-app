@@ -3,8 +3,8 @@ import { DropdownMessage, DropdownType } from "../reducers/dropdown";
 import { generateRandomIdentifier } from "../../helpers/identifiers";
 
 export enum DropdownActionsType {
-  ADD_DROPDOWN_MESSAGE,
-  DISMISS_DROPDOWN_MESSAGE
+  ADD_DROPDOWN_MESSAGE = "ADD_DROPDOWN_MESSAGE",
+  DISMISS_DROPDOWN_MESSAGE = "DISMISS_DROPDOWN_MESSAGE"
 }
 
 export interface DisplayDropdownMessageAction {

@@ -187,7 +187,7 @@ export const confirmPhoneLogIn: AsyncActionCreator = (
       // TODO: this probably isn't what we want to display
       errorMessage: err.message
     });
-    console.error("Confirming phone log in failed", JSON.stringify(err));
+    console.warn("Confirming phone log in failed", JSON.stringify(err));
     return;
   }
 };
