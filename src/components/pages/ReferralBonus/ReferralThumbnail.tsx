@@ -28,7 +28,7 @@ import {
 } from "../../../store/reducers/apiCalls";
 import { Member } from "../../../store/reducers/members";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
-import { RouteName } from "../../shared/Navigation";
+import { RouteName } from "../../shared/navigation";
 import { Text } from "../../shared/elements";
 import { ReferralBonusNavParams } from ".";
 import {

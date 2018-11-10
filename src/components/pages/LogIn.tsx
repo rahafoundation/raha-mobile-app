@@ -31,7 +31,7 @@ import {
   cancelPhoneLogIn
 } from "../../store/actions/authentication";
 import { RahaState, RahaThunkDispatch } from "../../store";
-import { RouteName } from "../shared/Navigation";
+import { RouteName } from "../shared/navigation";
 import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
 import { getMemberById } from "../../store/selectors/members";
 import { Button, Text } from "../shared/elements";
@@ -214,8 +214,8 @@ class PhoneNumberForm extends React.Component<
             this.props.waitingForCode
               ? "Requesting..."
               : phoneValid
-                ? "Request SMS Code"
-                : "Log In With Phone"
+              ? "Request SMS Code"
+              : "Log In With Phone"
           }
           onPress={this._handleSubmit}
           disabled={this.props.waitingForCode || !phoneValid}

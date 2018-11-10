@@ -19,7 +19,7 @@ import { Member } from "../../../store/reducers/members";
 import { getMemberById } from "../../../store/selectors/members";
 import { fontSizes } from "../../../helpers/fonts";
 import { MemberThumbnail } from "../../shared/MemberThumbnail";
-import { RouteName } from "../../shared/Navigation";
+import { RouteName } from "../../shared/navigation";
 import { generateRandomIdentifier } from "../../../helpers/identifiers";
 import { styles as sharedStyles } from "./styles";
 

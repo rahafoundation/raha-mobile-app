@@ -1,7 +1,7 @@
 import * as React from "react";
 import { NavigationScreenProps, NavigationActions } from "react-navigation";
 import { Loading } from "../shared/Loading";
-import { RouteName } from "../shared/Navigation";
+import { RouteName } from "../shared/navigation";
 
 type Props = { defaultRoute: RouteName } & NavigationScreenProps;
 

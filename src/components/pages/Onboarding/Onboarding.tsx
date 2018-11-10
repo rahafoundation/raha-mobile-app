@@ -16,7 +16,7 @@ import { OnboardingCamera } from "./OnboardingCamera";
 import { VideoUploader } from "../../shared/VideoUploader";
 import { OnboardingCreateAccount } from "./OnboardingCreateAccount";
 import { getMemberById } from "../../../store/selectors/members";
-import { RouteName } from "../../shared/Navigation";
+import { RouteName } from "../../shared/navigation";
 import { Loading } from "../../shared/Loading";
 import { generateToken } from "../../../helpers/token";
 import { IndependentPageContainer, Text } from "../../shared/elements";
@@ -337,8 +337,8 @@ class OnboardingView extends React.Component<OnboardingProps, OnboardingState> {
               this.state.verifiedName
                 ? this.state.verifiedName
                 : this.props.displayName
-                  ? this.props.displayName
-                  : undefined
+                ? this.props.displayName
+                : undefined
             }
             onVerifiedName={(verifiedName: string) => {
               this._goToStep(OnboardingStep.INPUT_EMAIL, {

@@ -1,7 +1,13 @@
 import { NavigationActions, NavigationParams } from "react-navigation";
 import url from "url";
 
-import { DEEPLINK_ROUTES } from "./Navigation";
+import { RouteName } from "../components/shared/navigation";
+
+export const DEEPLINK_ROUTES = {
+  invite: RouteName.OnboardingPage,
+  profileTab: RouteName.ProfileTab,
+  walletTab: RouteName.WalletTab
+};
 
 export function processDeeplink(link: string, navigation: any) {
   const deeplinkUrl = url.parse(link, true, true);

@@ -24,41 +24,42 @@ import { connect, MapStateToProps } from "react-redux";
 import firebase from "react-native-firebase";
 import { NotificationOpen } from "react-native-firebase/notifications";
 
-import { analytics } from "../../firebaseInit";
-import { Give as GiveScreen } from "../pages/Give";
-import { Feed } from "../pages/Feed";
-import { Wallet } from "../pages/Wallet";
-import { LogIn } from "../pages/LogIn";
-import { PendingInvites } from "../pages/PendingInvites";
-import { Profile as ProfileScreen } from "../pages/Profile";
-import { getMemberById } from "../../store/selectors/members";
-import { RahaState } from "../../store";
-import { MemberList as MemberListScreen } from "../pages/MemberList";
-import { StoryList as StoryListScreen } from "../pages/StoryList";
-import { Onboarding } from "../pages/Onboarding/Onboarding";
-import { ReferralBonus } from "../pages/ReferralBonus";
-import { getLoggedInFirebaseUserId } from "../../store/selectors/authentication";
-import { Text } from "./elements";
-import { Discover } from "../pages/Discover";
-import { LeaderBoard } from "../pages/LeaderBoard";
-import { Invite } from "../pages/Invite/Invite";
-import { colors, palette } from "../../helpers/colors";
-import { fonts, fontSizes } from "../../helpers/fonts";
-import { InitializationRouter } from "../pages/InitializationRouter";
-import { Member } from "../../store/reducers/members";
-import { Verify } from "../pages/Verify";
-import { processDeeplink, routeToPath } from "./Deeplinking";
+import { analytics } from "../../../firebaseInit";
+import { Give as GiveScreen } from "../../pages/Give";
+import { Feed } from "../../pages/Feed";
+import { Wallet } from "../../pages/Wallet";
+import { LogIn } from "../../pages/LogIn";
+import { PendingInvites } from "../../pages/PendingInvites";
+import { Profile as ProfileScreen } from "../../pages/Profile";
+import { getMemberById } from "../../../store/selectors/members";
+import { RahaState } from "../../../store";
+import { MemberList as MemberListScreen } from "../../pages/MemberList";
+import { StoryList as StoryListScreen } from "../../pages/StoryList";
+import { Onboarding } from "../../pages/Onboarding/Onboarding";
+import { ReferralBonus } from "../../pages/ReferralBonus";
+import { getLoggedInFirebaseUserId } from "../../../store/selectors/authentication";
+import { Text } from "../elements";
+import { Discover } from "../../pages/Discover";
+import { LeaderBoard } from "../../pages/LeaderBoard";
+import { Invite } from "../../pages/Invite/Invite";
+import { colors, palette } from "../../../helpers/colors";
+import { fonts, fontSizes } from "../../../helpers/fonts";
+import { InitializationRouter } from "../../pages/InitializationRouter";
+import { Member } from "../../../store/reducers/members";
+import { Verify } from "../../pages/Verify";
+import { processDeeplink, routeToPath } from "../../../helpers/deeplinking";
 import branch from "react-native-branch";
-import { AccountSettingsPage } from "../pages/AccountSettings/AccountSettings";
-import { EditMemberPage } from "../pages/AccountSettings/EditMember";
-import { GovernancePage } from "../pages/AccountSettings/Governance";
-import { AccountRecoveryPage } from "../pages/AccountSettings/AccountRecovery";
-import { CurrencySettingsPage } from "../pages/AccountSettings/CurrencySettings";
-import { SignOutPage } from "../pages/AccountSettings/SignOut";
-import { FlagMemberPage } from "../pages/Flagging/FlagMember";
-import { generateRandomIdentifier } from "../../helpers/identifiers";
-import { FlagFeedPage } from "../pages/Flagging/FlagFeed";
-import { ResolveFlagMemberPage } from "../pages/Flagging/ResolveFlagMember";
+import { AccountSettingsPage } from "../../pages/AccountSettings/AccountSettings";
+import { EditMemberPage } from "../../pages/AccountSettings/EditMember";
+import { GovernancePage } from "../../pages/AccountSettings/Governance";
+import { AccountRecoveryPage } from "../../pages/AccountSettings/AccountRecovery";
+import { CurrencySettingsPage } from "../../pages/AccountSettings/CurrencySettings";
+import { SignOutPage } from "../../pages/AccountSettings/SignOut";
+import { FlagMemberPage } from "../../pages/Flagging/FlagMember";
+import { generateRandomIdentifier } from "../../../helpers/identifiers";
+import { FlagFeedPage } from "../../pages/Flagging/FlagFeed";
+import { ResolveFlagMemberPage } from "../../pages/Flagging/ResolveFlagMember";
+import { RouteName } from ".";
 
 /**
  * Gets the current screen from navigation state.
@@ -98,45 +99,6 @@ function trackPageChanges(
     analytics.setCurrentScreen(currentScreen);
   }
 }
-
-export enum RouteName {
-  InitializationRouter = "InitializationRouter",
-  AccountPage = "Account",
-  GivePage = "Give",
-  FeedPage = "Feed Page",
-  FeedTab = "Feed",
-  InvitePage = "Invite",
-  LogInPage = "LogIn",
-  MemberListPage = "Member List",
-  StoryListPage = "Story List",
-  OnboardingPage = "Onboarding",
-  ProfilePage = "Profile Page",
-  ProfileTab = "Profile",
-  DiscoverPage = "DiscoverPage",
-  DiscoverTab = "Discover",
-  LeaderboardPage = "Leaderboard",
-  WalletPage = "WalletPage",
-  WalletTab = "Wallet",
-  ReferralBonusPage = "Referral Bonus",
-  PendingInvitesPage = "Pending Invites",
-  Verify = "Verify",
-  EditMemberPage = "Edit Member Page",
-  Governance = "Governance",
-  AccountRecovery = "Account Recovery",
-  SignOut = "Sign Out",
-  CurrencySettings = "Currency Settings",
-  FlagMemberPage = "Flag Member Page",
-  FlagFeed = "Flag Feed",
-  ResolveFlagMemberPage = "Resolve Flag Member Page"
-}
-
-// TODO: Move this to Deeplinking. Need to also move RouteName out to avoid
-// circular dependency loading.
-export const DEEPLINK_ROUTES = {
-  invite: RouteName.OnboardingPage,
-  profileTab: RouteName.ProfileTab,
-  walletTab: RouteName.WalletTab
-};
 
 const subHeaderStyle: TextStyle = {
   fontSize: 18
