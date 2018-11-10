@@ -98,7 +98,7 @@ const _logInWithCredential = async (
     verificationId,
     verificationCode
   );
-  await auth.signInAndRetrieveDataWithCredential(credential);
+  await auth.signInWithCredential(credential);
 };
 
 let verificationId: string;
