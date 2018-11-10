@@ -1,5 +1,6 @@
 import { NavigationActions, NavigationParams } from "react-navigation";
 import url from "url";
+
 import { DEEPLINK_ROUTES } from "./Navigation";
 
 export function processDeeplink(link: string, navigation: any) {

@@ -21,6 +21,8 @@ import {
   NavigationScreenProps
 } from "react-navigation";
 import { connect, MapStateToProps } from "react-redux";
+import firebase from "react-native-firebase";
+import { NotificationOpen } from "react-native-firebase/notifications";
 
 import { analytics } from "../../firebaseInit";
 import { Give as GiveScreen } from "../pages/Give";
@@ -131,7 +133,9 @@ export enum RouteName {
 // TODO: Move this to Deeplinking. Need to also move RouteName out to avoid
 // circular dependency loading.
 export const DEEPLINK_ROUTES = {
-  invite: RouteName.OnboardingPage
+  invite: RouteName.OnboardingPage,
+  profileTab: RouteName.ProfileTab,
+  walletTab: RouteName.WalletTab
 };
 
 const subHeaderStyle: TextStyle = {
@@ -610,11 +614,18 @@ type BranchParams = {
 
 class NavigationView extends React.Component<Props> {
   navigation: any;
-  _unsubscribeFromBranch: any;
+  _unsubscribeFromBranch?: () => void;
+  _unsubscribeFromNotificationOpen?: () => void;
 
   componentWillUnmount() {
-    this._unsubscribeFromBranch();
-    this._unsubscribeFromBranch = null;
+    if (this._unsubscribeFromBranch) {
+      this._unsubscribeFromBranch();
+      this._unsubscribeFromBranch = undefined;
+    }
+    if (this._unsubscribeFromNotificationOpen) {
+      this._unsubscribeFromNotificationOpen();
+      this._unsubscribeFromNotificationOpen = undefined;
+    }
   }
 
   _processBranchDeeplink = (branchParams: BranchParams) => {
@@ -653,9 +664,34 @@ class NavigationView extends React.Component<Props> {
     routeToPath(params["path"], this.navigation, params);
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     this._unsubscribeFromBranch = branch.subscribe(this._processBranchDeeplink);
+    this._unsubscribeFromNotificationOpen = firebase
+      .notifications()
+      .onNotificationOpened(this.handleNotificationOpen);
+    this.handleNotificationOpen(
+      await firebase.notifications().getInitialNotification()
+    );
   }
+
+  /**
+   * Takes an action based on a notification being opened.
+   */
+  handleNotificationOpen = async (
+    notificationOpen: NotificationOpen | undefined
+  ) => {
+    if (notificationOpen) {
+      console.log(notificationOpen);
+      const notification = notificationOpen.notification;
+      console.log(notification);
+      if (notification.data) {
+        const { deeplinkUrl } = notification.data;
+        if (deeplinkUrl) {
+          processDeeplink(deeplinkUrl, this.navigation);
+        }
+      }
+    }
+  };
 
   _setNavigationRef = (ref: any) => {
     // Check ref exists -- on Android, if Activity is popping off via backspace,
