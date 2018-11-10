@@ -8,6 +8,7 @@
 import * as React from "react";
 import firebase from "react-native-firebase";
 import { MapStateToProps, connect } from "react-redux";
+import { Notification } from "react-native-firebase/notifications";
 
 import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 
@@ -109,7 +110,7 @@ class MessagingManagerComponent extends React.Component<Props> {
    * OS notification to work on Android after a couple hours of trying,
    * and at I don't think the in-app dropdown is a bad experience.
    */
-  _displayPushNotification = async (remoteNotification: any) => {
+  _displayPushNotification = async (remoteNotification: Notification) => {
     this.props.displayDropdownMessage(
       DropdownType.INFO,
       remoteNotification.title,
