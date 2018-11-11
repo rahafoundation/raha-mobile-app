@@ -8,6 +8,7 @@ import { AsyncActionCreator } from ".";
 import { auth } from "../../firebaseInit";
 import { config } from "../../data/config";
 import branch from "react-native-branch";
+import { RahaThunkDispatch } from "..";
 
 export enum PhoneLogInActionType {
   PHONE_LOGIN_SENDING_PHONE_NUMBER = "AUTH.PHONE_LOGIN_SENDING_PHONE",
@@ -45,6 +46,10 @@ export interface SignedOutAction {
   type: FirebaseAuthActionType.SIGNED_OUT;
 }
 
+type PhoneLogInActionFailedType =
+  | PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED
+  | PhoneLogInActionType.PHONE_LOGIN_SENDING_CONFIRMATION_FAILED;
+
 export type PhoneLogInAction =
   | {
       type:
@@ -54,9 +59,7 @@ export type PhoneLogInAction =
         | PhoneLogInActionType.PHONE_LOGIN_SENDING_CONFIRMATION;
     }
   | {
-      type:
-        | PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED
-        | PhoneLogInActionType.PHONE_LOGIN_SENDING_CONFIRMATION_FAILED;
+      type: PhoneLogInActionFailedType;
       errorMessage: string;
     };
 
@@ -127,7 +130,16 @@ export const initiatePhoneLogIn: AsyncActionCreator = (
             break;
           case firebase.auth.PhoneAuthState.ERROR:
             if (snapshot.error) {
-              throw snapshot.error;
+              _dispatchError(
+                PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED,
+                snapshot.error,
+                dispatch
+              );
+            } else {
+              // Unexpected, it should always have an error.
+              console.warn(
+                "No error associated with Firebase Phone Auth ERROR state"
+              );
             }
             break;
           case firebase.auth.PhoneAuthState.AUTO_VERIFIED:
@@ -150,25 +162,37 @@ export const initiatePhoneLogIn: AsyncActionCreator = (
         }
       });
   } catch (err) {
-    let errorMessage = err.message;
-    // TODO: this is probably not what we want to display
-    // get API returned error message if parseable
-    // TODO: generate messages based on the error code
-    if (err instanceof ApiCallFailedError) {
-      try {
-        const responseBody = await err.response.json();
-        errorMessage = responseBody.message;
-      } catch (err2) {
-        // no-op
-      }
-    }
-
-    dispatch({
-      type: PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED,
-      errorMessage
-    });
-    console.error("Initiating phone log in failed", errorMessage);
+    _dispatchError(
+      PhoneLogInActionType.PHONE_LOGIN_SENDING_PHONE_NUMBER_FAILED,
+      err,
+      dispatch
+    );
   }
+};
+
+const _dispatchError = async (
+  type: PhoneLogInActionFailedType,
+  err: Error,
+  dispatch: RahaThunkDispatch
+) => {
+  let errorMessage = err.message;
+  // TODO: this is probably not what we want to display
+  // get API returned error message if parseable
+  // TODO: generate messages based on the error code
+  if (err instanceof ApiCallFailedError) {
+    try {
+      const responseBody = await err.response.json();
+      errorMessage = responseBody.message;
+    } catch (err2) {
+      // no-op
+    }
+  }
+
+  dispatch({
+    type,
+    errorMessage
+  });
+  console.error("Initiating phone log in failed", errorMessage);
 };
 
 export const confirmPhoneLogIn: AsyncActionCreator = (
