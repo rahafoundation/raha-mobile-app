@@ -681,9 +681,7 @@ class NavigationView extends React.Component<Props> {
     notificationOpen: NotificationOpen | undefined
   ) => {
     if (notificationOpen) {
-      console.log(notificationOpen);
       const notification = notificationOpen.notification;
-      console.log(notification);
       if (notification.data) {
         const { deeplinkUrl } = notification.data;
         if (deeplinkUrl) {
