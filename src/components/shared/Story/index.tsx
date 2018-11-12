@@ -9,7 +9,6 @@ import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { MapStateToProps, connect } from "react-redux";
 
-import { Big } from "big.js";
 import { Text } from "../elements";
 import {
   VideoWithPlaceholderView,
@@ -42,9 +41,7 @@ import {
 } from "../../../store/selectors/stories/types";
 import { RahaState } from "../../../store";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
-import { Currency, CurrencyRole, CurrencyType } from "../elements/Currency";
-import { fonts, fontSizes } from "../../../helpers/fonts";
-import { palette } from "../../../helpers/colors";
+import { Tip } from "./Tip";
 
 /**
  * Component for call-to-actions that allow the user to interact with a rendered
@@ -68,67 +65,7 @@ const CallToAction: React.StatelessComponent<{
               </TextLink>
             );
           case CallToActionDataType.TIP:
-            return (
-              <View
-                key={idx}
-                style={{ flexDirection: "row", alignItems: "center" }}
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    marginRight: 6,
-                    paddingHorizontal: 6,
-                    borderRadius: 3,
-                    borderWidth: 2,
-                    borderColor: palette.lightGray,
-                    alignItems: "center"
-                  }}
-                >
-                  <Icon name="caret-up" color={palette.darkMint} solid />
-                  <Text
-                    style={{
-                      ...fontSizes.small,
-                      ...fonts.Lato.Bold,
-                      color: palette.darkMint,
-                      textAlign: "center"
-                    }}
-                  >
-                    Tip
-                  </Text>
-                </View>
-
-                <TouchableOpacity
-                  onPress={() => {
-                    // TODO: Go to TipList
-                  }}
-                >
-                  <Text
-                    style={{
-                      ...fontSizes.small,
-                      ...fonts.Lato.Bold,
-                      marginRight: 2,
-                      color: palette.darkGray
-                    }}
-                  >
-                    {piece.data.fromMemberIds.length}
-                  </Text>
-                  <Icon
-                    name="user"
-                    style={{ marginRight: 6 }}
-                    color={palette.darkGray}
-                    solid
-                  />
-                </TouchableOpacity>
-                <Currency
-                  style={{ ...fontSizes.small }}
-                  currencyValue={{
-                    value: new Big(piece.data.tipTotal),
-                    role: CurrencyRole.Transaction,
-                    currencyType: CurrencyType.Raha
-                  }}
-                />
-              </View>
-            );
+            return <Tip key={idx} data={piece.data} />;
           default:
             console.error(
               `Unexpected: invalid data type in piece of CallToAction. Piece:`,
@@ -332,20 +269,14 @@ class ActivityContent extends React.Component<{
             {description && <MixedText content={description} />}
           </Text>
         </View>
-        {/* TODO(tina): Render call to action for tipping
-        {actorCallToAction &&
-<<<<<<< HEAD
-        actorsData !== RAHA_BASIC_INCOME_MEMBER && ( 
-=======
-        actorsData !== RAHA_BASIC_INCOME_MEMBER && ( // TODOt
->>>>>>> 58687245... Add tip UI
-            <CallToAction
-              style={{ marginLeft: leftColumnWidth + thumbnailMarginRight }}
-              key={"tip"}
-              member={actorsData[0]}
-              callToAction={actorCallToAction}
-            />
-          )} */}
+        {actorCallToAction && actorsData !== RAHA_BASIC_INCOME_MEMBER && (
+          <CallToAction
+            style={{ marginLeft: leftColumnWidth + thumbnailMarginRight }}
+            key={"tip"}
+            member={actorsData[0]}
+            callToAction={actorCallToAction}
+          />
+        )}
         {body && (
           <React.Fragment>
             <View style={styles.contentBodyRow}>
