@@ -1,7 +1,7 @@
 export const config = {
   apiBase: "https://raha-5395e.appspot.com/api/",
   versionInfo: {
-    appVersion: "0.1.3",
+    appVersion: "0.1.4",
     iosCodepushVersion: 9,
     androidCodepushVersion: 13
   },
