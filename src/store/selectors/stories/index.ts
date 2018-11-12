@@ -20,7 +20,8 @@ import {
   FlagMemberStoryData,
   CallToAction,
   CallToActionDataType,
-  CallToActionPiece
+  CallToActionPiece,
+  TipData
 } from "./types";
 import {
   Operation,
@@ -695,7 +696,7 @@ function createTipCallToAction(
     return undefined;
   }
 
-  const tipData = tips.reduce(
+  const tipData: TipData = tips.reduce(
     (data, tip) => {
       if (tip.data.to_uid === member.get("memberId")) {
         return {
@@ -715,10 +716,10 @@ function createTipCallToAction(
     }
   );
 
-  const piece = {
+  const piece: CallToActionPiece = {
     type: CallToActionDataType.TIP,
     data: tipData
-  } as CallToActionPiece;
+  };
   return [piece];
 }
 
@@ -770,7 +771,7 @@ function createGiveRahaStory(
               givenToMember,
               tipOperations
             ),
-            description: ["donated", amountDonated, "to Raha Basic Income"]
+            description: ["donated", amountDonated, "to the Raha Basic Income"]
           }
         }
       }

@@ -44,8 +44,10 @@ interface ActivityBundlingCache {
   newMember: Map<MemberId, NewMemberCacheValues>;
   flagMember: Map<OperationId, FlagMemberCacheValues>;
 
-  // operation id -> list of children ops for that operation
-  childrenOps: Map<OperationId, ChildOperation[]>;
+  // operation id -> list of child ops for that operation.
+  // It gets processed after the creation of all activities so that we don't
+  // have to rely on processing order of activities to attach them.
+  childOps: Map<OperationId, ChildOperation[]>;
 }
 
 /**
@@ -497,7 +499,7 @@ function addTipOperation(
     );
   }
 
-  const existingArray = bundlingCache.childrenOps.get(target_operation_id);
+  const existingArray = bundlingCache.childOps.get(target_operation_id);
   const newChildOps = existingArray
     ? existingArray.concat(operation)
     : [operation];
@@ -505,10 +507,7 @@ function addTipOperation(
     activities: activities,
     bundlingCache: {
       ...bundlingCache,
-      childrenOps: bundlingCache.childrenOps.set(
-        target_operation_id,
-        newChildOps
-      )
+      childOps: bundlingCache.childOps.set(target_operation_id, newChildOps)
     }
   };
 }
@@ -618,14 +617,14 @@ function addOperationsToActivities(
         ...existingData,
         bundlingCache: existingData.bundlingCache
           ? existingData.bundlingCache
-          : { newMember: Map(), flagMember: Map(), childrenOps: Map() }
+          : { newMember: Map(), flagMember: Map(), childOps: Map() }
       }
     : {
         activities: List(),
         bundlingCache: {
           newMember: Map(),
           flagMember: Map(),
-          childrenOps: Map()
+          childOps: Map()
         }
       };
 
@@ -642,7 +641,7 @@ function addOperationsToActivities(
     }
   }, initialBundlingData);
 
-  if (result.bundlingCache.childrenOps) {
+  if (result.bundlingCache.childOps) {
     // Add all children operations to the associated activity
     const merged = result.activities.map(activity => {
       if (activity.type === ActivityType.GIVE) {
@@ -652,7 +651,7 @@ function addOperationsToActivities(
             Array.isArray(activity.operations)
               ? activity.operations
               : [activity.operations],
-            result.bundlingCache.childrenOps
+            result.bundlingCache.childOps
           )
         };
       } else {
