@@ -29,7 +29,8 @@ import {
   MintType,
   MintBasicIncomeOperation,
   TipGiveOperation,
-  TipMetadata
+  TipMetadata,
+  GiveType
 } from "@raha/api-shared/dist/models/Operation";
 
 import { getMemberById } from "../members";
@@ -53,6 +54,7 @@ import {
   ActivityType
 } from "../activities/types";
 import { isGenesisVerificationActivity } from "../activities";
+import { da } from "date-fns/esm/locale";
 
 function videoReferenceForUri(videoUri: string): VideoReference {
   return {
@@ -693,14 +695,19 @@ function createTipCallToAction(
   tips?: TipGiveOperation[]
 ): CallToAction | undefined {
   if (!tips) {
-    return undefined;
+    return [
+      {
+        type: CallToActionDataType.TIP,
+        data: {
+          tipTotal: new Big(10),
+          fromMemberIds: [member.get("memberId")],
+          toMemberId: member.get("memberId")
+        }
+      }
+    ];
   }
 
-<<<<<<< HEAD
   const tipData: TipData = tips.reduce(
-=======
-  const tipData = tips.reduce(
->>>>>>> Fill in TODOs
     (data, tip) => {
       if (tip.data.to_uid === member.get("memberId")) {
         return {
@@ -720,11 +727,7 @@ function createTipCallToAction(
     }
   );
 
-<<<<<<< HEAD
   const piece: CallToActionPiece = {
-=======
-  const piece = {
->>>>>>> Fill in TODOs
     type: CallToActionDataType.TIP,
     data: tipData
   };
@@ -779,11 +782,7 @@ function createGiveRahaStory(
               givenToMember,
               tipOperations
             ),
-<<<<<<< HEAD
             description: ["donated", amountDonated, "to the Raha Basic Income"]
-=======
-            description: ["donated", amountDonated, "to Raha Basic Income"]
->>>>>>> Fill in TODOs
           }
         }
       }
