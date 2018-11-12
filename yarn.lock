@@ -627,21 +627,21 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@raha/api-shared@^0.1.18":
-  version "0.1.18"
-  resolved "https://registry.yarnpkg.com/@raha/api-shared/-/api-shared-0.1.18.tgz#1f7fb6247c50779c81325a4a4f2c93424d20ef84"
-  integrity sha512-ZYsX6dPQ7+vfEdammTxPF8By3x+7Za+Zi4xCxixnSRTH74B3B5dEf4798Yx+k54e6karI9EpR7KX2Fmx3wleww==
+"@raha/api-shared@^0.1.19":
+  version "0.1.19"
+  resolved "https://registry.yarnpkg.com/@raha/api-shared/-/api-shared-0.1.19.tgz#461c0d87070360b08a161898905ce361296a83ac"
+  integrity sha512-Y2GcYiHoBx/+b8pNT4CLjRrbv/jWibknhEBLWpGNBFIBaQkGf1Aj0OFhW3rD8RbdR8Ih9eOTLhTc8XiSaj1sFg==
   dependencies:
     big.js "^5.1.2"
     enum-values "^1.2.1"
     http-status "^1.2.0"
 
-"@raha/api@^0.2.12":
-  version "0.2.12"
-  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.2.12.tgz#16f7ab06210e977e180339088850a03567b304c2"
-  integrity sha512-Q5+1Vzi1HwjbApYFzrB6RAMzC5KEY3kAjvgiH6Hu6tx/sFxXnoAP0p/lhIOr37FuLQPNIyql3ldijy1okRFLtg==
+"@raha/api@^0.2.14":
+  version "0.2.14"
+  resolved "https://registry.yarnpkg.com/@raha/api/-/api-0.2.14.tgz#c6d3f621e1495693d8c7813f53fd17453c3bde1d"
+  integrity sha512-ltaA0eCA4MRVBuYdS87P57IZUrxWRnnY0cOKUDC/qf6z5LIfxydlKjN2J6vF8qh5Cbt9i5B8ts2CzorkRlzyFA==
   dependencies:
-    "@raha/api-shared" "^0.1.18"
+    "@raha/api-shared" "^0.1.19"
     big.js "^5.0.3"
     url-join "^4.0.0"
 

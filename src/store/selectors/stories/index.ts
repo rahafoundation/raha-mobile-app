@@ -759,7 +759,7 @@ function createGiveRahaStory(
       body: {
         bodyContent: {
           type: BodyType.TEXT,
-          text: operation.data.memo
+          text: operation.data.memo ? operation.data.memo : ""
         },
         nextInChain: {
           direction: ChainDirection.Forward,

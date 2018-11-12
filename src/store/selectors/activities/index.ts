@@ -488,8 +488,8 @@ function addTipOperation(
   operation: TipGiveOperation
 ): ActivityBundlingData {
   const { activities, bundlingCache } = existingData;
-  const target_operation_id = operation.data.metadata.target_operation;
-  if (!target_operation_id) {
+  const targetOperationId = operation.data.metadata.targetOperationId;
+  if (!targetOperationId) {
     throw new Error(
       `Unexpected tip operation without a parent ID: ${JSON.stringify(
         operation,
@@ -499,7 +499,7 @@ function addTipOperation(
     );
   }
 
-  const existingArray = bundlingCache.childOps.get(target_operation_id);
+  const existingArray = bundlingCache.childOps.get(targetOperationId);
   const newChildOps = existingArray
     ? existingArray.concat(operation)
     : [operation];
@@ -507,7 +507,7 @@ function addTipOperation(
     activities: activities,
     bundlingCache: {
       ...bundlingCache,
-      childOps: bundlingCache.childOps.set(target_operation_id, newChildOps)
+      childOps: bundlingCache.childOps.set(targetOperationId, newChildOps)
     }
   };
 }
@@ -770,7 +770,7 @@ export function filterVerifyMemberActivities(
 }
 
 export function isGenesisVerificationActivity(activity: Activity): boolean {
-  if (activity.type === ActivityType.INDEPENDENT_OPERATION) {
+  if (!Array.isArray(activity.operations)) {
     return GENESIS_VERIFY_OPS.includes(activity.operations.id);
   }
 
