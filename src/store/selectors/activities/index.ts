@@ -7,14 +7,18 @@ import {
   FlagMemberOperation,
   ResolveFlagMemberOperation,
   MintReferralBonusOperation,
-  MintBasicIncomeOperation
+  MintBasicIncomeOperation,
+  TipGiveOperation,
+  GiveType,
+  DirectGiveOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 import {
   Activity,
   NewMemberRelatedOperations,
   ActivityType,
-  IndependentOperation
+  IndependentOperation,
+  ChildOperation
 } from "./types";
 import { RahaState } from "../../reducers";
 import { List, Map } from "immutable";
@@ -39,6 +43,11 @@ interface ActivityBundlingCache {
   // member id -> index of corresponding NEW_MEMBER activity in the list
   newMember: Map<MemberId, NewMemberCacheValues>;
   flagMember: Map<OperationId, FlagMemberCacheValues>;
+
+  // operation id -> list of child ops for that operation.
+  // It gets processed after the creation of all activities so that we don't
+  // have to rely on processing order of activities to attach them.
+  childOps: Map<OperationId, ChildOperation[]>;
 }
 
 /**
@@ -128,6 +137,21 @@ function addCreateMemberOperation(
       ...bundlingCache,
       newMember: bundlingCache.newMember.set(newMemberId, { index: nextIndex })
     }
+  };
+}
+
+function addDirectGiveOperation(
+  existingData: ActivityBundlingData,
+  operation: DirectGiveOperation
+): ActivityBundlingData {
+  const newActivity: Activity = {
+    type: ActivityType.GIVE,
+    operations: operation
+  };
+
+  return {
+    activities: existingData.activities.push(newActivity),
+    bundlingCache: existingData.bundlingCache
   };
 }
 
@@ -454,6 +478,41 @@ function addResolveFlagMemberOperation(
 }
 
 /**
+ * Adds a tip operation, which is a child operation that cannot existing on its own.
+ * Saves the tips in a child operations map which gets processed after the
+ * creation of all activities so that we don't have to rely on processing order
+ * of activities to attach them.
+ */
+function addTipOperation(
+  existingData: ActivityBundlingData,
+  operation: TipGiveOperation
+): ActivityBundlingData {
+  const { activities, bundlingCache } = existingData;
+  const target_operation_id = operation.data.metadata.target_operation;
+  if (!target_operation_id) {
+    throw new Error(
+      `Unexpected tip operation without a parent ID: ${JSON.stringify(
+        operation,
+        null,
+        2
+      )}`
+    );
+  }
+
+  const existingArray = bundlingCache.childOps.get(target_operation_id);
+  const newChildOps = existingArray
+    ? existingArray.concat(operation)
+    : [operation];
+  return {
+    activities: activities,
+    bundlingCache: {
+      ...bundlingCache,
+      childOps: bundlingCache.childOps.set(target_operation_id, newChildOps)
+    }
+  };
+}
+
+/**
  * Add a single operation to a list in progress of activities. Keeps track not
  * just of the final list, but of cached data to optimize the creation of
  * Activities.
@@ -496,9 +555,31 @@ function addOperationToActivitiesList(
       return addFlagMemberOperation(existingData, operation);
     case OperationType.RESOLVE_FLAG_MEMBER:
       return addResolveFlagMemberOperation(existingData, operation);
+    case OperationType.GIVE:
+      if (operation.data.metadata) {
+        switch (operation.data.metadata.type) {
+          case GiveType.DIRECT_GIVE:
+            return addDirectGiveOperation(
+              existingData,
+              operation as DirectGiveOperation
+            );
+          case GiveType.TIP:
+            return addTipOperation(existingData, operation as TipGiveOperation);
+          default:
+            throw new Error(
+              `Unexpected GIVE operation data type. Operation: ${JSON.stringify(
+                operation,
+                null,
+                2
+              )}`
+            );
+        }
+      } else {
+        // TODO(tina): Migrate GIVE operations to have metadata block
+        return addIndependentOperation(existingData, operation);
+      }
     case OperationType.EDIT_MEMBER:
     case OperationType.REQUEST_VERIFICATION:
-    case OperationType.GIVE:
     case OperationType.TRUST:
       return addIndependentOperation(existingData, operation);
     case OperationType.INVITE:
@@ -536,14 +617,18 @@ function addOperationsToActivities(
         ...existingData,
         bundlingCache: existingData.bundlingCache
           ? existingData.bundlingCache
-          : { newMember: Map(), flagMember: Map() }
+          : { newMember: Map(), flagMember: Map(), childOps: Map() }
       }
     : {
         activities: List(),
-        bundlingCache: { newMember: Map(), flagMember: Map() }
+        bundlingCache: {
+          newMember: Map(),
+          flagMember: Map(),
+          childOps: Map()
+        }
       };
 
-  return newOperations.reduce((memo, operation) => {
+  const result = newOperations.reduce((memo, operation) => {
     try {
       return addOperationToActivitiesList(memo, operation);
     } catch (err) {
@@ -554,7 +639,52 @@ function addOperationsToActivities(
       );
       return memo;
     }
-  }, initialBundlingData).activities;
+  }, initialBundlingData);
+
+  if (result.bundlingCache.childOps) {
+    // Add all children operations to the associated activity
+    const merged = result.activities.map(activity => {
+      if (activity.type === ActivityType.GIVE) {
+        return {
+          ...activity,
+          childOperations: mergeChildOpsForOps(
+            Array.isArray(activity.operations)
+              ? activity.operations
+              : [activity.operations],
+            result.bundlingCache.childOps
+          )
+        };
+      } else {
+        return activity;
+      }
+    });
+    return merged;
+  } else {
+    return result.activities;
+  }
+}
+
+function mergeChildOpsForOps(
+  ops: Operation[],
+  childOps: Map<OperationId, ChildOperation[]>
+): ChildOperation[] {
+  // for each op, add up all the child ops
+  return ops.reduce(
+    (allChildOps, op) => {
+      const children = childOps.get(op.id);
+      if (children) {
+        return allChildOps.concat(children);
+      } else {
+        return allChildOps;
+      }
+    },
+    [] as ChildOperation[]
+  );
+}
+
+interface InitialActivityBundlingData {
+  activities: List<Activity>;
+  bundlingCache?: ActivityBundlingCache;
 }
 
 /**

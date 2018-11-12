@@ -9,7 +9,9 @@ import {
   FlagMemberOperation,
   ResolveFlagMemberOperation,
   MintReferralBonusOperation,
-  MintBasicIncomeOperation
+  MintBasicIncomeOperation,
+  TipGiveOperation,
+  DirectGiveOperation
 } from "@raha/api-shared/dist/models/Operation";
 
 /**
@@ -17,6 +19,7 @@ import {
  */
 export enum ActivityType {
   INDEPENDENT_OPERATION = "INDEPENDENT_OPERATION",
+  GIVE = "GIVE",
 
   // CREATE_MEMBER + VERIFY + MINT_REFERRAL_BONUS
   NEW_MEMBER = "NEW_MEMBER",
@@ -29,10 +32,12 @@ export enum ActivityType {
  */
 export interface ActivityDefinition<
   Type extends ActivityType,
-  RelatedOps extends Operation | Operation[]
+  RelatedOps extends Operation | Operation[],
+  RelatedChildOp extends ChildOperation = never
 > {
   type: Type;
   operations: RelatedOps;
+  childOperations?: RelatedChildOp[];
 }
 
 /**
@@ -90,6 +95,11 @@ export type IndependentOperation =
   | VerifyOperation;
 
 /**
+ * Operations cannot exist independently and must be attached to another operation.
+ */
+export type ChildOperation = TipGiveOperation;
+
+/**
  * Activity that corresponds to the process of a new member joining Raha, from
  * creating an account to getting verified and the inviter minting a referral
  * bonus.
@@ -105,6 +115,12 @@ export type NewMemberActivity = ActivityDefinition<
 export type FlagMemberActivity = ActivityDefinition<
   ActivityType.FLAG_MEMBER,
   FlagMemberRelatedOperations
+>;
+
+export type GiveActivity = ActivityDefinition<
+  ActivityType.GIVE,
+  DirectGiveOperation,
+  TipGiveOperation
 >;
 
 /**
@@ -126,4 +142,5 @@ export type IndependentOperationActivity = ActivityDefinition<
 export type Activity =
   | NewMemberActivity
   | FlagMemberActivity
-  | IndependentOperationActivity;
+  | IndependentOperationActivity
+  | GiveActivity;

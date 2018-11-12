@@ -17,13 +17,19 @@ import {
   TrustMemberStoryData,
   EditMemberStoryData,
   RequestVerificationStoryData,
-  FlagMemberStoryData
+  FlagMemberStoryData,
+  CallToAction,
+  CallToActionDataType,
+  CallToActionPiece,
+  TipData
 } from "./types";
 import {
   Operation,
   OperationType,
   MintType,
-  MintBasicIncomeOperation
+  MintBasicIncomeOperation,
+  TipGiveOperation,
+  TipMetadata
 } from "@raha/api-shared/dist/models/Operation";
 
 import { getMemberById } from "../members";
@@ -682,11 +688,47 @@ function createVerifyMemberStory(
   };
 }
 
+function createTipCallToAction(
+  member: Member,
+  tips?: TipGiveOperation[]
+): CallToAction | undefined {
+  if (!tips) {
+    return undefined;
+  }
+
+  const tipData: TipData = tips.reduce(
+    (data, tip) => {
+      if (tip.data.to_uid === member.get("memberId")) {
+        return {
+          tipTotal: data.tipTotal.plus(tip.data.donation_amount),
+          fromMemberIds: data.fromMemberIds.concat(tip.creator_uid),
+          toMemberId: data.toMemberId
+        };
+      } else {
+        // Skip -- this tip doesn't apply to the given member.
+        return data;
+      }
+    },
+    {
+      tipTotal: new Big(0),
+      toMemberId: member.get("memberId"),
+      fromMemberIds: [] as MemberId[]
+    }
+  );
+
+  const piece: CallToActionPiece = {
+    type: CallToActionDataType.TIP,
+    data: tipData
+  };
+  return [piece];
+}
+
 function createGiveRahaStory(
   state: RahaState,
   storyData: GiveRahaStoryData
 ): Story {
   const operation = storyData.activities.operations;
+  const tipOperations = storyData.activities.childOperations;
 
   // type suggestion since GENESIS_MEMBER is only possible for
   // VERIFY operations
@@ -712,6 +754,7 @@ function createGiveRahaStory(
     timestamp: operation.created_at,
     content: {
       actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
+      actorCallToAction: createTipCallToAction(creatorMember, tipOperations),
       description: ["gave", amountGiven, "for"],
       body: {
         bodyContent: {
@@ -724,20 +767,11 @@ function createGiveRahaStory(
             actors: OrderedMap({
               [givenToMember.get("memberId")]: givenToMember
             }),
-            description: ["donated", amountDonated],
-            // TODO: make this configurable
-            body: {
-              bodyContent: {
-                type: BodyType.TEXT,
-                text: "Because every life has value"
-              },
-              nextInChain: {
-                direction: ChainDirection.Forward,
-                nextStoryContent: {
-                  actors: RAHA_BASIC_INCOME_MEMBER
-                }
-              }
-            }
+            actorCallToAction: createTipCallToAction(
+              givenToMember,
+              tipOperations
+            ),
+            description: ["donated", amountDonated, "to the Raha Basic Income"]
           }
         }
       }
@@ -957,6 +991,11 @@ export function createStoryFromActivity(
     case ActivityType.FLAG_MEMBER:
       return createStory(state, {
         type: StoryType.FLAG_MEMBER,
+        activities: activity
+      });
+    case ActivityType.GIVE:
+      return createStory(state, {
+        type: StoryType.GIVE_RAHA,
         activities: activity
       });
     case ActivityType.INDEPENDENT_OPERATION:

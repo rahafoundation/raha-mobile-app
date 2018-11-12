@@ -10,6 +10,8 @@ import {
   RequestVerificationOperation,
   TrustOperation,
   VerifyOperation,
+  DirectGiveOperation,
+  TipGiveOperation,
   MintBasicIncomeOperation
 } from "@raha/api-shared/dist/models/Operation";
 import { OrderedMap } from "immutable";
@@ -21,6 +23,7 @@ import {
   FlagMemberActivity
 } from "../activities/types";
 import { Activity } from "../activities/types";
+import Big from "big.js";
 
 /**
  * Represents the direction of the relationship between actors in an story.
@@ -116,6 +119,12 @@ export interface StoryContent {
    */
   description?: (string | CurrencyValue)[];
   /**
+   * An invitation for the user to take an action on the Story that relates to
+   * the actors of the Story. This will be rendered under the actor names.
+   */
+  actorCallToAction?: CallToAction;
+
+  /**
    * A larger, detailed body describing (in text) or representing (visually) the
    * action.
    *
@@ -142,7 +151,8 @@ export interface ActionLink {
 
 export enum CallToActionDataType {
   TEXT = "TEXT",
-  LINK = "LINK"
+  LINK = "LINK",
+  TIP = "TIP"
 }
 
 export type CallToActionPiece =
@@ -153,7 +163,17 @@ export type CallToActionPiece =
   | {
       type: CallToActionDataType.LINK;
       data: ActionLink;
+    }
+  | {
+      type: CallToActionDataType.TIP;
+      data: TipData;
     };
+
+export type TipData = {
+  tipTotal: Big;
+  toMemberId: MemberId;
+  fromMemberIds: MemberId[];
+};
 
 /**
  * An invitation for a member to take action.
@@ -193,7 +213,7 @@ export type MintBasicIncomeStoryData = StoryDataDefinition<
 
 export type GiveRahaStoryData = StoryDataDefinition<
   StoryType.GIVE_RAHA,
-  ActivityDefinition<ActivityType.INDEPENDENT_OPERATION, GiveOperation>
+  ActivityDefinition<ActivityType.GIVE, DirectGiveOperation, TipGiveOperation>
 >;
 
 export type EditMemberStoryData = StoryDataDefinition<
