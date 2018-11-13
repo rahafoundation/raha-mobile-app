@@ -15,7 +15,10 @@ import {
   MintBasicIncomeOperation
 } from "@raha/api-shared/dist/models/Operation";
 import { OrderedMap } from "immutable";
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
+import {
+  MemberId,
+  OperationId
+} from "@raha/api-shared/dist/models/identifiers";
 import {
   NewMemberActivity,
   ActivityType,
@@ -174,6 +177,7 @@ export type TipData = {
   tipTotal: Big;
   toMemberId: MemberId;
   fromMemberIds: MemberId[];
+  targetOperationId: OperationId;
 };
 
 /**

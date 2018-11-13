@@ -272,7 +272,6 @@ class ActivityContent extends React.Component<{
         {actorCallToAction && actorsData !== RAHA_BASIC_INCOME_MEMBER && (
           <CallToAction
             style={{ marginLeft: leftColumnWidth + thumbnailMarginRight }}
-            key={"tip"}
             member={actorsData[0]}
             callToAction={actorCallToAction}
           />

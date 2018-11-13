@@ -1,15 +1,11 @@
 /**
- * A scrolling list of MemberThumbnail, appropriate for viewing groups
- * of members such as everyone trusted by or who trusts a certain person.
+ * A list of members who tipped the operation
  */
 import * as React from "react";
 import { FlatList, View, Text } from "react-native";
 
-import { Loading } from "../shared/Loading";
 import { Member } from "../../store/reducers/members";
-import { MemberThumbnail } from "../shared/MemberThumbnail";
 import { fontSizes } from "../../helpers/fonts";
-import { colors } from "../../helpers/colors";
 import { TipGiveOperation } from "@raha/api-shared/dist/models/Operation";
 
 type StateProps = {

@@ -47,7 +47,10 @@ import {
 } from "../../../components/shared/elements/Currency";
 import { getOperationCreator } from "../operations";
 import { List, OrderedMap } from "immutable";
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
+import {
+  MemberId,
+  OperationId
+} from "@raha/api-shared/dist/models/identifiers";
 import {
   Activity,
   IndependentOperationActivity,
@@ -692,14 +695,17 @@ function createVerifyMemberStory(
 
 function createTipCallToAction(
   member: Member,
+  targetOperationId: OperationId,
   tips?: TipGiveOperation[]
 ): CallToAction | undefined {
   if (!tips) {
+    // TODO(tina): REMOVE TEST BEFORE MERGE
     return [
       {
         type: CallToActionDataType.TIP,
         data: {
           tipTotal: new Big(10),
+          targetOperationId,
           fromMemberIds: [member.get("memberId")],
           toMemberId: member.get("memberId")
         }
@@ -711,9 +717,9 @@ function createTipCallToAction(
     (data, tip) => {
       if (tip.data.to_uid === member.get("memberId")) {
         return {
+          ...data,
           tipTotal: data.tipTotal.plus(tip.data.donation_amount),
-          fromMemberIds: data.fromMemberIds.concat(tip.creator_uid),
-          toMemberId: data.toMemberId
+          fromMemberIds: data.fromMemberIds.concat(tip.creator_uid)
         };
       } else {
         // Skip -- this tip doesn't apply to the given member.
@@ -723,7 +729,8 @@ function createTipCallToAction(
     {
       tipTotal: new Big(0),
       toMemberId: member.get("memberId"),
-      fromMemberIds: [] as MemberId[]
+      fromMemberIds: [] as MemberId[],
+      targetOperationId
     }
   );
 
@@ -765,7 +772,11 @@ function createGiveRahaStory(
     timestamp: operation.created_at,
     content: {
       actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
-      actorCallToAction: createTipCallToAction(creatorMember, tipOperations),
+      actorCallToAction: createTipCallToAction(
+        creatorMember,
+        operation.id,
+        tipOperations
+      ),
       description: ["gave", amountGiven, "for"],
       body: {
         bodyContent: {
@@ -780,6 +791,7 @@ function createGiveRahaStory(
             }),
             actorCallToAction: createTipCallToAction(
               givenToMember,
+              operation.id,
               tipOperations
             ),
             description: ["donated", amountDonated, "to the Raha Basic Income"]
