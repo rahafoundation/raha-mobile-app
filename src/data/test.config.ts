@@ -4,8 +4,8 @@ export const config: Config = {
   apiBase: "https://raha-test.appspot.com/api/",
   versionInfo: {
     appVersion: "0.1.4",
-    iosCodepushVersion: 9,
-    androidCodepushVersion: 13
+    iosCodepushVersion: 10,
+    androidCodepushVersion: 14
   },
   publicVideoBucket: "raha-video-test",
   firebase: {
