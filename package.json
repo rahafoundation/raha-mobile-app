@@ -1,9 +1,9 @@
 {
   "name": "@raha.app/mobile",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "config": {
-    "version": "0.1.4"
+    "version": "0.1.5"
   },
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
