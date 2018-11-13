@@ -13,30 +13,90 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import { Text } from "../elements";
 import { TipData } from "../../../store/selectors/stories/types";
 import { CurrencyRole, CurrencyType, Currency } from "../elements/Currency";
+import { connect, MapStateToProps } from "react-redux";
+import { RahaState } from "../../../store";
+import { getLoggedInMember } from "../../../store/selectors/authentication";
+import { tip } from "../../../store/actions/wallet";
+import { generateRandomIdentifier } from "../../../helpers/identifiers";
+import { OperationId } from "@raha/api-shared/dist/models/identifiers";
+import { ApiCallStatus } from "../../../store/reducers/apiCalls";
+import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
+import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
-type TipProps = {
+type StateProps = {
+  // loggedInMember?: Member;
+  // getMemberById: (memberId: MemberId) => Member | undefined;
+  apiCallStatus: ApiCallStatus | undefined;
+};
+
+type DispatchProps = {
+  tip: typeof tip;
+};
+
+type OwnProps = {
   data: TipData;
 };
+
+type TipProps = OwnProps & DispatchProps & StateProps;
+
+type TipState = {
+  // Independent tip button presses are batched and sent every 5 seconds or on
+  // unmount to give the user a chance to cancel.
+  pendingTipAmount: Big;
+  pendingTipId?: OperationId;
+};
+
+const TIP_INCREMENT = new Big(0.1);
 
 /**
  * Call-to-action that is rendered in the feed below actors to allow the logged
  * in user to tip them.
  */
-export class Tip extends React.Component<TipProps> {
+export class TipView extends React.Component<TipProps, TipState> {
+  // this.timerInterval = setInterval(this._updateTimeLeft, 1000);
+
+  id?: string;
+  componentDidUpdate() {
+    console.log(
+      "YOLO",
+      "state is now " +
+        (this.props.apiCallStatus ? this.props.apiCallStatus.status : undefined)
+    );
+  }
+
+  private _onTipButtonPressed = () => {
+    // this.setState(state => {
+    //   pendingTipAmount: state.pendingTipAmount.add(TIP_INCREMENT);
+    // });
+    // this.id = generateRandomIdentifier();
+
+    this.id = this.props.data.toMemberId + this.props.data.targetOperationId;
+    console.log("YOLO", "sending tip " + this.id);
+    this.props.tip(
+      this.id,
+      this.props.data.toMemberId,
+      TIP_INCREMENT,
+      this.props.data.targetOperationId
+    );
+  };
+
   render() {
     const { tipTotal, fromMemberIds } = this.props.data;
     return (
       <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <View style={styles.tipButton}>
+        <TouchableOpacity
+          style={styles.tipButton}
+          onPress={this._onTipButtonPressed}
+        >
           <Icon name="caret-up" color={palette.darkMint} solid />
           <Text style={styles.tipButtonText}>Tip</Text>
-        </View>
+        </TouchableOpacity>
         {tipTotal.gt(0) && (
           <React.Fragment>
             <TouchableOpacity
               style={styles.tippersContainer}
               onPress={() => {
-                // TODO: Go to TipList
+                // TODO(tina): Go to TipList
               }}
             >
               <Text style={styles.tippersText}>{fromMemberIds.length}</Text>
@@ -103,3 +163,22 @@ export const styles = StyleSheet.create({
   tippersIcon: tippersIconStyle,
   tippersText: tippersTextStyle
 });
+
+const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
+  state,
+  ownProps
+) => {
+  const loggedInMember = getLoggedInMember(state);
+  return {
+    apiCallStatus: getStatusOfApiCall(
+      state,
+      ApiEndpointName.TIP,
+      ownProps.data.toMemberId + ownProps.data.targetOperationId
+    )
+  };
+};
+
+export const Tip = connect(
+  mapStateToProps,
+  { tip }
+)(TipView);
