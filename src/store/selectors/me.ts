@@ -13,10 +13,21 @@ import { RahaState } from "..";
 import { getMemberById } from "./members";
 import { getOperationsForCreator, getOperationsForType } from "./operations";
 
-export const RAHA_MINT_WEEKLY_RATE = 10;
-export const MAX_WEEKS_ACCRUE = 4; // TODO#420 Surface (and enforce) this limit
+export const RAHA_MINT_WEEKLY_RATE = new Big(10);
+export const MAX_WEEKS_ACCRUE = new Big(4);
+export const RAHA_MINT_CAP = RAHA_MINT_WEEKLY_RATE.times(MAX_WEEKS_ACCRUE);
 export const REFERRAL_BONUS = new Big(60);
 const MILLISECONDS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
+// Set to midnight on Nov 16th, 2018 UTC
+const MINT_CAP_TRANSITION_DATE_UTC = Date.UTC(2018, 10, 16);
+
+/**
+ * Return whether or not we're past the transition to capped mintable amounts.
+ * TODO: This code can be removed after the mint cap transition date has passed.
+ */
+export function isPastMintCapTransitionDate() {
+  return Date.now() >= MINT_CAP_TRANSITION_DATE_UTC;
+}
 
 export function getMintableAmount(
   state: RahaState,
@@ -24,12 +35,17 @@ export function getMintableAmount(
 ): Big | undefined {
   const member = getMemberById(state, memberId);
   if (member) {
-    return new Big(
+    const maxMintable = new Big(
       new Date().getTime() - member.get("lastMintedBasicIncomeAt").getTime()
     )
       .div(MILLISECONDS_PER_WEEK)
       .times(RAHA_MINT_WEEKLY_RATE)
       .round(2, 0);
+    if (isPastMintCapTransitionDate()) {
+      return maxMintable.gt(RAHA_MINT_CAP) ? RAHA_MINT_CAP : maxMintable;
+    } else {
+      return maxMintable;
+    }
   }
   return undefined;
 }

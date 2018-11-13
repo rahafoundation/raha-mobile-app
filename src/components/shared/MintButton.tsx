@@ -10,7 +10,9 @@ import { mintBasicIncome } from "../../store/actions/wallet";
 import { getLoggedInMember } from "../../store/selectors/authentication";
 import {
   getMintableAmount,
-  RAHA_MINT_WEEKLY_RATE
+  RAHA_MINT_WEEKLY_RATE,
+  RAHA_MINT_CAP,
+  isPastMintCapTransitionDate
 } from "../../store/selectors/me";
 import {
   ApiCallStatus,
@@ -18,7 +20,7 @@ import {
 } from "../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
 import { Member } from "../../store/reducers/members";
-import { Button, Text } from "./elements";
+import { Text } from "./elements";
 import { CurrencyRole, CurrencyType, CurrencyValue } from "./elements/Currency";
 import { fontSizes } from "../../helpers/fonts";
 import { MixedText } from "./elements/MixedText";
@@ -82,10 +84,26 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
             "Current mint rate is",
             {
               currencyType: CurrencyType.Raha,
-              value: new Big(RAHA_MINT_WEEKLY_RATE),
+              value: RAHA_MINT_WEEKLY_RATE,
               role: CurrencyRole.Transaction
             },
             "per week."
+          ]}
+        />
+      </Text>
+      <Text>
+        <MixedText
+          style={[fontSizes.small, { textAlign: "center" }]}
+          content={[
+            isPastMintCapTransitionDate()
+              ? "You can only accumulate up to"
+              : "After 11/15 you will only be able to accumulate up to",
+            {
+              currencyType: CurrencyType.Raha,
+              value: RAHA_MINT_CAP,
+              role: CurrencyRole.None
+            },
+            "at a time."
           ]}
         />
       </Text>
