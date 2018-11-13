@@ -176,7 +176,7 @@ export type CallToActionPiece =
 export type TipData = {
   tipTotal: Big;
   toMemberId: MemberId;
-  fromMemberIds: MemberId[];
+  fromMemberIds: Set<MemberId>;
   targetOperationId: OperationId;
 };
 

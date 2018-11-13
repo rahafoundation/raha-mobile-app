@@ -57,7 +57,7 @@ import {
   ActivityType
 } from "../activities/types";
 import { isGenesisVerificationActivity } from "../activities";
-import { da } from "date-fns/esm/locale";
+import { getLoggedInMemberId } from "../authentication";
 
 function videoReferenceForUri(videoUri: string): VideoReference {
   return {
@@ -698,28 +698,28 @@ function createTipCallToAction(
   targetOperationId: OperationId,
   tips?: TipGiveOperation[]
 ): CallToAction | undefined {
-  if (!tips) {
-    // TODO(tina): REMOVE TEST BEFORE MERGE
+  if (!tips || tips.length === 0) {
     return [
       {
         type: CallToActionDataType.TIP,
         data: {
-          tipTotal: new Big(10),
+          tipTotal: new Big(0),
           targetOperationId,
-          fromMemberIds: [member.get("memberId")],
+          fromMemberIds: new Set<MemberId>(),
           toMemberId: member.get("memberId")
         }
       }
     ];
   }
 
+  const toMemberId = member.get("memberId");
   const tipData: TipData = tips.reduce(
     (data, tip) => {
-      if (tip.data.to_uid === member.get("memberId")) {
+      if (tip.data.to_uid === toMemberId) {
         return {
           ...data,
-          tipTotal: data.tipTotal.plus(tip.data.donation_amount),
-          fromMemberIds: data.fromMemberIds.concat(tip.creator_uid)
+          tipTotal: data.tipTotal.plus(tip.data.amount),
+          fromMemberIds: data.fromMemberIds.add(tip.creator_uid)
         };
       } else {
         // Skip -- this tip doesn't apply to the given member.
@@ -728,8 +728,8 @@ function createTipCallToAction(
     },
     {
       tipTotal: new Big(0),
-      toMemberId: member.get("memberId"),
-      fromMemberIds: [] as MemberId[],
+      toMemberId,
+      fromMemberIds: new Set<MemberId>(),
       targetOperationId
     }
   );
@@ -754,6 +754,15 @@ function createGiveRahaStory(
   const givenToMember = getMemberById(state, operation.data.to_uid, {
     throwIfMissing: true
   });
+  const loggedInMemberId = getLoggedInMemberId(state);
+  const giverTipCta =
+    creatorMember.get("memberId") === loggedInMemberId
+      ? undefined
+      : createTipCallToAction(creatorMember, operation.id, tipOperations);
+  const recipientTipCta =
+    givenToMember.get("memberId") === loggedInMemberId
+      ? undefined
+      : createTipCallToAction(givenToMember, operation.id, tipOperations);
 
   const amountDonated: CurrencyValue = {
     value: new Big(operation.data.donation_amount),
@@ -772,11 +781,7 @@ function createGiveRahaStory(
     timestamp: operation.created_at,
     content: {
       actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
-      actorCallToAction: createTipCallToAction(
-        creatorMember,
-        operation.id,
-        tipOperations
-      ),
+      actorCallToAction: giverTipCta,
       description: ["gave", amountGiven, "for"],
       body: {
         bodyContent: {
@@ -789,11 +794,7 @@ function createGiveRahaStory(
             actors: OrderedMap({
               [givenToMember.get("memberId")]: givenToMember
             }),
-            actorCallToAction: createTipCallToAction(
-              givenToMember,
-              operation.id,
-              tipOperations
-            ),
+            actorCallToAction: recipientTipCta,
             description: ["donated", amountDonated, "to the Raha Basic Income"]
           }
         }
