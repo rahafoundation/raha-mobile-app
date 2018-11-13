@@ -5,7 +5,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ViewStyle,
-  TextStyle
+  TextStyle,
+  TouchableHighlight
 } from "react-native";
 import { fontSizes, fonts } from "../../../helpers/fonts";
 import { palette } from "../../../helpers/colors";
@@ -50,24 +51,25 @@ const TIP_INCREMENT = new Big(0.1);
 const CANCEL_INTERVAL_MS = 3000;
 
 /**
+ * ID used for the tip API call so that we can check on the status
+ */
+function tipCallApiId(data: TipData): string {
+  return data.toMemberId + data.targetOperationId;
+}
+
+/**
  * Call-to-action that is rendered in the feed below actors to allow the logged
  * in user to tip them.
  */
 export class TipView extends React.Component<TipProps, TipState> {
-  state = {
-    pendingTipAmount: undefined
-  };
-
   pendingTimer?: any;
 
-  id?: string;
-  // componentDidUpdate() {
-  //   console.log(
-  //     "YOLO",
-  //     "state is now " +
-  //       (this.props.apiCallStatus ? this.props.apiCallStatus.status : undefined)
-  //   );
-  // }
+  constructor(props: TipProps) {
+    super(props);
+    this.state = {
+      pendingTipAmount: undefined
+    };
+  }
 
   // TODO(tina): When navigating to another page, it won't call unmount
   componentWillUnmount() {
@@ -100,6 +102,15 @@ export class TipView extends React.Component<TipProps, TipState> {
     this.pendingTimer = undefined;
   };
 
+  private _onTipButtonPressIn = () => {
+    console.log("YOLO", "press in");
+    // TODO(tina): Long-press should keep incrementing
+  };
+
+  private _onTipButtonPressOut = () => {
+    console.log("YOLO", "press out");
+  };
+
   private _onTipButtonPressed = () => {
     this._cancelPendingSendTip();
     this.setState(
@@ -124,14 +135,11 @@ export class TipView extends React.Component<TipProps, TipState> {
     );
   };
 
-  // TODO(tina): send on unmount
-
   private _sendTip = (pendingTipAmount: Big) => {
-    // this.id = generateRandomIdentifier();
-    // this.id = this.props.data.toMemberId + this.props.data.targetOperationId;
+    // TODO(tina): animation when sending, disable button
     console.log("YOLO", "sending tip for " + pendingTipAmount);
     // this.props.tip(
-    //   this.id,
+    //   tipCallApiId(this.props.data),
     //   this.props.data.toMemberId,
     //   TIP_INCREMENT,
     //   this.props.data.targetOperationId
@@ -158,62 +166,55 @@ export class TipView extends React.Component<TipProps, TipState> {
     const { tipTotal, fromMemberIds } = this.props.data;
     const { pendingTipAmount } = this.state;
     return (
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          position: "relative"
-        }}
-      >
-        {/* <View style={{ position: "relative" }}> */}
-        {pendingTipAmount && (
-          //TODO(tina): first render is so slow
-          <View style={styles.pendingTip}>
-            {/* TODO(tina): animate countdown circle */}
-            <Icon
-              style={styles.pendingCancel}
-              name="times-circle"
-              color={palette.red}
-              size={20}
-              onPress={this._onCancelTipPressed}
-              solid
-            />
-            <Currency
-              style={{ ...fontSizes.small }}
-              currencyValue={{
-                value: pendingTipAmount,
-                role: CurrencyRole.Transaction,
-                currencyType: CurrencyType.Raha
-              }}
-            />
-          </View>
-        )}
+      <View style={styles.container}>
+        <View style={styles.actionContainer}>
+          <TouchableOpacity
+            style={styles.tipButton}
+            onPressIn={this._onTipButtonPressIn}
+            onPressOut={this._onTipButtonPressOut}
+            onPress={this._onTipButtonPressed}
+          >
+            <Icon name="caret-up" size={20} color={palette.darkMint} solid />
+            <Text style={styles.tipButtonText}>Tip</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.tipButton}
-          onPress={this._onTipButtonPressed}
-        >
-          <Icon name="caret-up" color={palette.darkMint} solid />
-          <Text style={styles.tipButtonText}>Tip</Text>
-        </TouchableOpacity>
-        {/* </View> */}
-
-        {tipTotal.gt(0) && (
-          <React.Fragment>
-            <TouchableOpacity
-              style={styles.tippersContainer}
-              onPress={() => {
-                // TODO(tina): Go to TipList
-              }}
-            >
-              <Text style={styles.tippersText}>{fromMemberIds.size}</Text>
+          {pendingTipAmount && (
+            //TODO(tina): first render is so slow
+            // {/* TODO(tina): animate countdown circle */}
+            <React.Fragment>
+              <Currency
+                style={styles.pendingTip}
+                currencyValue={{
+                  value: pendingTipAmount,
+                  role: CurrencyRole.Transaction,
+                  currencyType: CurrencyType.Raha
+                }}
+              />
               <Icon
-                name="user"
-                style={styles.tippersIcon}
-                color={palette.darkGray}
+                style={styles.pendingCancel}
+                name="times-circle"
+                color={palette.red}
+                size={20}
+                onPress={this._onCancelTipPressed}
                 solid
               />
-            </TouchableOpacity>
+            </React.Fragment>
+          )}
+        </View>
+        {tipTotal.gt(0) && (
+          <TouchableOpacity
+            style={styles.tippersContainer}
+            onPress={() => {
+              // TODO(tina): Go to TipList
+            }}
+          >
+            <Text style={styles.tippersText}>{fromMemberIds.size}</Text>
+            <Icon
+              name="user"
+              style={styles.tippersIcon}
+              color={palette.darkGray}
+              solid
+            />
             <Currency
               style={{ ...fontSizes.small }}
               currencyValue={{
@@ -222,7 +223,7 @@ export class TipView extends React.Component<TipProps, TipState> {
                 currencyType: CurrencyType.Raha
               }}
             />
-          </React.Fragment>
+          </TouchableOpacity>
         )}
       </View>
     );
@@ -239,11 +240,8 @@ const tipButtonTextStyle: TextStyle = {
 
 const tipButtonStyle: ViewStyle = {
   flexDirection: "row",
-  marginRight: 6,
-  paddingHorizontal: 6,
-  borderRadius: 3,
-  borderWidth: 2,
-  borderColor: palette.lightGray,
+  paddingVertical: 8,
+  paddingRight: 12,
   alignItems: "center"
 };
 
@@ -263,28 +261,33 @@ const tippersIconStyle: ViewStyle = {
   marginRight: 6
 };
 
-const pendingTipStyle: ViewStyle = {
-  flexDirection: "row",
-  position: "absolute",
-  padding: 6,
-  borderColor: palette.lightGray,
-  borderRadius: 16,
-  borderWidth: 2,
-  top: "90%", // Slight overlap to associate with the tip button
-  backgroundColor: palette.white,
-  alignItems: "center",
-  zIndex: 1, // Bring to front
-  // TODO: Horizontally center. For now it's fixed because the method I found
-  // was using translateX(-50%) which isn't available in RN. It's slightly to
-  // the left so that the user doesn't accidentally hit the X button.
-  left: -36
+const pendingTipStyle: TextStyle = {
+  ...fontSizes.small,
+  marginRight: 8,
+  paddingVertical: 8
 };
 
 const pendingCancelStyle: ViewStyle = {
-  paddingRight: 4
+  paddingRight: 4,
+  paddingVertical: 8
+};
+
+const actionContainerStyle: ViewStyle = {
+  flexDirection: "row"
+};
+
+const containerStyle: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  position: "relative",
+  justifyContent: "space-between",
+  minHeight: 40,
+  marginRight: 12
 };
 
 export const styles = StyleSheet.create({
+  container: containerStyle,
+  actionContainer: actionContainerStyle,
   pendingTip: pendingTipStyle,
   pendingCancel: pendingCancelStyle,
   tipButtonText: tipButtonTextStyle,
@@ -298,12 +301,11 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const loggedInMember = getLoggedInMember(state);
   return {
     apiCallStatus: getStatusOfApiCall(
       state,
       ApiEndpointName.TIP,
-      ownProps.data.toMemberId + ownProps.data.targetOperationId
+      tipCallApiId(ownProps.data)
     )
   };
 };
