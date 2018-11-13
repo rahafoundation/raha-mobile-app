@@ -58,38 +58,101 @@ export class TipView extends React.Component<TipProps, TipState> {
     pendingTipAmount: undefined
   };
 
-  // this.timerInterval = setInterval(this._updateTimeLeft, 1000);
+  pendingTimer?: any;
 
   id?: string;
-  componentDidUpdate() {
+  // componentDidUpdate() {
+  //   console.log(
+  //     "YOLO",
+  //     "state is now " +
+  //       (this.props.apiCallStatus ? this.props.apiCallStatus.status : undefined)
+  //   );
+  // }
+
+  // TODO(tina): When navigating to another page, it won't call unmount
+  componentWillUnmount() {
     console.log(
       "YOLO",
-      "state is now " +
-        (this.props.apiCallStatus ? this.props.apiCallStatus.status : undefined)
+      "tip component will unmount " +
+        this.props.data.toMemberId +
+        " maybe send " +
+        this.state.pendingTipAmount
     );
+    this._cancelPendingSendTip();
+    const pendingTip = this.state.pendingTipAmount;
+    if (pendingTip) {
+      this._sendTip(pendingTip);
+    }
   }
 
-  private _onTipButtonPressed = () => {
-    this.setState(state => {
-      // TODO(tina): reset timer every time user presses up
-      return {
-        pendingTipAmount: state.pendingTipAmount
-          ? state.pendingTipAmount.add(TIP_INCREMENT)
-          : new Big(TIP_INCREMENT)
-      };
+  private _onCancelTipPressed = () => {
+    this._cancelPendingSendTip();
+    this.setState({
+      pendingTipAmount: undefined
     });
+  };
+
+  private _cancelPendingSendTip = () => {
+    if (!this.pendingTimer) {
+      return;
+    }
+    clearTimeout(this.pendingTimer);
+    this.pendingTimer = undefined;
+  };
+
+  private _onTipButtonPressed = () => {
+    this._cancelPendingSendTip();
+    this.setState(
+      state => {
+        // TODO(tina): reset timer every time user presses up
+        const newAmount = state.pendingTipAmount
+          ? state.pendingTipAmount.add(TIP_INCREMENT)
+          : new Big(TIP_INCREMENT);
+        console.log("YOLO", "setting the tip to " + newAmount);
+        return {
+          pendingTipAmount: newAmount
+        };
+      },
+      () => {
+        console.log("YOLO", "set timer for " + this.state.pendingTipAmount);
+        this.pendingTimer = setTimeout(
+          this._sendTip,
+          CANCEL_INTERVAL_MS,
+          this.state.pendingTipAmount
+        );
+      }
+    );
+  };
+
+  // TODO(tina): send on unmount
+
+  private _sendTip = (pendingTipAmount: Big) => {
     // this.id = generateRandomIdentifier();
     // this.id = this.props.data.toMemberId + this.props.data.targetOperationId;
-    // console.log("YOLO", "sending tip " + this.id);
+    console.log("YOLO", "sending tip for " + pendingTipAmount);
     // this.props.tip(
     //   this.id,
     //   this.props.data.toMemberId,
     //   TIP_INCREMENT,
     //   this.props.data.targetOperationId
     // );
+    this.setState(state => {
+      if (
+        !state.pendingTipAmount ||
+        !pendingTipAmount.eq(state.pendingTipAmount)
+      ) {
+        console.warn(
+          "Current state amount " +
+            state.pendingTipAmount +
+            " does not match expected sent amount " +
+            pendingTipAmount
+        );
+      }
+      return {
+        pendingTipAmount: undefined
+      };
+    });
   };
-
-  private _sendTip = () => {};
 
   render() {
     const { tipTotal, fromMemberIds } = this.props.data;
@@ -111,7 +174,8 @@ export class TipView extends React.Component<TipProps, TipState> {
               style={styles.pendingCancel}
               name="times-circle"
               color={palette.red}
-              size={14}
+              size={20}
+              onPress={this._onCancelTipPressed}
               solid
             />
             <Currency
@@ -206,13 +270,14 @@ const pendingTipStyle: ViewStyle = {
   borderColor: palette.lightGray,
   borderRadius: 16,
   borderWidth: 2,
-  bottom: "90%", // Slight overlap to associate with the tip button
+  top: "90%", // Slight overlap to associate with the tip button
   backgroundColor: palette.white,
   alignItems: "center",
   zIndex: 1, // Bring to front
-  // TODO: Horizontally center. For now it's fixed to what looked nice because the
-  // method I found was using translateX(-50%) which isn't available in RN.
-  left: -8
+  // TODO: Horizontally center. For now it's fixed because the method I found
+  // was using translateX(-50%) which isn't available in RN. It's slightly to
+  // the left so that the user doesn't accidentally hit the X button.
+  left: -36
 };
 
 const pendingCancelStyle: ViewStyle = {
