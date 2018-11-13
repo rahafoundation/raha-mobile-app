@@ -673,7 +673,8 @@ function mergeChildOpsForOps(
     (allChildOps, op) => {
       const children = childOps.get(op.id);
       if (children) {
-        return allChildOps.concat(children);
+        const result = allChildOps.concat(children);
+        return result;
       } else {
         return allChildOps;
       }
