@@ -8,7 +8,6 @@ import * as React from "react";
 import { Big } from "big.js";
 import {
   View,
-  TouchableOpacity,
   StyleSheet,
   ViewStyle,
   TextStyle,
@@ -16,15 +15,13 @@ import {
   ActivityIndicator,
   Animated
 } from "react-native";
-import { fontSizes, fonts } from "../../../../helpers/fonts";
+import { fontSizes } from "../../../../helpers/fonts";
 import { palette } from "../../../../helpers/colors";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { Text } from "../../elements";
 import { CurrencyRole, CurrencyType, Currency } from "../../elements/Currency";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../../store";
 import { tip } from "../../../../store/actions/wallet";
-import { OperationId } from "@raha/api-shared/dist/models/identifiers";
 import {
   ApiCallStatus,
   ApiCallStatusType
@@ -33,14 +30,23 @@ import { getStatusOfApiCall } from "../../../../store/selectors/apiCalls";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import CountdownCircle from "../../elements/CountdownCircle";
 import { TipData } from "../../../../store/selectors/stories/types";
+import { DropdownType } from "../../../../store/reducers/dropdown";
+import { displayDropdownMessage } from "../../../../store/actions/dropdown";
+import { getMemberById } from "../../../../store/selectors/members";
+import { Member } from "../../../../store/reducers/members";
 
 type StateProps = {
-  // getMemberById: (memberId: MemberId) => Member | undefined;
+  toMember: Member | undefined;
   apiCallStatus: ApiCallStatus | undefined;
 };
 
 type DispatchProps = {
   tip: typeof tip;
+  displayDropdownMessage: (
+    type: DropdownType,
+    title: string,
+    message: string
+  ) => void;
 };
 
 type OwnProps = {
@@ -102,6 +108,7 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
 
   private _onApiStatusChanged = (status: ApiCallStatusType) => {
     switch (status) {
+      // TODO(tina): Remove these temporary holds for animations
       case ApiCallStatusType.SUCCESS:
         setTimeout(() => {
           if (this.props.onSent) {
@@ -109,13 +116,24 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
           }
         }, 2000);
         break;
-      case ApiCallStatusType.FAILURE:
+      case ApiCallStatusType.FAILURE: {
+        const toMember = this.props.toMember;
+        if (toMember) {
+          this.props.displayDropdownMessage(
+            DropdownType.ERROR,
+            "Error sending tip",
+            "Tip to " +
+              toMember.get("fullName") +
+              " wasn't sent. Please try again."
+          );
+        }
         setTimeout(() => {
           if (this.props.onSendFailed) {
             this.props.onSendFailed();
           }
         }, 2000);
         break;
+      }
       case ApiCallStatusType.STARTED:
       // No action; the callback gets called the moment the timer expires
       default:
@@ -153,7 +171,6 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
   };
 
   private _sendTip = (pendingTipAmount: Big) => {
-    // TODO(tina): animation when sending, disable button
     if (this.props.onSending) {
       this.props.onSending();
     }
@@ -262,6 +279,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
 ) => {
   const { tipId } = ownProps;
   return {
+    toMember: getMemberById(state, ownProps.data.toMemberId),
     apiCallStatus: tipId
       ? getStatusOfApiCall(state, ApiEndpointName.TIP, tipId)
       : undefined
@@ -270,5 +288,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
 
 export const PendingTip = connect(
   mapStateToProps,
-  { tip }
+  {
+    tip,
+    displayDropdownMessage
+  }
 )(PendingTipView);
