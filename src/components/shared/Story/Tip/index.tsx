@@ -130,14 +130,28 @@ export class TipCallToActionView extends React.Component<
       <View style={styles.container}>
         <View style={styles.actionContainer}>
           <TouchableOpacity
-            style={styles.tipButton} // TODO(tina): disabled style
+            style={styles.tipButton}
             disabled={this.state.isTipSending}
             onPressIn={this._onTipButtonPressIn}
             onPressOut={this._onTipButtonPressOut}
             onPress={this._onTipButtonPressed}
           >
-            <Icon name="caret-up" size={20} color={palette.darkMint} solid />
-            <Text style={styles.tipButtonText}>Tip</Text>
+            <Icon
+              name="caret-up"
+              size={20}
+              color={
+                this.state.isTipSending ? palette.lightGray : palette.darkMint
+              }
+              solid
+            />
+            <Text
+              style={[
+                styles.tipButtonText,
+                this.state.isTipSending ? styles.disabledText : undefined
+              ]}
+            >
+              Tip
+            </Text>
           </TouchableOpacity>
           {pendingTipAmount && (
             <PendingTip
@@ -192,6 +206,10 @@ const tipButtonTextStyle: TextStyle = {
   textAlign: "center"
 };
 
+const disabledTextStyle: TextStyle = {
+  color: palette.lightGray
+};
+
 const tipButtonStyle: ViewStyle = {
   flexDirection: "row",
   paddingVertical: 8,
@@ -240,7 +258,8 @@ export const styles = StyleSheet.create({
   tipButton: tipButtonStyle,
   tippersContainer: tippersContainerStyle,
   tippersIcon: tippersIconStyle,
-  tippersText: tippersTextStyle
+  tippersText: tippersTextStyle,
+  disabledText: disabledTextStyle
 });
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (

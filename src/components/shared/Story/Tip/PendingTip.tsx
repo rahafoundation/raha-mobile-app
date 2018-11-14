@@ -71,7 +71,7 @@ const CANCEL_INTERVAL_MS = 5000;
  * Call-to-action that is rendered in the feed below actors to allow the logged
  * in user to tip them.
  */
-export class PendingTipView extends React.Component<TipProps, TipState> {
+export class PendingTipView extends React.PureComponent<TipProps, TipState> {
   pendingTimer?: any;
   countdownCircle: CountdownCircle | null;
 
@@ -83,8 +83,6 @@ export class PendingTipView extends React.Component<TipProps, TipState> {
     };
   }
 
-  // TODO(tina): Don't update on API ID change
-  // shouldComponentUpdate()
   componentDidMount() {
     this._schedulePendingTip();
   }
