@@ -43,30 +43,28 @@ type DispatchProps = {
 };
 
 type OwnProps = {
-  sendTip: (amount: Big) => void;
-  apiCallId?: string;
+  id: string;
+  pendingTipAmount: Big;
+  onSending?: () => void;
+  onSent?: () => void;
+  onSendFailed?: () => void;
+  onCancelled?: () => void;
 };
 
 type TipProps = OwnProps & DispatchProps & StateProps;
 
 type TipState = {
-  // Independent tip button presses are batched and sent every 5 seconds or on
-  // unmount to give the user a chance to cancel.
-  pendingTipAmount?: Big;
   pendingTipId?: OperationId;
-
-  // TODO(tina): REMOVE TEXT
-  callStatus?: ApiCallStatusType;
+  fadeAnimation: Animated.Value;
 };
 
-const TIP_INCREMENT = new Big(0.1);
-const CANCEL_INTERVAL_MS = 1000; // TODO(tina): increase timeout
+const CANCEL_INTERVAL_MS = 3000; // TODO(tina): increase timeout
 
 /**
  * Call-to-action that is rendered in the feed below actors to allow the logged
  * in user to tip them.
  */
-export class TipActionView extends React.Component<TipProps, TipState> {
+export class TipActionView extends React.PureComponent<TipProps, TipState> {
   pendingTimer?: any;
   countdownCircle: CountdownCircle | null;
 
@@ -74,15 +72,73 @@ export class TipActionView extends React.Component<TipProps, TipState> {
     super(props);
     this.countdownCircle = null;
     this.state = {
-      pendingTipAmount: undefined
+      fadeAnimation: new Animated.Value(0)
     };
   }
 
+  // TODO(tina): Don't update on API ID change
+  // shouldComponentUpdate()
+  componentDidMount() {
+    this._schedulePendingTip();
+  }
+
+  componentDidUpdate(prevProps: TipProps) {
+    if (prevProps.apiCallStatus !== this.props.apiCallStatus) {
+      console.log("YOLO", "status changed ");
+      // TODO(tina): send after animation
+      // const status = this.props.apiCallStatus;
+      // if (status) {
+      //   switch (status.status) {
+      //     case ApiCallStatusType.STARTED:
+      //       if (this.props.onSending) {
+      //         this.props.onSending();
+      //       }
+      //       break;
+      //     case ApiCallStatusType.SUCCESS:
+      //       if (this.props.onSent) {
+      //         this.props.onSent();
+      //       }
+      //       break;
+      //     case ApiCallStatusType.FAILURE:
+      //       if (this.props.onSendFailed) {
+      //         this.props.onSendFailed();
+      //       }
+      //   }
+      // }
+    }
+
+    if (prevProps.pendingTipAmount !== this.props.pendingTipAmount) {
+      this._schedulePendingTip();
+    }
+  }
+
+  private _getInitialState(props: TipProps) {
+    return {
+      fadeAnimation: new Animated.Value(0)
+    };
+  }
+
+  private _onApiCallCompleted = () => {
+    // TODO(tina): animate out then call the callback
+  };
+
+  private _schedulePendingTip = () => {
+    console.log("YOLO", "set timer for " + this.props.pendingTipAmount);
+    if (this.countdownCircle) {
+      this.countdownCircle.restartAnimation();
+    }
+    this.pendingTimer = setTimeout(
+      this._sendTip,
+      CANCEL_INTERVAL_MS,
+      this.props.pendingTipAmount
+    );
+  };
+
   private _onCancelTipPressed = () => {
     this._cancelPendingSendTip();
-    this.setState({
-      pendingTipAmount: undefined
-    });
+    if (this.props.onCancelled) {
+      this.props.onCancelled();
+    }
   };
 
   private _cancelPendingSendTip = () => {
@@ -96,107 +152,26 @@ export class TipActionView extends React.Component<TipProps, TipState> {
     this.pendingTimer = undefined;
   };
 
-  private _onTipButtonPressIn = () => {
-    console.log("YOLO", "press in");
-    // TODO(tina): Long-press should keep incrementing
-  };
-
-  private _onTipButtonPressOut = () => {
-    console.log("YOLO", "press out");
-  };
-
-  private _onTipButtonPressed = () => {
-    this._cancelPendingSendTip();
-    this.setState(
-      state => {
-        const newAmount = state.pendingTipAmount
-          ? state.pendingTipAmount.add(TIP_INCREMENT)
-          : new Big(TIP_INCREMENT);
-        return {
-          pendingTipAmount: newAmount
-        };
-      },
-      () => {
-        console.log("YOLO", "set timer for " + this.state.pendingTipAmount);
-        if (this.countdownCircle) {
-          this.countdownCircle.restartAnimation();
-        }
-        this.pendingTimer = setTimeout(
-          this._sendTip,
-          CANCEL_INTERVAL_MS,
-          this.state.pendingTipAmount
-        );
-      }
-    );
-  };
-
   private _sendTip = (pendingTipAmount: Big) => {
     // TODO(tina): animation when sending, disable button
     console.log("YOLO", "sending tip for " + pendingTipAmount);
-
+    if (this.props.onSending) {
+      this.props.onSending();
+    }
     // this.props.tip(
     //   tipCallApiId(this.props.data),
     //   this.props.data.toMemberId,
     //   TIP_INCREMENT,
     //   this.props.data.targetOperationId
     // );
-    this.setState(state => {
-      if (
-        !state.pendingTipAmount ||
-        !pendingTipAmount.eq(state.pendingTipAmount)
-      ) {
-        console.warn(
-          "Current state amount " +
-            state.pendingTipAmount +
-            " does not match expected sent amount " +
-            pendingTipAmount
-        );
-      }
-      return {
-        // pendingTipAmount: undefined,
-        // TODO(tina): REMOVE test
-        callStatus: ApiCallStatusType.STARTED
-      };
-    });
 
     // TODO(tina): REMOVE test
     setTimeout(() => {
-      this.setState({
-        callStatus: ApiCallStatusType.SUCCESS
-      });
-
+      if (this.props.onSent) {
+        this.props.onSent();
+      }
       // TODO: animate and then remove pendingTipAmount
     }, 5000);
-  };
-
-  // TODO(tina): First render is so slow
-  private _renderPendingTip = () => {
-    const pendingTipAmount = this.state.pendingTipAmount;
-    if (!pendingTipAmount) {
-      return undefined;
-    }
-    const disableTipAction =
-      !!this.props.apiCallStatus &&
-      this.props.apiCallStatus.status !== ApiCallStatusType.SUCCESS;
-    return (
-      <Animated.View style={{ flexDirection: "row" }}>
-        {/* TODO: Allow user to send custom amount by tapping on this */}
-        <Currency
-          style={styles.pendingTip}
-          currencyValue={{
-            value: pendingTipAmount,
-            role: CurrencyRole.Transaction,
-            currencyType: CurrencyType.Raha
-          }}
-        />
-        <TouchableWithoutFeedback
-          onPress={this._onCancelTipPressed}
-          disabled={disableTipAction}
-        >
-          <View style={styles.pendingCancel}>{this._renderIcon()}</View>
-        </TouchableWithoutFeedback>
-      </Animated.View>
-    );
   };
 
   private _renderIcon = () => {
@@ -236,24 +211,29 @@ export class TipActionView extends React.Component<TipProps, TipState> {
     }
   };
 
+  // TODO(tina): First render is so slow
   render() {
     const disableTipAction =
       !!this.props.apiCallStatus &&
       this.props.apiCallStatus.status !== ApiCallStatusType.SUCCESS;
     return (
-      <View style={styles.actionContainer}>
-        <TouchableOpacity
-          style={styles.tipButton} // TODO(tina): disabled style
+      <Animated.View style={{ flexDirection: "row" }}>
+        {/* TODO: Allow user to send custom amount by tapping on this */}
+        <Currency
+          style={styles.pendingTip}
+          currencyValue={{
+            value: this.props.pendingTipAmount,
+            role: CurrencyRole.Transaction,
+            currencyType: CurrencyType.Raha
+          }}
+        />
+        <TouchableWithoutFeedback
+          onPress={this._onCancelTipPressed}
           disabled={disableTipAction}
-          onPressIn={this._onTipButtonPressIn}
-          onPressOut={this._onTipButtonPressOut}
-          onPress={this._onTipButtonPressed}
         >
-          <Icon name="caret-up" size={20} color={palette.darkMint} solid />
-          <Text style={styles.tipButtonText}>Tip</Text>
-        </TouchableOpacity>
-        {this._renderPendingTip()}
-      </View>
+          <View style={styles.pendingCancel}>{this._renderIcon()}</View>
+        </TouchableWithoutFeedback>
+      </Animated.View>
     );
   }
 }
@@ -339,10 +319,10 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const { apiCallId } = ownProps;
+  const { id } = ownProps;
   return {
-    apiCallStatus: apiCallId
-      ? getStatusOfApiCall(state, ApiEndpointName.TIP, apiCallId)
+    apiCallStatus: id
+      ? getStatusOfApiCall(state, ApiEndpointName.TIP, id)
       : undefined
   };
 };
