@@ -1,3 +1,9 @@
+/**
+ * Renders the tip action button. When pressed, the tip is incremented and
+ * batched after some time interval. During that time, the user is allowed to
+ * cancel the pending tip. If the pending tip isn't canceled, it's sent and
+ * displayed until the action component fades out.
+ */
 import * as React from "react";
 import { Big } from "big.js";
 import {
@@ -6,25 +12,28 @@ import {
   StyleSheet,
   ViewStyle,
   TextStyle,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  ActivityIndicator,
+  Animated
 } from "react-native";
-import { fontSizes, fonts } from "../../../helpers/fonts";
-import { palette } from "../../../helpers/colors";
+import { fontSizes, fonts } from "../../../../helpers/fonts";
+import { palette } from "../../../../helpers/colors";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { Text } from "../elements";
-import { TipData } from "../../../store/selectors/stories/types";
-import { CurrencyRole, CurrencyType, Currency } from "../elements/Currency";
+import { Text } from "../../elements";
+import { CurrencyRole, CurrencyType, Currency } from "../../elements/Currency";
 import { connect, MapStateToProps } from "react-redux";
-import { RahaState } from "../../../store";
-import { tip } from "../../../store/actions/wallet";
+import { RahaState } from "../../../../store";
+import { tip } from "../../../../store/actions/wallet";
 import { OperationId } from "@raha/api-shared/dist/models/identifiers";
-import { ApiCallStatus } from "../../../store/reducers/apiCalls";
-import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
+import {
+  ApiCallStatus,
+  ApiCallStatusType
+} from "../../../../store/reducers/apiCalls";
+import { getStatusOfApiCall } from "../../../../store/selectors/apiCalls";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
-import CountdownCircle from "../elements/CountdownCircle";
+import CountdownCircle from "../../elements/CountdownCircle";
 
 type StateProps = {
-  // loggedInMember?: Member;
   // getMemberById: (memberId: MemberId) => Member | undefined;
   apiCallStatus: ApiCallStatus | undefined;
 };
@@ -34,7 +43,8 @@ type DispatchProps = {
 };
 
 type OwnProps = {
-  data: TipData;
+  sendTip: (amount: Big) => void;
+  apiCallId?: string;
 };
 
 type TipProps = OwnProps & DispatchProps & StateProps;
@@ -44,24 +54,19 @@ type TipState = {
   // unmount to give the user a chance to cancel.
   pendingTipAmount?: Big;
   pendingTipId?: OperationId;
+
+  // TODO(tina): REMOVE TEXT
+  callStatus?: ApiCallStatusType;
 };
 
 const TIP_INCREMENT = new Big(0.1);
-const CANCEL_INTERVAL_SEC = 3;
-const CANCEL_INTERVAL_MS = CANCEL_INTERVAL_SEC * 1000;
-
-/**
- * ID used for the tip API call so that we can check on the status
- */
-function tipCallApiId(data: TipData): string {
-  return data.toMemberId + data.targetOperationId;
-}
+const CANCEL_INTERVAL_MS = 1000; // TODO(tina): increase timeout
 
 /**
  * Call-to-action that is rendered in the feed below actors to allow the logged
  * in user to tip them.
  */
-export class TipView extends React.Component<TipProps, TipState> {
+export class TipActionView extends React.Component<TipProps, TipState> {
   pendingTimer?: any;
   countdownCircle: CountdownCircle | null;
 
@@ -71,22 +76,6 @@ export class TipView extends React.Component<TipProps, TipState> {
     this.state = {
       pendingTipAmount: undefined
     };
-  }
-
-  // TODO(tina): When navigating to another page, it won't call unmount
-  componentWillUnmount() {
-    console.log(
-      "YOLO",
-      "tip component will unmount " +
-        this.props.data.toMemberId +
-        " maybe send " +
-        this.state.pendingTipAmount
-    );
-    this._cancelPendingSendTip();
-    const pendingTip = this.state.pendingTipAmount;
-    if (pendingTip) {
-      this._sendTip(pendingTip);
-    }
   }
 
   private _onCancelTipPressed = () => {
@@ -123,7 +112,6 @@ export class TipView extends React.Component<TipProps, TipState> {
         const newAmount = state.pendingTipAmount
           ? state.pendingTipAmount.add(TIP_INCREMENT)
           : new Big(TIP_INCREMENT);
-        console.log("YOLO", "setting the tip to " + newAmount);
         return {
           pendingTipAmount: newAmount
         };
@@ -145,6 +133,7 @@ export class TipView extends React.Component<TipProps, TipState> {
   private _sendTip = (pendingTipAmount: Big) => {
     // TODO(tina): animation when sending, disable button
     console.log("YOLO", "sending tip for " + pendingTipAmount);
+
     // this.props.tip(
     //   tipCallApiId(this.props.data),
     //   this.props.data.toMemberId,
@@ -164,85 +153,106 @@ export class TipView extends React.Component<TipProps, TipState> {
         );
       }
       return {
-        pendingTipAmount: undefined
+        // pendingTipAmount: undefined,
+        // TODO(tina): REMOVE test
+        callStatus: ApiCallStatusType.STARTED
       };
     });
+
+    // TODO(tina): REMOVE test
+    setTimeout(() => {
+      this.setState({
+        callStatus: ApiCallStatusType.SUCCESS
+      });
+
+      // TODO: animate and then remove pendingTipAmount
+    }, 5000);
+  };
+
+  // TODO(tina): First render is so slow
+  private _renderPendingTip = () => {
+    const pendingTipAmount = this.state.pendingTipAmount;
+    if (!pendingTipAmount) {
+      return undefined;
+    }
+    const disableTipAction =
+      !!this.props.apiCallStatus &&
+      this.props.apiCallStatus.status !== ApiCallStatusType.SUCCESS;
+    return (
+      <Animated.View style={{ flexDirection: "row" }}>
+        {/* TODO: Allow user to send custom amount by tapping on this */}
+        <Currency
+          style={styles.pendingTip}
+          currencyValue={{
+            value: pendingTipAmount,
+            role: CurrencyRole.Transaction,
+            currencyType: CurrencyType.Raha
+          }}
+        />
+        <TouchableWithoutFeedback
+          onPress={this._onCancelTipPressed}
+          disabled={disableTipAction}
+        >
+          <View style={styles.pendingCancel}>{this._renderIcon()}</View>
+        </TouchableWithoutFeedback>
+      </Animated.View>
+    );
+  };
+
+  private _renderIcon = () => {
+    const tipApiCallStatus = this.state.callStatus;
+    if (!tipApiCallStatus) {
+      return (
+        <CountdownCircle
+          ref={ref => (this.countdownCircle = ref)}
+          millis={CANCEL_INTERVAL_MS}
+          radius={10}
+          color={palette.red}
+          bgColor={palette.white}
+          shadowColor={palette.lightGray}
+          borderWidth={2}
+        >
+          <Icon name="times-circle" color={palette.red} size={14} solid />
+        </CountdownCircle>
+      );
+    }
+
+    switch (tipApiCallStatus) {
+      case ApiCallStatusType.STARTED:
+        return <ActivityIndicator />;
+      case ApiCallStatusType.FAILURE:
+        // TODO(tina): Display dropdown.
+        <Icon name="check-frown" color={palette.red} size={14} solid />;
+      case ApiCallStatusType.SUCCESS:
+        return (
+          <Icon
+            style={{ padding: 3 }}
+            name="check-circle"
+            color={palette.darkMint}
+            size={14}
+            solid
+          />
+        );
+    }
   };
 
   render() {
-    const { tipTotal, fromMemberIds } = this.props.data;
-    const { pendingTipAmount } = this.state;
+    const disableTipAction =
+      !!this.props.apiCallStatus &&
+      this.props.apiCallStatus.status !== ApiCallStatusType.SUCCESS;
     return (
-      <View style={styles.container}>
-        <View style={styles.actionContainer}>
-          <TouchableOpacity
-            style={styles.tipButton}
-            onPressIn={this._onTipButtonPressIn}
-            onPressOut={this._onTipButtonPressOut}
-            onPress={this._onTipButtonPressed}
-          >
-            <Icon name="caret-up" size={20} color={palette.darkMint} solid />
-            <Text style={styles.tipButtonText}>Tip</Text>
-          </TouchableOpacity>
-
-          {pendingTipAmount && (
-            //TODO(tina): first render is so slow
-            <React.Fragment>
-              <Currency
-                style={styles.pendingTip}
-                currencyValue={{
-                  value: pendingTipAmount,
-                  role: CurrencyRole.Transaction,
-                  currencyType: CurrencyType.Raha
-                }}
-              />
-              <TouchableWithoutFeedback onPress={this._onCancelTipPressed}>
-                <View style={styles.pendingCancel}>
-                  <CountdownCircle
-                    ref={ref => (this.countdownCircle = ref)}
-                    millis={CANCEL_INTERVAL_MS}
-                    radius={10}
-                    color={palette.red}
-                    bgColor={palette.white}
-                    shadowColor={palette.lightGray}
-                    borderWidth={2}
-                  >
-                    <Icon
-                      name="times-circle"
-                      color={palette.red}
-                      size={14}
-                      solid
-                    />
-                  </CountdownCircle>
-                </View>
-              </TouchableWithoutFeedback>
-            </React.Fragment>
-          )}
-        </View>
-        {tipTotal.gt(0) && (
-          <TouchableOpacity
-            style={styles.tippersContainer}
-            onPress={() => {
-              // TODO(tina): Go to TipList
-            }}
-          >
-            <Text style={styles.tippersText}>{fromMemberIds.size}</Text>
-            <Icon
-              name="user"
-              style={styles.tippersIcon}
-              color={palette.darkGray}
-              solid
-            />
-            <Currency
-              style={{ ...fontSizes.small }}
-              currencyValue={{
-                value: new Big(tipTotal),
-                role: CurrencyRole.Transaction,
-                currencyType: CurrencyType.Raha
-              }}
-            />
-          </TouchableOpacity>
-        )}
+      <View style={styles.actionContainer}>
+        <TouchableOpacity
+          style={styles.tipButton} // TODO(tina): disabled style
+          disabled={disableTipAction}
+          onPressIn={this._onTipButtonPressIn}
+          onPressOut={this._onTipButtonPressOut}
+          onPress={this._onTipButtonPressed}
+        >
+          <Icon name="caret-up" size={20} color={palette.darkMint} solid />
+          <Text style={styles.tipButtonText}>Tip</Text>
+        </TouchableOpacity>
+        {this._renderPendingTip()}
       </View>
     );
   }
@@ -296,7 +306,8 @@ const pendingTipStyle: TextStyle = {
 
 const pendingCancelStyle: ViewStyle = {
   paddingVertical: 8,
-  paddingHorizontal: 6
+  paddingHorizontal: 6,
+  justifyContent: "center"
 };
 
 const actionContainerStyle: ViewStyle = {
@@ -328,16 +339,15 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
+  const { apiCallId } = ownProps;
   return {
-    apiCallStatus: getStatusOfApiCall(
-      state,
-      ApiEndpointName.TIP,
-      tipCallApiId(ownProps.data)
-    )
+    apiCallStatus: apiCallId
+      ? getStatusOfApiCall(state, ApiEndpointName.TIP, apiCallId)
+      : undefined
   };
 };
 
-export const Tip = connect(
+export const TipAction = connect(
   mapStateToProps,
   { tip }
-)(TipView);
+)(TipActionView);
