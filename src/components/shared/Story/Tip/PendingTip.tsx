@@ -32,6 +32,7 @@ import {
 import { getStatusOfApiCall } from "../../../../store/selectors/apiCalls";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import CountdownCircle from "../../elements/CountdownCircle";
+import { TipData } from "../../../../store/selectors/stories/types";
 
 type StateProps = {
   // getMemberById: (memberId: MemberId) => Member | undefined;
@@ -43,6 +44,8 @@ type DispatchProps = {
 };
 
 type OwnProps = {
+  data: TipData;
+
   // Unique ID for the latest tip transaction, used to track the API call.
   tipId: string;
 
@@ -59,7 +62,6 @@ type OwnProps = {
 type TipProps = OwnProps & DispatchProps & StateProps;
 
 type TipState = {
-  pendingTipId?: OperationId;
   fadeAnimation: Animated.Value;
 };
 
@@ -69,7 +71,7 @@ const CANCEL_INTERVAL_MS = 5000;
  * Call-to-action that is rendered in the feed below actors to allow the logged
  * in user to tip them.
  */
-export class PendingTipView extends React.PureComponent<TipProps, TipState> {
+export class PendingTipView extends React.Component<TipProps, TipState> {
   pendingTimer?: any;
   countdownCircle: CountdownCircle | null;
 
@@ -88,28 +90,11 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
   }
 
   componentDidUpdate(prevProps: TipProps) {
-    if (prevProps.apiCallStatus !== this.props.apiCallStatus) {
-      console.log("YOLO", "status changed ");
-      // TODO(tina): send after animation
-      // const status = this.props.apiCallStatus;
-      // if (status) {
-      //   switch (status.status) {
-      //     case ApiCallStatusType.STARTED:
-      //       if (this.props.onSending) {
-      //         this.props.onSending();
-      //       }
-      //       break;
-      //     case ApiCallStatusType.SUCCESS:
-      //       if (this.props.onSent) {
-      //         this.props.onSent();
-      //       }
-      //       break;
-      //     case ApiCallStatusType.FAILURE:
-      //       if (this.props.onSendFailed) {
-      //         this.props.onSendFailed();
-      //       }
-      //   }
-      // }
+    const { apiCallStatus } = this.props;
+    if (prevProps.apiCallStatus !== apiCallStatus) {
+      if (apiCallStatus) {
+        this._onApiStatusChanged(apiCallStatus.status);
+      }
     }
 
     if (prevProps.pendingTipAmount !== this.props.pendingTipAmount) {
@@ -117,18 +102,30 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
     }
   }
 
-  private _getInitialState(props: TipProps) {
-    return {
-      fadeAnimation: new Animated.Value(0)
-    };
-  }
-
-  private _onApiCallCompleted = () => {
-    // TODO(tina): animate out then call the callback
+  private _onApiStatusChanged = (status: ApiCallStatusType) => {
+    switch (status) {
+      case ApiCallStatusType.SUCCESS:
+        setTimeout(() => {
+          if (this.props.onSent) {
+            this.props.onSent();
+          }
+        }, 2000);
+        break;
+      case ApiCallStatusType.FAILURE:
+        setTimeout(() => {
+          if (this.props.onSendFailed) {
+            this.props.onSendFailed();
+          }
+        }, 2000);
+        break;
+      case ApiCallStatusType.STARTED:
+      // No action; the callback gets called the moment the timer expires
+      default:
+    }
   };
 
   private _schedulePendingTip = () => {
-    console.log("YOLO", "set timer for " + this.props.pendingTipAmount);
+    this._cancelPendingSendTip();
     if (this.countdownCircle) {
       this.countdownCircle.restartAnimation();
     }
@@ -159,24 +156,15 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
 
   private _sendTip = (pendingTipAmount: Big) => {
     // TODO(tina): animation when sending, disable button
-    console.log("YOLO", "sending tip for " + pendingTipAmount);
     if (this.props.onSending) {
       this.props.onSending();
     }
-    // this.props.tip(
-    //   tipCallApiId(this.props.data),
-    //   this.props.data.toMemberId,
-    //   TIP_INCREMENT,
-    //   this.props.data.targetOperationId
-    // );
-
-    // TODO(tina): REMOVE test
-    setTimeout(() => {
-      if (this.props.onSent) {
-        this.props.onSent();
-      }
-      // TODO: animate and then remove pendingTipAmount
-    }, 5000);
+    this.props.tip(
+      this.props.tipId,
+      this.props.data.toMemberId,
+      pendingTipAmount,
+      this.props.data.targetOperationId
+    );
   };
 
   private _renderIcon = () => {
@@ -204,7 +192,15 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
         return <ActivityIndicator />;
       case ApiCallStatusType.FAILURE:
         // TODO(tina): Display dropdown.
-        <Icon name="check-frown" color={palette.red} size={14} solid />;
+        return (
+          <Icon
+            style={{ padding: 3 }}
+            name="frown"
+            color={palette.red}
+            size={14}
+            solid
+          />
+        );
       case ApiCallStatusType.SUCCESS:
         return (
           <Icon
@@ -245,46 +241,6 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
   }
 }
 
-const tipButtonIconStyle: ViewStyle = {
-  marginLeft: 4
-};
-
-const tipButtonTextStyle: TextStyle = {
-  ...fontSizes.small,
-  ...fonts.Lato.Bold,
-  marginLeft: 4,
-  color: palette.darkMint,
-  textAlign: "center"
-};
-
-const tipButtonStyle: ViewStyle = {
-  flexDirection: "row",
-  paddingVertical: 8,
-  paddingRight: 12,
-  // paddingHorizontal: 12,
-  alignItems: "center",
-  // borderWidth: 2,
-  // borderColor: palette.darkMint,
-  // backgroundColor: palette.veryLightGray,
-  borderRadius: 8
-};
-
-const tippersContainerStyle: ViewStyle = {
-  flexDirection: "row",
-  alignItems: "center"
-};
-
-const tippersTextStyle: TextStyle = {
-  ...fontSizes.small,
-  ...fonts.Lato.Bold,
-  marginRight: 2,
-  color: palette.darkGray
-};
-
-const tippersIconStyle: ViewStyle = {
-  marginRight: 6
-};
-
 const pendingTipStyle: TextStyle = {
   ...fontSizes.small,
   marginLeft: 8,
@@ -297,29 +253,9 @@ const pendingCancelStyle: ViewStyle = {
   justifyContent: "center"
 };
 
-const actionContainerStyle: ViewStyle = {
-  flexDirection: "row"
-};
-
-const containerStyle: ViewStyle = {
-  flexDirection: "row",
-  alignItems: "center",
-  position: "relative",
-  justifyContent: "space-between",
-  minHeight: 40,
-  marginRight: 12
-};
-
 export const styles = StyleSheet.create({
-  container: containerStyle,
-  actionContainer: actionContainerStyle,
   pendingTip: pendingTipStyle,
-  pendingCancel: pendingCancelStyle,
-  tipButtonText: tipButtonTextStyle,
-  tipButton: tipButtonStyle,
-  tippersContainer: tippersContainerStyle,
-  tippersIcon: tippersIconStyle,
-  tippersText: tippersTextStyle
+  pendingCancel: pendingCancelStyle
 });
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (

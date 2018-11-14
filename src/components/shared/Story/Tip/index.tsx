@@ -110,8 +110,7 @@ export class TipCallToActionView extends React.Component<
 
   private _onTipSending = () => {
     this.setState({
-      isTipSending: true,
-      pendingTipAmount: undefined
+      isTipSending: true
     });
   };
 
@@ -142,6 +141,7 @@ export class TipCallToActionView extends React.Component<
           </TouchableOpacity>
           {pendingTipAmount && (
             <PendingTip
+              data={this.props.data}
               onCanceled={this._onClearPendingTip}
               onSendFailed={this._onClearPendingTip}
               onSending={this._onTipSending}
