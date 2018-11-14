@@ -29,5 +29,6 @@ export enum RouteName {
   CurrencySettings = "Currency Settings",
   FlagMemberPage = "Flag Member Page",
   FlagFeed = "Flag Feed",
-  ResolveFlagMemberPage = "Resolve Flag Member Page"
+  ResolveFlagMemberPage = "Resolve Flag Member Page",
+  TipperListPage = "Tipper List"
 }

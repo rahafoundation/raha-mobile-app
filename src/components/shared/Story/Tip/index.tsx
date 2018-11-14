@@ -20,10 +20,14 @@ import { TipData } from "../../../../store/selectors/stories/types";
 import { CurrencyRole, CurrencyType, Currency } from "../../elements/Currency";
 import { PendingTip } from "./PendingTip";
 import { generateRandomIdentifier } from "../../../../helpers/identifiers";
+import { RouteName } from "../../navigation";
+import { withNavigation, NavigationInjectedProps } from "react-navigation";
 
-type TipCallToActionProps = {
+type OwnProps = {
   data: TipData;
 };
+
+type TipCallToActionProps = OwnProps & NavigationInjectedProps;
 
 type TipCallToActionState = {
   // While the latest pending tip is sending, tip button is disabled
@@ -40,7 +44,7 @@ const TIP_INCREMENT = new Big(0.1);
  * Call-to-action that is rendered in the feed below actors to allow the logged
  * in user to tip them.
  */
-export class TipCallToAction extends React.Component<
+class TipCallToActionView extends React.Component<
   TipCallToActionProps,
   TipCallToActionState
 > {
@@ -55,22 +59,6 @@ export class TipCallToAction extends React.Component<
       pendingTipAmount: undefined
     };
   }
-
-  // TODO(tina): When navigating to another page, it won't call unmount
-  // componentWillUnmount() {
-  //   console.log(
-  //     "YOLO",
-  //     "tip component will unmount " +
-  //       this.props.data.toMemberId +
-  //       " maybe send " +
-  //       this.state.pendingTipAmount
-  //   );
-  //   this._cancelPendingSendTip();
-  //   const pendingTip = this.state.pendingTipAmount;
-  //   if (pendingTip) {
-  //     this._sendTip(pendingTip);
-  //   }
-  // }
 
   private _onTipButtonPressIn = () => {
     // TODO(tina): Long-press should keep incrementing
@@ -106,7 +94,11 @@ export class TipCallToAction extends React.Component<
     });
   };
 
-  private _viewTippers = () => {};
+  private _viewTippers = () => {
+    this.props.navigation.navigate(RouteName.TipperListPage, {
+      tipData: this.props.data
+    });
+  };
 
   render() {
     const { tipTotal, fromMemberIds } = this.props.data;
@@ -177,6 +169,10 @@ export class TipCallToAction extends React.Component<
   }
 }
 
+export const TipCallToAction = withNavigation<TipCallToActionProps>(
+  TipCallToActionView
+);
+
 const tipButtonIconStyle: ViewStyle = {
   marginLeft: 4
 };
@@ -234,7 +230,7 @@ const tippersIconStyle: ViewStyle = {
   marginRight: 6
 };
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: containerStyle,
   actionContainer: actionContainerStyle,
   tipButtonText: tipButtonTextStyle,
