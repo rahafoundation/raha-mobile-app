@@ -41,7 +41,7 @@ import {
 } from "../../../store/selectors/stories/types";
 import { RahaState } from "../../../store";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
-import { Tip } from "./Tip";
+import { TipCallToAction } from "./Tip";
 
 /**
  * Component for call-to-actions that allow the user to interact with a rendered
@@ -65,7 +65,7 @@ const CallToAction: React.StatelessComponent<{
               </TextLink>
             );
           case CallToActionDataType.TIP:
-            return <Tip key={idx} data={piece.data} />;
+            return <TipCallToAction key={idx} data={piece.data} />;
           default:
             console.error(
               `Unexpected: invalid data type in piece of CallToAction. Piece:`,
