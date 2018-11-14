@@ -43,12 +43,17 @@ type DispatchProps = {
 };
 
 type OwnProps = {
-  id: string;
+  // Unique ID for the latest tip transaction, used to track the API call.
+  tipId: string;
+
+  // The pending amount. Whenever this is changed, the timer will restart.
   pendingTipAmount: Big;
+
+  // Callbacks after sending completed and the pending tip component has faded out.
   onSending?: () => void;
   onSent?: () => void;
   onSendFailed?: () => void;
-  onCancelled?: () => void;
+  onCanceled?: () => void;
 };
 
 type TipProps = OwnProps & DispatchProps & StateProps;
@@ -58,13 +63,13 @@ type TipState = {
   fadeAnimation: Animated.Value;
 };
 
-const CANCEL_INTERVAL_MS = 3000; // TODO(tina): increase timeout
+const CANCEL_INTERVAL_MS = 5000;
 
 /**
  * Call-to-action that is rendered in the feed below actors to allow the logged
  * in user to tip them.
  */
-export class TipActionView extends React.PureComponent<TipProps, TipState> {
+export class PendingTipView extends React.PureComponent<TipProps, TipState> {
   pendingTimer?: any;
   countdownCircle: CountdownCircle | null;
 
@@ -72,7 +77,7 @@ export class TipActionView extends React.PureComponent<TipProps, TipState> {
     super(props);
     this.countdownCircle = null;
     this.state = {
-      fadeAnimation: new Animated.Value(0)
+      fadeAnimation: new Animated.Value(1)
     };
   }
 
@@ -136,8 +141,8 @@ export class TipActionView extends React.PureComponent<TipProps, TipState> {
 
   private _onCancelTipPressed = () => {
     this._cancelPendingSendTip();
-    if (this.props.onCancelled) {
-      this.props.onCancelled();
+    if (this.props.onCanceled) {
+      this.props.onCanceled();
     }
   };
 
@@ -175,7 +180,9 @@ export class TipActionView extends React.PureComponent<TipProps, TipState> {
   };
 
   private _renderIcon = () => {
-    const tipApiCallStatus = this.state.callStatus;
+    const tipApiCallStatus = this.props.apiCallStatus
+      ? this.props.apiCallStatus.status
+      : undefined;
     if (!tipApiCallStatus) {
       return (
         <CountdownCircle
@@ -319,15 +326,15 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const { id } = ownProps;
+  const { tipId } = ownProps;
   return {
-    apiCallStatus: id
-      ? getStatusOfApiCall(state, ApiEndpointName.TIP, id)
+    apiCallStatus: tipId
+      ? getStatusOfApiCall(state, ApiEndpointName.TIP, tipId)
       : undefined
   };
 };
 
-export const TipAction = connect(
+export const PendingTip = connect(
   mapStateToProps,
   { tip }
-)(TipActionView);
+)(PendingTipView);

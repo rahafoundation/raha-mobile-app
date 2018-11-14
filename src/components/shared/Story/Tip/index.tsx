@@ -24,15 +24,7 @@ import { CurrencyRole, CurrencyType, Currency } from "../../elements/Currency";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../../store";
 import { tip } from "../../../../store/actions/wallet";
-import { OperationId } from "@raha/api-shared/dist/models/identifiers";
-import {
-  ApiCallStatus,
-  ApiCallStatusType
-} from "../../../../store/reducers/apiCalls";
-import { getStatusOfApiCall } from "../../../../store/selectors/apiCalls";
-import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
-import CountdownCircle from "../../elements/CountdownCircle";
-import { TipAction } from "./TipAction";
+import { PendingTip } from "./PendingTip";
 import { generateRandomIdentifier } from "../../../../helpers/identifiers";
 
 type StateProps = {
@@ -51,17 +43,15 @@ type OwnProps = {
 type TipCallToActionProps = OwnProps & DispatchProps & StateProps;
 
 type TipCallToActionState = {
+  // While the latest pending tip is sending, tip button is disabled
   isTipSending?: boolean;
 
-  // TODO(tina): REMOVE TEXT
-  callStatus?: ApiCallStatusType;
-
+  // Current pending tip amount to be sent. Whenever this is changed, the timer
+  // within PendingTip will be restarted.
   pendingTipAmount?: Big;
 };
 
 const TIP_INCREMENT = new Big(0.1);
-const CANCEL_INTERVAL_SEC = 3;
-const CANCEL_INTERVAL_MS = CANCEL_INTERVAL_SEC * 1000;
 
 /**
  * Call-to-action that is rendered in the feed below actors to allow the logged
@@ -71,8 +61,13 @@ export class TipCallToActionView extends React.Component<
   TipCallToActionProps,
   TipCallToActionState
 > {
+  // A unique ID for the next tip action. This is used to check the API call
+  // status within PendingTip.
+  tipId: string;
+
   constructor(props: TipCallToActionProps) {
     super(props);
+    this.tipId = generateRandomIdentifier();
     this.state = {
       pendingTipAmount: undefined
     };
@@ -95,16 +90,14 @@ export class TipCallToActionView extends React.Component<
   // }
 
   private _onTipButtonPressIn = () => {
-    console.log("YOLO", "press in");
     // TODO(tina): Long-press should keep incrementing
   };
 
   private _onTipButtonPressOut = () => {
-    console.log("YOLO", "press out");
+    // TODO(tina): Long-press should keep incrementing
   };
 
   private _onTipButtonPressed = () => {
-    // // this._cancelPendingSendTip();
     this.setState(state => {
       const newAmount = state.pendingTipAmount
         ? state.pendingTipAmount.add(TIP_INCREMENT)
@@ -112,6 +105,22 @@ export class TipCallToActionView extends React.Component<
       return {
         pendingTipAmount: newAmount
       };
+    });
+  };
+
+  private _onTipSending = () => {
+    this.setState({
+      isTipSending: true,
+      pendingTipAmount: undefined
+    });
+  };
+
+  private _onClearPendingTip = () => {
+    // Set a new ID for the next tip
+    this.tipId = generateRandomIdentifier();
+    this.setState({
+      isTipSending: false,
+      pendingTipAmount: undefined
     });
   };
 
@@ -132,13 +141,13 @@ export class TipCallToActionView extends React.Component<
             <Text style={styles.tipButtonText}>Tip</Text>
           </TouchableOpacity>
           {pendingTipAmount && (
-            <TipAction
+            <PendingTip
+              onCanceled={this._onClearPendingTip}
+              onSendFailed={this._onClearPendingTip}
+              onSending={this._onTipSending}
+              onSent={this._onClearPendingTip}
               pendingTipAmount={pendingTipAmount}
-              // TODO(tina): clean
-              id={
-                this.props.data.targetOperationId + this.props.data.toMemberId
-              }
-              // id={generateRandomIdentifier()}
+              tipId={this.tipId}
             />
           )}
         </View>
@@ -195,6 +204,19 @@ const tipButtonStyle: ViewStyle = {
   borderRadius: 8
 };
 
+const actionContainerStyle: ViewStyle = {
+  flexDirection: "row"
+};
+
+const containerStyle: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  position: "relative",
+  justifyContent: "space-between",
+  minHeight: 40,
+  marginRight: 12
+};
+
 const tippersContainerStyle: ViewStyle = {
   flexDirection: "row",
   alignItems: "center"
@@ -211,36 +233,9 @@ const tippersIconStyle: ViewStyle = {
   marginRight: 6
 };
 
-const pendingTipStyle: TextStyle = {
-  ...fontSizes.small,
-  marginLeft: 8,
-  paddingVertical: 8
-};
-
-const pendingCancelStyle: ViewStyle = {
-  paddingVertical: 8,
-  paddingHorizontal: 6,
-  justifyContent: "center"
-};
-
-const actionContainerStyle: ViewStyle = {
-  flexDirection: "row"
-};
-
-const containerStyle: ViewStyle = {
-  flexDirection: "row",
-  alignItems: "center",
-  position: "relative",
-  justifyContent: "space-between",
-  minHeight: 40,
-  marginRight: 12
-};
-
 export const styles = StyleSheet.create({
   container: containerStyle,
   actionContainer: actionContainerStyle,
-  pendingTip: pendingTipStyle,
-  pendingCancel: pendingCancelStyle,
   tipButtonText: tipButtonTextStyle,
   tipButton: tipButtonStyle,
   tippersContainer: tippersContainerStyle,
