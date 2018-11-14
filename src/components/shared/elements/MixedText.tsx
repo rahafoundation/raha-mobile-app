@@ -24,8 +24,8 @@ export const MixedText: React.StatelessComponent<MixedTextProps> = props => {
   const arrayContent = typeof content === "string" ? [content] : content;
 
   const transformed = textTransform
-    ? arrayContent.map(c =>
-        textTransform && typeof c === "string" ? textTransform(c) : c
+    ? arrayContent.map(
+        c => (textTransform && typeof c === "string" ? textTransform(c) : c)
       )
     : arrayContent;
   return (

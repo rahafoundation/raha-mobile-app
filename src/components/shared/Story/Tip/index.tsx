@@ -169,9 +169,7 @@ class TipCallToActionView extends React.Component<
   }
 }
 
-export const TipCallToAction = withNavigation<TipCallToActionProps>(
-  TipCallToActionView
-);
+export const TipCallToAction = withNavigation<OwnProps>(TipCallToActionView);
 
 const tipButtonIconStyle: ViewStyle = {
   marginLeft: 4
