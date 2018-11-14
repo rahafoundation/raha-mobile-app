@@ -1,6 +1,7 @@
 /**
- * Adopted from https://github.com/MrToph/react-native-countdown-circle to not
- * include the inner text.
+ * Circular countdown timer.
+ *
+ * Adopted from https://github.com/MrToph/react-native-countdown-circle
  */
 import React from "react";
 import {
@@ -12,10 +13,39 @@ import {
   ViewStyle
 } from "react-native";
 
+function getInitialState(props: Props) {
+  const circleProgress = new Animated.Value(0);
+  return {
+    circleProgress,
+    millisElapsed: 0,
+    interpolationValuesHalfCircle1: calcInterpolationValuesForHalfCircle1(
+      circleProgress,
+      props
+    ),
+    interpolationValuesHalfCircle2: calcInterpolationValuesForHalfCircle2(
+      circleProgress,
+      props
+    )
+  };
+}
+
+function calcInterpolationValuesForHalfCircle1(
+  animatedValue: Animated.Value,
+  { shadowColor }: Props
+): HalfCircleValue {
+  const rotate = animatedValue.interpolate({
+    inputRange: [0, 50, 50, 100],
+    outputRange: ["0deg", "180deg", "180deg", "180deg"]
+  });
+
+  const backgroundColor = shadowColor;
+  return { rotate, backgroundColor };
+}
+
 function calcInterpolationValuesForHalfCircle2(
-  animatedValue,
-  { color, shadowColor }
-) {
+  animatedValue: Animated.Value,
+  { color, shadowColor }: Props
+): HalfCircleValue {
   const rotate = animatedValue.interpolate({
     inputRange: [0, 50, 50, 100],
     outputRange: ["0deg", "0deg", "180deg", "360deg"]
@@ -28,104 +58,71 @@ function calcInterpolationValuesForHalfCircle2(
   return { rotate, backgroundColor };
 }
 
-function getInitialState(props) {
-  const circleProgress = new Animated.Value(0);
-  return {
-    circleProgress,
-    secondsElapsed: 0,
-    text: props.updateText(0, props.seconds),
-    interpolationValuesHalfCircle1: calcInterpolationValuesForHalfCircle1(
-      circleProgress,
-      props
-    ),
-    interpolationValuesHalfCircle2: calcInterpolationValuesForHalfCircle2(
-      circleProgress,
-      props
-    )
-  };
-}
-
-function calcInterpolationValuesForHalfCircle1(animatedValue, { shadowColor }) {
-  const rotate = animatedValue.interpolate({
-    inputRange: [0, 50, 50, 100],
-    outputRange: ["0deg", "180deg", "180deg", "180deg"]
-  });
-
-  const backgroundColor = shadowColor;
-  return { rotate, backgroundColor };
-}
-
-type Props = {
-  seconds: number;
-  radius: number;
-  color?: string;
-  shadowColor?: string;
-  bgColor?: string;
-  borderWidth?: number;
-  containerStyle?: ViewStyle;
-  onTimeElapsed: () => void;
+type HalfCircleValue = {
+  rotate: Animated.AnimatedInterpolation;
+  backgroundColor: string | Animated.AnimatedInterpolation;
 };
 
-export default class PercentageCircle extends React.PureComponent<Props> {
+export interface Props {
+  millis: number;
+  radius: number;
+  color: string;
+  shadowColor: string;
+  bgColor: string;
+  borderWidth: number;
+  containerStyle?: ViewStyle;
+  children?: React.ReactNode;
+}
+
+type State = {
+  millisElapsed: number;
+  circleProgress: Animated.Value;
+  interpolationValuesHalfCircle1: HalfCircleValue;
+  interpolationValuesHalfCircle2: HalfCircleValue;
+};
+
+// TODO: scroll away clears state
+export default class CountdownCircle extends React.PureComponent<Props, State> {
   static defaultProps = {
     color: "#f00",
     shadowColor: "#999",
     bgColor: "#e9e9ef",
     borderWidth: 2,
-    seconds: 10,
     children: null,
-    containerStyle: null,
-    textStyle: null,
-    onTimeElapsed: () => null
+    containerStyle: null
   };
 
   constructor(props: Props) {
     super(props);
-
     this.state = getInitialState(props);
-    this.restartAnimation();
+    this.startAnimation();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.seconds !== nextProps.seconds) {
+  componentWillReceiveProps(nextProps: Props) {
+    if (this.props.millis !== nextProps.millis) {
       this.state.circleProgress.stopAnimation();
-      this.setState(getInitialState(nextProps), this.restartAnimation);
+      this.setState(getInitialState(nextProps), this.startAnimation);
     }
   }
 
-  onCircleAnimated = ({ finished }) => {
-    // if animation was interrupted by stopAnimation don't restart it.
-    if (!finished) return;
-
-    const secondsElapsed = this.state.secondsElapsed + 1;
-    const callback =
-      secondsElapsed < this.props.seconds
-        ? this.restartAnimation
-        : this.props.onTimeElapsed;
-    const updatedText = this.props.updateText(
-      secondsElapsed,
-      this.props.seconds
-    );
-    this.setState(
-      {
-        ...getInitialState(this.props),
-        secondsElapsed,
-        text: updatedText
-      },
-      callback
-    );
+  pauseAnimation = () => {
+    this.state.circleProgress.stopAnimation();
   };
 
   restartAnimation = () => {
+    this.setState(getInitialState(this.props), this.startAnimation);
+  };
+
+  startAnimation = () => {
     this.state.circleProgress.stopAnimation();
     Animated.timing(this.state.circleProgress, {
       toValue: 100,
-      duration: 1000,
+      duration: this.props.millis,
       easing: Easing.linear
-    }).start(this.onCircleAnimated);
+    }).start();
   };
 
-  renderHalfCircle({ rotate, backgroundColor }) {
+  renderHalfCircle({ rotate, backgroundColor }: HalfCircleValue) {
     const { radius } = this.props;
 
     return (
@@ -173,7 +170,7 @@ export default class PercentageCircle extends React.PureComponent<Props> {
           }
         ]}
       >
-        <Text style={this.props.textStyle}>{this.state.text}</Text>
+        {this.props.children}
       </View>
     );
   }
