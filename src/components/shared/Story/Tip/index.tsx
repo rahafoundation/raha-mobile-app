@@ -2,9 +2,6 @@
  * Tipping call to action row that displays tipping action and how many tips the
  * Story had received.
  */
-// TODO TODAY: Send tip fadeout and restart, TipList, clean up components
-// TODO TOMORROW: polish on navigation away, press and hold
-// TODO P1: Edit text for amount
 
 import * as React from "react";
 import { Big } from "big.js";
@@ -21,26 +18,12 @@ import Icon from "react-native-vector-icons/FontAwesome5";
 import { Text } from "../../elements";
 import { TipData } from "../../../../store/selectors/stories/types";
 import { CurrencyRole, CurrencyType, Currency } from "../../elements/Currency";
-import { connect, MapStateToProps } from "react-redux";
-import { RahaState } from "../../../../store";
-import { tip } from "../../../../store/actions/wallet";
 import { PendingTip } from "./PendingTip";
 import { generateRandomIdentifier } from "../../../../helpers/identifiers";
 
-type StateProps = {
-  // getMemberById: (memberId: MemberId) => Member | undefined;
-  // apiCallStatus: ApiCallStatus | undefined;
-};
-
-type DispatchProps = {
-  tip: typeof tip;
-};
-
-type OwnProps = {
+type TipCallToActionProps = {
   data: TipData;
 };
-
-type TipCallToActionProps = OwnProps & DispatchProps & StateProps;
 
 type TipCallToActionState = {
   // While the latest pending tip is sending, tip button is disabled
@@ -57,7 +40,7 @@ const TIP_INCREMENT = new Big(0.1);
  * Call-to-action that is rendered in the feed below actors to allow the logged
  * in user to tip them.
  */
-export class TipCallToActionView extends React.Component<
+export class TipCallToAction extends React.Component<
   TipCallToActionProps,
   TipCallToActionState
 > {
@@ -123,6 +106,8 @@ export class TipCallToActionView extends React.Component<
     });
   };
 
+  private _viewTippers = () => {};
+
   render() {
     const { tipTotal, fromMemberIds } = this.props.data;
     const { pendingTipAmount } = this.state;
@@ -168,9 +153,7 @@ export class TipCallToActionView extends React.Component<
         {tipTotal.gt(0) && (
           <TouchableOpacity
             style={styles.tippersContainer}
-            onPress={() => {
-              // TODO(tina): Go to TipList
-            }}
+            onPress={this._viewTippers}
           >
             <Text style={styles.tippersText}>{fromMemberIds.size}</Text>
             <Icon
@@ -261,15 +244,3 @@ export const styles = StyleSheet.create({
   tippersText: tippersTextStyle,
   disabledText: disabledTextStyle
 });
-
-const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
-  state,
-  ownProps
-) => {
-  return {};
-};
-
-export const TipCallToAction = connect(
-  mapStateToProps,
-  { tip }
-)(TipCallToActionView);

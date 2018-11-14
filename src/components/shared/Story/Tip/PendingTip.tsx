@@ -68,6 +68,7 @@ type OwnProps = {
 type TipProps = OwnProps & DispatchProps & StateProps;
 
 type TipState = {
+  // TODO(tina): Add fadeout animation
   fadeAnimation: Animated.Value;
 };
 
@@ -206,7 +207,6 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
       case ApiCallStatusType.STARTED:
         return <ActivityIndicator />;
       case ApiCallStatusType.FAILURE:
-        // TODO(tina): Display dropdown.
         return (
           <Icon
             style={{ padding: 3 }}

@@ -575,7 +575,6 @@ function addOperationToActivitiesList(
             );
         }
       } else {
-        // TODO(tina): Migrate GIVE operations to have metadata block
         return addIndependentOperation(existingData, operation);
       }
     case OperationType.EDIT_MEMBER:
