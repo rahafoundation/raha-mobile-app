@@ -6,7 +6,7 @@ import {
   StyleSheet,
   ViewStyle,
   TextStyle,
-  TouchableHighlight
+  TouchableWithoutFeedback
 } from "react-native";
 import { fontSizes, fonts } from "../../../helpers/fonts";
 import { palette } from "../../../helpers/colors";
@@ -16,13 +16,12 @@ import { TipData } from "../../../store/selectors/stories/types";
 import { CurrencyRole, CurrencyType, Currency } from "../elements/Currency";
 import { connect, MapStateToProps } from "react-redux";
 import { RahaState } from "../../../store";
-import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { tip } from "../../../store/actions/wallet";
-import { generateRandomIdentifier } from "../../../helpers/identifiers";
 import { OperationId } from "@raha/api-shared/dist/models/identifiers";
 import { ApiCallStatus } from "../../../store/reducers/apiCalls";
 import { getStatusOfApiCall } from "../../../store/selectors/apiCalls";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
+import CountdownCircle from "../elements/CountdownCircle";
 
 type StateProps = {
   // loggedInMember?: Member;
@@ -48,7 +47,8 @@ type TipState = {
 };
 
 const TIP_INCREMENT = new Big(0.1);
-const CANCEL_INTERVAL_MS = 3000;
+const CANCEL_INTERVAL_SEC = 3;
+const CANCEL_INTERVAL_MS = CANCEL_INTERVAL_SEC * 1000;
 
 /**
  * ID used for the tip API call so that we can check on the status
@@ -63,9 +63,11 @@ function tipCallApiId(data: TipData): string {
  */
 export class TipView extends React.Component<TipProps, TipState> {
   pendingTimer?: any;
+  countdownCircle: CountdownCircle | null;
 
   constructor(props: TipProps) {
     super(props);
+    this.countdownCircle = null;
     this.state = {
       pendingTipAmount: undefined
     };
@@ -99,6 +101,9 @@ export class TipView extends React.Component<TipProps, TipState> {
       return;
     }
     clearTimeout(this.pendingTimer);
+    if (this.countdownCircle) {
+      this.countdownCircle.pauseAnimation();
+    }
     this.pendingTimer = undefined;
   };
 
@@ -115,7 +120,6 @@ export class TipView extends React.Component<TipProps, TipState> {
     this._cancelPendingSendTip();
     this.setState(
       state => {
-        // TODO(tina): reset timer every time user presses up
         const newAmount = state.pendingTipAmount
           ? state.pendingTipAmount.add(TIP_INCREMENT)
           : new Big(TIP_INCREMENT);
@@ -126,6 +130,9 @@ export class TipView extends React.Component<TipProps, TipState> {
       },
       () => {
         console.log("YOLO", "set timer for " + this.state.pendingTipAmount);
+        if (this.countdownCircle) {
+          this.countdownCircle.restartAnimation();
+        }
         this.pendingTimer = setTimeout(
           this._sendTip,
           CANCEL_INTERVAL_MS,
@@ -180,7 +187,6 @@ export class TipView extends React.Component<TipProps, TipState> {
 
           {pendingTipAmount && (
             //TODO(tina): first render is so slow
-            // {/* TODO(tina): animate countdown circle */}
             <React.Fragment>
               <Currency
                 style={styles.pendingTip}
@@ -190,14 +196,26 @@ export class TipView extends React.Component<TipProps, TipState> {
                   currencyType: CurrencyType.Raha
                 }}
               />
-              <Icon
-                style={styles.pendingCancel}
-                name="times-circle"
-                color={palette.red}
-                size={20}
-                onPress={this._onCancelTipPressed}
-                solid
-              />
+              <TouchableWithoutFeedback onPress={this._onCancelTipPressed}>
+                <View style={styles.pendingCancel}>
+                  <CountdownCircle
+                    ref={ref => (this.countdownCircle = ref)}
+                    millis={CANCEL_INTERVAL_MS}
+                    radius={10}
+                    color={palette.red}
+                    bgColor={palette.white}
+                    shadowColor={palette.lightGray}
+                    borderWidth={2}
+                  >
+                    <Icon
+                      name="times-circle"
+                      color={palette.red}
+                      size={14}
+                      solid
+                    />
+                  </CountdownCircle>
+                </View>
+              </TouchableWithoutFeedback>
             </React.Fragment>
           )}
         </View>
@@ -230,6 +248,10 @@ export class TipView extends React.Component<TipProps, TipState> {
   }
 }
 
+const tipButtonIconStyle: ViewStyle = {
+  marginLeft: 4
+};
+
 const tipButtonTextStyle: TextStyle = {
   ...fontSizes.small,
   ...fonts.Lato.Bold,
@@ -242,7 +264,12 @@ const tipButtonStyle: ViewStyle = {
   flexDirection: "row",
   paddingVertical: 8,
   paddingRight: 12,
-  alignItems: "center"
+  // paddingHorizontal: 12,
+  alignItems: "center",
+  // borderWidth: 2,
+  // borderColor: palette.darkMint,
+  // backgroundColor: palette.veryLightGray,
+  borderRadius: 8
 };
 
 const tippersContainerStyle: ViewStyle = {
@@ -263,13 +290,13 @@ const tippersIconStyle: ViewStyle = {
 
 const pendingTipStyle: TextStyle = {
   ...fontSizes.small,
-  marginRight: 8,
+  marginLeft: 8,
   paddingVertical: 8
 };
 
 const pendingCancelStyle: ViewStyle = {
-  paddingRight: 4,
-  paddingVertical: 8
+  paddingVertical: 8,
+  paddingHorizontal: 6
 };
 
 const actionContainerStyle: ViewStyle = {
