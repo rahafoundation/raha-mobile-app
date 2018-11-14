@@ -3,15 +3,8 @@
  *
  * Adopted from https://github.com/MrToph/react-native-countdown-circle
  */
-import React from "react";
-import {
-  Easing,
-  Animated,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle
-} from "react-native";
+import * as React from "react";
+import { Easing, Animated, StyleSheet, View, ViewStyle } from "react-native";
 
 function getInitialState(props: Props) {
   const circleProgress = new Animated.Value(0);
