@@ -68,7 +68,6 @@ type OwnProps = {
 type TipProps = OwnProps & DispatchProps & StateProps;
 
 type TipState = {
-  // TODO(tina): Add fadeout animation
   fadeAnimation: Animated.Value;
 };
 
@@ -109,13 +108,15 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
 
   private _onApiStatusChanged = (status: ApiCallStatusType) => {
     switch (status) {
-      // TODO(tina): Remove these temporary holds for animations
       case ApiCallStatusType.SUCCESS:
-        setTimeout(() => {
+        Animated.timing(this.state.fadeAnimation, {
+          toValue: 0,
+          duration: 1000
+        }).start(() => {
           if (this.props.onSent) {
             this.props.onSent();
           }
-        }, 2000);
+        });
         break;
       case ApiCallStatusType.FAILURE: {
         const toMember = this.props.toMember;
@@ -128,11 +129,14 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
               " wasn't sent. Please try again."
           );
         }
-        setTimeout(() => {
+        Animated.timing(this.state.fadeAnimation, {
+          toValue: 0,
+          duration: 1000
+        }).start(() => {
           if (this.props.onSendFailed) {
             this.props.onSendFailed();
           }
-        }, 2000);
+        });
         break;
       }
       case ApiCallStatusType.STARTED:
@@ -235,7 +239,9 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
       !!this.props.apiCallStatus &&
       this.props.apiCallStatus.status !== ApiCallStatusType.SUCCESS;
     return (
-      <Animated.View style={{ flexDirection: "row" }}>
+      <Animated.View
+        style={{ flexDirection: "row", opacity: this.state.fadeAnimation }}
+      >
         {/* TODO: Allow user to send custom amount by tapping on this */}
         <Currency
           style={styles.pendingTip}
