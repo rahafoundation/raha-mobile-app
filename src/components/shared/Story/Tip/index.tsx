@@ -39,6 +39,8 @@ type TipCallToActionState = {
 };
 
 const TIP_INCREMENT = new Big(0.1);
+const START_PRESS_HOLD_TIMEOUT_MS = 800;
+const PRESS_HOLD_SPEEDUP = 0.8;
 
 /**
  * Call-to-action that is rendered in the feed below actors to allow the logged
@@ -52,6 +54,10 @@ class TipCallToActionView extends React.Component<
   // status within PendingTip.
   tipId: string;
 
+  // Press and hold variables
+  incrementInterval = START_PRESS_HOLD_TIMEOUT_MS;
+  incrementFn?: NodeJS.Timer;
+
   constructor(props: TipCallToActionProps) {
     super(props);
     this.tipId = generateRandomIdentifier();
@@ -61,11 +67,38 @@ class TipCallToActionView extends React.Component<
   }
 
   private _onTipButtonPressIn = () => {
-    // TODO(tina): Long-press should keep incrementing
+    this._incrementTipWhilePressed();
+  };
+
+  private _incrementTipWhilePressed = () => {
+    this._incrementTip();
+    this.incrementInterval = Math.max(
+      1, // Don't let it go to 0
+      Math.round(this.incrementInterval * PRESS_HOLD_SPEEDUP)
+    );
+    this.incrementFn = setTimeout(
+      this._incrementTipWhilePressed,
+      this.incrementInterval
+    );
   };
 
   private _onTipButtonPressOut = () => {
-    // TODO(tina): Long-press should keep incrementing
+    console.log("YOLO", "press out");
+    const incrementFn = this.incrementFn;
+    if (incrementFn) {
+      clearTimeout(incrementFn);
+    }
+  };
+
+  private _incrementTip = () => {
+    this.setState(state => {
+      const newAmount = state.pendingTipAmount
+        ? state.pendingTipAmount.add(TIP_INCREMENT)
+        : new Big(TIP_INCREMENT);
+      return {
+        pendingTipAmount: newAmount
+      };
+    });
   };
 
   private _onTipButtonPressed = () => {
@@ -88,6 +121,13 @@ class TipCallToActionView extends React.Component<
   private _onClearPendingTip = () => {
     // Set a new ID for the next tip
     this.tipId = generateRandomIdentifier();
+
+    // Clear press and hold to increment
+    this.incrementInterval = START_PRESS_HOLD_TIMEOUT_MS;
+    if (this.incrementFn) {
+      clearTimeout(this.incrementFn);
+    }
+
     this.setState({
       isTipSending: false,
       pendingTipAmount: undefined
@@ -111,7 +151,6 @@ class TipCallToActionView extends React.Component<
             disabled={this.state.isTipSending}
             onPressIn={this._onTipButtonPressIn}
             onPressOut={this._onTipButtonPressOut}
-            onPress={this._onTipButtonPressed}
           >
             <Icon
               name="caret-up"
