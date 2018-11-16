@@ -67,6 +67,7 @@ class TipCallToActionView extends React.Component<
   }
 
   private _onTipButtonPressIn = () => {
+    this.incrementInterval = START_PRESS_HOLD_TIMEOUT_MS;
     this._incrementTipWhilePressed();
   };
 
@@ -83,7 +84,6 @@ class TipCallToActionView extends React.Component<
   };
 
   private _onTipButtonPressOut = () => {
-    console.log("YOLO", "press out");
     const incrementFn = this.incrementFn;
     if (incrementFn) {
       clearTimeout(incrementFn);
@@ -91,17 +91,6 @@ class TipCallToActionView extends React.Component<
   };
 
   private _incrementTip = () => {
-    this.setState(state => {
-      const newAmount = state.pendingTipAmount
-        ? state.pendingTipAmount.add(TIP_INCREMENT)
-        : new Big(TIP_INCREMENT);
-      return {
-        pendingTipAmount: newAmount
-      };
-    });
-  };
-
-  private _onTipButtonPressed = () => {
     this.setState(state => {
       const newAmount = state.pendingTipAmount
         ? state.pendingTipAmount.add(TIP_INCREMENT)
@@ -123,7 +112,6 @@ class TipCallToActionView extends React.Component<
     this.tipId = generateRandomIdentifier();
 
     // Clear press and hold to increment
-    this.incrementInterval = START_PRESS_HOLD_TIMEOUT_MS;
     if (this.incrementFn) {
       clearTimeout(this.incrementFn);
     }
