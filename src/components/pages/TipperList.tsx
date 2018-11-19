@@ -27,7 +27,7 @@ import { IndependentPageContainer } from "../shared/elements";
 import { MemberName } from "../shared/MemberName";
 
 type StateProps = {
-  toMember?: Member;
+  toMember: Member;
   tippers: Member[];
   tipData: TipData;
 };
@@ -46,15 +46,17 @@ export const TipperListView: React.StatelessComponent<TipperListProps> = ({
 }) => {
   const fromCount = tipData.fromMemberIds.size;
   const { tipTotal, donationTotal } = tipData;
+  const toMemberName = toMember.get("fullName");
 
   let content = [
+    toMemberName,
+    "received",
     {
       currencyType: CurrencyType.Raha,
       value: tipTotal.plus(donationTotal),
       role: CurrencyRole.Transaction
     },
     "in tips",
-    toMember ? "to " + toMember.get("fullName") : "",
     "from",
     fromCount.toString(),
     fromCount === 1 ? "person" : "people"
@@ -99,8 +101,13 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
     throw new Error("No tipData was passed to TipperList page.");
   }
 
+  const toMember = getMemberById(state, tipData.toMemberId);
+  if (!toMember) {
+    throw new Error("Invalid member was passed to TipperList page.");
+  }
+
   return {
-    toMember: getMemberById(state, tipData.toMemberId),
+    toMember,
     tippers: getMembersByIds(state, Array.from(tipData.fromMemberIds)).filter(
       x => !!x
     ) as Member[],
