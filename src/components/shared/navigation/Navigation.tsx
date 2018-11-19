@@ -60,6 +60,7 @@ import { generateRandomIdentifier } from "../../../helpers/identifiers";
 import { FlagFeedPage } from "../../pages/Flagging/FlagFeed";
 import { ResolveFlagMemberPage } from "../../pages/Flagging/ResolveFlagMember";
 import { RouteName } from ".";
+import { TipperList } from "../../pages/TipperList";
 
 /**
  * Gets the current screen from navigation state.
@@ -328,6 +329,7 @@ export function createNavigatorForTab(
       [RouteName.GivePage]: Give,
       [RouteName.FlagMemberPage]: FlagMember,
       [RouteName.ResolveFlagMemberPage]: ResolveFlagMember,
+      [RouteName.TipperListPage]: TipperList,
       [RouteName.Verify]: {
         screen: Verify,
         navigationOptions: {

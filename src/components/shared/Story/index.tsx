@@ -4,7 +4,7 @@
  */
 import * as React from "react";
 import { formatRelative } from "date-fns";
-import { View, Image } from "react-native";
+import { View, Image, ViewStyle, TouchableOpacity } from "react-native";
 import { withNavigation, NavigationInjectedProps } from "react-navigation";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { MapStateToProps, connect } from "react-redux";
@@ -19,7 +19,12 @@ import { MemberThumbnail } from "../MemberThumbnail";
 import { TextLink } from "../elements/TextLink";
 import { ArrowHeadDirection, ArrowHead } from "./ArrowHead";
 import { MixedText } from "../elements/MixedText";
-import { styles, leftColumnWidth, chainIndicatorColor } from "./styles";
+import {
+  styles,
+  leftColumnWidth,
+  chainIndicatorColor,
+  thumbnailMarginRight
+} from "./styles";
 import {
   RAHA_BASIC_INCOME_MEMBER,
   Member
@@ -36,6 +41,7 @@ import {
 } from "../../../store/selectors/stories/types";
 import { RahaState } from "../../../store";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
+import { TipCallToAction } from "./Tip";
 
 /**
  * Component for call-to-actions that allow the user to interact with a rendered
@@ -44,9 +50,10 @@ import { getLoggedInMember } from "../../../store/selectors/authentication";
 const CallToAction: React.StatelessComponent<{
   member: Member;
   callToAction: CallToActionData;
-}> = ({ member, callToAction }) => {
+  style?: ViewStyle;
+}> = ({ member, callToAction, style }) => {
   return (
-    <View>
+    <View style={style}>
       {callToAction.map((piece, idx) => {
         switch (piece.type) {
           case CallToActionDataType.TEXT:
@@ -58,8 +65,7 @@ const CallToAction: React.StatelessComponent<{
               </TextLink>
             );
           case CallToActionDataType.TIP:
-            // TODO(tina): Make real component
-            return <Text key={idx}>{piece.data.tipTotal} as tip!</Text>;
+            return <TipCallToAction key={idx} data={piece.data} />;
           default:
             console.error(
               `Unexpected: invalid data type in piece of CallToAction. Piece:`,
@@ -263,15 +269,13 @@ class ActivityContent extends React.Component<{
             {description && <MixedText content={description} />}
           </Text>
         </View>
-        {/* TODO(tina): Render call to action for tipping
-        {actorCallToAction &&
-        actorsData !== RAHA_BASIC_INCOME_MEMBER && ( 
-            <CallToAction
-              key={"tip"}
-              member={actorsData[0]}
-              callToAction={actorCallToAction}
-            />
-          )} */}
+        {actorCallToAction && actorsData !== RAHA_BASIC_INCOME_MEMBER && (
+          <CallToAction
+            style={{ marginLeft: leftColumnWidth + thumbnailMarginRight }}
+            member={actorsData[0]}
+            callToAction={actorCallToAction}
+          />
+        )}
         {body && (
           <React.Fragment>
             <View style={styles.contentBodyRow}>

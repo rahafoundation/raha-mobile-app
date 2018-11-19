@@ -15,7 +15,10 @@ import {
   MintBasicIncomeOperation
 } from "@raha/api-shared/dist/models/Operation";
 import { OrderedMap } from "immutable";
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
+import {
+  MemberId,
+  OperationId
+} from "@raha/api-shared/dist/models/identifiers";
 import {
   NewMemberActivity,
   ActivityType,
@@ -118,6 +121,7 @@ export interface StoryContent {
    * display name in the format of a complete sentence.
    */
   description?: (string | CurrencyValue)[];
+
   /**
    * An invitation for the user to take an action on the Story that relates to
    * the actors of the Story. This will be rendered under the actor names.
@@ -172,7 +176,8 @@ export type CallToActionPiece =
 export type TipData = {
   tipTotal: Big;
   toMemberId: MemberId;
-  fromMemberIds: MemberId[];
+  fromMemberIds: Set<MemberId>;
+  targetOperationId: OperationId;
 };
 
 /**
