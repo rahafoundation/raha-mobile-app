@@ -47,8 +47,7 @@ export const TipperListView: React.StatelessComponent<TipperListProps> = ({
   const fromCount = tipData.fromMemberIds.size;
   const { tipTotal, donationTotal } = tipData;
   const toMemberName = toMember.get("fullName");
-
-  let content = [
+  const content = [
     toMemberName,
     "received",
     {
@@ -59,15 +58,18 @@ export const TipperListView: React.StatelessComponent<TipperListProps> = ({
     "in tips",
     "from",
     fromCount.toString(),
-    fromCount === 1 ? "person" : "people"
+    fromCount === 1 ? "person" : "people",
+    ...(donationTotal.gt(0)
+      ? [
+          "and donated",
+          {
+            currencyType: CurrencyType.Raha,
+            value: donationTotal,
+            role: CurrencyRole.Donation
+          }
+        ]
+      : [])
   ];
-  if (donationTotal.gt(0)) {
-    content = content.concat("and donated", {
-      currencyType: CurrencyType.Raha,
-      value: donationTotal,
-      role: CurrencyRole.Donation
-    });
-  }
   return (
     <IndependentPageContainer containerStyle={styles.container}>
       {/* Hack to make Android properly center text: Wrap in another <Text />*/}
