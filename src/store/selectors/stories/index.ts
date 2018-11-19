@@ -698,6 +698,7 @@ function createTipCallToAction(
   targetOperationId: OperationId,
   tips?: TipGiveOperation[]
 ): CallToAction | undefined {
+  const toMemberId = member.get("memberId");
   if (!tips || tips.length === 0) {
     return [
       {
@@ -706,13 +707,12 @@ function createTipCallToAction(
           tipTotal: new Big(0),
           targetOperationId,
           fromMemberIds: new Set<MemberId>(),
-          toMemberId: member.get("memberId")
+          toMemberId: toMemberId
         }
       }
     ];
   }
 
-  const toMemberId = member.get("memberId");
   const tipData: TipData = tips.reduce(
     (data, tip) => {
       if (tip.data.to_uid === toMemberId) {
