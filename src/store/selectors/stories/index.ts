@@ -705,6 +705,7 @@ function createTipCallToAction(
         type: CallToActionDataType.TIP,
         data: {
           tipTotal: new Big(0),
+          donationTotal: new Big(0),
           targetOperationId,
           fromMemberIds: new Set<MemberId>(),
           toMemberId: toMemberId
@@ -719,6 +720,7 @@ function createTipCallToAction(
         return {
           ...data,
           tipTotal: data.tipTotal.plus(tip.data.amount),
+          donationTotal: data.donationTotal.plus(tip.data.donation_amount),
           fromMemberIds: data.fromMemberIds.add(tip.creator_uid)
         };
       } else {
@@ -728,6 +730,7 @@ function createTipCallToAction(
     },
     {
       tipTotal: new Big(0),
+      donationTotal: new Big(0),
       toMemberId,
       fromMemberIds: new Set<MemberId>(),
       targetOperationId

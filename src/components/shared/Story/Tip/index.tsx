@@ -129,7 +129,7 @@ class TipCallToActionView extends React.Component<
   };
 
   render() {
-    const { tipTotal, fromMemberIds } = this.props.data;
+    const { tipTotal, donationTotal, fromMemberIds } = this.props.data;
     const { pendingTipAmount } = this.state;
     return (
       <View style={styles.container}>
@@ -184,7 +184,7 @@ class TipCallToActionView extends React.Component<
             <Currency
               style={{ ...fontSizes.small }}
               currencyValue={{
-                value: new Big(tipTotal),
+                value: tipTotal.plus(donationTotal),
                 role: CurrencyRole.Transaction,
                 currencyType: CurrencyType.Raha
               }}

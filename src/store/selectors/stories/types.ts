@@ -174,7 +174,10 @@ export type CallToActionPiece =
     };
 
 export type TipData = {
+  // Total amount received, excluding donation amount
   tipTotal: Big;
+  // Total amount of donation from tips
+  donationTotal: Big;
   toMemberId: MemberId;
   fromMemberIds: Set<MemberId>;
   targetOperationId: OperationId;

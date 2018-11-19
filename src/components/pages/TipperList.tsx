@@ -27,7 +27,7 @@ import { IndependentPageContainer } from "../shared/elements";
 import { MemberName } from "../shared/MemberName";
 
 type StateProps = {
-  toMember?: Member;
+  toMember: Member;
   tippers: Member[];
   tipData: TipData;
 };
@@ -45,25 +45,36 @@ export const TipperListView: React.StatelessComponent<TipperListProps> = ({
   tipData
 }) => {
   const fromCount = tipData.fromMemberIds.size;
+  const { tipTotal, donationTotal } = tipData;
+  const toMemberName = toMember.get("fullName");
+  const content = [
+    toMemberName,
+    "received",
+    {
+      currencyType: CurrencyType.Raha,
+      value: tipTotal.plus(donationTotal),
+      role: CurrencyRole.Transaction
+    },
+    "in tips",
+    "from",
+    fromCount.toString(),
+    fromCount === 1 ? "person" : "people",
+    ...(donationTotal.gt(0)
+      ? [
+          "and donated",
+          {
+            currencyType: CurrencyType.Raha,
+            value: donationTotal,
+            role: CurrencyRole.Donation
+          }
+        ]
+      : [])
+  ];
   return (
     <IndependentPageContainer containerStyle={styles.container}>
       {/* Hack to make Android properly center text: Wrap in another <Text />*/}
       <Text style={{ textAlign: "center" }}>
-        <MixedText
-          style={styles.header}
-          content={[
-            {
-              currencyType: CurrencyType.Raha,
-              value: tipData.tipTotal,
-              role: CurrencyRole.Transaction
-            },
-            "in tips",
-            toMember ? "to " + toMember.get("fullName") : "",
-            "from",
-            fromCount.toString(),
-            fromCount === 1 ? "person" : "people"
-          ]}
-        />
+        <MixedText style={styles.header} content={content} />
       </Text>
       <FlatList
         data={tippers}
@@ -92,8 +103,13 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
     throw new Error("No tipData was passed to TipperList page.");
   }
 
+  const toMember = getMemberById(state, tipData.toMemberId);
+  if (!toMember) {
+    throw new Error("Invalid member was passed to TipperList page.");
+  }
+
   return {
-    toMember: getMemberById(state, tipData.toMemberId),
+    toMember,
     tippers: getMembersByIds(state, Array.from(tipData.fromMemberIds)).filter(
       x => !!x
     ) as Member[],
