@@ -240,7 +240,11 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
       this.props.apiCallStatus.status !== ApiCallStatusType.SUCCESS;
     return (
       <Animated.View
-        style={{ flexDirection: "row", opacity: this.state.fadeAnimation }}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          opacity: this.state.fadeAnimation
+        }}
       >
         {/* TODO: Allow user to send custom amount by tapping on this */}
         <Currency
