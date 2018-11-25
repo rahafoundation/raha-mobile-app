@@ -202,7 +202,15 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
           shadowColor={palette.lightGray}
           borderWidth={2}
         >
-          <Icon name="times-circle" color={palette.red} size={14} solid />
+          <Icon
+            name="times-circle"
+            color={palette.red}
+            size={14}
+            // Icon doesn't get centered on iOS without this
+            // https://github.com/oblador/react-native-vector-icons/issues/638
+            style={{ height: 14, width: 14 }}
+            solid
+          />
         </CountdownCircle>
       );
     }
