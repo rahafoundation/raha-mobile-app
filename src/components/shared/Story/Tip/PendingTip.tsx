@@ -13,7 +13,8 @@ import {
   TextStyle,
   TouchableWithoutFeedback,
   ActivityIndicator,
-  Animated
+  Animated,
+  Platform
 } from "react-native";
 import { fontSizes } from "../../../../helpers/fonts";
 import { palette } from "../../../../helpers/colors";
@@ -206,9 +207,12 @@ export class PendingTipView extends React.PureComponent<TipProps, TipState> {
             name="times-circle"
             color={palette.red}
             size={14}
-            // Icon doesn't get centered on iOS without this
+            // Icon doesn't get centered on iOS without this but Android gets
+            // screwed up with it.
             // https://github.com/oblador/react-native-vector-icons/issues/638
-            style={{ height: 14, width: 14 }}
+            style={
+              Platform.OS === "ios" ? { height: 14, width: 14 } : undefined
+            }
             solid
           />
         </CountdownCircle>
