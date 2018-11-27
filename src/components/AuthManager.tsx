@@ -26,7 +26,7 @@ class AuthManagerComponent extends React.Component<AuthManagerProps> {
   }
 
   public componentWillMount() {
-    this.unsubscribe = auth.onAuthStateChanged((user: RNFirebase.User) => {
+    this.unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
         this.props.logIn();
       } else {
