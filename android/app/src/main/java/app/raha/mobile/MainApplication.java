@@ -14,6 +14,7 @@ import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 import io.invertase.firebase.storage.RNFirebaseStoragePackage;
+import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import org.reactnative.camera.RNCameraPackage;
@@ -52,7 +53,7 @@ public class MainApplication extends Application implements ReactApplication {
             new AppCenterReactNativePackage(MainApplication.this),
             new SvgPackage(), new RNDeviceInfo(), new RNFirebasePackage(),
           new RNFirebaseAnalyticsPackage(), new RNFirebaseCrashlyticsPackage(), new RNFirebaseAuthPackage(), new RNFirebaseStoragePackage(),
-          new RNFirebaseMessagingPackage(), new RNFirebaseNotificationsPackage(), new RNCameraPackage(),
+          new RNFirebaseFirestorePackage(), new RNFirebaseMessagingPackage(), new RNFirebaseNotificationsPackage(), new RNCameraPackage(),
           new RNVideoProcessingPackage(), new ReactVideoPackage(), new VectorIconsPackage());
     }
 
