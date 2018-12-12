@@ -330,6 +330,13 @@ export function createNavigatorForTab(
       [RouteName.FlagMemberPage]: FlagMember,
       [RouteName.ResolveFlagMemberPage]: ResolveFlagMember,
       [RouteName.TipperListPage]: TipperList,
+      [RouteName.InvitePage]: {
+        // Not needed for Profile tab, but does not hurt
+        screen: Invite,
+        navigationOptions: {
+          header: null
+        }
+      },
       [RouteName.Verify]: {
         screen: Verify,
         navigationOptions: {
@@ -389,12 +396,6 @@ const DiscoverTab = createNavigatorForTab(
 
 const WalletTab = createNavigatorForTab(
   {
-    [RouteName.InvitePage]: {
-      screen: Invite,
-      navigationOptions: {
-        header: null
-      }
-    },
     [RouteName.WalletPage]: {
       screen: Wallet,
       navigationOptions: createHeaderNavigationOptions()
