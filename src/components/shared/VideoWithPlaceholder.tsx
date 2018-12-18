@@ -107,6 +107,7 @@ export class VideoWithPlaceholderView extends React.Component<
                 this.setState({ videoLoaded: true });
               }}
               ref={r => (this.video = r)}
+              resizeMode="cover"
               style={{
                 width: "100%",
                 height: "100%",
