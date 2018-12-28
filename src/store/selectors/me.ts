@@ -34,7 +34,7 @@ export function isPastReferralBonusSplitTransitionDate() {
 }
 
 // TODO(tina): Replace
-export function getReferralBonus(): Big | undefined {
+export function getReferralBonus(createdAt?: Date): Big {
   return REFERRAL_BONUS;
 }
 
@@ -55,13 +55,18 @@ export function getMintableAmount(
   return undefined;
 }
 
+export type UnclaimedReferral = {
+  memberId: MemberId;
+  referralBonus: Big;
+};
+
 /**
  * Return the list of members for whom the member can still claim a referral bonus.
  */
 export function getUnclaimedReferrals(
   state: RahaState,
   memberId: MemberId
-): MemberId[] | undefined {
+): UnclaimedReferral[] | undefined {
   const member = getMemberById(state, memberId);
   if (member) {
     const memberMintOperations = getOperationsForType(
@@ -81,7 +86,16 @@ export function getUnclaimedReferrals(
         .get("invited")
         .subtract(claimedIds)
         .values()
-    );
+    ).map(memberId => {
+      const referredMember = getMemberById(state, memberId);
+      const referralBonusForMember = getReferralBonus(
+        referredMember ? referredMember.get("createdAt") : undefined
+      );
+      return {
+        memberId: memberId,
+        referralBonus: referralBonusForMember
+      };
+    });
   }
   return undefined;
 }

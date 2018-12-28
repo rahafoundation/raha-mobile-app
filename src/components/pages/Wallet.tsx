@@ -10,8 +10,6 @@ import {
 } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
-
 import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";
 import { RouteName } from "../shared/navigation";
@@ -20,7 +18,8 @@ import { NavigationScreenProps } from "react-navigation";
 import {
   getUnclaimedReferrals,
   getMintableAmount,
-  REFERRAL_BONUS
+  REFERRAL_BONUS,
+  UnclaimedReferral
 } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
 import { Button, Text } from "../shared/elements";
@@ -43,7 +42,7 @@ type OwnProps = NavigationScreenProps<{}>;
 type StateProps = {
   loggedInMember: Member;
   mintableAmount?: Big;
-  unclaimedReferralIds?: MemberId[];
+  unclaimedReferrals?: UnclaimedReferral[];
 };
 
 type Props = OwnProps & StateProps;
@@ -85,7 +84,7 @@ const Actions: React.StatelessComponent<Props> = props => {
   const {
     loggedInMember,
     mintableAmount,
-    unclaimedReferralIds,
+    unclaimedReferrals,
     navigation
   } = props;
   if (!loggedInMember.get("isVerified")) {
@@ -115,8 +114,8 @@ const Actions: React.StatelessComponent<Props> = props => {
     );
   }
 
-  const hasUnclaimedReferrals = unclaimedReferralIds
-    ? unclaimedReferralIds.length > 0
+  const hasUnclaimedReferrals = unclaimedReferrals
+    ? unclaimedReferrals.length > 0
     : false;
 
   // Show one action at a time: Mint or Invite.
@@ -136,7 +135,7 @@ const Actions: React.StatelessComponent<Props> = props => {
           title={"Mint Invite Bonuses!"}
           onPress={() => {
             navigation.push(RouteName.ReferralBonusPage, {
-              unclaimedReferralIds
+              unclaimedReferrals
             });
           }}
         />
@@ -316,7 +315,7 @@ const mapStateToProps: MapStateToProps<
   return {
     loggedInMember,
     mintableAmount: getMintableAmount(state, loggedInMember.get("memberId")),
-    unclaimedReferralIds: getUnclaimedReferrals(
+    unclaimedReferrals: getUnclaimedReferrals(
       state,
       loggedInMember.get("memberId")
     )

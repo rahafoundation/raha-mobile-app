@@ -15,14 +15,15 @@ import { mintReferralBonus } from "../../../store/actions/wallet";
 import { Member } from "../../../store/reducers/members";
 import { getMembersByIds } from "../../../store/selectors/members";
 import { ReferralThumbnail } from "./ReferralThumbnail";
+import { UnclaimedReferral } from "../../../store/selectors/me";
 
 export interface ReferralBonusNavParams {
-  unclaimedReferralIds: (MemberId | undefined)[];
+  unclaimedReferrals: UnclaimedReferral[];
 }
 
 type OwnProps = NavigationScreenProps<ReferralBonusNavParams>;
 
-type StateProps = { unclaimedReferralMembers: (Member | undefined)[] };
+type StateProps = { unclaimedReferrals: UnclaimedReferral[] };
 
 type DispatchProps = {
   mintReferralBonus: typeof mintReferralBonus;
@@ -34,17 +35,20 @@ type MergedProps = {
 type Props = OwnProps & StateProps & MergedProps;
 
 const ReferralsComponent: React.StatelessComponent<Props> = ({
-  unclaimedReferralMembers,
+  unclaimedReferrals,
   navigation
 }) => {
-  const members = unclaimedReferralMembers.filter(m => m) as Member[];
   return (
     <View>
       <FlatList
-        data={members}
-        keyExtractor={m => m.get("memberId")}
+        data={unclaimedReferrals}
+        keyExtractor={m => m.memberId}
         renderItem={m => (
-          <ReferralThumbnail invitedMember={m.item} navigation={navigation} />
+          <ReferralThumbnail
+            invitedMemberId={m.item.memberId}
+            referralBonus={m.item.referralBonus}
+            navigation={navigation}
+          />
         )}
       />
     </View>
@@ -55,14 +59,11 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const unclaimedReferralIds = ownProps.navigation
-    .getParam("unclaimedReferralIds", [])
-    .filter(x => x) as MemberId[];
-  const unclaimedReferralMembers = unclaimedReferralIds
-    ? getMembersByIds(state, unclaimedReferralIds)
-    : [];
+  const unclaimedReferrals = ownProps.navigation
+    .getParam("unclaimedReferrals", [])
+    .filter(x => x) as UnclaimedReferral[];
   return {
-    unclaimedReferralMembers
+    unclaimedReferrals
   };
 };
 
