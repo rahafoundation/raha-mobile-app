@@ -12,6 +12,7 @@ import {
 import { RahaState } from "..";
 import { getMemberById } from "./members";
 import { getOperationsForCreator, getOperationsForType } from "./operations";
+import { Member } from "../reducers/members";
 
 // TODO(tina): Get from shared config when Mark's code is checked in
 export const RAHA_MINT_WEEKLY_RATE = new Big(10);
@@ -33,12 +34,19 @@ export function isPastReferralBonusSplitTransitionDate() {
   return Date.now() >= REFERRAL_BONUS_SPLIT_TRANSITION_DATE_UTC;
 }
 
-// TODO(tina): Replace
+// TODO(tina): Replace below methods
 export function getReferralBonus(createdAt?: Date): Big {
   return REFERRAL_BONUS;
 }
 
-export function getMintableAmount(
+export function getInviteMintableAmount(
+  state: RahaState,
+  member: Member
+): Big | undefined {
+  return undefined;
+}
+
+export function getMintableBasicIncomeAmount(
   state: RahaState,
   memberId: MemberId
 ): Big | undefined {

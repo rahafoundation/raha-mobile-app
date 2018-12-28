@@ -1,11 +1,15 @@
 import { Big } from "big.js";
 
-import { MintType } from "@raha/api-shared/dist/models/Operation";
+import {
+  MintType,
+  Operation,
+  MintPayload
+} from "@raha/api-shared/dist/models/Operation";
 import {
   MemberId,
   OperationId
 } from "@raha/api-shared/dist/models/identifiers";
-import { mint as callMint } from "@raha/api/dist/me/mint";
+import { mint as callMint, MintArgs } from "@raha/api/dist/me/mint";
 import { give as callGive, tip as callTip } from "@raha/api/dist/members/give";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { UnauthenticatedError } from "@raha/api/dist/errors/UnauthenticatedError";
@@ -20,32 +24,33 @@ export const mintBasicIncome: AsyncActionCreator = (
   memberId: MemberId,
   amount: Big
 ) => {
-  return wrapApiCallAction(
-    async (dispatch, getState) => {
-      const authToken = await getAuthToken(getState());
-      if (!authToken) {
-        throw new UnauthenticatedError();
-      }
-
-      const { body } = await callMint(config.apiBase, authToken, {
-        type: MintType.BASIC_INCOME,
-        amount
-      });
-
-      const action: OperationsAction = {
-        type: OperationsActionType.ADD_OPERATIONS,
-        operations: [body]
-      };
-      dispatch(action);
-    },
-    ApiEndpointName.MINT,
-    memberId
-  );
+  return mint(memberId, [
+    {
+      type: MintType.BASIC_INCOME,
+      amount
+    }
+  ]);
 };
 
 export const mintReferralBonus: AsyncActionCreator = (
   amount: Big,
   invitedMemberId: MemberId
+) => {
+  return mint(invitedMemberId, [
+    {
+      type: MintType.REFERRAL_BONUS,
+      amount,
+      invited_member_id: invitedMemberId
+    }
+  ]);
+};
+
+/**
+ * Takes multiple mint actions.
+ */
+export const mint: AsyncActionCreator = (
+  apiIdentifier: string,
+  mintActions: MintArgs[]
 ) => {
   return wrapApiCallAction(
     async (dispatch, getState) => {
@@ -54,20 +59,21 @@ export const mintReferralBonus: AsyncActionCreator = (
         throw new UnauthenticatedError();
       }
 
-      const { body } = await callMint(config.apiBase, authToken, {
-        type: MintType.REFERRAL_BONUS,
-        amount,
-        invited_member_id: invitedMemberId
-      });
+      const ops = await Promise.all(
+        mintActions.map(async w => {
+          const { body } = await callMint(config.apiBase, authToken, w);
+          return body;
+        })
+      );
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [body]
+        operations: ops
       };
       dispatch(action);
     },
     ApiEndpointName.MINT,
-    invitedMemberId
+    apiIdentifier
   );
 };
 

@@ -17,7 +17,7 @@ import { getLoggedInMember } from "../../store/selectors/authentication";
 import { NavigationScreenProps } from "react-navigation";
 import {
   getUnclaimedReferrals,
-  getMintableAmount,
+  getMintableBasicIncomeAmount,
   REFERRAL_BONUS,
   UnclaimedReferral
 } from "../../store/selectors/me";
@@ -314,7 +314,10 @@ const mapStateToProps: MapStateToProps<
   }
   return {
     loggedInMember,
-    mintableAmount: getMintableAmount(state, loggedInMember.get("memberId")),
+    mintableAmount: getMintableBasicIncomeAmount(
+      state,
+      loggedInMember.get("memberId")
+    ),
     unclaimedReferrals: getUnclaimedReferrals(
       state,
       loggedInMember.get("memberId")
