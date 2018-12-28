@@ -11,8 +11,7 @@ import { getLoggedInMember } from "../../store/selectors/authentication";
 import {
   getMintableAmount,
   RAHA_MINT_WEEKLY_RATE,
-  RAHA_MINT_CAP,
-  isPastMintCapTransitionDate
+  RAHA_MINT_CAP
 } from "../../store/selectors/me";
 import {
   ApiCallStatus,
@@ -95,9 +94,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
         <MixedText
           style={[fontSizes.small, { textAlign: "center" }]}
           content={[
-            isPastMintCapTransitionDate()
-              ? "You can only accumulate up to"
-              : "After 11/15 you will only be able to accumulate up to",
+            "You can only accumulate up to",
             {
               currencyType: CurrencyType.Raha,
               value: RAHA_MINT_CAP,
