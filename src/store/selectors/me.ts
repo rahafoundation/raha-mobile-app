@@ -35,7 +35,7 @@ export function isPastReferralBonusSplitTransitionDate() {
 
 // TODO(tina): Replace
 export function getReferralBonus(): Big | undefined {
-  return undefined;
+  return REFERRAL_BONUS;
 }
 
 export function getMintableAmount(
