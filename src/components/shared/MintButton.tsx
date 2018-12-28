@@ -51,11 +51,20 @@ type Props = OwnProps & StateProps & MergedProps;
 
 const MintButtonComponent: React.StatelessComponent<Props> = props => {
   const {
-    mintableBasicIncome: mintableAmount,
+    mintableBasicIncome,
+    mintableInvitedBonus,
     mintApiCallStatus,
     mint,
     loggedInMember
   } = props;
+
+  var mintableAmount = Big(0);
+  if (mintableBasicIncome) {
+    mintableAmount = mintableAmount.plus(mintableBasicIncome);
+  }
+  if (mintableInvitedBonus) {
+    mintableAmount = mintableAmount.plus(mintableInvitedBonus);
+  }
 
   const mintInProgress =
     mintApiCallStatus && mintApiCallStatus.status === ApiCallStatusType.STARTED;
@@ -111,10 +120,26 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
               value: RAHA_MINT_CAP,
               role: CurrencyRole.None
             },
-            "at a time."
+            "in basic income at a time."
           ]}
         />
       </Text>
+      {mintableInvitedBonus && mintableInvitedBonus.gt(0) && (
+        <Text>
+          <MixedText
+            style={[fontSizes.small, { textAlign: "center" }]}
+            content={[
+              "You have a bonus of",
+              {
+                currencyType: CurrencyType.Raha,
+                value: mintableInvitedBonus,
+                role: CurrencyRole.None
+              },
+              "for being invited!"
+            ]}
+          />
+        </Text>
+      )}
     </View>
   );
 };
