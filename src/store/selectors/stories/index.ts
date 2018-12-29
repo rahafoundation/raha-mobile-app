@@ -21,7 +21,8 @@ import {
   CallToAction,
   CallToActionDataType,
   CallToActionPiece,
-  TipData
+  TipData,
+  MintInvitedBonusStoryData
 } from "./types";
 import {
   Operation,
@@ -874,6 +875,33 @@ function membersArrayToMap(members: Member[]): OrderedMap<MemberId, Member> {
   );
 }
 
+// TODO: Bundle into new user story
+function createMintInvitedBonusStory(
+  state: RahaState,
+  storyData: MintInvitedBonusStoryData
+): Story {
+  const operation = storyData.activities.operations;
+  const creatorMember = getOperationCreator(state, operation) as Member;
+
+  const amountMinted: CurrencyValue = {
+    value: Big(operation.data.amount),
+    currencyType: CurrencyType.Raha,
+    role: CurrencyRole.Transaction
+  };
+
+  return {
+    storyData,
+    id: operation.id,
+    timestamp: operation.created_at,
+    content: {
+      // type suggestions since GENESIS_MEMBER is only possible for
+      // VERIFY operations
+      actors: OrderedMap({ [creatorMember.get("memberId")]: creatorMember }),
+      description: ["minted", amountMinted, "for accepting an invite."]
+    }
+  };
+}
+
 function createMintBasicIncomeStory(
   state: RahaState,
   storyData: MintBasicIncomeStoryData
@@ -977,13 +1005,17 @@ function storyTypeForIndependentOperationActivity(
     case OperationType.GIVE:
       return StoryType.GIVE_RAHA;
     case OperationType.MINT:
-      if (operation.data.type !== MintType.BASIC_INCOME) {
-        throw new Error(
-          "Unexpected: Mint operation in INDIVIDUAL_OPERATION " +
-            "activity was not a MINT_BASIC_INCOME operation."
-        );
+      const mintType = operation.data.type;
+      if (mintType === MintType.BASIC_INCOME) {
+        return StoryType.MINT_BASIC_INCOME;
       }
-      return StoryType.MINT_BASIC_INCOME;
+      if (mintType === MintType.INVITED_BONUS) {
+        return StoryType.MINT_INVITED_BONUS;
+      }
+      throw new Error(
+        "Unexpected: Mint operation in INDIVIDUAL_OPERATION " +
+          "activity was not a MINT_BASIC_INCOME or INVITED_BONUS operation."
+      );
     case OperationType.REQUEST_VERIFICATION:
       return StoryType.REQUEST_VERIFICATION;
     case OperationType.TRUST:
@@ -1056,6 +1088,8 @@ export function createStory(
         return createGiveRahaStory(state, storyData);
       case StoryType.MINT_BASIC_INCOME:
         return createMintBasicIncomeStory(state, storyData);
+      case StoryType.MINT_INVITED_BONUS:
+        return createMintInvitedBonusStory(state, storyData);
       case StoryType.REQUEST_VERIFICATION:
         return createRequestVerificationStory(state, storyData);
       default: {

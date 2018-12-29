@@ -10,7 +10,8 @@ import {
   MintBasicIncomeOperation,
   TipGiveOperation,
   GiveType,
-  DirectGiveOperation
+  DirectGiveOperation,
+  MintInvitedBonus
 } from "@raha/api-shared/dist/models/Operation";
 
 import {
@@ -540,6 +541,13 @@ function addOperationToActivitiesList(
           return addMintReferralBonusOperation(
             existingData,
             operation as MintReferralBonusOperation
+          );
+        case MintType.INVITED_BONUS:
+          // TODO: Bundle into new user Story
+          return addIndependentOperation(
+            existingData,
+            // typescript not smart enough to figure this out
+            operation as MintInvitedBonus
           );
         default:
           throw new Error(

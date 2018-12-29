@@ -12,7 +12,8 @@ import {
   VerifyOperation,
   DirectGiveOperation,
   TipGiveOperation,
-  MintBasicIncomeOperation
+  MintBasicIncomeOperation,
+  MintInvitedBonus
 } from "@raha/api-shared/dist/models/Operation";
 import { OrderedMap } from "immutable";
 import {
@@ -219,6 +220,11 @@ export type MintBasicIncomeStoryData = StoryDataDefinition<
   MintBasicIncomeActivity | MintBasicIncomeActivity[]
 >;
 
+export type MintInvitedBonusStoryData = StoryDataDefinition<
+  StoryType.MINT_INVITED_BONUS,
+  ActivityDefinition<ActivityType.INDEPENDENT_OPERATION, MintInvitedBonus>
+>;
+
 export type GiveRahaStoryData = StoryDataDefinition<
   StoryType.GIVE_RAHA,
   ActivityDefinition<ActivityType.GIVE, DirectGiveOperation, TipGiveOperation>
@@ -260,7 +266,8 @@ export type StoryData =
   | FlagMemberStoryData
   | RequestVerificationStoryData
   | TrustMemberStoryData
-  | VerifyMemberStoryData;
+  | VerifyMemberStoryData
+  | MintInvitedBonusStoryData;
 
 /**
  * Types of stories shown in the feed.
@@ -277,7 +284,9 @@ export enum StoryType {
   REQUEST_VERIFICATION = "REQUEST_VERIFICATION",
 
   // CREATE_MEMBER + VERIFY + MINT_REFERRAL_BONUS
-  NEW_MEMBER = "NEW_MEMBER"
+  NEW_MEMBER = "NEW_MEMBER",
+
+  MINT_INVITED_BONUS = "MINT_INVITED_BONUS"
 }
 
 /**
