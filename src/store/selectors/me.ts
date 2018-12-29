@@ -16,6 +16,14 @@ import { Member } from "../reducers/members";
 
 const MILLISECONDS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
 
+/**
+ * Return whether or not we're past the transition to split referral bonus to 30/30.
+ * TODO: This code can be removed after the mint cap transition date has passed.
+ */
+export function isPastReferralBonusSplitTransitionDate() {
+  return Date.now() >= Config.REFERRAL_SPLIT_DATE;
+}
+
 export function getMintableAmount(
   state: RahaState,
   loggedInMember: Member

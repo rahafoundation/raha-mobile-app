@@ -3,6 +3,7 @@ import { View, Image } from "react-native";
 import { Text, Button } from "../../shared/elements";
 import { styles } from "./styles";
 import { isPastReferralBonusSplitTransitionDate } from "../../../store/selectors/me";
+import { Config } from "@raha/api-shared/dist/helpers/Config";
 
 interface Props {
   onContinue: () => void;
