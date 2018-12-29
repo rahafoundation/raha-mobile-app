@@ -30,7 +30,7 @@ export const InviteSplash: React.StatelessComponent<Props> = props => {
         <Text style={styles.paragraph}>
           {isPastReferralBonusSplitTransitionDate()
             ? "Currently, the network referral bonus is 60 Raha - meaning you can mint an extra 60 Raha for every friend that joins!"
-            : "Invite a friend and both you and your friend be able to mint an extra 30 Raha when you verify them."}
+            : "Invite a friend and you'll each be able to mint a bonus 30 Raha when you verify them."}
         </Text>
         <Text style={styles.paragraph}>
           Continue to send your friend a video inviting them to the network.
