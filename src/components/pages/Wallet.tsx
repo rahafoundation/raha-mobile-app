@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { connect, MapStateToProps } from "react-redux";
 
+import { MemberId } from "@raha/api-shared/dist/models/identifiers";
+
 import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";
 import { RouteName } from "../shared/navigation";
@@ -17,9 +19,7 @@ import { getLoggedInMember } from "../../store/selectors/authentication";
 import { NavigationScreenProps } from "react-navigation";
 import {
   getUnclaimedReferrals,
-  getMintableBasicIncomeAmount,
-  REFERRAL_BONUS,
-  UnclaimedReferral
+  getMintableAmount
 } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
 import { Button, Text } from "../shared/elements";
@@ -36,13 +36,14 @@ import { MixedText } from "../shared/elements/MixedText";
 import { FlaggedNotice } from "../shared/Cards/FlaggedNotice";
 import { EnforcePermissionsButton } from "../shared/elements/EnforcePermissionsButton";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
+import { Config } from "@raha/api-shared/dist/helpers/Config";
 
 type OwnProps = NavigationScreenProps<{}>;
 
 type StateProps = {
   loggedInMember: Member;
   mintableAmount?: Big;
-  unclaimedReferrals?: UnclaimedReferral[];
+  unclaimedReferralIds?: MemberId[];
 };
 
 type Props = OwnProps & StateProps;
@@ -84,7 +85,7 @@ const Actions: React.StatelessComponent<Props> = props => {
   const {
     loggedInMember,
     mintableAmount,
-    unclaimedReferrals,
+    unclaimedReferralIds,
     navigation
   } = props;
   if (!loggedInMember.get("isVerified")) {
@@ -114,8 +115,8 @@ const Actions: React.StatelessComponent<Props> = props => {
     );
   }
 
-  const hasUnclaimedReferrals = unclaimedReferrals
-    ? unclaimedReferrals.length > 0
+  const hasUnclaimedReferrals = unclaimedReferralIds
+    ? unclaimedReferralIds.length > 0
     : false;
 
   // Show one action at a time: Mint or Invite.
@@ -135,7 +136,7 @@ const Actions: React.StatelessComponent<Props> = props => {
           title={"Mint Invite Bonuses!"}
           onPress={() => {
             navigation.push(RouteName.ReferralBonusPage, {
-              unclaimedReferrals
+              unclaimedReferralIds
             });
           }}
         />
@@ -170,7 +171,7 @@ const Invite: React.StatelessComponent<Props> = props => {
             "Earn",
             {
               currencyType: CurrencyType.Raha,
-              value: REFERRAL_BONUS,
+              value: Config.getReferralBonus(),
               role: CurrencyRole.Transaction
             },
             "when friends you invite join Raha."
@@ -314,11 +315,8 @@ const mapStateToProps: MapStateToProps<
   }
   return {
     loggedInMember,
-    mintableAmount: getMintableBasicIncomeAmount(
-      state,
-      loggedInMember.get("memberId")
-    ),
-    unclaimedReferrals: getUnclaimedReferrals(
+    mintableAmount: getMintableAmount(state, loggedInMember),
+    unclaimedReferralIds: getUnclaimedReferrals(
       state,
       loggedInMember.get("memberId")
     )

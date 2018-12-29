@@ -16,6 +16,10 @@ import { connect, MergeProps, MapStateToProps } from "react-redux";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
 
+import {
+  getInitialsForName,
+  getMemberColor
+} from "../../../helpers/memberDisplay";
 import { RahaState } from "../../../store";
 import { mintReferralBonus } from "../../../store/actions/wallet";
 import {
@@ -38,18 +42,21 @@ import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { Loading } from "../../shared/Loading";
 import { fonts } from "../../../helpers/fonts";
 import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissionsButton";
-import { MemberId } from "@raha/api-shared/dist/models/identifiers";
-import { getMemberById } from "../../../store/selectors/members";
+import { Config } from "@raha/api-shared/dist/helpers/Config";
+
+const REFERRAL_BONUS_VALUE: CurrencyValue = {
+  currencyType: CurrencyType.Raha,
+  value: Config.getReferralBonus(),
+  role: CurrencyRole.None
+};
 
 type OwnProps = NavigationScreenProps<ReferralBonusNavParams> & {
   loggedInMember?: Member;
-  invitedMemberId: MemberId;
-  referralBonus: Big;
+  invitedMember: Member;
 };
 
 type StateProps = {
   mintBonusApiCallStatus?: ApiCallStatus;
-  invitedMember?: Member;
 };
 
 type DispatchProps = {
@@ -65,18 +72,11 @@ type Props = OwnProps & StateProps & MergedProps;
 const ReferralThumbnailComponent: React.StatelessComponent<Props> = ({
   loggedInMember,
   invitedMember,
-  referralBonus,
   navigation,
   mintBonusApiCallStatus,
   mintReferralBonus
 }) => {
-  const REFERRAL_BONUS_VALUE: CurrencyValue = {
-    currencyType: CurrencyType.Raha,
-    value: referralBonus,
-    role: CurrencyRole.None
-  };
-
-  if (!loggedInMember || !invitedMember) {
+  if (!loggedInMember) {
     return <Loading />;
   }
 
@@ -144,14 +144,15 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
 ) => {
   return {
     loggedInMember: getLoggedInMember(state),
-    invitedMember: getMemberById(state, ownProps.invitedMemberId, {
-      throwIfMissing: true
-    }),
-    referralBonus: ownProps.referralBonus,
+    trustApiCallStatus: getStatusOfApiCall(
+      state,
+      ApiEndpointName.TRUST_MEMBER,
+      ownProps.invitedMember.get("memberId")
+    ),
     mintBonusApiCallStatus: getStatusOfApiCall(
       state,
       ApiEndpointName.MINT,
-      ownProps.invitedMemberId
+      ownProps.invitedMember.get("memberId")
     )
   };
 };
@@ -166,8 +167,8 @@ const mergeProps: MergeProps<
     ...stateProps,
     mintReferralBonus: () =>
       dispatchProps.mintReferralBonus(
-        ownProps.referralBonus,
-        ownProps.invitedMemberId
+        Config.getReferralBonus(),
+        ownProps.invitedMember.get("memberId")
       ),
     ...ownProps
   };

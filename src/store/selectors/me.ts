@@ -8,42 +8,54 @@ import {
   MintType,
   MintReferralBonusPayload
 } from "@raha/api-shared/dist/models/Operation";
-
+import { Config } from "@raha/api-shared/dist/helpers/Config";
 import { RahaState } from "..";
 import { getMemberById } from "./members";
 import { getOperationsForCreator, getOperationsForType } from "./operations";
 import { Member } from "../reducers/members";
 
-// TODO(tina): Get from shared config when Mark's code is checked in
-export const RAHA_MINT_WEEKLY_RATE = new Big(10);
-export const MAX_WEEKS_ACCRUE = new Big(4);
-export const RAHA_MINT_CAP = RAHA_MINT_WEEKLY_RATE.times(MAX_WEEKS_ACCRUE);
-export const REFERRAL_BONUS = new Big(60);
-export const REFERRAL_BONUS_PRE_SPLIT = new Big(60);
-export const REFERRAL_BONUS_POST_SPLIT = new Big(30);
 const MILLISECONDS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
 
-// Set to midnight on Jan 1st, 2019 UTC
-const REFERRAL_BONUS_SPLIT_TRANSITION_DATE_UTC = Date.UTC(2019, 0, 1);
-
-/**
- * Return whether or not we're past the transition to split referral bonus to 30/30.
- * TODO: This code can be removed after the mint cap transition date has passed.
- */
-export function isPastReferralBonusSplitTransitionDate() {
-  return Date.now() >= REFERRAL_BONUS_SPLIT_TRANSITION_DATE_UTC;
-}
-
-// TODO(tina): Replace below methods
-export function getReferralBonus(createdAt?: Date): Big {
-  return REFERRAL_BONUS;
-}
-
-export function getInviteMintableAmount(
+export function getMintableAmount(
   state: RahaState,
-  member: Member
+  loggedInMember: Member
 ): Big | undefined {
-  return undefined;
+  const basicIncome = getMintableBasicIncomeAmount(
+    state,
+    loggedInMember.get("memberId")
+  );
+  const inviteBonus = getInvitedBonusMintableAmount(state, loggedInMember);
+  var total = Big(0);
+  if (basicIncome) total = total.plus(basicIncome);
+  if (inviteBonus) total = total.plus(inviteBonus);
+  return total;
+}
+
+export function getInvitedBonusMintableAmount(
+  state: RahaState,
+  loggedInMember: Member
+): Big | undefined {
+  // Check that invite has been confirmed/verified.
+  if (!loggedInMember.get("inviteConfirmed")) {
+    return undefined;
+  }
+
+  // Check that user has not claimed the bonus before.
+  const mintOperations = getOperationsForType(
+    getOperationsForCreator(state.operations, loggedInMember.get("memberId")),
+    OperationType.MINT
+  ) as List<MintOperation>;
+  const memberReferralOperations = mintOperations.filter(
+    op => op.data.type === MintType.INVITED_BONUS
+  );
+  if (!memberReferralOperations.isEmpty()) {
+    return undefined;
+  }
+
+  const bonus = Config.getInvitedBonus(
+    loggedInMember.get("createdAt").getTime()
+  );
+  return bonus;
 }
 
 export function getMintableBasicIncomeAmount(
@@ -56,17 +68,12 @@ export function getMintableBasicIncomeAmount(
       new Date().getTime() - member.get("lastMintedBasicIncomeAt").getTime()
     )
       .div(MILLISECONDS_PER_WEEK)
-      .times(RAHA_MINT_WEEKLY_RATE)
+      .times(Config.UBI_WEEKLY_RATE)
       .round(2, 0);
-    return maxMintable.gt(RAHA_MINT_CAP) ? RAHA_MINT_CAP : maxMintable;
+    return maxMintable.gt(Config.MINT_CAP) ? Config.MINT_CAP : maxMintable;
   }
   return undefined;
 }
-
-export type UnclaimedReferral = {
-  memberId: MemberId;
-  referralBonus: Big;
-};
 
 /**
  * Return the list of members for whom the member can still claim a referral bonus.
@@ -74,7 +81,7 @@ export type UnclaimedReferral = {
 export function getUnclaimedReferrals(
   state: RahaState,
   memberId: MemberId
-): UnclaimedReferral[] | undefined {
+): MemberId[] | undefined {
   const member = getMemberById(state, memberId);
   if (member) {
     const memberMintOperations = getOperationsForType(
@@ -94,16 +101,7 @@ export function getUnclaimedReferrals(
         .get("invited")
         .subtract(claimedIds)
         .values()
-    ).map(memberId => {
-      const referredMember = getMemberById(state, memberId);
-      const referralBonusForMember = getReferralBonus(
-        referredMember ? referredMember.get("createdAt") : undefined
-      );
-      return {
-        memberId: memberId,
-        referralBonus: referralBonusForMember
-      };
-    });
+    );
   }
   return undefined;
 }

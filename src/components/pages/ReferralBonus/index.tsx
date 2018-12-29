@@ -15,15 +15,14 @@ import { mintReferralBonus } from "../../../store/actions/wallet";
 import { Member } from "../../../store/reducers/members";
 import { getMembersByIds } from "../../../store/selectors/members";
 import { ReferralThumbnail } from "./ReferralThumbnail";
-import { UnclaimedReferral } from "../../../store/selectors/me";
 
 export interface ReferralBonusNavParams {
-  unclaimedReferrals: UnclaimedReferral[];
+  unclaimedReferralIds: (MemberId | undefined)[];
 }
 
 type OwnProps = NavigationScreenProps<ReferralBonusNavParams>;
 
-type StateProps = { unclaimedReferrals: UnclaimedReferral[] };
+type StateProps = { unclaimedReferralMembers: (Member | undefined)[] };
 
 type DispatchProps = {
   mintReferralBonus: typeof mintReferralBonus;
@@ -35,20 +34,17 @@ type MergedProps = {
 type Props = OwnProps & StateProps & MergedProps;
 
 const ReferralsComponent: React.StatelessComponent<Props> = ({
-  unclaimedReferrals,
+  unclaimedReferralMembers,
   navigation
 }) => {
+  const members = unclaimedReferralMembers.filter(m => m) as Member[];
   return (
     <View>
       <FlatList
-        data={unclaimedReferrals}
-        keyExtractor={m => m.memberId}
+        data={members}
+        keyExtractor={m => m.get("memberId")}
         renderItem={m => (
-          <ReferralThumbnail
-            invitedMemberId={m.item.memberId}
-            referralBonus={m.item.referralBonus}
-            navigation={navigation}
-          />
+          <ReferralThumbnail invitedMember={m.item} navigation={navigation} />
         )}
       />
     </View>
@@ -59,11 +55,14 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps, RahaState> = (
   state,
   ownProps
 ) => {
-  const unclaimedReferrals = ownProps.navigation
-    .getParam("unclaimedReferrals", [])
-    .filter(x => x) as UnclaimedReferral[];
+  const unclaimedReferralIds = ownProps.navigation
+    .getParam("unclaimedReferralIds", [])
+    .filter(x => x) as MemberId[];
+  const unclaimedReferralMembers = unclaimedReferralIds
+    ? getMembersByIds(state, unclaimedReferralIds)
+    : [];
   return {
-    unclaimedReferrals
+    unclaimedReferralMembers
   };
 };
 

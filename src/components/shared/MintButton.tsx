@@ -9,9 +9,7 @@ import { RahaState } from "../../store";
 import { getLoggedInMember } from "../../store/selectors/authentication";
 import {
   getMintableBasicIncomeAmount,
-  RAHA_MINT_WEEKLY_RATE,
-  RAHA_MINT_CAP,
-  getInviteMintableAmount as getInvitedBonusMintableAmount
+  getInvitedBonusMintableAmount
 } from "../../store/selectors/me";
 import {
   ApiCallStatus,
@@ -30,6 +28,7 @@ import {
 } from "@raha/api-shared/dist/models/Operation";
 import { MintArgs } from "@raha/api/dist/me/mint";
 import { mint } from "../../store/actions/wallet";
+import { Config } from "@raha/api-shared/dist/helpers/Config";
 
 interface OwnProps {
   style?: StyleProp<ViewStyle>;
@@ -103,7 +102,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
             "Current mint rate is",
             {
               currencyType: CurrencyType.Raha,
-              value: RAHA_MINT_WEEKLY_RATE,
+              value: Config.UBI_WEEKLY_RATE,
               role: CurrencyRole.Transaction
             },
             "per week."
@@ -117,7 +116,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
             "You can only accumulate up to",
             {
               currencyType: CurrencyType.Raha,
-              value: RAHA_MINT_CAP,
+              value: Config.MINT_CAP,
               role: CurrencyRole.None
             },
             "in basic income at a time."
@@ -183,19 +182,19 @@ const mergeProps: MergeProps<
     mintableInvitedBonus
   } = stateProps;
   var mintActions = [] as MintArgs[];
-  if (mintableBasicIncome) {
-    mintActions.concat({
+  if (mintableBasicIncome && mintableBasicIncome.gt(0)) {
+    mintActions = mintActions.concat({
       type: MintType.BASIC_INCOME,
       amount: mintableBasicIncome
     });
   }
 
-  // TODO(tina): Add invited bonus
-  // if (mintableInvitedBonus) {
-  //   mintActions.concat({
-  //     // type: MintType.I
-  //   })
-  // }
+  if (mintableInvitedBonus && mintableInvitedBonus.gt(0)) {
+    mintActions = mintActions.concat({
+      type: MintType.INVITED_BONUS,
+      amount: mintableInvitedBonus
+    });
+  }
 
   return {
     ...stateProps,
