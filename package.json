@@ -27,8 +27,8 @@
     "bumpVersion": "./scripts/checkiOSCodePushKey.sh && node scripts/incrementVersion.js"
   },
   "dependencies": {
-    "@raha/api": "^0.2.14",
-    "@raha/api-shared": "^0.1.19",
+    "@raha/api": "^0.2.16",
+    "@raha/api-shared": "^0.1.23",
     "appcenter": "^1.7.1",
     "big.js": "^5.1.2",
     "core-js": "^2.5.7",

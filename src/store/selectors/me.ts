@@ -8,28 +8,65 @@ import {
   MintType,
   MintReferralBonusPayload
 } from "@raha/api-shared/dist/models/Operation";
-
+import { Config } from "@raha/api-shared/dist/helpers/Config";
 import { RahaState } from "..";
 import { getMemberById } from "./members";
 import { getOperationsForCreator, getOperationsForType } from "./operations";
+import { Member } from "../reducers/members";
 
-export const RAHA_MINT_WEEKLY_RATE = new Big(10);
-export const MAX_WEEKS_ACCRUE = new Big(4);
-export const RAHA_MINT_CAP = RAHA_MINT_WEEKLY_RATE.times(MAX_WEEKS_ACCRUE);
-export const REFERRAL_BONUS = new Big(60);
 const MILLISECONDS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
-// Set to midnight on Nov 16th, 2018 UTC
-const MINT_CAP_TRANSITION_DATE_UTC = Date.UTC(2018, 10, 16);
 
 /**
- * Return whether or not we're past the transition to capped mintable amounts.
+ * Return whether or not we're past the transition to split referral bonus to 30/30.
  * TODO: This code can be removed after the mint cap transition date has passed.
  */
-export function isPastMintCapTransitionDate() {
-  return Date.now() >= MINT_CAP_TRANSITION_DATE_UTC;
+export function isPastReferralBonusSplitTransitionDate() {
+  return Date.now() >= Config.REFERRAL_SPLIT_DATE;
 }
 
 export function getMintableAmount(
+  state: RahaState,
+  loggedInMember: Member
+): Big | undefined {
+  const basicIncome = getMintableBasicIncomeAmount(
+    state,
+    loggedInMember.get("memberId")
+  );
+  const inviteBonus = getInvitedBonusMintableAmount(state, loggedInMember);
+  var total = Big(0);
+  if (basicIncome) total = total.plus(basicIncome);
+  if (inviteBonus) total = total.plus(inviteBonus);
+  return total;
+}
+
+export function getInvitedBonusMintableAmount(
+  state: RahaState,
+  loggedInMember: Member
+): Big | undefined {
+  // Check that invite has been confirmed/verified.
+  if (!loggedInMember.get("inviteConfirmed")) {
+    return undefined;
+  }
+
+  // Check that user has not claimed the bonus before.
+  const mintOperations = getOperationsForType(
+    getOperationsForCreator(state.operations, loggedInMember.get("memberId")),
+    OperationType.MINT
+  ) as List<MintOperation>;
+  const memberReferralOperations = mintOperations.filter(
+    op => op.data.type === MintType.INVITED_BONUS
+  );
+  if (!memberReferralOperations.isEmpty()) {
+    return undefined;
+  }
+
+  const bonus = Config.getInvitedBonus(
+    loggedInMember.get("createdAt").getTime()
+  );
+  return bonus;
+}
+
+export function getMintableBasicIncomeAmount(
   state: RahaState,
   memberId: MemberId
 ): Big | undefined {
@@ -39,13 +76,9 @@ export function getMintableAmount(
       new Date().getTime() - member.get("lastMintedBasicIncomeAt").getTime()
     )
       .div(MILLISECONDS_PER_WEEK)
-      .times(RAHA_MINT_WEEKLY_RATE)
+      .times(Config.UBI_WEEKLY_RATE)
       .round(2, 0);
-    if (isPastMintCapTransitionDate()) {
-      return maxMintable.gt(RAHA_MINT_CAP) ? RAHA_MINT_CAP : maxMintable;
-    } else {
-      return maxMintable;
-    }
+    return maxMintable.gt(Config.MINT_CAP) ? Config.MINT_CAP : maxMintable;
   }
   return undefined;
 }

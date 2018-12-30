@@ -6,13 +6,10 @@ import { connect, MapStateToProps, MergeProps } from "react-redux";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 
 import { RahaState } from "../../store";
-import { mintBasicIncome } from "../../store/actions/wallet";
 import { getLoggedInMember } from "../../store/selectors/authentication";
 import {
-  getMintableAmount,
-  RAHA_MINT_WEEKLY_RATE,
-  RAHA_MINT_CAP,
-  isPastMintCapTransitionDate
+  getMintableBasicIncomeAmount,
+  getInvitedBonusMintableAmount
 } from "../../store/selectors/me";
 import {
   ApiCallStatus,
@@ -25,7 +22,13 @@ import { CurrencyRole, CurrencyType, CurrencyValue } from "./elements/Currency";
 import { fontSizes } from "../../helpers/fonts";
 import { MixedText } from "./elements/MixedText";
 import { EnforcePermissionsButton } from "./elements/EnforcePermissionsButton";
-import { OperationType } from "@raha/api-shared/dist/models/Operation";
+import {
+  OperationType,
+  MintType
+} from "@raha/api-shared/dist/models/Operation";
+import { MintArgs } from "@raha/api/dist/me/mint";
+import { mint } from "../../store/actions/wallet";
+import { Config } from "@raha/api-shared/dist/helpers/Config";
 
 interface OwnProps {
   style?: StyleProp<ViewStyle>;
@@ -33,11 +36,12 @@ interface OwnProps {
 
 interface StateProps {
   loggedInMember?: Member;
-  mintableAmount?: Big;
+  mintableBasicIncome?: Big;
+  mintableInvitedBonus?: Big;
   mintApiCallStatus?: ApiCallStatus;
 }
 interface DispatchProps {
-  mintBasicIncome: typeof mintBasicIncome;
+  mint: typeof mint;
 }
 interface MergedProps {
   mint: () => void;
@@ -45,7 +49,21 @@ interface MergedProps {
 type Props = OwnProps & StateProps & MergedProps;
 
 const MintButtonComponent: React.StatelessComponent<Props> = props => {
-  const { mintableAmount, mintApiCallStatus, mint, loggedInMember } = props;
+  const {
+    mintableBasicIncome,
+    mintableInvitedBonus,
+    mintApiCallStatus,
+    mint,
+    loggedInMember
+  } = props;
+
+  var mintableAmount = Big(0);
+  if (mintableBasicIncome) {
+    mintableAmount = mintableAmount.plus(mintableBasicIncome);
+  }
+  if (mintableInvitedBonus) {
+    mintableAmount = mintableAmount.plus(mintableInvitedBonus);
+  }
 
   const mintInProgress =
     mintApiCallStatus && mintApiCallStatus.status === ApiCallStatusType.STARTED;
@@ -84,7 +102,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
             "Current mint rate is",
             {
               currencyType: CurrencyType.Raha,
-              value: RAHA_MINT_WEEKLY_RATE,
+              value: Config.UBI_WEEKLY_RATE,
               role: CurrencyRole.Transaction
             },
             "per week."
@@ -95,18 +113,32 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
         <MixedText
           style={[fontSizes.small, { textAlign: "center" }]}
           content={[
-            isPastMintCapTransitionDate()
-              ? "You can only accumulate up to"
-              : "After 11/15 you will only be able to accumulate up to",
+            "You can only accumulate up to",
             {
               currencyType: CurrencyType.Raha,
-              value: RAHA_MINT_CAP,
+              value: Config.MINT_CAP,
               role: CurrencyRole.None
             },
-            "at a time."
+            "in basic income at a time."
           ]}
         />
       </Text>
+      {mintableInvitedBonus && mintableInvitedBonus.gt(0) && (
+        <Text>
+          <MixedText
+            style={[fontSizes.small, { textAlign: "center" }]}
+            content={[
+              "You have a bonus of",
+              {
+                currencyType: CurrencyType.Raha,
+                value: mintableInvitedBonus,
+                role: CurrencyRole.None
+              },
+              "for being invited!"
+            ]}
+          />
+        </Text>
+      )}
     </View>
   );
 };
@@ -120,7 +152,14 @@ const mapStateToProps: MapStateToProps<
   if (loggedInMember) {
     return {
       loggedInMember: loggedInMember,
-      mintableAmount: getMintableAmount(state, loggedInMember.get("memberId")),
+      mintableBasicIncome: getMintableBasicIncomeAmount(
+        state,
+        loggedInMember.get("memberId")
+      ),
+      mintableInvitedBonus: getInvitedBonusMintableAmount(
+        state,
+        loggedInMember
+      ),
       mintApiCallStatus: getStatusOfApiCall(
         state,
         ApiEndpointName.MINT,
@@ -137,15 +176,31 @@ const mergeProps: MergeProps<
   OwnProps,
   MergedProps
 > = (stateProps, dispatchProps, ownProps) => {
-  const { loggedInMember, mintableAmount } = stateProps;
+  const {
+    loggedInMember,
+    mintableBasicIncome,
+    mintableInvitedBonus
+  } = stateProps;
+  var mintActions = [] as MintArgs[];
+  if (mintableBasicIncome && mintableBasicIncome.gt(0)) {
+    mintActions = mintActions.concat({
+      type: MintType.BASIC_INCOME,
+      amount: mintableBasicIncome
+    });
+  }
+
+  if (mintableInvitedBonus && mintableInvitedBonus.gt(0)) {
+    mintActions = mintActions.concat({
+      type: MintType.INVITED_BONUS,
+      amount: mintableInvitedBonus
+    });
+  }
+
   return {
     ...stateProps,
     mint: () =>
       loggedInMember
-        ? dispatchProps.mintBasicIncome(
-            loggedInMember.get("memberId"),
-            mintableAmount
-          )
+        ? dispatchProps.mint(loggedInMember.get("memberId"), mintActions)
         : {},
     ...ownProps
   };
@@ -153,6 +208,6 @@ const mergeProps: MergeProps<
 
 export const MintButton = connect(
   mapStateToProps,
-  { mintBasicIncome },
+  { mint },
   mergeProps
 )(MintButtonComponent);

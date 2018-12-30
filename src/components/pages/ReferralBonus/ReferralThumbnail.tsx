@@ -41,12 +41,12 @@ import { MemberThumbnail } from "../../shared/MemberThumbnail";
 import { getLoggedInMember } from "../../../store/selectors/authentication";
 import { Loading } from "../../shared/Loading";
 import { fonts } from "../../../helpers/fonts";
-import { REFERRAL_BONUS } from "../../../store/selectors/me";
 import { EnforcePermissionsButton } from "../../shared/elements/EnforcePermissionsButton";
+import { Config } from "@raha/api-shared/dist/helpers/Config";
 
 const REFERRAL_BONUS_VALUE: CurrencyValue = {
   currencyType: CurrencyType.Raha,
-  value: REFERRAL_BONUS,
+  value: Config.getReferralBonus(),
   role: CurrencyRole.None
 };
 
@@ -167,7 +167,7 @@ const mergeProps: MergeProps<
     ...stateProps,
     mintReferralBonus: () =>
       dispatchProps.mintReferralBonus(
-        REFERRAL_BONUS,
+        Config.getReferralBonus(),
         ownProps.invitedMember.get("memberId")
       ),
     ...ownProps

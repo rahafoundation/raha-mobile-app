@@ -11,7 +11,8 @@ import {
   MintReferralBonusOperation,
   MintBasicIncomeOperation,
   TipGiveOperation,
-  DirectGiveOperation
+  DirectGiveOperation,
+  MintInvitedBonus
 } from "@raha/api-shared/dist/models/Operation";
 
 /**
@@ -92,7 +93,8 @@ export type IndependentOperation =
   | TrustOperation
   | GiveOperation
   | RequestVerificationOperation
-  | VerifyOperation;
+  | VerifyOperation
+  | MintInvitedBonus;
 
 /**
  * Operations cannot exist independently and must be attached to another operation.

@@ -19,8 +19,7 @@ import { getLoggedInMember } from "../../store/selectors/authentication";
 import { NavigationScreenProps } from "react-navigation";
 import {
   getUnclaimedReferrals,
-  getMintableAmount,
-  REFERRAL_BONUS
+  getMintableAmount
 } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
 import { Button, Text } from "../shared/elements";
@@ -37,6 +36,7 @@ import { MixedText } from "../shared/elements/MixedText";
 import { FlaggedNotice } from "../shared/Cards/FlaggedNotice";
 import { EnforcePermissionsButton } from "../shared/elements/EnforcePermissionsButton";
 import { OperationType } from "@raha/api-shared/dist/models/Operation";
+import { Config } from "@raha/api-shared/dist/helpers/Config";
 
 type OwnProps = NavigationScreenProps<{}>;
 
@@ -171,7 +171,7 @@ const Invite: React.StatelessComponent<Props> = props => {
             "Earn",
             {
               currencyType: CurrencyType.Raha,
-              value: REFERRAL_BONUS,
+              value: Config.getReferralBonus(),
               role: CurrencyRole.Transaction
             },
             "when friends you invite join Raha."
@@ -315,7 +315,7 @@ const mapStateToProps: MapStateToProps<
   }
   return {
     loggedInMember,
-    mintableAmount: getMintableAmount(state, loggedInMember.get("memberId")),
+    mintableAmount: getMintableAmount(state, loggedInMember),
     unclaimedReferralIds: getUnclaimedReferrals(
       state,
       loggedInMember.get("memberId")
