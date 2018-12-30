@@ -7,7 +7,8 @@ import {
   ViewStyle,
   ScrollView,
   ImageStyle,
-  Animated
+  Animated,
+  Easing
 } from "react-native";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
@@ -62,23 +63,20 @@ interface MergedProps {
 type Props = OwnProps & StateProps & MergedProps;
 
 type MoneyProps = {
-  loggedInMember: Member;
-  mintingProgress: Big;
+  mintInProgress: boolean;
+  balance: Big;
 };
 
 const MoneySection: React.StatelessComponent<MoneyProps> = ({
-  loggedInMember,
-  mintingProgress
+  mintInProgress,
+  balance
 }) => {
-  // TODO isMinting should rely on API
-  const isMinting = mintingProgress.gt(0);
-  const balance = loggedInMember.get("balance").plus(mintingProgress);
   return (
     <React.Fragment>
       <View style={styles.financesSection}>
         <View>
           <Currency
-            style={[styles.balanceValue, isMinting && { opacity: 0.5 }]}
+            style={[styles.balanceValue, mintInProgress && { opacity: 0.5 }]}
             currencyValue={{
               value: balance,
               role: CurrencyRole.Transaction,
@@ -107,7 +105,7 @@ const MoneySection: React.StatelessComponent<MoneyProps> = ({
 
 type ActionProps = Props & {
   mint: () => void;
-  mintingProgress: Big;
+  mintingProgress: Big | null;
 };
 
 const Actions: React.StatelessComponent<ActionProps> = props => {
@@ -223,66 +221,56 @@ const Invite: React.StatelessComponent<Props> = props => {
 //   nextApiCallStatus: ApiCallStatus,
 //   currApiCallStatus?: ApiCallStatus
 // ) {}
-const MINTING_TWEEN_TIME_MS = 2000;
+const MINTING_ANIM_DURATION = 3000;
+const MINTING_ANIM_POLY = 4;
 
 class WalletView extends React.Component<Props, { mintingProgress: Big }> {
-  state = { mintingProgress: Big(0) };
-  mintingTweenHandle = 0;
-  start: number | undefined = undefined;
+  state = {
+    mintingProgress: Big(0)
+  };
 
-  componentWillReceiveProps(nextProps: Props) {
-    const nextMintApiCallStatus = nextProps.mintApiCallStatus;
-    if (!nextMintApiCallStatus) {
+  _mintingAnim = new Animated.Value(0);
+
+  componentDidMount() {
+    this._mintingAnim.addListener(progress => {
+      const mintingProgress = Big(progress.value).round(2);
+      if (!this.state.mintingProgress.eq(mintingProgress)) {
+        this.setState({ mintingProgress });
+      }
+    });
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const mintApiCallStatus = this.props.mintApiCallStatus;
+    if (
+      !mintApiCallStatus ||
+      mintApiCallStatus === prevProps.mintApiCallStatus
+    ) {
       return;
     }
-    if (nextMintApiCallStatus.status === ApiCallStatusType.STARTED) {
-      this.startMintingTween();
-    } else if (nextMintApiCallStatus.status === ApiCallStatusType.SUCCESS) {
-      this.endMintingTween();
+    if (mintApiCallStatus.status === ApiCallStatusType.STARTED) {
+      Animated.timing(this._mintingAnim, {
+        toValue: +this.props.mintableAmount,
+        duration: MINTING_ANIM_DURATION,
+        easing: Easing.inOut(Easing.poly(MINTING_ANIM_POLY))
+      }).start(() => {
+        this.setState({ mintingProgress: Big(0) });
+        this._mintingAnim.setValue;
+      });
     }
   }
 
   componentWillUnmount() {
-    this.endMintingTween();
-  }
-
-  updateMintingTween = (timestamp: number) => {
-    if (this.start === undefined) this.start = timestamp;
-    const mintingProgress = this.props.mintableAmount.times(
-      (timestamp - this.start) / MINTING_TWEEN_TIME_MS
-    );
-    if (!mintingProgress.eq(this.state.mintingProgress)) {
-      this.setState({ mintingProgress });
-    }
-    if (mintingProgress.lt(this.props.mintableAmount)) {
-      requestAnimationFrame(this.updateMintingTween);
-    }
-  };
-
-  startMintingTween() {
-    this.start = undefined;
-    requestAnimationFrame(this.updateMintingTween);
-  }
-
-  endMintingTween() {
-    cancelAnimationFrame(this.mintingTweenHandle);
-    this.setState({ mintingProgress: Big(0) });
+    this._mintingAnim.removeAllListeners();
   }
 
   render() {
-    let { mintingProgress } = this.state;
-
-    if (
-      this.props.mintApiCallStatus &&
-      this.props.mintApiCallStatus.status === ApiCallStatusType.SUCCESS
-    ) {
-      mintingProgress = Big(0);
-    }
+    const { mintingProgress } = this.state;
     const actionProps = { ...this.props, mintingProgress };
     return (
       <ScrollView bounces={false} contentContainerStyle={styles.page}>
         <MoneySection
-          loggedInMember={this.props.loggedInMember}
+          balance={this.props.loggedInMember}
           mintingProgress={mintingProgress}
         />
         <Actions {...actionProps} />

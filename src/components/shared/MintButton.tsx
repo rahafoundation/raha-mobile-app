@@ -31,12 +31,16 @@ import { mint } from "../../store/actions/wallet";
 import { Config } from "@raha/api-shared/dist/helpers/Config";
 
 type Props = {
-  mintingProgress: Big;
+  mintingProgress: Big | null;
   style?: StyleProp<ViewStyle>;
   loggedInMember: Member;
   mintableAmount?: Big;
+<<<<<<< HEAD
   mintingAmount?: Big;
   mintableInvitedBonus?: Big;
+=======
+  mintingAmount: Big | null;
+>>>>>>> Switching to using React.Animated
   mintApiCallStatus?: ApiCallStatus;
   mint: () => void;
 };
@@ -51,8 +55,8 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
     mint
   } = props;
 
-  const mintInProgress =
-    mintApiCallStatus && mintApiCallStatus.status === ApiCallStatusType.STARTED;
+  const mintInProgress = mintingProgress !== null;
+
   const canMint =
     // member is logged in
     loggedInMember &&
@@ -67,7 +71,7 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
 
   const mintValue: CurrencyValue | undefined = mintableAmount
     ? {
-        value: mintInProgress
+        value: mintingProgress
           ? mintableAmount.minus(mintingProgress)
           : mintableAmount,
         role: CurrencyRole.None,
