@@ -734,6 +734,14 @@ NSData * GTM_NULLABLE_TYPE GTMDataFromInputStream(NSInputStream *inputStream, NS
 // affect a fetch after the fetch has begun.
 - (void)setRequestValue:(GTM_NULLABLE NSString *)value forHTTPHeaderField:(NSString *)field;
 
+// The fetcher's request (deprecated.)
+//
+// Exposing a mutable object in the interface was convenient but a bad design decision due
+// to thread-safety requirements.  Clients should use the request property and
+// setRequestValue:forHTTPHeaderField: instead.
+@property(atomic, readonly, GTM_NULLABLE) NSMutableURLRequest *mutableRequest
+    GTMSESSION_DEPRECATE_ON_2016_SDKS("use 'request' or '-setRequestValue:forHTTPHeaderField:'");
+
 // Data used for resuming a download task.
 @property(atomic, readonly, GTM_NULLABLE) NSData *downloadResumeData;
 
@@ -1239,11 +1247,7 @@ NSData * GTM_NULLABLE_TYPE GTMDataFromInputStream(NSInputStream *inputStream, NS
 // can catch those.
 
 #ifdef __OBJC__
-// If asserts are entirely no-ops, the synchronization monitor is just a bunch
-// of counting code that doesn't report exceptional circumstances in any way.
-// Only build the synchronization monitor code if NS_BLOCK_ASSERTIONS is not
-// defined or asserts are being logged instead.
-#if DEBUG && (!defined(NS_BLOCK_ASSERTIONS) || GTMSESSION_ASSERT_AS_LOG)
+#if DEBUG
   #define __GTMSessionMonitorSynchronizedVariableInner(varname, counter) \
       varname ## counter
   #define __GTMSessionMonitorSynchronizedVariable(varname, counter)  \

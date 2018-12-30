@@ -85,19 +85,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSError *)unexpectedErrorResponseWithDeserializedResponse:(id)deserializedResponse;
 
-/** @fn malformedJWTErrorWithToken:underlyingError:
-    @brief Constructs an @c NSError with the code set to @c FIRAuthErrorCodeMalformedJWT and
-        populates the userInfo dictionary with an error message, the bad token, and an underlying
-        error that may have occurred when parsing.
-    @param token The token that failed to parse.
-    @param underlyingError The error that caused this error. If this parameter is nil, the
-        NSUnderlyingErrorKey value will not be set.
-    @remarks This error is returned when JWT parsing fails.
-    @returns An @c FIRAuthErrorCodeMalformedJWT error wrapping an underlying error, if available.
- */
-+ (NSError *)malformedJWTErrorWithToken:(NSString *)token
-                        underlyingError:(NSError *_Nullable)underlyingError;
-
 /** @fn unexpectedResponseWithData:underlyingError:
     @brief Constructs an @c NSError with the @c FIRAuthInternalErrorCodeUnexpectedResponse
         code, and a populated @c FIRAuthErrorUserInfoDataKey key in the @c NSError.userInfo
@@ -283,7 +270,7 @@ NS_ASSUME_NONNULL_BEGIN
     @param serverResponseReason A more detailed explanation string from server response.
     @return The NSError instance associated with the given FIRAuthError.
  */
-+ (NSError *)weakPasswordErrorWithServerResponseReason:(nullable NSString *)serverResponseReason;
++ (NSError *)weakPasswordErrorWithServerResponseReason:(NSString *)serverResponseReason;
 
 /** @fn appNotAuthorizedError
     @brief Constructs an @c NSError with the @c FIRAuthErrorCodeAppNotAuthorized code.
@@ -492,7 +479,7 @@ NS_ASSUME_NONNULL_BEGIN
     @param message Error message from the backend, if any.
     @return The nullable NSError instance associated with the given error message, if one is found.
  */
-+ (nullable NSError *)URLResponseErrorWithCode:(NSString *)code message:(nullable NSString *)message;
++ (NSError *)URLResponseErrorWithCode:(NSString *)code message:(nullable NSString *)message;
 
 /** @fn nullUserErrorWithMessage:
     @brief Constructs an @c NSError with the code and message provided.

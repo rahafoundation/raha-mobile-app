@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#import "FIRStorageReference.h"
-
 #import "FIRStoragePath.h"
 
 NS_ASSUME_NONNULL_BEGIN

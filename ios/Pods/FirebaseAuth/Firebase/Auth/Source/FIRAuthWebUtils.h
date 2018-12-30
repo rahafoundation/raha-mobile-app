@@ -60,7 +60,7 @@ typedef void (^FIRFetchAuthDomainCallback)(NSString *_Nullable authDomain,
  @return The value for the key.
  */
 
-+ (nullable NSString *)queryItemValue:(NSString *)name from:(NSArray<NSURLQueryItem *> *)queryList;
++ (NSString *)queryItemValue:(NSString *)name from:(NSArray<NSURLQueryItem *> *)queryList;
 
 @end
 

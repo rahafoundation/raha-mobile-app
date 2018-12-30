@@ -532,14 +532,12 @@
 		78BB7FD3F84B4601A891AB45 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		7BB11A4F8C8D471890B748DA /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
-		824C23475D370B697B11CFA2 /* Pods-Raha.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Raha.staging.xcconfig"; path = "Pods/Target Support Files/Pods-Raha/Pods-Raha.staging.xcconfig"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		83E49061BB1112A50812597F /* Pods-RahaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RahaTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RahaTests/Pods-RahaTests.debug.xcconfig"; sourceTree = "<group>"; };
 		8F1ADEC696B94D5087A2153A /* RNCamera.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCamera.xcodeproj; path = "../node_modules/react-native-camera/ios/RNCamera.xcodeproj"; sourceTree = "<group>"; };
 		8FE36CB580361902999624D9 /* Pods-RahaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RahaTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RahaTests/Pods-RahaTests.release.xcconfig"; sourceTree = "<group>"; };
 		90FB7A8D9CC84096AB863525 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		943331A2CD13454ABF698608 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
-		9ECCB817721C4FB1570DC91B /* Pods-RahaTests.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RahaTests.staging.xcconfig"; path = "Pods/Target Support Files/Pods-RahaTests/Pods-RahaTests.staging.xcconfig"; sourceTree = "<group>"; };
 		9FB38222B84F4343A6C2FD83 /* RNOpenAppSettings.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNOpenAppSettings.xcodeproj; path = "../node_modules/react-native-app-settings/ios/RNOpenAppSettings.xcodeproj"; sourceTree = "<group>"; };
 		A6575AB645C14063A1E4E240 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		A8E44C965D59A184D0888B03 /* libPods-RahaTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RahaTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1009,8 +1007,6 @@
 				DD25A1AA57839E9F612DDDC2 /* Pods-Raha.release.xcconfig */,
 				83E49061BB1112A50812597F /* Pods-RahaTests.debug.xcconfig */,
 				8FE36CB580361902999624D9 /* Pods-RahaTests.release.xcconfig */,
-				824C23475D370B697B11CFA2 /* Pods-Raha.staging.xcconfig */,
-				9ECCB817721C4FB1570DC91B /* Pods-RahaTests.staging.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1121,7 +1117,6 @@
 				EA659E0320FED53E008AFD2A /* Embed Frameworks */,
 				B74A0559215926E30064B3E1 /* ShellScript */,
 				B766F585215A2F3000E182A4 /* ShellScript */,
-				BFD517D49A5984278012527D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1756,28 +1751,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# Upload *.dysm files to Crashlytics\n# https://firebase.google.com/docs/crashlytics/get-deobfuscated-reports\n\n\"${PODS_ROOT}/Fabric/upload-symbols\" -gsp \"${PROJECT_DIR}/Raha/GoogleService-Info.plist\" -p ios \"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\"\n\n";
 		};
-		BFD517D49A5984278012527D /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-Raha/Pods-Raha-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/gRPC/gRPCCertificates.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/gRPCCertificates.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Raha/Pods-Raha-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -2108,7 +2081,7 @@
 		};
 		EAC652A7216EF12600019097 /* Staging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 824C23475D370B697B11CFA2 /* Pods-Raha.staging.xcconfig */;
+			baseConfigurationReference = DD25A1AA57839E9F612DDDC2 /* Pods-Raha.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUNDLE_DISPLAY_NAME = "Raha Staging";
@@ -2149,7 +2122,7 @@
 		};
 		EAC652A8216EF12600019097 /* Staging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9ECCB817721C4FB1570DC91B /* Pods-RahaTests.staging.xcconfig */;
+			baseConfigurationReference = 8FE36CB580361902999624D9 /* Pods-RahaTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";

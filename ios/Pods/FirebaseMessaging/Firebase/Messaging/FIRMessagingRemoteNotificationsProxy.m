@@ -21,7 +21,6 @@
 
 #import "FIRMessagingConstants.h"
 #import "FIRMessagingLogger.h"
-#import "FIRMessagingUtilities.h"
 #import "FIRMessaging_Private.h"
 
 static const BOOL kDefaultAutoRegisterEnabledValue = YES;
@@ -99,11 +98,7 @@ static NSString *kReceiveDataMessageSelectorString = @"messaging:didReceiveMessa
     return;
   }
 
-  UIApplication *application = FIRMessagingUIApplication();
-  if (!application) {
-    return;
-  }
-  NSObject<UIApplicationDelegate> *appDelegate = [application delegate];
+  NSObject<UIApplicationDelegate> *appDelegate = [[UIApplication sharedApplication] delegate];
   [self swizzleAppDelegateMethods:appDelegate];
 
   // Add KVO listener on [UNUserNotificationCenter currentNotificationCenter]'s delegate property
@@ -216,7 +211,7 @@ static NSString *kReceiveDataMessageSelectorString = @"messaging:didReceiveMessa
 
 #pragma mark - UNNotificationCenter Swizzling
 
-- (void)swizzleUserNotificationCenterDelegate:(id _Nonnull)delegate {
+- (void)swizzleUserNotificationCenterDelegate:(id)delegate {
   if (self.currentUserNotificationCenterDelegate == delegate) {
     // Via pointer-check, compare if we have already swizzled this item.
     return;
@@ -251,7 +246,7 @@ static NSString *kReceiveDataMessageSelectorString = @"messaging:didReceiveMessa
   }
 }
 
-- (void)unswizzleUserNotificationCenterDelegate:(id _Nonnull)delegate {
+- (void)unswizzleUserNotificationCenterDelegate:(id)delegate {
   if (self.currentUserNotificationCenterDelegate != delegate) {
     // We aren't swizzling this delegate, so don't do anything.
     return;
@@ -260,10 +255,6 @@ static NSString *kReceiveDataMessageSelectorString = @"messaging:didReceiveMessa
       NSSelectorFromString(kUserNotificationWillPresentSelectorString);
   // Call unswizzle methods, even if the method was not implemented (it will fail gracefully).
   [self unswizzleSelector:willPresentNotificationSelector
-                  inClass:[self.currentUserNotificationCenterDelegate class]];
-  SEL didReceiveNotificationResponseSelector =
-      NSSelectorFromString(kUserNotificationDidReceiveResponseSelectorString);
-  [self unswizzleSelector:didReceiveNotificationResponseSelector
                   inClass:[self.currentUserNotificationCenterDelegate class]];
   self.currentUserNotificationCenterDelegate = nil;
   self.hasSwizzledUserNotificationDelegate = NO;
