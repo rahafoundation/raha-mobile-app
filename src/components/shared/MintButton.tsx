@@ -30,40 +30,26 @@ import { MintArgs } from "@raha/api/dist/me/mint";
 import { mint } from "../../store/actions/wallet";
 import { Config } from "@raha/api-shared/dist/helpers/Config";
 
-interface OwnProps {
+type Props = {
+  mintingProgress: Big;
   style?: StyleProp<ViewStyle>;
-}
-
-interface StateProps {
-  loggedInMember?: Member;
-  mintableBasicIncome?: Big;
+  loggedInMember: Member;
+  mintableAmount?: Big;
+  mintingAmount?: Big;
   mintableInvitedBonus?: Big;
   mintApiCallStatus?: ApiCallStatus;
-}
-interface DispatchProps {
-  mint: typeof mint;
-}
-interface MergedProps {
   mint: () => void;
-}
-type Props = OwnProps & StateProps & MergedProps;
+};
 
 const MintButtonComponent: React.StatelessComponent<Props> = props => {
   const {
-    mintableBasicIncome,
+    mintingProgress,
+    loggedInMember,
+    mintableAmount,
     mintableInvitedBonus,
     mintApiCallStatus,
-    mint,
-    loggedInMember
+    mint
   } = props;
-
-  var mintableAmount = Big(0);
-  if (mintableBasicIncome) {
-    mintableAmount = mintableAmount.plus(mintableBasicIncome);
-  }
-  if (mintableInvitedBonus) {
-    mintableAmount = mintableAmount.plus(mintableInvitedBonus);
-  }
 
   const mintInProgress =
     mintApiCallStatus && mintApiCallStatus.status === ApiCallStatusType.STARTED;
@@ -81,7 +67,9 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
 
   const mintValue: CurrencyValue | undefined = mintableAmount
     ? {
-        value: mintableAmount,
+        value: mintInProgress
+          ? mintableAmount.minus(mintingProgress)
+          : mintableAmount,
         role: CurrencyRole.None,
         currencyType: CurrencyType.Raha
       }
@@ -143,71 +131,4 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
   );
 };
 
-const mapStateToProps: MapStateToProps<
-  StateProps,
-  OwnProps,
-  RahaState
-> = state => {
-  const loggedInMember = getLoggedInMember(state);
-  if (loggedInMember) {
-    return {
-      loggedInMember: loggedInMember,
-      mintableBasicIncome: getMintableBasicIncomeAmount(
-        state,
-        loggedInMember.get("memberId")
-      ),
-      mintableInvitedBonus: getInvitedBonusMintableAmount(
-        state,
-        loggedInMember
-      ),
-      mintApiCallStatus: getStatusOfApiCall(
-        state,
-        ApiEndpointName.MINT,
-        loggedInMember.get("memberId")
-      )
-    };
-  }
-  return {};
-};
-
-const mergeProps: MergeProps<
-  StateProps,
-  DispatchProps,
-  OwnProps,
-  MergedProps
-> = (stateProps, dispatchProps, ownProps) => {
-  const {
-    loggedInMember,
-    mintableBasicIncome,
-    mintableInvitedBonus
-  } = stateProps;
-  var mintActions = [] as MintArgs[];
-  if (mintableBasicIncome && mintableBasicIncome.gt(0)) {
-    mintActions = mintActions.concat({
-      type: MintType.BASIC_INCOME,
-      amount: mintableBasicIncome
-    });
-  }
-
-  if (mintableInvitedBonus && mintableInvitedBonus.gt(0)) {
-    mintActions = mintActions.concat({
-      type: MintType.INVITED_BONUS,
-      amount: mintableInvitedBonus
-    });
-  }
-
-  return {
-    ...stateProps,
-    mint: () =>
-      loggedInMember
-        ? dispatchProps.mint(loggedInMember.get("memberId"), mintActions)
-        : {},
-    ...ownProps
-  };
-};
-
-export const MintButton = connect(
-  mapStateToProps,
-  { mint },
-  mergeProps
-)(MintButtonComponent);
+export const MintButton = MintButtonComponent;

@@ -24,6 +24,7 @@ export function isPastReferralBonusSplitTransitionDate() {
   return Date.now() >= Config.REFERRAL_SPLIT_DATE;
 }
 
+<<<<<<< HEAD
 export function getMintableAmount(
   state: RahaState,
   loggedInMember: Member
@@ -70,6 +71,9 @@ export function getMintableBasicIncomeAmount(
   state: RahaState,
   memberId: MemberId
 ): Big | undefined {
+=======
+export function getMintableAmount(state: RahaState, memberId: MemberId): Big {
+>>>>>>> WIP animate minting
   const member = getMemberById(state, memberId);
   if (member) {
     const maxMintable = new Big(
@@ -80,7 +84,7 @@ export function getMintableBasicIncomeAmount(
       .round(2, 0);
     return maxMintable.gt(Config.MINT_CAP) ? Config.MINT_CAP : maxMintable;
   }
-  return undefined;
+  return Big(0);
 }
 
 /**
