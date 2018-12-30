@@ -1,1 +1,0 @@
-../../../FirebaseFirestore/Firestore/core/include/firebase/firestore/metadata_changes.h

@@ -25,10 +25,7 @@
 
 @end
 
+
 @interface FIRMessagingReceiver : NSObject <FIRMessagingDataMessageManagerDelegate>
-
 @property(nonatomic, weak, nullable) id<FIRMessagingReceiverDelegate> delegate;
-/// Whether to use direct channel for direct channel message callback handler in all iOS versions.
-@property(nonatomic, assign) BOOL useDirectChannel;
-
 @end

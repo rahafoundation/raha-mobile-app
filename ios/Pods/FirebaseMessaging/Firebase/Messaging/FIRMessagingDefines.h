@@ -55,7 +55,7 @@ _Pragma("clang diagnostic pop")
 #ifndef _FIRMessagingDevAssert
 // we directly invoke the NSAssert handler so we can pass on the varargs
 // (NSAssert doesn't have a macro we can use that takes varargs)
-#ifdef DEBUG
+#if !defined(NS_BLOCK_ASSERTIONS)
 #define _FIRMessagingDevAssert(condition, ...)                                       \
   do {                                                                      \
     if (!(condition)) {                                                     \
@@ -67,9 +67,9 @@ _Pragma("clang diagnostic pop")
                       description:__VA_ARGS__];                             \
     }                                                                       \
   } while(0)
-#else // !defined(DEBUG)
+#else // !defined(NS_BLOCK_ASSERTIONS)
 #define _FIRMessagingDevAssert(condition, ...) do { } while (0)
-#endif // !defined(DEBUG)
+#endif // !defined(NS_BLOCK_ASSERTIONS)
 
 #endif // _FIRMessagingDevAssert
 

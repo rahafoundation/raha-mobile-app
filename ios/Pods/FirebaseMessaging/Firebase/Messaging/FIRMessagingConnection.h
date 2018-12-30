@@ -67,6 +67,7 @@ typedef NS_ENUM(NSUInteger, FIRMessagingConnectionCloseReason) {
  */
 @interface FIRMessagingConnection : NSObject
 
+@property(nonatomic, readwrite, assign) int64_t lastHeartbeatPingTimestamp;
 @property(nonatomic, readonly, assign) FIRMessagingConnectionState state;
 @property(nonatomic, readonly, copy) NSString *host;
 @property(nonatomic, readonly, assign) NSUInteger port;

@@ -408,7 +408,7 @@ typedef void (^FIRVerifyClientResponseCallback)
  */
 - (void)asyncPostToURLWithRequestConfiguration:(FIRAuthRequestConfiguration *)requestConfiguration
                                            URL:(NSURL *)URL
-                                          body:(nullable NSData *)body
+                                          body:(NSData *)body
                                    contentType:(NSString *)contentType
                              completionHandler:(FIRAuthBackendRPCIssuerCompletionHandler)handler;
 

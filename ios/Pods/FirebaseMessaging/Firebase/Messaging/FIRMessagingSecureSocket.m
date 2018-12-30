@@ -129,6 +129,10 @@ static NSUInteger SerializedSize(int32_t value) {
 
   BOOL isVOIPSocket = NO;
 
+#if FIRMessaging_PROBER
+  isVOIPSocket = YES;
+#endif
+
   [self openStream:self.outStream isVOIPStream:isVOIPSocket];
   [self openStream:self.inStream isVOIPStream:isVOIPSocket];
 }
@@ -178,7 +182,7 @@ static NSUInteger SerializedSize(int32_t value) {
       _FIRMessagingDevAssert(stream == self.inStream, @"Incorrect stream");
       if (![self performRead]) {
         FIRMessagingLoggerDebug(kFIRMessagingMessageCodeSecureSocket004,
-                                @"Error occurred when reading incoming stream");
+                                @"Error occured when reading incoming stream");
         [self disconnect];
       }
       break;

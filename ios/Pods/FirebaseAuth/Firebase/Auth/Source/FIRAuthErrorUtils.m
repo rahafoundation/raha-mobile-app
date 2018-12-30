@@ -413,12 +413,6 @@ static NSString *const kFIRAuthErrorMessageNullUser = @"A null user object was p
 static NSString *const kFIRAuthErrorMessageInternalError = @"An internal error has occurred, "
     "print and inspect the error details for more information.";
 
-/** @var kFIRAuthErrorMessageMalformedJWT
-    @brief Error message constant describing @c FIRAuthErrorCodeMalformedJWT errors.
- */
-static NSString *const kFIRAuthErrorMessageMalformedJWT =
-    @"Failed to parse JWT. Check the userInfo dictionary for the full token.";
-
 /** @var FIRAuthErrorDescription
     @brief The error descrioption, based on the error code.
     @remarks No default case so that we get a compiler warning if a new value was added to the enum.
@@ -537,8 +531,6 @@ static NSString *FIRAuthErrorDescription(FIRAuthErrorCode code) {
       return kFIRAuthErrorMessageNullUser;
     case FIRAuthErrorCodeWebInternalError:
       return kFIRAuthErrorMessageWebInternalError;
-    case FIRAuthErrorCodeMalformedJWT:
-      return kFIRAuthErrorMessageMalformedJWT;
   }
 }
 
@@ -660,8 +652,6 @@ static NSString *const FIRAuthErrorCodeString(FIRAuthErrorCode code) {
       return @"ERROR_NULL_USER";
     case FIRAuthErrorCodeWebInternalError:
       return @"ERROR_WEB_INTERNAL_ERROR";
-    case FIRAuthErrorCodeMalformedJWT:
-      return @"ERROR_MALFORMED_JWT";
   }
 }
 
@@ -693,8 +683,7 @@ static NSString *const FIRAuthErrorCodeString(FIRAuthErrorCode code) {
   return [self errorWithCode:code userInfo:errorUserInfo];
 }
 
-+ (NSError *)errorWithCode:(FIRAuthInternalErrorCode)code
-                  userInfo:(nullable NSDictionary *)userInfo {
++ (NSError *)errorWithCode:(FIRAuthInternalErrorCode)code userInfo:(NSDictionary *)userInfo {
   BOOL isPublic = (code & FIRAuthPublicErrorCodeFlag) == FIRAuthPublicErrorCodeFlag;
   if (isPublic) {
     // This is a public error. Return it as a public error and add a description.
@@ -744,18 +733,6 @@ static NSString *const FIRAuthErrorCodeString(FIRAuthErrorCode code) {
   return [self errorWithCode:FIRAuthInternalErrorCodeUnexpectedErrorResponse userInfo:@{
     FIRAuthErrorUserInfoDeserializedResponseKey : deserializedResponse
   }];
-}
-
-+ (NSError *)malformedJWTErrorWithToken:(NSString *)token
-                        underlyingError:(NSError *_Nullable)underlyingError {
-  NSMutableDictionary *userInfo =
-      [NSMutableDictionary dictionaryWithObject:kFIRAuthErrorMessageMalformedJWT
-                                         forKey:NSLocalizedDescriptionKey];
-  [userInfo setObject:token forKey:FIRAuthErrorUserInfoDataKey];
-  if (underlyingError != nil) {
-    [userInfo setObject:underlyingError forKey:NSUnderlyingErrorKey];
-  }
-  return [self errorWithCode:FIRAuthInternalErrorCodeMalformedJWT userInfo:[userInfo copy]];
 }
 
 + (NSError *)unexpectedResponseWithData:(NSData *)data
@@ -876,7 +853,7 @@ static NSString *const FIRAuthErrorCodeString(FIRAuthErrorCode code) {
   return [self errorWithCode:FIRAuthInternalErrorCodeOperationNotAllowed message:message];
 }
 
-+ (NSError *)weakPasswordErrorWithServerResponseReason:(nullable NSString *)reason {
++ (NSError *)weakPasswordErrorWithServerResponseReason:(NSString *)reason {
   return [self errorWithCode:FIRAuthInternalErrorCodeWeakPassword userInfo:@{
     NSLocalizedFailureReasonErrorKey : reason
   }];
@@ -1002,7 +979,7 @@ static NSString *const FIRAuthErrorCodeString(FIRAuthErrorCode code) {
   }];
 }
 
-+ (nullable NSError *)URLResponseErrorWithCode:(NSString *)code message:(nullable NSString *)message {
++ (NSError *)URLResponseErrorWithCode:(NSString *)code message:(nullable NSString *)message {
   if ([code isEqualToString:kURLResponseErrorCodeInvalidClientID]) {
     return [self errorWithCode:FIRAuthInternalErrorCodeInvalidClientID message:message];
   }
