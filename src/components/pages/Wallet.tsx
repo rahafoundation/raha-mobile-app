@@ -6,9 +6,7 @@ import {
   TextStyle,
   ViewStyle,
   ScrollView,
-  ImageStyle,
-  Animated,
-  Easing
+  ImageStyle
 } from "react-native";
 import { connect, MapStateToProps, MergeProps } from "react-redux";
 
@@ -17,11 +15,16 @@ import { MemberId } from "@raha/api-shared/dist/models/identifiers";
 import { Member } from "../../store/reducers/members";
 import { RahaState } from "../../store";
 import { RouteName } from "../shared/navigation";
-import { getLoggedInMember } from "../../store/selectors/authentication";
+import {
+  getLoggedInMember,
+  getLoggedInMemberId
+} from "../../store/selectors/authentication";
 import { NavigationScreenProps } from "react-navigation";
 import {
   getUnclaimedReferrals,
-  getMintableAmount
+  getMintableAmount,
+  getMintableBasicIncomeAmount,
+  getMintableInvitedBonus
 } from "../../store/selectors/me";
 import { MintButton } from "../shared/MintButton";
 import { Button, Text } from "../shared/elements";
@@ -50,7 +53,8 @@ import {
 type OwnProps = NavigationScreenProps<{}>;
 type StateProps = {
   loggedInMember: Member;
-  mintableAmount: Big;
+  mintableBasicIncome: Big;
+  mintableInvitedBonus: Big;
   unclaimedReferralIds?: MemberId[];
   mintApiCallStatus?: ApiCallStatus;
 };
@@ -64,11 +68,13 @@ type Props = OwnProps & StateProps & MergedProps;
 
 type MoneyProps = {
   mintInProgress: boolean;
+  totalDonated: Big;
   balance: Big;
 };
 
 const MoneySection: React.StatelessComponent<MoneyProps> = ({
   mintInProgress,
+  totalDonated,
   balance
 }) => {
   return (
@@ -90,7 +96,7 @@ const MoneySection: React.StatelessComponent<MoneyProps> = ({
             <Currency
               style={styles.donationValue}
               currencyValue={{
-                value: loggedInMember.get("totalDonated"),
+                value: totalDonated,
                 role: CurrencyRole.Donation,
                 currencyType: CurrencyType.Raha
               }}
@@ -104,16 +110,22 @@ const MoneySection: React.StatelessComponent<MoneyProps> = ({
 };
 
 type ActionProps = Props & {
-  mint: () => void;
-  mintingProgress: Big | null;
+  mintAndStartAnim: () => void;
+  mintingProgress: Big;
+  animInProgress: boolean;
+  mintableInvitedBonus: Big;
 };
 
 const Actions: React.StatelessComponent<ActionProps> = props => {
   const {
+    animInProgress,
     loggedInMember,
-    mintableAmount,
+    mintableBasicIncome,
     unclaimedReferralIds,
-    navigation
+    navigation,
+    mintingProgress,
+    mintableInvitedBonus,
+    mintAndStartAnim
   } = props;
   if (!loggedInMember.get("isVerified")) {
     return (
@@ -147,12 +159,18 @@ const Actions: React.StatelessComponent<ActionProps> = props => {
     : false;
 
   // Show one action at a time: Mint or Invite.
-  const canMint = mintableAmount && mintableAmount.gt(0);
+  const canMint = mintableBasicIncome && mintableBasicIncome.gt(0);
   return (
     <View style={styles.actionsSection}>
       <FlaggedNotice restrictedFrom="minting" />
       {canMint ? (
-        <MintButton {...props} style={styles.mintButton} />
+        <MintButton
+          mintInProgress={animInProgress}
+          displayAmount={mintableBasicIncome.minus(mintingProgress)}
+          mintableInvitedBonus={mintableInvitedBonus}
+          mintAndStartAnim={mintAndStartAnim}
+          style={styles.mintButton}
+        />
       ) : (
         <Invite {...props} />
       )}
@@ -221,57 +239,92 @@ const Invite: React.StatelessComponent<Props> = props => {
 //   nextApiCallStatus: ApiCallStatus,
 //   currApiCallStatus?: ApiCallStatus
 // ) {}
-const MINTING_ANIM_DURATION = 3000;
-const MINTING_ANIM_POLY = 4;
+const MINTING_ANIM_DURATION_MS = 1800;
 
-class WalletView extends React.Component<Props, { mintingProgress: Big }> {
+class WalletView extends React.Component<
+  Props,
+  { mintingProgress: Big; animInProgress: boolean }
+> {
   state = {
-    mintingProgress: Big(0)
+    mintingProgress: Big(0),
+    animInProgress: false
   };
 
-  _mintingAnim = new Animated.Value(0);
+  _animationFrame = 0;
+  _animationStart = null as number | null;
 
-  componentDidMount() {
-    this._mintingAnim.addListener(progress => {
-      const mintingProgress = Big(progress.value).round(2);
-      if (!this.state.mintingProgress.eq(mintingProgress)) {
-        this.setState({ mintingProgress });
-      }
-    });
+  static easeInOutQuad(t: number) {
+    return t < 0.5 ? 0.1 * t * t * t : -1 + (4 - 2 * t) * t;
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const mintApiCallStatus = this.props.mintApiCallStatus;
-    if (
-      !mintApiCallStatus ||
-      mintApiCallStatus === prevProps.mintApiCallStatus
-    ) {
+  // componentDidMount() {
+  //   this._mintingAnim.addListener(progress => {
+  //     const mintingProgress = Big(progress.value).round(2);
+  //     if (!this.state.mintingProgress.eq(mintingProgress)) {
+  //       this.setState({ mintingProgress });
+  //     }
+  //   });
+  // }
+  mintAndStartAnim = () => {
+    this.props.mint();
+    requestAnimationFrame(this.animationCallback);
+  };
+
+  animationCallback = (timeMillis: number) => {
+    if (this._animationStart === null) {
+      this._animationStart = timeMillis;
+      this.setState({ animInProgress: true });
+    }
+    const progress =
+      (timeMillis - this._animationStart) / MINTING_ANIM_DURATION_MS;
+    if (progress >= 1.0) {
+      this._animationStart = null;
+      this.setState({ mintingProgress: Big(0), animInProgress: false });
       return;
     }
-    if (mintApiCallStatus.status === ApiCallStatusType.STARTED) {
-      Animated.timing(this._mintingAnim, {
-        toValue: +this.props.mintableAmount,
-        duration: MINTING_ANIM_DURATION,
-        easing: Easing.inOut(Easing.poly(MINTING_ANIM_POLY))
-      }).start(() => {
-        this.setState({ mintingProgress: Big(0) });
-        this._mintingAnim.setValue;
-      });
+    const mintingProgress = this.props.mintableBasicIncome
+      .times(WalletView.easeInOutQuad(progress))
+      .round(2);
+    console.log("minting prog:", mintingProgress);
+    if (!this.state.mintingProgress.eq(mintingProgress)) {
+      this.setState({ mintingProgress });
     }
-  }
+    this._animationFrame = requestAnimationFrame(this.animationCallback);
+  };
+
+  // componentDidUpdate(prevProps: Props) {
+  //   const mintApiCallStatus = this.props.mintApiCallStatus;
+  //   if (
+  //     !mintApiCallStatus ||
+  //     mintApiCallStatus === prevProps.mintApiCallStatus
+  //   ) {
+  //     return;
+  //   }
+  //   if (mintApiCallStatus.status === ApiCallStatusType.STARTED) {
+  //     this._animationFrame = requestAnimationFrame(this.animationCallback);
+  //   }
+  // }
 
   componentWillUnmount() {
-    this._mintingAnim.removeAllListeners();
+    cancelAnimationFrame(this._animationFrame);
   }
 
   render() {
-    const { mintingProgress } = this.state;
-    const actionProps = { ...this.props, mintingProgress };
+    const { mintingProgress, animInProgress } = this.state;
+    const actionProps = {
+      ...this.props,
+      animInProgress,
+      mintingProgress,
+      mintAndStartAnim: this.mintAndStartAnim
+    };
     return (
       <ScrollView bounces={false} contentContainerStyle={styles.page}>
         <MoneySection
-          balance={this.props.loggedInMember}
-          mintingProgress={mintingProgress}
+          balance={this.props.loggedInMember
+            .get("balance")
+            .plus(mintingProgress)}
+          mintInProgress={animInProgress || mintingProgress.gt(0)}
+          totalDonated={this.props.loggedInMember.get("totalDonated")}
         />
         <Actions {...actionProps} />
       </ScrollView>
@@ -392,17 +445,16 @@ const mapStateToProps: MapStateToProps<
     // TODO: gracefully deal with this situation.
     throw Error("Member not logged in, should not have gotten here.");
   }
+  const loggedInMemberId = loggedInMember.get("memberId");
   return {
     loggedInMember,
-    mintableAmount: getMintableAmount(state, loggedInMember),
-    unclaimedReferralIds: getUnclaimedReferrals(
-      state,
-      loggedInMember.get("memberId")
-    ),
+    mintableBasicIncome: Big(40), //getMintableBasicIncomeAmount(state, loggedInMemberId),
+    unclaimedReferralIds: getUnclaimedReferrals(state, loggedInMemberId),
+    mintableInvitedBonus: getMintableInvitedBonus(state, loggedInMember),
     mintApiCallStatus: getStatusOfApiCall(
       state,
       ApiEndpointName.MINT,
-      loggedInMember.get("memberId")
+      loggedInMemberId
     )
   };
 };
@@ -413,14 +465,14 @@ const mergeProps: MergeProps<
   OwnProps,
   MergedProps
 > = (stateProps, dispatchProps, ownProps) => {
-  const { loggedInMember, mintableAmount } = stateProps;
+  const { loggedInMember, mintableBasicIncome } = stateProps;
   return {
     ...stateProps,
     mint: () =>
       loggedInMember
         ? dispatchProps.mintBasicIncome(
             loggedInMember.get("memberId"),
-            mintableAmount
+            mintableBasicIncome
           )
         : {},
     ...ownProps

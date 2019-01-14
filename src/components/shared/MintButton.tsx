@@ -1,79 +1,37 @@
 import { Big } from "big.js";
 import * as React from "react";
 import { StyleProp, ViewStyle, View } from "react-native";
-import { connect, MapStateToProps, MergeProps } from "react-redux";
 
-import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
-
-import { RahaState } from "../../store";
-import { getLoggedInMember } from "../../store/selectors/authentication";
-import {
-  getMintableBasicIncomeAmount,
-  getInvitedBonusMintableAmount
-} from "../../store/selectors/me";
-import {
-  ApiCallStatus,
-  ApiCallStatusType
-} from "../../store/reducers/apiCalls";
-import { getStatusOfApiCall } from "../../store/selectors/apiCalls";
 import { Member } from "../../store/reducers/members";
 import { Text } from "./elements";
 import { CurrencyRole, CurrencyType, CurrencyValue } from "./elements/Currency";
 import { fontSizes } from "../../helpers/fonts";
 import { MixedText } from "./elements/MixedText";
 import { EnforcePermissionsButton } from "./elements/EnforcePermissionsButton";
-import {
-  OperationType,
-  MintType
-} from "@raha/api-shared/dist/models/Operation";
-import { MintArgs } from "@raha/api/dist/me/mint";
-import { mint } from "../../store/actions/wallet";
+import { OperationType } from "@raha/api-shared/dist/models/Operation";
 import { Config } from "@raha/api-shared/dist/helpers/Config";
 
 type Props = {
-  mintingProgress: Big | null;
-  style?: StyleProp<ViewStyle>;
-  loggedInMember: Member;
-  mintableAmount?: Big;
-<<<<<<< HEAD
-  mintingAmount?: Big;
+  mintInProgress: boolean;
+  displayAmount: Big;
   mintableInvitedBonus?: Big;
-=======
-  mintingAmount: Big | null;
->>>>>>> Switching to using React.Animated
-  mintApiCallStatus?: ApiCallStatus;
-  mint: () => void;
+  style?: StyleProp<ViewStyle>;
+  mintAndStartAnim: () => void;
 };
 
-const MintButtonComponent: React.StatelessComponent<Props> = props => {
+export const MintButton: React.StatelessComponent<Props> = props => {
   const {
-    mintingProgress,
-    loggedInMember,
-    mintableAmount,
+    mintInProgress,
+    displayAmount,
     mintableInvitedBonus,
-    mintApiCallStatus,
-    mint
+    mintAndStartAnim
   } = props;
-
-  const mintInProgress = mintingProgress !== null;
-
-  const canMint =
-    // member is logged in
-    loggedInMember &&
-    // member has been verified
-    loggedInMember.get("isVerified") &&
-    // member has raha to mint
-    (mintableAmount && mintableAmount.gt(0)) &&
-    // api call hasn't started or is failed
-    !mintInProgress;
 
   const mintText = mintInProgress ? "Minting" : "Mint";
 
-  const mintValue: CurrencyValue | undefined = mintableAmount
+  const mintValue: CurrencyValue | undefined = displayAmount.gt(0)
     ? {
-        value: mintingProgress
-          ? mintableAmount.minus(mintingProgress)
-          : mintableAmount,
+        value: displayAmount,
         role: CurrencyRole.None,
         currencyType: CurrencyType.Raha
       }
@@ -84,8 +42,8 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
         operationType={OperationType.MINT}
         style={props.style}
         title={[mintText, ...(mintValue ? [mintValue] : [])]}
-        onPress={mint}
-        disabled={!canMint}
+        onPress={mintAndStartAnim}
+        disabled={mintInProgress}
       />
       <Text style={{ marginTop: 4 }}>
         <MixedText
@@ -105,13 +63,13 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
         <MixedText
           style={[fontSizes.small, { textAlign: "center" }]}
           content={[
-            "You can only accumulate up to",
+            "You can having at most",
             {
               currencyType: CurrencyType.Raha,
               value: Config.MINT_CAP,
               role: CurrencyRole.None
             },
-            "in basic income at a time."
+            "of pending basic income."
           ]}
         />
       </Text>
@@ -134,5 +92,3 @@ const MintButtonComponent: React.StatelessComponent<Props> = props => {
     </View>
   );
 };
-
-export const MintButton = MintButtonComponent;

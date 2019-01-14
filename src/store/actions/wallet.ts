@@ -24,7 +24,7 @@ function resolveAfter2Seconds() {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve("resolved");
-    }, 2000);
+    }, 500);
   });
 }
 
@@ -32,38 +32,12 @@ export const mintBasicIncome: AsyncActionCreator = (
   memberId: MemberId,
   amount: Big
 ) => {
-<<<<<<< HEAD
   return mint(memberId, [
     {
       type: MintType.BASIC_INCOME,
       amount
     }
   ]);
-=======
-  return wrapApiCallAction(
-    async (dispatch, getState) => {
-      const authToken = await getAuthToken(getState());
-      if (!authToken) {
-        throw new UnauthenticatedError();
-      }
-
-      await resolveAfter2Seconds();
-
-      // const { body } = await callMint(config.apiBase, authToken, {
-      //   type: MintType.BASIC_INCOME,
-      //   amount
-      // });
-
-      // const action: OperationsAction = {
-      //   type: OperationsActionType.ADD_OPERATIONS,
-      //   operations: [body]
-      // };
-      // dispatch(action);
-    },
-    ApiEndpointName.MINT,
-    memberId
-  );
->>>>>>> WIP animate minting
 };
 
 export const mintReferralBonus: AsyncActionCreator = (
@@ -93,18 +67,22 @@ export const mint: AsyncActionCreator = (
         throw new UnauthenticatedError();
       }
 
-      const ops = await Promise.all(
-        mintActions.map(async w => {
-          const { body } = await callMint(config.apiBase, authToken, w);
-          return body;
-        })
-      );
+      await resolveAfter2Seconds();
 
-      const action: OperationsAction = {
-        type: OperationsActionType.ADD_OPERATIONS,
-        operations: ops
-      };
-      dispatch(action);
+      debugger;
+
+      // const ops = await Promise.all(
+      //   mintActions.map(async w => {
+      //     const { body } = await callMint(config.apiBase, authToken, w);
+      //     return body;
+      //   })
+      // );
+
+      // const action: OperationsAction = {
+      //   type: OperationsActionType.ADD_OPERATIONS,
+      //   operations: ops
+      // };
+      // dispatch(action);
     },
     ApiEndpointName.MINT,
     apiIdentifier
