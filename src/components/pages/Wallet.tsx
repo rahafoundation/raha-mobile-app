@@ -458,14 +458,14 @@ const mergeProps: MergeProps<
     mintableInvitedBonus
   } = stateProps;
   var mintActions = [] as MintArgs[];
-  if (mintableBasicIncome && mintableBasicIncome.gt(0)) {
+  if (mintableBasicIncome.gt(0)) {
     mintActions = mintActions.concat({
       type: MintType.BASIC_INCOME,
       amount: mintableBasicIncome
     });
   }
 
-  if (mintableInvitedBonus && mintableInvitedBonus.gt(0)) {
+  if (mintableInvitedBonus.gt(0)) {
     mintActions = mintActions.concat({
       type: MintType.INVITED_BONUS,
       amount: mintableInvitedBonus

@@ -57,7 +57,7 @@ export const MintButton: React.StatelessComponent<Props> = props => {
         <MixedText
           style={[fontSizes.small, { textAlign: "center" }]}
           content={[
-            "You can having at most",
+            "You can have at most",
             {
               currencyType: CurrencyType.Raha,
               value: Config.MINT_CAP,
