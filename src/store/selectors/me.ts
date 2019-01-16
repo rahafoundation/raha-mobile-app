@@ -24,28 +24,13 @@ export function isPastReferralBonusSplitTransitionDate() {
   return Date.now() >= Config.REFERRAL_SPLIT_DATE;
 }
 
-export function getMintableAmount(
+export function getMintableInvitedBonus(
   state: RahaState,
   loggedInMember: Member
-): Big | undefined {
-  const basicIncome = getMintableBasicIncomeAmount(
-    state,
-    loggedInMember.get("memberId")
-  );
-  const inviteBonus = getInvitedBonusMintableAmount(state, loggedInMember);
-  var total = Big(0);
-  if (basicIncome) total = total.plus(basicIncome);
-  if (inviteBonus) total = total.plus(inviteBonus);
-  return total;
-}
-
-export function getInvitedBonusMintableAmount(
-  state: RahaState,
-  loggedInMember: Member
-): Big | undefined {
+): Big {
   // Check that invite has been confirmed/verified.
   if (!loggedInMember.get("inviteConfirmed")) {
-    return undefined;
+    return Big(0);
   }
 
   // Check that user has not claimed the bonus before.
@@ -57,7 +42,7 @@ export function getInvitedBonusMintableAmount(
     op => op.data.type === MintType.INVITED_BONUS
   );
   if (!memberReferralOperations.isEmpty()) {
-    return undefined;
+    return Big(0);
   }
 
   const bonus = Config.getInvitedBonus(
@@ -69,7 +54,7 @@ export function getInvitedBonusMintableAmount(
 export function getMintableBasicIncomeAmount(
   state: RahaState,
   memberId: MemberId
-): Big | undefined {
+): Big {
   const member = getMemberById(state, memberId);
   if (member) {
     const maxMintable = new Big(
@@ -80,7 +65,7 @@ export function getMintableBasicIncomeAmount(
       .round(2, 0);
     return maxMintable.gt(Config.MINT_CAP) ? Config.MINT_CAP : maxMintable;
   }
-  return undefined;
+  return Big(0);
 }
 
 /**

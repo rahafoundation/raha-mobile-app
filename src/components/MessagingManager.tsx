@@ -47,7 +47,7 @@ class MessagingManagerComponent extends React.Component<Props> {
     this._updateMemberFcmToken();
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.unsubscribeTokenRefreshListener = firebase
       .messaging()
       .onTokenRefresh(this._updateMemberFcmToken);

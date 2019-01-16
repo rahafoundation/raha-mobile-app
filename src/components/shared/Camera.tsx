@@ -43,7 +43,7 @@ export class Camera extends React.Component<CameraProps, CameraState> {
     this.camera = null;
   }
 
-  async componentWillMount() {
+  async UNSAFE_componentWillMount() {
     // iOS will prompt when the component is access for the first time.
     await this.requestPermissionsAndroid();
   }
