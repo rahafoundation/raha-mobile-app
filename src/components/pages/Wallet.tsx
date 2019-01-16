@@ -114,7 +114,7 @@ const MoneySection: React.StatelessComponent<MoneyProps> = ({
 
 type ActionProps = Props & {
   mint: () => void;
-  mintingProgress: Big;
+  mintDisplayAmount: Big;
   mintInProgress: boolean;
   mintableInvitedBonus: Big;
 };
@@ -125,7 +125,7 @@ const Actions: React.StatelessComponent<ActionProps> = props => {
     mintableAmount,
     unclaimedReferralIds,
     navigation,
-    mintingProgress,
+    mintDisplayAmount,
     mint,
     mintableInvitedBonus,
     mintInProgress
@@ -169,7 +169,7 @@ const Actions: React.StatelessComponent<ActionProps> = props => {
       {showMintButton ? (
         <MintButton
           mintInProgress={mintInProgress}
-          displayAmount={mintableAmount.minus(mintingProgress)}
+          displayAmount={mintDisplayAmount}
           mintableInvitedBonus={mintableInvitedBonus}
           mint={mint}
           style={styles.mintButton}
@@ -238,18 +238,23 @@ const Invite: React.StatelessComponent<Props> = props => {
   );
 };
 
-const MINTING_ANIM_DURATION_MS = 4500;
+const MINTING_ANIM_DURATION_MS = 3000;
 const MINTING_ANIM_POLY = 4;
 
 class WalletView extends React.Component<
   Props,
-  { mintingProgress: Big; animInProgress: boolean }
+  { mintDisplayAmount: Big; animInProgress: boolean }
 > {
-  state = {
-    mintingProgress: Big(0),
-    animInProgress: false
-  };
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      mintDisplayAmount: props.mintableAmount,
+      animInProgress: false
+    };
+  }
 
+  // Because this does not affect render() directly but instead
+  // through a listener, store as property not in state.
   _mintingAnim = new Animated.Value(0);
 
   componentDidUpdate(prevProps: Props) {
@@ -261,31 +266,32 @@ class WalletView extends React.Component<
       return;
     }
     if (mintApiCallStatus.status === ApiCallStatusType.STARTED) {
-      if (!this.state.mintingProgress.eq(0)) {
-        this.setState({ mintingProgress: Big(0) });
-      }
       this._mintingAnim.addListener(progress => {
-        const mintingProgress = Big(progress.value).round(2);
-        if (!this.state.mintingProgress.eq(mintingProgress)) {
-          this.setState({ mintingProgress });
+        const mintDisplayAmount = Big(progress.value).round(2);
+        if (!this.state.mintDisplayAmount.eq(mintDisplayAmount)) {
+          this.setState({ mintDisplayAmount });
         }
       });
       this.setState({ animInProgress: true });
+      this._mintingAnim.setValue(+this.props.mintableAmount);
       Animated.timing(this._mintingAnim, {
-        toValue: +this.props.mintableAmount,
+        toValue: 0,
         duration: MINTING_ANIM_DURATION_MS,
         easing: Easing.inOut(Easing.poly(MINTING_ANIM_POLY))
       }).start(() => {
         this.setState({ animInProgress: false });
         this._mintingAnim.removeAllListeners();
-        this._mintingAnim.setValue(0);
       });
     }
   }
 
+  componentWillUnmount() {
+    this._mintingAnim.removeAllListeners();
+  }
+
   render() {
-    const { mintApiCallStatus } = this.props;
-    const { mintingProgress, animInProgress } = this.state;
+    const { mintApiCallStatus, mintableAmount } = this.props;
+    const { mintDisplayAmount, animInProgress } = this.state;
     const mintInProgress =
       animInProgress ||
       (!!mintApiCallStatus &&
@@ -293,15 +299,17 @@ class WalletView extends React.Component<
     const actionProps = {
       ...this.props,
       mintInProgress,
-      mintingProgress,
+      mintDisplayAmount,
       mint: this.props.mint
     };
+    let balance = this.props.loggedInMember.get("balance");
+    if (animInProgress) {
+      balance = balance.plus(mintableAmount).minus(mintDisplayAmount);
+    }
     return (
       <ScrollView bounces={false} contentContainerStyle={styles.page}>
         <MoneySection
-          balance={this.props.loggedInMember
-            .get("balance")
-            .plus(mintingProgress)}
+          balance={balance}
           mintInProgress={mintInProgress}
           totalDonated={this.props.loggedInMember.get("totalDonated")}
         />
