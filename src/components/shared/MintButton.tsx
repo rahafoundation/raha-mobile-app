@@ -15,16 +15,11 @@ type Props = {
   displayAmount: Big;
   mintableInvitedBonus?: Big;
   style?: StyleProp<ViewStyle>;
-  mintAndStartAnim: () => void;
+  mint: () => void;
 };
 
 export const MintButton: React.StatelessComponent<Props> = props => {
-  const {
-    mintInProgress,
-    displayAmount,
-    mintableInvitedBonus,
-    mintAndStartAnim
-  } = props;
+  const { mintInProgress, displayAmount, mintableInvitedBonus, mint } = props;
 
   const mintText = mintInProgress ? "Minting" : "Mint";
 
@@ -41,7 +36,7 @@ export const MintButton: React.StatelessComponent<Props> = props => {
         operationType={OperationType.MINT}
         style={props.style}
         title={[mintText, ...(mintValue ? [mintValue] : [])]}
-        onPress={mintAndStartAnim}
+        onPress={mint}
         disabled={mintInProgress}
       />
       <Text style={{ marginTop: 4 }}>

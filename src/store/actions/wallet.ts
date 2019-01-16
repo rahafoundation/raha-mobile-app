@@ -3,7 +3,8 @@ import { Big } from "big.js";
 import {
   MintType,
   Operation,
-  MintPayload
+  MintPayload,
+  OperationType
 } from "@raha/api-shared/dist/models/Operation";
 import {
   MemberId,
@@ -14,19 +15,11 @@ import { give as callGive, tip as callTip } from "@raha/api/dist/members/give";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { UnauthenticatedError } from "@raha/api/dist/errors/UnauthenticatedError";
 
-import { getAuthToken } from "../selectors/authentication";
+import { getAuthToken, getLoggedInMemberId } from "../selectors/authentication";
 import { AsyncActionCreator } from ".";
 import { wrapApiCallAction } from "./apiCalls";
 import { OperationsAction, OperationsActionType } from "./operations";
 import { config } from "../../data/config";
-
-function resolveAfter2Seconds() {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve("resolved");
-    }, 5000);
-  });
-}
 
 export const mintBasicIncome: AsyncActionCreator = (
   memberId: MemberId,
@@ -67,22 +60,29 @@ export const mint: AsyncActionCreator = (
         throw new UnauthenticatedError();
       }
 
-      await resolveAfter2Seconds();
+      const ops = await Promise.all(
+        mintActions.map(async w => {
+          const { body } = await callMint(config.apiBase, authToken, w);
+          return body;
+        })
+      );
 
-      debugger;
-
-      // const ops = await Promise.all(
-      //   mintActions.map(async w => {
-      //     const { body } = await callMint(config.apiBase, authToken, w);
-      //     return body;
-      //   })
-      // );
-
-      // const action: OperationsAction = {
-      //   type: OperationsActionType.ADD_OPERATIONS,
-      //   operations: ops
-      // };
-      // dispatch(action);
+      const action: OperationsAction = {
+        type: OperationsActionType.ADD_OPERATIONS,
+        operations: [
+          {
+            id: "jadfklajwefa",
+            creator_uid: getLoggedInMemberId(getState()) as string,
+            op_code: OperationType.MINT,
+            data: {
+              type: MintType.BASIC_INCOME,
+              amount: mintActions[0].amount.toString()
+            },
+            created_at: new Date()
+          }
+        ]
+      };
+      dispatch(action);
     },
     ApiEndpointName.MINT,
     apiIdentifier
