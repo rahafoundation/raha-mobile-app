@@ -162,11 +162,11 @@ const Actions: React.StatelessComponent<ActionProps> = props => {
     : false;
 
   // Show one action at a time: Mint or Invite.
-  const canMint = mintableAmount.gt(0) && !mintInProgress;
+  const showMintButton = mintableAmount.gt(0) || mintInProgress;
   return (
     <View style={styles.actionsSection}>
       <FlaggedNotice restrictedFrom="minting" />
-      {canMint ? (
+      {showMintButton ? (
         <MintButton
           mintInProgress={mintInProgress}
           displayAmount={mintableAmount.minus(mintingProgress)}
