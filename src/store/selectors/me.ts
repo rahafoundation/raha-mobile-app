@@ -24,21 +24,6 @@ export function isPastReferralBonusSplitTransitionDate() {
   return Date.now() >= Config.REFERRAL_SPLIT_DATE;
 }
 
-export function getMintableAmount(
-  state: RahaState,
-  loggedInMember: Member
-): Big {
-  const basicIncome = getMintableBasicIncomeAmount(
-    state,
-    loggedInMember.get("memberId")
-  );
-  const inviteBonus = getMintableInvitedBonus(state, loggedInMember);
-  var total = Big(0);
-  if (basicIncome) total = total.plus(basicIncome);
-  if (inviteBonus) total = total.plus(inviteBonus);
-  return total;
-}
-
 export function getMintableInvitedBonus(
   state: RahaState,
   loggedInMember: Member

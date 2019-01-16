@@ -2,7 +2,6 @@ import { Big } from "big.js";
 import * as React from "react";
 import { StyleProp, ViewStyle, View } from "react-native";
 
-import { Member } from "../../store/reducers/members";
 import { Text } from "./elements";
 import { CurrencyRole, CurrencyType, CurrencyValue } from "./elements/Currency";
 import { fontSizes } from "../../helpers/fonts";
