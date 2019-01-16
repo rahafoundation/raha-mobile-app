@@ -213,18 +213,7 @@ const Invite: React.StatelessComponent<Props> = props => {
         />
       </View>
       <View style={[styles.section, styles.sectionSpacer]}>
-        <Text style={styles.header}>Want to mint more Raha?</Text>
-        <MixedText
-          content={[
-            "Earn",
-            {
-              currencyType: CurrencyType.Raha,
-              value: Config.getReferralBonus(),
-              role: CurrencyRole.Transaction
-            },
-            "when friends you invite join Raha."
-          ]}
-        />
+        <Text style={styles.header}>Help grow the movement!</Text>
         <EnforcePermissionsButton
           operationType={OperationType.INVITE}
           style={styles.button}
@@ -232,6 +221,17 @@ const Invite: React.StatelessComponent<Props> = props => {
           onPress={() => {
             navigation.push(RouteName.InvitePage);
           }}
+        />
+        <MixedText
+          style={{ textAlign: "center" }}
+          content={[
+            "You and your friend can each earn",
+            {
+              currencyType: CurrencyType.Raha,
+              value: Config.REFERRAL_BONUS_POST_SPLIT,
+              role: CurrencyRole.Transaction
+            }
+          ]}
         />
       </View>
     </React.Fragment>
@@ -401,7 +401,7 @@ const headerStyle: TextStyle = {
   ...fonts.Lato.Semibold,
   ...fontSizes.large,
   textAlign: "center",
-  marginBottom: 14
+  marginBottom: 8
 };
 
 const styles = StyleSheet.create({
