@@ -3,8 +3,7 @@ import { Big } from "big.js";
 import {
   MintType,
   Operation,
-  MintPayload,
-  OperationType
+  MintPayload
 } from "@raha/api-shared/dist/models/Operation";
 import {
   MemberId,
@@ -15,7 +14,7 @@ import { give as callGive, tip as callTip } from "@raha/api/dist/members/give";
 import { ApiEndpointName } from "@raha/api-shared/dist/routes/ApiEndpoint";
 import { UnauthenticatedError } from "@raha/api/dist/errors/UnauthenticatedError";
 
-import { getAuthToken, getLoggedInMemberId } from "../selectors/authentication";
+import { getAuthToken } from "../selectors/authentication";
 import { AsyncActionCreator } from ".";
 import { wrapApiCallAction } from "./apiCalls";
 import { OperationsAction, OperationsActionType } from "./operations";
@@ -69,18 +68,7 @@ export const mint: AsyncActionCreator = (
 
       const action: OperationsAction = {
         type: OperationsActionType.ADD_OPERATIONS,
-        operations: [
-          {
-            id: "jadfklajwefa",
-            creator_uid: getLoggedInMemberId(getState()) as string,
-            op_code: OperationType.MINT,
-            data: {
-              type: MintType.BASIC_INCOME,
-              amount: mintActions[0].amount.toString()
-            },
-            created_at: new Date()
-          }
-        ]
+        operations: ops
       };
       dispatch(action);
     },
