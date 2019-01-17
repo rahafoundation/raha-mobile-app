@@ -615,7 +615,7 @@ function addOperationToActivitiesList(
  * @param existingData Existing data to start with, i.e. for adding new
  * operations to an existing list of Activities (and associated cache)
  */
-function addOperationsToActivities(
+export function addOperationsToActivities(
   newOperations: List<Operation>,
   existingData?: InitialActivityBundlingData
 ): List<Activity> {
@@ -702,7 +702,7 @@ interface InitialActivityBundlingData {
  * - don't recreate the history every time (memoize the selector)
  * - don't return all of them, probably paginate
  */
-export function allActivities(state: RahaState): List<Activity> {
+function allActivities(state: RahaState): List<Activity> {
   return addOperationsToActivities(state.operations);
 }
 

@@ -103,131 +103,6 @@ function mintStoryDataTimestamps(
   };
 }
 
-interface MintBundleData {
-  stories: List<Story>;
-  bundledMint?: MintBasicIncomeStoryData;
-}
-
-/**
- * maximum range of time of bundled mint stories, in seconds
- */
-const MAX_MINT_BUNDLE_RANGE_SECONDS = 3 * 60 * 60;
-
-/**
- * Combines two mint basic income stories. the first one should have activities
- * that come before the second one; and the activities are expected to be
- * ordered chronologically, old to new.
- */
-function combineMintBasicIncomeStories(
-  beforeStory: MintBasicIncomeStoryData,
-  afterStory: MintBasicIncomeStoryData
-): MintBasicIncomeStoryData {
-  return {
-    type: StoryType.MINT_BASIC_INCOME,
-    activities: (Array.isArray(beforeStory.activities)
-      ? beforeStory.activities
-      : [beforeStory.activities]
-    ).concat(afterStory.activities)
-  };
-}
-
-/**
- * Given a list of stories, bundle the basic income mint ones together. 3 hour
- * windows of mint activities starting at the timestamp the first bundled mint
- * activity get combined.
- *
- * @param inputStories Stories whose mints need to be consolidated. Expected to
- * be in chronological order, old to new.
- */
-export function bundleMintBasicIncomeStories(
-  state: RahaState,
-  inputStories: List<Story>
-): List<Story> {
-  return inputStories.reduce(
-    (memo, story, index): MintBundleData => {
-      const lastStory = index === inputStories.size - 1;
-      // check up-front if the bundled mint should be flushed before the next
-      // story, to ensure ordering is correct. Don't have to worry about next
-      // story needing to come first, since stories should be sorted
-      // chronologically already.
-      const shouldFlushMintBundle: boolean =
-        !!memo.bundledMint &&
-        (lastStory ||
-          differenceInSeconds(
-            story.timestamp,
-            mintStoryDataTimestamps(memo.bundledMint).first
-          ) > MAX_MINT_BUNDLE_RANGE_SECONDS);
-
-      if (
-        memo.bundledMint &&
-        Array.isArray(memo.bundledMint.activities) &&
-        memo.bundledMint.activities.length > 50
-      ) {
-        console.warn(
-          "wtf",
-          mintStoryDataTimestamps(memo.bundledMint).first,
-          story.timestamp,
-          differenceInSeconds(
-            mintStoryDataTimestamps(memo.bundledMint).first,
-            story.timestamp
-          )
-        );
-      }
-
-      const workingData: MintBundleData = shouldFlushMintBundle
-        ? // add bundled mint story
-          {
-            bundledMint: undefined,
-            stories: memo.stories.push(
-              createMintBasicIncomeStory(
-                state,
-                // must be present due to definition of shouldFlushMintBundle
-                // but typescript not powerful enough to infer
-                memo.bundledMint as any
-              )
-            )
-          }
-        : memo;
-
-      // handle non-basic income stories
-      if (story.storyData.type !== StoryType.MINT_BASIC_INCOME) {
-        return {
-          ...workingData,
-          stories: workingData.stories.push(story)
-        };
-      }
-
-      // handle basic income story
-
-      if (!workingData.bundledMint) {
-        return lastStory
-          ? // don't bundle if the last story
-            {
-              stories: workingData.stories.push(story)
-            }
-          : {
-              // start bundling this story
-              ...workingData,
-              bundledMint: story.storyData
-            };
-      }
-
-      // add this story to the existing bundle.
-      return {
-        ...workingData,
-        bundledMint: combineMintBasicIncomeStories(
-          workingData.bundledMint,
-          story.storyData
-        )
-      };
-    },
-    {
-      stories: List(),
-      bundledMint: undefined
-    } as MintBundleData
-  ).stories;
-}
-
 /**
  * generate id for story: type, with all operation ids concatenated.
  *
@@ -912,9 +787,11 @@ function createMintBasicIncomeStory(
     ? storyData.activities.map(activity => activity.operations)
     : [storyData.activities.operations];
 
-  const actorsArray: Member[] = operations.map(operation =>
-    getMemberById(state, operation.creator_uid, { throwIfMissing: true })
-  );
+  const actorsArray: Member[] = operations
+    .map(operation =>
+      getMemberById(state, operation.creator_uid, { throwIfMissing: true })
+    )
+    .reverse(); // Reverse to show most recent actor first
 
   const newestTimestamp: Date = mintStoryDataTimestamps(storyData).last;
 
