@@ -12,12 +12,21 @@ import { StoryFeed } from "../shared/StoryFeed";
 import { RahaState } from "../../store";
 import { colors } from "../../helpers/colors";
 import { View } from "react-native";
-import { allActivities } from "../../store/selectors/activities";
+import { addOperationsToActivities } from "../../store/selectors/activities";
 import {
   storiesForActivities,
-  bundleMintBasicIncomeStories
+  createStory
 } from "../../store/selectors/stories";
-import { StoryType, Story } from "../../store/selectors/stories/types";
+import {
+  StoryType,
+  Story,
+  MintBasicIncomeStoryData
+} from "../../store/selectors/stories/types";
+import {
+  OperationType,
+  Operation,
+  MintType
+} from "@raha/api-shared/dist/models/Operation";
 
 type StateProps = {
   stories: List<Story>;
@@ -52,15 +61,32 @@ export class FeedView extends React.Component<FeedProps> {
   }
 }
 
+function isBasicIncomeOp(op: Operation) {
+  return (
+    op.op_code === OperationType.MINT && op.data.type === MintType.BASIC_INCOME
+  );
+}
+
 const mapStateToProps: MapStateToProps<StateProps, {}, RahaState> = state => {
-  return {
-    stories: bundleMintBasicIncomeStories(
-      state,
-      storiesForActivities(state, allActivities(state))
-    )
-      .filter(story => story.storyData.type !== StoryType.REQUEST_VERIFICATION)
-      .reverse()
-  };
+  const feedOps = state.operations.filter(
+    o => o.op_code !== OperationType.REQUEST_VERIFICATION && !isBasicIncomeOp(o)
+  );
+  let stories = storiesForActivities(state, addOperationsToActivities(feedOps));
+  const lastStory = stories.last();
+  if (lastStory) {
+    const lastStoryTimestamp = lastStory.timestamp;
+    const basicIncomeOpsSinceLast = state.operations.filter(
+      o => o.created_at > lastStoryTimestamp && isBasicIncomeOp(o)
+    );
+    if (basicIncomeOpsSinceLast.size > 0) {
+      stories = stories.push(createStory(state, {
+        type: StoryType.MINT_BASIC_INCOME,
+        activities: addOperationsToActivities(basicIncomeOpsSinceLast).toArray()
+      } as MintBasicIncomeStoryData) as Story);
+    }
+  }
+  stories = stories.reverse();
+  return { stories };
 };
 
 export const Feed = connect(mapStateToProps)(FeedView);
