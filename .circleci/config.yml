@@ -1,4 +1,4 @@
-# Borrowed starter Circle config for settting up ios/android react-native CI.
+# Borrowed starter Circle config for setting up ios/android react-native CI.
 # https://github.com/CircleCI-Public/circleci-demo-react-native/blob/master/.circleci/config.yml
 version: 2
 jobs:
@@ -46,6 +46,18 @@ jobs:
 
       - store_artifacts:
           path: test-results
+
+  # Builds and publishes the Android prod APK off of master branch to Google
+  # Play Alpha track
+  publish_android_alpha:
+    working_directory: ~/raha-mobile-app
+    branches:
+      only:
+        - master
+        - tina/upload_apk # TODO: remove
+    steps:
+      - run: yarn bundle:android
+
   # android:
   #   working_directory: ~/raha-mobile-app/android
   #   docker:

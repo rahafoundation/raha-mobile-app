@@ -1,5 +1,8 @@
-apply plugin: "com.android.application"
-apply plugin: "io.fabric"
+plugins {
+    id("com.android.application")
+    id("io.fabric")
+    id("com.github.triplet.play") version "2.1.0"
+}
 
 import com.android.build.OutputFile
 
@@ -173,6 +176,13 @@ android {
             }
         }
     }
+}
+
+// GPP config for publishing to Google Play Console directly https://github.com/Triple-T/gradle-play-publisher
+play {
+    track = "internal"
+    status = "halted"
+    serviceAccountCredentials = project.hasProperty('RAHA_PLAY_CONSOLE_KEY') ? file(RAHA_PLAY_CONSOLE_KEY) : ""
 }
 
 dependencies {
