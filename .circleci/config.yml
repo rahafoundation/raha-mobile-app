@@ -62,7 +62,6 @@ jobs:
       #     key: bundle-v1-{{ checksum "Gemfile.lock" }}-{{ arch }}
       - run: yarn config deploy && yarn bumpVersion -r internal --apply && ./gradlew publishProdRelease
 
-
   # android:
   #   working_directory: ~/raha-mobile-app/android
   #   docker:
@@ -142,7 +141,16 @@ jobs:
 
 workflows:
   version: 3
-  build_and_test 
+  branch:
+    jobs:
+      - build_and_test
+    filters:
+      branches:
+        ignore:
+          - tina/upload_apk # TODO: test
+          - master
+
+  master:
     jobs:
       - build_and_test
       - publish_android_alpha:
