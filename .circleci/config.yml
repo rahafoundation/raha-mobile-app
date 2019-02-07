@@ -1,8 +1,8 @@
 # Borrowed starter Circle config for setting up ios/android react-native CI.
 # https://github.com/CircleCI-Public/circleci-demo-react-native/blob/master/.circleci/config.yml
-version: 2
+version: 3
 jobs:
-  node:
+  build_and_test:
     working_directory: ~/raha-mobile-app
     docker:
       - image: circleci/node:8
@@ -50,13 +50,18 @@ jobs:
   # Builds and publishes the Android prod APK off of master branch to Google
   # Play Alpha track
   publish_android_alpha:
-    working_directory: ~/raha-mobile-app
-    branches:
-      only:
-        - master
-        - tina/upload_apk # TODO: remove
+    working_directory: ~/raha-mobile-app/android
+    docker:
+      - image: circleci/android:api-26-node8-alpha
     steps:
-      - run: yarn bundle:android
+      # - checkout:
+      #     path: ~/raha-mobile-app
+      # - attach_workspace:
+      #     at: ~/raha-mobile-app
+      # - restore_cache:
+      #     key: bundle-v1-{{ checksum "Gemfile.lock" }}-{{ arch }}
+      - run: yarn config deploy && yarn bumpVersion -r internal --apply && ./gradlew publishProdRelease
+
 
   # android:
   #   working_directory: ~/raha-mobile-app/android
@@ -136,10 +141,18 @@ jobs:
   #         path: ios/test-results
 
 workflows:
-  version: 2
-  node-android-ios:
+  version: 3
+  build_and_test 
     jobs:
-      - node
+      - build_and_test
+      - publish_android_alpha:
+        requires:
+          - build_and_test
+        filters:
+          branches:
+            only:
+              - tina/upload_apk # TODO: test
+              - master
       # - android:
       #     requires:
       #       - node
