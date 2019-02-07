@@ -141,26 +141,25 @@ jobs:
 
 workflows:
   version: 2
-  branch:
+  branch-build:
     jobs:
-      - build_and_test
-    filters:
-      branches:
-        ignore:
-          - tina/upload_apk # TODO: test
-          - master
-
-  master:
+      - build_and_test:
+        filters:
+          branches:
+            ignore:
+              - tina/upload_apk # TODO: test
+              - master
+  master-build:
     jobs:
       - build_and_test
       - publish_android_alpha:
         requires:
-          - build_and_test
-        filters:
-          branches:
-            only:
-              - tina/upload_apk # TODO: test
-              - master
+          - build_and_test:
+            filters:
+              branches:
+                only:
+                  - tina/upload_apk # TODO: test
+                  - master
       # - android:
       #     requires:
       #       - node
