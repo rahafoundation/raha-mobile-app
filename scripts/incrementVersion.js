@@ -18,6 +18,9 @@ const VERSION_LOCATIONS = [
 ];
 const CODEPUSH = "codepush";
 
+// Used for generating versions for internal testing, not to be released.
+const INTERNAL = "internal";
+
 const packageJsonPath = path.join(__dirname, "..", "package.json");
 const iosInfoPlistPath = path.join(
   __dirname,
@@ -293,7 +296,7 @@ function generateAndSaveConfigs({ release, apply }) {
     );
 
     const nextVersionName =
-      release === CODEPUSH
+      release === CODEPUSH || release === INTERNAL
         ? highestVersion
         : semver.inc(highestVersion, release);
     const nextAndroidVersionCode =
@@ -396,7 +399,7 @@ function main() {
     .option("release", {
       alias: "r",
       desc: "Release type",
-      choices: ["major", "minor", "patch", CODEPUSH],
+      choices: ["major", "minor", "patch", INTERNAL, CODEPUSH],
       required: true
     })
     .option("apply", {
