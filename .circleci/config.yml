@@ -140,7 +140,7 @@ jobs:
   #         path: ios/test-results
 
 workflows:
-  version: 3
+  version: 2
   branch:
     jobs:
       - build_and_test
