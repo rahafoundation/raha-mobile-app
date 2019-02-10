@@ -147,9 +147,7 @@ workflows:
       - publish_android_alpha:
         filters:
           branches:
-            only:
-              - master
-              - tina/upload_apk # TODO remove
+            only: tina/upload_apk # TODO remove
 
       # - android:
       #     requires:
