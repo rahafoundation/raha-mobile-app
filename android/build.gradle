@@ -36,6 +36,16 @@ allprojects {
         resolutionStrategy.force "com.google.android.gms:play-services-basement:15.0.1"
         resolutionStrategy.force "com.google.android.gms:play-services-tasks:15.0.1"
     }
+
+    project.plugins.whenPluginAdded { plugin ->
+        if ("com.android.build.gradle.AppPlugin".equals(plugin.class.name)) {
+            println "Disable pre dexing for module ${project.name}"
+            project.android.dexOptions.preDexLibraries = false
+        } else if ("com.android.build.gradle.LibraryPlugin".equals(plugin.class.name)) {
+            println "Disable pre dexing for module ${project.name}"
+            project.android.dexOptions.preDexLibraries = false
+        }
+    }
 }
 
 ext {
