@@ -1,6 +1,6 @@
 # Borrowed starter Circle config for setting up ios/android react-native CI.
 # https://github.com/CircleCI-Public/circleci-demo-react-native/blob/master/.circleci/config.yml
-version: 3
+version: 2
 jobs:
   build_and_test:
     working_directory: ~/raha-mobile-app
@@ -141,7 +141,7 @@ jobs:
 
 workflows:
   version: 2
-  dev:
+  commit:
     jobs:
       - build_and_test
       - publish_android_alpha:
