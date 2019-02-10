@@ -148,10 +148,3 @@ workflows:
         filters:
           branches:
             only: tina/upload_apk # TODO remove
-
-      # - android:
-      #     requires:
-      #       - node
-      # - ios:
-      #     requires:
-      #       - node
