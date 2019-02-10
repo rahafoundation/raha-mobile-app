@@ -135,6 +135,8 @@ workflows:
     jobs:
       - build_and_test
       - publish_android_alpha:
+          requires:
+            - build_and_test
           filters:
             branches:
               only:
