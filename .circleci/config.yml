@@ -40,7 +40,7 @@ jobs:
   # Builds and publishes the Android prod APK off of master branch to Google
   # Play Alpha track
   publish_android_alpha:
-    working_directory: ~/raha-mobile-app/android
+    working_directory: ~/raha-mobile-app
     docker:
       - image: circleci/android:api-26-node8-alpha
     steps:
@@ -55,7 +55,9 @@ jobs:
       #     at: ~/raha-mobile-app
       # - restore_cache:
       #     key: bundle-v1-{{ checksum "Gemfile.lock" }}-{{ arch }}
-      - run: yarn config:deploy && echo 'y' | node ../scripts/incrementVersion.js -r internal --apply && ./gradlew publishProdRelease
+      - run: yarn config:deploy
+      - run: echo 'y' | node ./scripts/incrementVersion.js -r internal --apply
+      - run: cd android && ./gradlew publishProdRelease
 
   # android:
   #   working_directory: ~/raha-mobile-app/android
