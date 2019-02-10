@@ -50,12 +50,12 @@ jobs:
       - restore_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ arch }}
       - restore_cache:
-        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run: ./gradlew androidDependencies
       - save_cache:
-        paths:
-          - ~/.gradle
-        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run: echo ${RAHA_PLAY_CONSOLE_KEY_STRING} >> ${ORG_GRADLE_PROJECT_RAHA_PLAY_CONSOLE_KEY}
       - run: yarn config:deploy
       - run: echo 'y' | node ../scripts/incrementVersion.js -r internal --apply
