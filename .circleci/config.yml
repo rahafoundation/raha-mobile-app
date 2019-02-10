@@ -47,13 +47,15 @@ jobs:
       - checkout
       - restore_cache:
           key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
+      - restore_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
       # - checkout:
       #     path: ~/raha-mobile-app
       # - attach_workspace:
       #     at: ~/raha-mobile-app
       # - restore_cache:
       #     key: bundle-v1-{{ checksum "Gemfile.lock" }}-{{ arch }}
-      - run: yarn config:deploy && node ../scripts/incrementVersion.js -r internal --apply && ./gradlew publishProdRelease
+      - run: yarn config:deploy && echo 'y' | node ../scripts/incrementVersion.js -r internal --apply && ./gradlew publishProdRelease
 
   # android:
   #   working_directory: ~/raha-mobile-app/android
