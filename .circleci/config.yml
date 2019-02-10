@@ -8,25 +8,19 @@ jobs:
       - image: circleci/node:8
     steps:
       - checkout
-
       - restore_cache:
           key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
-
       - restore_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ arch }}
-
       - run: yarn install
-
       - save_cache:
           key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
           paths:
             - ~/.cache/yarn
-
       - save_cache:
           key: node-v1-{{ checksum "package.json" }}-{{ arch }}
           paths:
             - node_modules
-
       - run:
           name: tests
           command: |
@@ -35,18 +29,14 @@ jobs:
             yarn run test
           environment:
             JEST_JUNIT_OUTPUT: test-results/jest/junit.xml
-
       - persist_to_workspace:
           root: ~/raha-mobile-app
           paths:
             - node_modules
-
       - store_test_results:
           path: test-results
-
       - store_artifacts:
           path: test-results
-
   # Builds and publishes the Android prod APK off of master branch to Google
   # Play Alpha track
   publish_android_alpha:
@@ -145,6 +135,8 @@ workflows:
     jobs:
       - build_and_test
       - publish_android_alpha:
-        filters:
-          branches:
-            only: tina/upload_apk # TODO remove
+          filters:
+            branches:
+              only:
+                - master
+                - tina/upload_apk
