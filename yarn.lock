@@ -675,10 +675,17 @@
   resolved "https://registry.npmjs.org/@types/google-libphonenumber/-/google-libphonenumber-7.4.16.tgz#cd982619f66a8582e6d2e1d795f5b74f8ac08229"
   integrity sha512-UaVt4/4mYPGd/Rs4MVLkcPuuwUffkzA6tJuJuTebnk3Z+KahchCNkSz5E8up5jSTc459NRFyYkC9Fsheu4HLgQ==
 
-"@types/jest@^23.1.5":
-  version "23.1.5"
-  resolved "https://registry.npmjs.org/@types/jest/-/jest-23.1.5.tgz#e31be003956e1fa8c860124d99bea9ae327ae37b"
-  integrity sha512-GlN74UAcT2i+G4BzVVI/aHip0HDXZaiY11VEjHzAz74+dB3hIeM5lJmnnZx4acxxinK9lT+uEH1Vsa5aWj6w4Q==
+"@types/jest-diff@*":
+  version "20.0.1"
+  resolved "https://registry.yarnpkg.com/@types/jest-diff/-/jest-diff-20.0.1.tgz#35cc15b9c4f30a18ef21852e255fdb02f6d59b89"
+  integrity sha512-yALhelO3i0hqZwhjtcr6dYyaLoCHbAMshwtj6cGxTvHZAKXHsYGdff6E8EPw3xLKY0ELUTQ69Q1rQiJENnccMA==
+
+"@types/jest@^24.0.15":
+  version "24.0.15"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-24.0.15.tgz#6c42d5af7fe3b44ffff7cc65de7bf741e8fa427f"
+  integrity sha512-MU1HIvWUme74stAoc3mgAi+aMlgKOudgEvQDIm1v4RkrDudBh1T+NFp5sftpBAdXdx1J0PbdpJ+M2EsSOi1djA==
+  dependencies:
+    "@types/jest-diff" "*"
 
 "@types/node@*":
   version "10.5.1"
