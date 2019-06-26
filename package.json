@@ -45,7 +45,7 @@
     "react-native-country-picker-modal": "^0.6.2",
     "react-native-device-info": "^0.21.5",
     "react-native-dropdownalert": "^3.4.0",
-    "react-native-elements": "^0.19.1",
+    "react-native-elements": "^1.1.0",
     "react-native-firebase": "^5.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.7.2",
     "react-native-modal": "^6.5.0",
