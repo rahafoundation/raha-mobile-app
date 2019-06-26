@@ -34,7 +34,7 @@
     "core-js": "^2.5.7",
     "date-fns": "^2.0.0-alpha.16",
     "es6-symbol": "^3.1.1",
-    "google-libphonenumber": "^3.1.8",
+    "google-libphonenumber": "^3.2.2",
     "immutable": "^4.0.0-rc.9",
     "react": "16.5.1",
     "react-native": "^0.57.1",
