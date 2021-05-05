@@ -1,3 +1,5 @@
+# This codebase is no longer maintained.
+
 The Raha mobile app. Implemented in React Native with TypeScript.
 
 NOTE: These instructions are all written for Mac OSX at the moment.
